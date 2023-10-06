@@ -3,12 +3,17 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const colors = require('colors');
 const dotenv = require('dotenv').config();
+const connectDB = require('./config/MongoDBConnection');
 
-const mongoose = require('mongoose');
+// Connect to MongoDB
+connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
 
+//Start Express server
 const app = express();
 const Port = process.env.PORT || 3000;
+
 
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
