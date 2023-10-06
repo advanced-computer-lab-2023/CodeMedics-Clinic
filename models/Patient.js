@@ -24,11 +24,15 @@ const patientSchema = new Schema({
     },
     DateOfBirth: {
         type: Date,
-        required: [true, 'Please enter a Date of Birth']
+        required: false
     },
     Number: {
         type: Number,
-        required: [true, 'Please enter a phone number']
+        required: false
+    },
+    Gender: {
+        type: String,
+        required: true,
     },
     Package: {
         type: String,
@@ -36,5 +40,5 @@ const patientSchema = new Schema({
     }
 }, {timestamps: true});
 
-const Patient = mongoose.model('Patient', patientSchema);
+const Patient = mongoose.model('Patients', patientSchema, 'Patients');
 module.exports = Patient;

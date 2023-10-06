@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const adminSchema = new Schema({
     Name: {
         type: String,
-        required: [true, 'Please enter a name'],
+        required: false,
     },
     Username: {
         type: String,
@@ -16,10 +16,10 @@ const adminSchema = new Schema({
     },
     Email: {
         type: String,
-        required: [true, 'Please enter an email']
+        required: false,
     },
 
 }, {timestamps: true});
 
-const Admin = mongoose.model('Admin', adminSchema);
+const Admin = mongoose.model('Admin', adminSchema, 'Admins');
 module.exports = Admin;
