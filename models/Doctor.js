@@ -38,6 +38,10 @@ const doctorSchema = new Schema({
         type: String,
         required: [true, 'Please enter a degree']
 
+    },
+    Specialty: {
+        type: String,
+        required: [true, 'Please enter a specialty']
     }
 }, {timestamps: true});
 

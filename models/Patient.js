@@ -30,6 +30,10 @@ const patientSchema = new Schema({
         type: Number,
         required: [true, 'Please enter a phone number']
     },
+    Package: {
+        type: String,
+        required: false
+    }
 }, {timestamps: true});
 
 const Patient = mongoose.model('Patient', patientSchema);
