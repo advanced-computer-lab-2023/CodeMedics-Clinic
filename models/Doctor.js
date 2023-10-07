@@ -9,6 +9,8 @@ const doctorSchema = new Schema({
     Username: {
         type: String,
         required: true,
+        index: true,
+        unique: true
     },
     Password: {
         type: String,
@@ -16,12 +18,27 @@ const doctorSchema = new Schema({
     },
     Email: {
         type: String,
+        required: true,
+        index: true,
+        unique: true
+    },
+    DateOfBirth:{
+        type: Date,
         required: true
     },
-    Age: {
+    HourlyRate:{
         type: Number,
-        required: true,
-    }
+        required: true
+    },
+    Affiliation:{
+        type: String,
+        required: true
+    },
+    EductionalBackground:{
+        type: String,
+        required: true
+    },
+    
 }, { timestamps: true });
 
 const Doctor = mongoose.model('Doctor', doctorSchema);

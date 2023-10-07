@@ -21,7 +21,12 @@ const patientSchema = new Schema({
     Age: {
         type: Number,
         required: true,
-    }
+    },
+    FamilyMembers:{
+        type: [Schema.Types.ObjectId],
+        ref: 'FamilyMember',
+    },
+    
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);
