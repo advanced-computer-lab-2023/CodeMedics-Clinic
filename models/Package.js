@@ -14,7 +14,7 @@ const PackageSchema = new Schema({
         type: String,
         required: [true, 'Please enter a username']
     },
-    MedicinDiscount: {
+    MedicineDiscount: {
         type: String,
         required: [true, 'Please enter a password']
     },
