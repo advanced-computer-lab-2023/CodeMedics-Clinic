@@ -46,7 +46,11 @@ const patientSchema = new Schema({
     Package: {
         type: String,
         required: false
-    }
+    },
+    FamilyMembers: {
+        type: [String],
+        ref: 'FamilyMember',
+    },
 }, {timestamps: true});
 
 const Patient = mongoose.model('Patients', patientSchema, 'Patients');
