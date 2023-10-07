@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Prescription = require('./Prescription');
 const Schema = mongoose.Schema;
 
 const patientSchema = new Schema({
@@ -33,6 +34,14 @@ const patientSchema = new Schema({
     Gender: {
         type: String,
         required: true,
+    },
+    Prescriptions: {
+        type: [Prescription.schema],
+        required: false
+    },
+    EmergencyContacts: {
+        type: {String, String},
+        required: false
     },
     Package: {
         type: String,
