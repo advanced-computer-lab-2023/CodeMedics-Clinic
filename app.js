@@ -8,6 +8,9 @@ const dotenv = require('dotenv').config();
 const connectDB = require('./config/MongoDBConnection');
 const adminRoutes = require('./routes/AdminRoutes');
 const DeleteModelRecords = require('./config/DeleteAllRecords');
+const doctorRoutes = require('./routes/DoctorRoutes');
+const patientRoutes = require('./routes/PatientRoutes');
+
 // Connect to MongoDB
 connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
 
@@ -33,5 +36,6 @@ console.log("Server running at http://localhost:" + process.env.PORT + "/");
 // routes
 
 app.use('/admin', adminRoutes);
-
+app.use('/doctor', doctorRoutes);
+app.use('/patient', patientRoutes);
 module.exports = app;

@@ -1,8 +1,8 @@
-const adminModel = require('../models/Administrator.js');
-const doctorModel = require('../models/Doctor.js');
-const patientModel = require('../models/Patient.js');
+const adminModel = require('../../models/Administrator.js');
+const doctorModel = require('../../models/Doctor.js');
+const patientModel = require('../../models/Patient.js');
 const {default: mongoose} = require('mongoose');
-const getUsername = require('../config/usernameGetter');
+const getUsername = require('../../config/usernameGetter.js');
 
 const createAdmin = async (req, res) => {
     //create an admin in the database
