@@ -4,23 +4,23 @@ const Schema = mongoose.Schema;
 const packageSchema = new Schema({
     Name: {
         type: String,
-        required: [true, 'Please enter a first name']
+        required: [true, 'Please enter a Name']
     },
     Price: {
         type: String,
-        required: [true, 'Please enter a last name']
+        required: [true, 'Please enter a Price']
     },
     SessionDiscount: {
         type: String,
-        required: [true, 'Please enter a username']
+        required: [true, 'Please enter a SessionDiscount']
     },
     MedicineDiscount: {
         type: String,
-        required: [true, 'Please enter a password']
+        required: [true, 'Please enter a MedicineDiscount']
     },
     FamilyDiscount: {
         type: String,
-        required: [true, 'Please enter an email']
+        required: [true, 'Please enter a FamilyDiscount']
     },
 }, {timestamps: true});
 
