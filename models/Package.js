@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PackageSchema = new Schema({
+const packageSchema = new Schema({
     Name: {
         type: String,
         required: [true, 'Please enter a first name']
@@ -24,5 +24,5 @@ const PackageSchema = new Schema({
     },
 }, {timestamps: true});
 
-const Package = mongoose.model('Package', PackageSchema, 'Package');
+const Package = mongoose.model('Package', packageSchema, 'Package');
 module.exports = Package;
