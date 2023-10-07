@@ -28,7 +28,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.listen(Port);
 
-
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
 // routes
