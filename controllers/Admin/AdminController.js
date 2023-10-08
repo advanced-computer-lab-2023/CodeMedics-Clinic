@@ -2,7 +2,6 @@ const adminModel = require('../../models/Administrator.js');
 const doctorModel = require('../../models/Doctor.js');
 const patientModel = require('../../models/Patient.js');
 const packageModel = require('../../models/Package.js');
-const {default: mongoose} = require('mongoose');
 const getUsername = require('../../config/usernameGetter.js');
 
 const createAdmin = async (req, res) => {
@@ -22,7 +21,7 @@ const createAdmin = async (req, res) => {
     // If all required variables are present, proceed with creating an admin
     const {Name, Username, Password, Email} = req.body;
 
-    if (await getUsername.get(req, res) == '') {
+    if (await getUsername.get(req, res) === '') {
         const newAdmin = new adminModel({Name, Username, Password, Email});
         try {
             await newAdmin.save();
@@ -54,11 +53,13 @@ const removeAdmin = async (req, res) => {
         return res.status(400).json({message: 'Request body is empty'});
     }
     // Check if 'Username' is present in the request body
-    if (!req.body['Username']) {
+    if (!req.body['Username'] || req.body['Username'].trim() === '') {
         return res.status(400).json({message: 'Missing Username in the request body'});
     }
     const {Username} = req.body;
-    if (await getUsername.get(req, res) != '') {
+    if (await getUsername.get(req, res) === '') {
+        return res.status(404).json("User not found in database!");
+    } else {
         const username = await getUsername.get(req, res);
         try {
             await Promise.all([
@@ -66,15 +67,10 @@ const removeAdmin = async (req, res) => {
                 patientModel.deleteOne({Username: username}),
                 doctorModel.deleteOne({Username: username})
             ]);
-
-            console.log('User deleted successfully:', Username);
             return res.status(201).json(Username + "'s account has been Deleted!")
         } catch (error) {
-            console.error('Error deleting user:', error);
             return res.status(500).json({message: 'Error deleting user'});
         }
-    } else {
-        return res.status(404).json("User not found in database!");
     }
 }
 const getAllDoctorsApps = async (req, res) => {
