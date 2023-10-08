@@ -41,9 +41,14 @@ const doctorSchema = new Schema({
     },
     Specialty: {
         type: String,
-        required: [true, 'Please enter a specialty']
+        required: false,
+    },
+    Status: {
+        type: Boolean,
+        default: false,
+        required: false,
     }
 }, {timestamps: true});
 
-const Doctor = mongoose.model('Doctor', doctorSchema , 'Doctors');
+const Doctor = mongoose.model('Doctor', doctorSchema, 'Doctors');
 module.exports = Doctor;
