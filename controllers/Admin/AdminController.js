@@ -83,8 +83,18 @@ const removeAdmin = async (req, res) => {
         }
     }
 }
-const getAllDoctorsApps = async (req, res) => {
-    //get all doctors applications from the database
+const getAllDoctorsReg = async (req, res) => {
+    try {
+        const doctors = await doctorModel.find({Status: false});
+
+        if (doctors.length === 0) {
+            return res.status(404).json({message: 'No doctor applications found'});
+        }
+
+        return res.status(200).json(doctors);
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
 
 }
 const addPackage = async (req, res) => {
@@ -195,7 +205,7 @@ module.exports = {
     getAllAdmins,
     updateAdmin,
     removeAdmin,
-    getAllDoctorsApps,
+    getAllDoctorsReg,
     addPackage,
     removePackage,
     updatePackage
