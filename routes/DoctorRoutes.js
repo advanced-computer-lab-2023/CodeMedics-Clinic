@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
+const { getDoctors } = require('../controllers/Doctor/GetDoctors');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -18,6 +19,7 @@ function verifyToken(req, res, next) {
 app.use(verifyToken);
 
 router.put('/', updateDoctor);
+router.get('/', getDoctors);
 
 
 
