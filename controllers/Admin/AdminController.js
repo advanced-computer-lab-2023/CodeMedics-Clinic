@@ -37,8 +37,18 @@ const createAdmin = async (req, res) => {
 }
 
 const getAllAdmins = async (req, res) => {
-//get all admins from the database
-}
+    try {
+        const admins = await adminModel.find(); // Assuming adminModel is your Mongoose model
+
+        if (admins.length === 0) {
+            return res.status(404).json({message: 'No admins found'});
+        }
+
+        return res.status(200).json(admins);
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+};
 
 
 const updateAdmin = async (req, res) => {
