@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const prescriptionSchema = new Schema({
     Drug: {
-        type: {String, Number},
-        required: [true, 'Please enter a dosage']
+        type: String,
+        required: [true, 'Please enter a drug and dosage']
     },
     Doctor: {
         type: String,
@@ -15,7 +15,7 @@ const prescriptionSchema = new Schema({
         required: [true, 'Please enter a patient']
     },
     Date: {
-        type: Date,
+        type: String,
         required: [true, 'Please enter a date']
     },
     filled: {   

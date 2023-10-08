@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Prescription Viewer</title>
+  </head>
+  <body>
+    <h1>Prescription Viewer</h1>
+
+    <!-- Get All Prescriptions Button -->
+    <button id="getAllPrescriptions">Get All Prescriptions</button>
+
+    <!-- Filter by Date -->
+    <label for="dateFilter">Filter by Date:</label>
+    <input type="text" id="dateFilter" />
+    <button id="filterByDate">Filter</button>
+
+    <!-- Filter by Doctor -->
+    <label for="doctorFilter">Filter by Doctor:</label>
+    <input type="text" id="doctorFilter" />
+    <button id="filterByDoctor">Filter</button>
+
+    <!-- Filter by Filled Status -->
+    <label for="filledStatusFilter">Filter by Filled Status:</label>
+    <select id="filledStatusFilter">
+      <option value="true">Filled</option>
+      <option value="false">Unfilled</option>
+    </select>
+    <button id="filterByStatus">Filter</button>
+
+    <!-- Display Prescription Results -->
+    <div id="prescriptionResults">
+      <!-- Results will be displayed here -->
+    </div>
+
+    <script>
+      // Get All Prescriptions Button Click Event
+      document
+        .getElementById("getAllPrescriptions")
+        .addEventListener("click", () => {
+          fetch("../routes/patientRoutes.js")
+            .then((response) => response.json())
+            .then((data) => displayPrescriptions(data))
+            .catch((error) => console.error(error));
+        });
+
+      // Filter by Date Button Click Event
+      document.getElementById("filterByDate").addEventListener("click", () => {
+        const date = document.getElementById("dateFilter").value;
+        fetch("/patient/prescriptions/date/" + date)
+          .then((response) => response.json())
+          .then((data) => displayPrescriptions(data))
+          .catch((error) => console.error(error));
+      });
+
+      // Filter by Doctor Button Click Event
+      document
+        .getElementById("filterByDoctor")
+        .addEventListener("click", () => {
+          const doctorId = document.getElementById("doctorFilter").value;
+          fetch("/api/prescriptions/doctor/" + doctorId)
+            .then((response) => response.json())
+            .then((data) => displayPrescriptions(data))
+            .catch((error) => console.error(error));
+        });
+
+      // Filter by Status Button Click Event
+      document
+        .getElementById("filterByStatus")
+        .addEventListener("click", () => {
+          const filledStatus =
+            document.getElementById("filledStatusFilter").value;
+          fetch("/api/prescriptions/filled/" + filledStatus)
+            .then((response) => response.json())
+            .then((data) => displayPrescriptions(data))
+            .catch((error) => console.error(error));
+        });
+
+      // Display Prescriptions Function
+      function displayPrescriptions(prescriptions) {
+        const prescriptionResults = document.getElementById(
+          "prescriptionResults"
+        );
+        prescriptionResults.innerHTML = ""; // Clear previous results
+
+        if (prescriptions.length === 0) {
+          prescriptionResults.innerHTML = "No prescriptions found.";
+          return;
+        }
+
+        const prescriptionList = document.createElement("ul");
+        prescriptions.forEach((prescription) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `Prescription ID: ${prescription._id}, Date: ${prescription.date}, Doctor: ${prescription.doctor}, Filled: ${prescription.filled}`;
+          prescriptionList.appendChild(listItem);
+        });
+
+        prescriptionResults.appendChild(prescriptionList);
+      }
+    </script>
+  </body>
+</html>
