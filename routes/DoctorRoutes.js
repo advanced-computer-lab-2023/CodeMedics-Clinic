@@ -3,12 +3,11 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
 const { filterAppointments } = require('../controllers/Doctor/filterAppointments');
-const { searchForPatient } = require('../controllers/Doctor/searchForPatient');
+const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 
 const { filter } = require('lodash');
-const {updateDoctor} = require('../controllers/Doctor/UpdateDoctor');
 const {getDoctors} = require('../controllers/Doctor/GetDoctors');
 const app = require('../app.js');
 
@@ -27,7 +26,7 @@ function verifyToken(req, res, next) {
 
 router.put('/', updateDoctor);
 router.get('/viewappointments', filterAppointments);
-router.get('searchPatient', searchForPatient);
+router.get('searchPatient', searchPatient);
 router.get('/viewpatients', viewPatients);
 router.get('/', getDoctors);
 router.get('/filterpatients', filterPatients);

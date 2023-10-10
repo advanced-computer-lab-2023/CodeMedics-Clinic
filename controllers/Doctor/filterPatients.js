@@ -4,7 +4,7 @@ const Doctor = require('../../models/Doctor');
 const router = express.Router();
 const appointment = require('../../models/Appointment');
 
-router.get('/', async (req, res) => {
+exports.filterPatients = async (req, res) => {
     //filter patients based on upcoming appointments
     const username = req.session.username;
     const myAppointments = await appointment.find({doctorUserName: username});
@@ -15,7 +15,4 @@ router.get('/', async (req, res) => {
             patients.add(appointment.patientUserName);
     }
     res.render('Doctor/filterPatient', {patients: patients});
-});
-
-module.exports = router;
-exports.filterPatients = filterPatients;
+};;

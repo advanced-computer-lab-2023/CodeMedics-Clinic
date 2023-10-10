@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Doctor = require('../../models/Doctor'); 
 const Appointment = require('../../models/Appointment');
-const e = require('express');
-router.get('/', async (req, res) => { 
+
+exports.filterAppointments = async (req, res) => { 
     const status = req.query.status;
     const date = req.query.date;
     const doctor = await Doctor.findOne({Username: req.session.username});
@@ -15,7 +15,4 @@ router.get('/', async (req, res) => {
         appointments = appointments.filter(appointment => appointment.date == date);
     }
     res.render('Doctor/viewappointments', {appointments: appointments});
-});
-
-module.exports = router;
-exports.filterAppointments = filterAppointments;
+};;
