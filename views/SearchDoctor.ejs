@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search Doctor</title>
+  </head>
+  <body>
+    <h1>Search Doctor</h1>
+
+    <!-- Filter by Doctor -->
+    <label for="doctorFilter">Search by Doctor name:</label>
+    <input type="text" id="doctorFilter" />
+
+    <!-- Get doctors by name Button -->
+    <button id="Search">Search</button>
+
+
+    <!-- Display Prescription Results -->
+    <div id="SearchDoctor">
+      <!-- Results will be displayed here -->
+    </div>
+
+    <script>
+      // Get Doctors by name with Button Click Event
+      document
+        .getElementById("Search")
+        .addEventListener("click", () => {
+          fetch("../routes/DoctorRoutes.js")
+            .then((response) => response.json())
+            .then((data) => displayDoctors(data))
+            .catch((error) => console.error(error));
+        });
+
+
+        
+
+      // Display doctors Function
+      function displayDoctors(doctors) {
+        const SearchDoctor = document.getElementById(
+          "SearchDoctor"
+        );
+        SearchDoctor.innerHTML = ""; // Clear previous results
+
+        if (doctors.length === 0) {
+          SearchDoctor.innerHTML = "No doctors found.";
+          return;
+        }
+
+        const doctorList = document.createElement("ul");
+        doctors.forEach((doctor) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `First Name: ${doctor.FirstName}, Last Name: ${doctor.LastName}, Email: ${doctor.Email}, Hourly Rate: ${doctor.HourlyRate}, Specialty: ${doctor.Specialty}`;
+          doctorList.appendChild(listItem);
+        });
+
+        SearchDoctor.appendChild(doctorList);
+      }
+    </script>
+  </body>
+</html>
