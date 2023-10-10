@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const AdminController = require('../controllers/Admin/AdminController');
+const JWTAuth = require('../config/JWTAuth.js');
 
+const isAuth = JWTAuth.isAuth;
 
+// Middleware to check authentication for the routes below
+router.use(isAuth);
 //admin
-router.post('/createAdmin', (req, res) => {
-    AdminController.createAdmin(req, res).then();
-});
+router.post('/createAdmin', isAuth, AdminController.createAdmin);
 router.delete('/removeAdmin', (req, res) => {
     AdminController.removeAdmin(req, res).then();
 });

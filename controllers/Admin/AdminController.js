@@ -6,6 +6,9 @@ const getUsername = require('../../config/usernameGetter.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
+
+
+
 const createAdmin = asyncHandler(async (req, res) => {
     //create an admin in the database
     //check req body
@@ -19,19 +22,20 @@ const createAdmin = asyncHandler(async (req, res) => {
             return res.status(400).json({message: `Missing ${variable} in the request body`});
         }
     }
-
     // If all required variables are present, proceed with creating an admin
     const {Name, Username, Password, Email} = req.body;
+    // Hash the password using bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(Password, salt);
 
     if (await getUsername.get(req, res) === '') {
-        const newAdmin = new adminModel({Name, Username, Password, Email});
+        const newAdmin = new adminModel({Name, Username, Password: hashedPassword, Email});
         await newAdmin.save();
         return res.status(201).json("Admin created successfully!");
 
     } else {
         return res.status(400).json({message: "Username already exists"});
     }
-
 })
 
 const getAllAdmins = async (req, res) => {
