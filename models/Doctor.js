@@ -39,6 +39,12 @@ const doctorSchema = new Schema({
         required: [true, 'Please enter a degree']
 
     },
+    Status: {
+        type: String,
+        enum: ['Approved', 'Pending', 'Rejected'],
+        default: 'Pending',
+        required: true,
+    },
     Specialty: {
         type: String,
         required: [true, 'Please enter a specialty']
@@ -49,5 +55,5 @@ const doctorSchema = new Schema({
     }
 }, {timestamps: true});
 
-const Doctor = mongoose.model('Doctor', doctorSchema , 'Doctors');
+const Doctor = mongoose.model('Doctor', doctorSchema, 'Doctors');
 module.exports = Doctor;

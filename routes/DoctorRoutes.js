@@ -8,25 +8,30 @@ const { viewPatients } = require('../controllers/Doctor/viewPatients');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 
 const { filter } = require('lodash');
+const {updateDoctor} = require('../controllers/Doctor/UpdateDoctor');
+const {getDoctors} = require('../controllers/Doctor/GetDoctors');
+const app = require('../app.js');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
-    try{
+    try {
         const model = jwt.verify(token, process.env.SECRET_KEY);
         res.locals.token = model;
         next();
-    }
-    catch(e){
+    } catch (e) {
         res.status(401).json({message: e.message});
     }
 }
 
-app.use(verifyToken);
+//app.use(verifyToken);
 
 router.put('/', updateDoctor);
 router.get('/viewappointments', filterAppointments);
 router.get('searchPatient', searchForPatient);
 router.get('/viewpatients', viewPatients);
+router.get('/', getDoctors);
 router.get('/filterpatients', filterPatients);
+
+module.exports = router;
 
 

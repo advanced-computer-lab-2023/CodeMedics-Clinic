@@ -7,19 +7,19 @@ const packageSchema = new Schema({
         required: [true, 'Please enter a Name']
     },
     Price: {
-        type: String,
+        type: Number,
         required: [true, 'Please enter a Price']
     },
     SessionDiscount: {
-        type: String,
+        type: Number,
         required: [true, 'Please enter a SessionDiscount']
     },
     MedicineDiscount: {
-        type: String,
+        type: Number,
         required: [true, 'Please enter a MedicineDiscount']
     },
     FamilyDiscount: {
-        type: String,
+        type: Number,
         required: [true, 'Please enter a FamilyDiscount']
     },
 }, {timestamps: true});
