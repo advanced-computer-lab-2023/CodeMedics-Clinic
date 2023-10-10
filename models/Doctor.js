@@ -12,7 +12,8 @@ const doctorSchema = new Schema({
     },
     Username: {
         type: String,
-        required: [true, 'Please enter a username']
+        required: [true, 'Please enter a username'],
+        unique: true,
     },
     Password: {
         type: String,

@@ -3,8 +3,10 @@ const doctorModel = require('../../models/Doctor.js');
 const patientModel = require('../../models/Patient.js');
 const packageModel = require('../../models/Package.js');
 const getUsername = require('../../config/usernameGetter.js');
-
-const createAdmin = async (req, res) => {
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const asyncHandler = require('express-async-handler');
+const createAdmin = asyncHandler(async (req, res) => {
     //create an admin in the database
     //check req body
     if (Object.keys(req.body).length === 0) {
@@ -23,18 +25,14 @@ const createAdmin = async (req, res) => {
 
     if (await getUsername.get(req, res) === '') {
         const newAdmin = new adminModel({Name, Username, Password, Email});
-        try {
-            await newAdmin.save();
-            return res.status(201).json("Admin created successfully!");
-        } catch (error) {
-            return res.status(409).json({message: error.message});
-        }
+        await newAdmin.save();
+        return res.status(201).json("Admin created successfully!");
+
     } else {
         return res.status(400).json({message: "Username already exists"});
     }
 
-
-}
+})
 
 const getAllAdmins = async (req, res) => {
     try {
