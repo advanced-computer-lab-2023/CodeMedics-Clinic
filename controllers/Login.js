@@ -2,6 +2,7 @@ const adminModel = require("../models/Administrator");
 const doctorModel = require("../models/Doctor");
 const patientModel = require("../models/Patient");
 const AsyncHandler = require("express-async-handler");
+const bcrypt = require("bcryptjs");
 
 const Login = AsyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
