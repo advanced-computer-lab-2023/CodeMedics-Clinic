@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+const Patient = require('./Patient');
 const doctorSchema = new Schema({
     FirstName: {
         type: String,
@@ -42,6 +42,10 @@ const doctorSchema = new Schema({
     Specialty: {
         type: String,
         required: [true, 'Please enter a specialty']
+    },
+    Patients:{
+        type: [Patient.schema],
+        required: false
     }
 }, {timestamps: true});
 

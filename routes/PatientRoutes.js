@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 const { addFamilyMember , viewFamilyMembers } = require('../controllers/Patient/FamilyMembersController');
-
+const { filterAppointmentsPatient } = require('../controllers/Patient/filterAppointmentsPatient');
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try{
@@ -19,3 +19,4 @@ function verifyToken(req, res, next) {
 app.use(verifyToken);
 router.post('/family-members', addFamilyMember);
 router.get('/family-members', viewFamilyMembers);
+router.get('/viewappointments', filterAppointmentsPatient);
