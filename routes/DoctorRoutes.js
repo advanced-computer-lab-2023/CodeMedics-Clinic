@@ -7,7 +7,6 @@ const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 
-const { filter } = require('lodash');
 const {getDoctors} = require('../controllers/Doctor/GetDoctors');
 const app = require('../app.js');
 
