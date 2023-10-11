@@ -13,8 +13,7 @@ const patientSchema = new Schema({
     },
     Username: {
         type: String,
-        required: [true, 'Please enter a username'],
-        unique: true,
+        required: [true, 'Please enter a username']
     },
     Password: {
         type: String,
