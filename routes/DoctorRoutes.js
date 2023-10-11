@@ -8,7 +8,7 @@ const {viewPatients} = require('../controllers/Doctor/viewPatients');
 const {filterPatients} = require('../controllers/Doctor/filterPatients');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
 
-const {getDoctors} = require('../controllers/Doctor/GetDoctors');
+const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/GetDoctors');
 const app = require('../app.js');
 
 function verifyToken(req, res, next) {
@@ -33,6 +33,7 @@ router.get('searchPatient', searchPatient);
 router.get('/viewpatients', viewPatients);
 router.get('/', getDoctors);
 router.get('/filterpatients', filterPatients);
+router.get('/getDoctorsAndSpecialties', getDoctorsAndSpecialties);
 
 module.exports = router;
 
