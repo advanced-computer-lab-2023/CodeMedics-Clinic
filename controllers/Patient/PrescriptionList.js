@@ -5,7 +5,7 @@ const Prescription = require('../../models/Prescription');
 
 exports.filterPrescriptions = async (req, res) => {
   try {
-    const { userName, year, month, day, doctor, filledStatus } = req.body;
+    const { userName, year, month, day, doctor, filledStatus } = req.query;
 
     let query = { Patient: userName };
 
