@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
-const { filterAppointments } = require('../controllers/Doctor/filterAppointments');
-const { searchPatient } = require('../controllers/Doctor/searchForPatient');
-const { viewPatients } = require('../controllers/Doctor/viewPatients');
-const { filterPatients } = require('../controllers/Doctor/filterPatients');
+const {updateDoctor} = require('../controllers/Doctor/UpdateDoctor');
+const {filterAppointments} = require('../controllers/Doctor/filterAppointments');
+const {searchPatient} = require('../controllers/Doctor/searchForPatient');
+const {viewPatients} = require('../controllers/Doctor/viewPatients');
+const {filterPatients} = require('../controllers/Doctor/filterPatients');
+const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
 
 const {getDoctors} = require('../controllers/Doctor/GetDoctors');
 const app = require('../app.js');
@@ -21,8 +22,9 @@ function verifyToken(req, res, next) {
     }
 }
 
+router.post('/register', createDoctor);
 //app.use(verifyToken);
-
+router.get('/register', viewDoctorRegister);
 router.put('/', updateDoctor);
 router.get('/viewappointments', filterAppointments);
 router.get('searchPatient', searchPatient);

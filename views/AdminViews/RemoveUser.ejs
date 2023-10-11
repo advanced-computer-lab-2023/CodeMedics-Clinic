@@ -1,0 +1,74 @@
+<!-- remove_user.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove User</title>
+</head>
+<body>
+<h1>Remove User</h1>
+
+<!-- Remove User Form -->
+<form id="removeUserForm">
+    <!-- User Information -->
+    <label for="Username">Username:</label>
+    <input type="text" id="Username" name="Username" required>
+
+    <!-- Submit Button -->
+    <button type="button" onclick="removeUser()">Remove User</button>
+</form>
+
+<!-- Loading indicator -->
+<div id="loading" style="display: none;">Loading...</div>
+
+<!-- Container to display JSON response -->
+<pre id="jsonResponse"></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    async function removeUser() {
+        const username = document.getElementById('Username').value;
+
+        // Display loading indicator
+        document.getElementById('loading').style.display = 'block';
+
+        try {
+            const response = await axios.delete('/admin/removeUser', {
+                data: { Username: username },
+            });
+
+            // Hide loading indicator
+            document.getElementById('loading').style.display = 'none';
+
+            // Display formatted JSON response in the 'jsonResponse' div
+            document.getElementById('jsonResponse').innerHTML = JSON.stringify(response.data, null, 2);
+
+            // Log the status to the console
+            console.log('Status:', response.status);
+
+            // Handle success or error based on the status
+            if (response.status === 200) {
+                console.log('User removed successfully');
+                // Handle success, e.g., show a success message
+            } else {
+                console.error('Error removing user');
+                // Handle error, e.g., show an error message
+            }
+        } catch (error) {
+            // Hide loading indicator in case of an error
+            document.getElementById('loading').style.display = 'none';
+
+            // Display error information in the 'jsonResponse' div
+            document.getElementById('jsonResponse').innerHTML = JSON.stringify(error.response.data, null, 2);
+
+            // Log the status to the console
+            console.log('Status:', error.response.status);
+
+            console.error('Error:', error);
+        }
+    }
+</script>
+</body>
+</html>

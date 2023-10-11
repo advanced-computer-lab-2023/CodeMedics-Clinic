@@ -6,18 +6,20 @@ const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const { addFamilyMember , viewFamilyMembers } = require('../controllers/Patient/FamilyMembersController');
 const {filterPrescriptions} = require('../controllers/Patient/PrescriptionList');
 const { filterAppointmentsPatient } = require('../controllers/Patient/filterAppointmentsPatient');
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
-    try{
+    try {
         const model = jwt.verify(token, process.env.SECRET_KEY);
         res.locals.token = model;
         next();
-    }
-    catch(e){
+    } catch (e) {
         res.status(401).json({message: e.message});
     }
 }
 
+router.get('/register', patientController.viewPatientRegister);
+router.post('/register', patientController.createPatient);
 
 // app.use(verifyToken);
 
