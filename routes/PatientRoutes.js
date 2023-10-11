@@ -18,21 +18,17 @@ function verifyToken(req, res, next) {
     }
 }
 
-router.get('/register', patientController.viewPatientRegister);
-router.post('/register', patientController.createPatient);
+// router.get('/register', patientController.viewPatientRegister);
+// router.post('/register', patientController.createPatient);
 
 // app.use(verifyToken);
 
 router.post('/familyMembers', addFamilyMember);
 router.get('/familyMembers', viewFamilyMembers);
-//router.get('/prescriptions', getPrescriptions);
-//router.get('/prescriptions/date', getPrescriptionsByDate);
-//router.get('/prescriptions/doctor', getPrescriptionsByDoctor);
-//router.get('/prescriptions/status', getPrescriptionsByStatus);
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/viewappointments', filterAppointmentsPatient);
 router.get('/SearchDoctor', searchDoctor);
-// router.get('/doctorSearch', (req, res) => {
-//     res.render('SearchDoctor');
-// });
+router.get('/doctorSearch', (req, res) => {
+    res.render('SearchDoctor');
+});
 module.exports = router;
