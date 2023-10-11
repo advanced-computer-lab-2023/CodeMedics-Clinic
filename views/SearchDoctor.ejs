@@ -24,7 +24,7 @@
       document
         .getElementById("Search")
         .addEventListener("click", () => {
-          fetch("../routes/DoctorRoutes.js")
+          fetch("../controllers/Patient/SearchDoctor")
             .then((response) => response.json())
             .then((data) => displayDoctors(data))
             .catch((error) => console.error(error));

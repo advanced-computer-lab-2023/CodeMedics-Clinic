@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
+const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const { addFamilyMember , viewFamilyMembers } = require('../controllers/Patient/FamilyMembersController');
 const {getPrescriptions, getPrescriptionsByDate, getPrescriptionsByDoctor, getPrescriptionsByStatus, filterPrescriptions} = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
@@ -29,5 +30,8 @@ router.get('/family-members', viewFamilyMembers);
 //router.get('/prescriptions/status', getPrescriptionsByStatus);
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/viewappointments', filterAppointmentsPatient);
-
+router.get('/SearchDoctor', searchDoctor);
+router.get('/doctorSearch', (req, res) => {
+    res.render('SearchDoctor');
+});
 module.exports = router;
