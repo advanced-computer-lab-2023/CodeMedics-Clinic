@@ -38,4 +38,7 @@ router.get('/SearchDoctor', searchDoctor);
 router.get('/doctorSearch', (req, res) => {
     res.render('SearchDoctor');
 });
+router.get('/prescriptionList', (req, res) => {
+    res.render('prescriptionsList');
+});
 module.exports = router;
