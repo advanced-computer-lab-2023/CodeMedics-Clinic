@@ -1,0 +1,55 @@
+<head>
+    <title>View Filtered Patients</title>
+</head>
+
+<body>
+
+    <!-- display each one as a clickable object-->
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <h1>View Filtered Patients</h1>
+
+                <!-- add break line -->
+
+                <br>
+
+                <!-- add a table to display the appointments -->
+
+                <table>
+
+                    <tr>
+
+                        <th>patientFirstName</th>
+
+                        <th>patientLastName</th>
+
+                    </tr>
+
+                    <!-- loop through the appointments array and display each appointment -->
+
+                    <% for (var i = 0; i < patients.length; i++) { %>
+
+                    <tr>
+
+                        <td><a href="/doctor/viewPatientDetails/<%= patients[i].patientUserName %>"><%= patients[i].FirstName %></a></td>
+
+                        <td><a href="/doctor/viewPatientDetails/<%= patients[i].patientUserName %>"><%= patients[i].LastName %></a></td>
+
+                    </tr>
+
+                    <% } %>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>

@@ -1,0 +1,59 @@
+<head> 
+    <title>Doctor</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Doctor</h1>
+                <p>Doctor page body content</p>
+
+                <br> 
+
+                <p>Filter appointments by date and status</p>
+
+                <form action="/doctor/viewAppointments" method = "get">
+                    <label for="status">Status:</label>
+                    <select name="status" id="status">
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <label for="year">Year:</label>
+                    <input type="text" name="year" id="year">
+                    <label for="month">Month:</label>
+                    <input type="text" name="month" id="month">
+                    <label for="day">Day:</label>
+                    <input type="text" name="day" id="day">
+                    <input type="submit" value="Filter">
+                </form>
+
+                <br>
+
+                <a href="/doctor/viewPatients">View Patients</a>
+
+
+                <br>
+                <br>
+                <br>
+
+                <form action="/doctor/searchPatient" method="get">
+                    <label for="search">Search:</label>
+                    <input type="text" name="patientName" id="search">
+                    <input type="submit" value="Search">
+                </form>
+
+                <br>
+                <br>
+                
+                <!-- button for filtering patients based on upcoming appointments -->
+
+                <a href="/doctor/filterPatients">View Patients with upcoming appointments</a>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+

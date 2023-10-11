@@ -1,0 +1,60 @@
+<!-- display the results that are passed here from the searchForPatient.js-->
+
+<!-- display each patient such that each one if clicked we go to its another page displaying the patient details -->
+
+<head>
+    <title>View Search Results</title>
+
+</head>
+
+<body>
+
+    <!-- display each one as a clickable object-->
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <h1>View Search Results</h1>
+
+                <!-- add break line -->
+
+                <br>
+
+                <!-- add a table to display the appointments -->
+
+                <table>
+
+                    <tr>
+
+                        <th>patientFirstName</th>
+
+                        <th>patientLastName</th>
+
+                    </tr>
+
+                    <!-- loop through the appointments array and display each appointment -->
+
+                    <% for (var i = 0; i < patients.length; i++) { %>
+
+                    <tr>
+
+                        <td><a href="/doctor/viewPatientDetails/<%= patients[i].patientUserName %>"><%= patients[i].FirstName %></a></td>
+                        <td><a href="/doctor/viewPatientDetails/<%= patients[i].patientUserName %>"><%= patients[i].LastName %></a></td>
+
+
+                    </tr>
+
+                    <% } %>
+
+                </table>
+
+            </div>
+
+        </div>
+
+</body>
+    
+       

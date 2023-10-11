@@ -1,0 +1,43 @@
+<head>
+    <title>View Patients</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <h1>View Patients</h1>
+
+                <br>
+                <table>
+
+                    <tr>
+
+                        <th>patientFirstName</th>
+                        <th>patientLastName</th>
+                        <th>patientAge</th>
+                        <th>patientGender</th>
+                        <th>patientAddress</th>
+                        <th>patientPhoneNumber</th>
+                        <th>patientEmail</th>
+                    </tr>
+                    <!-- loop through the patients array and display each patient -->
+                    <% for (var i = 0; i < patients.length; i++) { %>
+                    <tr>
+
+                        <td><a href="/doctor/viewPatientDetails/<%= patients[i].patientUserName %>"><%= patients[i].FirstName %></a></td>
+                        <td><a href="/doctor/viewPatientDetails/<%= patients[i].patientUserName %>"><%= patients[i].LastName %></a></td>
+                        <td><%= patients[i].patientAge %></td>
+                        <td><%= patients[i].patientGender %></td>
+                        <td><%= patients[i].patientAddress %></td>
+                        <td><%= patients[i].patientPhoneNumber %></td>
+                        <td><%= patients[i].patientEmail %></td>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
+        </div>
+    </div>
