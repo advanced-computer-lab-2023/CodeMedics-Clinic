@@ -20,15 +20,12 @@
     </div>
 
     <script>
-      // Get Doctors by name with Button Click Event
-      document
-        .getElementById("Search")
-        .addEventListener("click", () => {
-          fetch("../controllers/Patient/SearchDoctor")
-            .then((response) => response.json())
-            .then((data) => displayDoctors(data))
-            .catch((error) => console.error(error));
-        });
+     document.getElementById("Search").onclick = function() {
+          const name = document.getElementById("doctorFilter").value
+          //alert(document.getElementById("doctorFilter").value);
+        };
+    
+      
 
 
         
