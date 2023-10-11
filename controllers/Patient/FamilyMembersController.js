@@ -7,6 +7,9 @@ exports.addFamilyMember = async (req, res) => {
    const familyMember = new FamilyMember({Name , NationalID , Gender , DateOfBirth});
    try{
       const patient = await Patient.findOne({Username});
+      if(patient == null){
+         return res.status(404).json({message: 'Patient does not exist'});
+      }
       const exists = await FamilyMember.findOne({NationalID});
       if(exists){
          return res.status(400).json({message: 'Family member already exists'});
@@ -24,6 +27,9 @@ exports.addFamilyMember = async (req, res) => {
 exports.viewFamilyMembers = async (req, res) => {
    const {Username} = req.body;
    const patient = await Patient.findOne({Username});
+   if(patient == null){
+      return res.status(404).json({message: 'Patient does not exist'});
+   }
    try{
       const familyMembers = [];
       for(let i=0; i<patient.FamilyMembers.length; i++){
