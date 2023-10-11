@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const { addFamilyMember , viewFamilyMembers } = require('../controllers/Patient/FamilyMembersController');
-const {getPrescriptions, getPrescriptionsByDate, getPrescriptionsByDoctor, getPrescriptionsByStatus, filterPrescriptions} = require('../controllers/Patient/PrescriptionList');
-const app = require('../app.js');
+const {filterPrescriptions} = require('../controllers/Patient/PrescriptionList');
 const { filterAppointmentsPatient } = require('../controllers/Patient/filterAppointmentsPatient');
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -22,8 +21,8 @@ function verifyToken(req, res, next) {
 
 // app.use(verifyToken);
 
-router.post('/family-members', addFamilyMember);
-router.get('/family-members', viewFamilyMembers);
+router.post('/familyMembers', addFamilyMember);
+router.get('/familyMembers', viewFamilyMembers);
 //router.get('/prescriptions', getPrescriptions);
 //router.get('/prescriptions/date', getPrescriptionsByDate);
 //router.get('/prescriptions/doctor', getPrescriptionsByDoctor);
@@ -31,7 +30,7 @@ router.get('/family-members', viewFamilyMembers);
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/viewappointments', filterAppointmentsPatient);
 router.get('/SearchDoctor', searchDoctor);
-router.get('/doctorSearch', (req, res) => {
-    res.render('SearchDoctor');
-});
+// router.get('/doctorSearch', (req, res) => {
+//     res.render('SearchDoctor');
+// });
 module.exports = router;
