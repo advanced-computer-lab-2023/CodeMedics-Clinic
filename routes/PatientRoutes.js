@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-
-const { searchDoctor } = require('../controllers/patient/SearchDoctor');
-const { addFamilyMember , viewFamilyMembers } = require('../controllers/Patient/FamilyMembersController');
-const {filterPrescriptions} = require('../controllers/Patient/PrescriptionList');
-const { filterAppointmentsPatient } = require('../controllers/Patient/filterAppointmentsPatient');
+const patientController = require('../controllers/Patient/PatientController');
+const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/FamilyMembersController');
+const {
+    getPrescriptions,
+    getPrescriptionsByDate,
+    getPrescriptionsByDoctor,
+    getPrescriptionsByStatus,
+    filterPrescriptions
+} = require('../controllers/Patient/PrescriptionList');
+const app = require('../app.js');
+const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
