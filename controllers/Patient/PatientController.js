@@ -58,6 +58,6 @@ const createPatient = asyncHandler(async (req, res) => {
     }
 });
 const viewPatientRegister = asyncHandler(async (req, res) => {
-    res.render('RegisterPatient');
+    res.render('PatientViews/RegisterPatient');
 });
 module.exports = {createPatient, viewPatientRegister};

@@ -55,6 +55,6 @@ const createDoctor = asyncHandler(async (req, res) => {
     }
 });
 const viewDoctorRegister = asyncHandler(async (req, res) => {
-    res.render('RegisterDoctor');
+    res.render('DoctorViews/RegisterDoctor');
 });
 module.exports = {createDoctor, viewDoctorRegister};

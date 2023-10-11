@@ -10,6 +10,7 @@ const adminGetter = require('../controllers/Admin/AdminGetters');
 //router.use(isAuth);
 //admin
 router.get('/', adminGetter.viewAdminPanel);
+router.get('/packageManager', adminGetter.viewPackageManager);
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
 });

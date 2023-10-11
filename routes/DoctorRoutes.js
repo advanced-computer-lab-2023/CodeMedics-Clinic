@@ -25,6 +25,8 @@ function verifyToken(req, res, next) {
 router.post('/register', createDoctor);
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
+
+
 router.put('/', updateDoctor);
 router.get('/viewappointments', filterAppointments);
 router.get('searchPatient', searchPatient);

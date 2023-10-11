@@ -1,0 +1,127 @@
+<!-- health_packages.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Packages Management</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+<h1>Health Packages Management</h1>
+
+<!-- Add Package Form -->
+<form id="addPackageForm">
+    <h2>Add Health Package</h2>
+    <label for="Name">Name:</label>
+    <input type="text" id="Name" name="Name" required>
+
+    <label for="Price">Price:</label>
+    <input type="number" id="Price" name="Price" required>
+
+    <label for="SessionDiscount">SessionDiscount:</label>
+    <input type="number" id="SessionDiscount" name="SessionDiscount" required>
+
+    <label for="MedicineDiscount">MedicineDiscount:</label>
+    <input type="number" id="MedicineDiscount" name="MedicineDiscount" required>
+
+    <label for="FamilyDiscount">FamilyDiscount:</label>
+    <input type="number" id="FamilyDiscount" name="FamilyDiscount" required>
+
+    <button type="button" onclick="submitForm('/admin/addPackage', 'POST', 'addPackageForm')">Add Package</button>
+</form>
+
+<!-- Update Package Form -->
+<form id="updatePackageForm">
+    <h2>Update Health Package</h2>
+
+    <label for="UpdateName">Name:</label>
+    <input type="text" id="UpdateName" name="Name" required>
+
+    <label for="UpdatePrice">Price:</label>
+    <input type="number" id="UpdatePrice" name="Price">
+
+    <label for="UpdateSessionDiscount">SessionDiscount:</label>
+    <input type="number" id="UpdateSessionDiscount" name="SessionDiscount">
+
+    <label for="UpdateMedicineDiscount">MedicineDiscount:</label>
+    <input type="number" id="UpdateMedicineDiscount" name="MedicineDiscount">
+
+    <label for="UpdateFamilyDiscount">FamilyDiscount:</label>
+    <input type="number" id="UpdateFamilyDiscount" name="FamilyDiscount">
+
+    <button type="button" onclick="submitForm('/admin/updatePackage', 'PATCH', 'updatePackageForm')">Update Package
+    </button>
+</form>
+
+<!-- Remove Package Form -->
+<form id="removePackageForm">
+    <h2>Remove Health Package</h2>
+    <label for="Name">Name:</label>
+    <input type="text" id="Name" name="Name" required>
+
+    <button type="button" onclick="submitForm('/admin/removePackage', 'DELETE', 'removePackageForm')">Remove Package</button>
+</form>
+
+<!-- Display Packages (optional) -->
+<pre id="responseDisplay"></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    async function submitForm(url, method, formId) {
+        const formData = new FormData(document.getElementById(formId));
+
+        try {
+            let response;
+
+            if (method === 'POST' || method === 'PATCH') {
+                // Convert FormData to JSON for POST and PATCH requests
+                const jsonObject = {};
+                formData.forEach((value, key) => {
+                    jsonObject[key] = value;
+                });
+
+                response = await axios({
+                    method,
+                    url,
+                    data: jsonObject,
+                    headers: {'Content-Type': 'application/json'},
+                });
+            } else {
+                // For DELETE request
+                const jsonObject = {};
+                formData.forEach((value, key) => {
+                    jsonObject[key] = value;
+                });
+
+                response = await axios({
+                    method,
+                    url,
+                    data: jsonObject,
+                });
+            }
+
+            // Display the response
+            const responseDisplay = document.getElementById('responseDisplay');
+            responseDisplay.innerText = `Status Code: ${response.status}\n\nResponse Data:\n${JSON.stringify(response.data, null, 2)}`;
+        } catch (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                const responseDisplay = document.getElementById('responseDisplay');
+                responseDisplay.innerText = `Status Code: ${error.response.status}\n\nError Data:\n${JSON.stringify(error.response.data, null, 2)}`;
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('No response received:', error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error:', error.message);
+            }
+        }
+    }
+</script>
+</body>
+</html>
