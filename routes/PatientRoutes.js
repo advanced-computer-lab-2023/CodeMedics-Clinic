@@ -25,8 +25,8 @@ function verifyToken(req, res, next) {
     }
 }
 
-// router.get('/register', patientController.viewPatientRegister);
-// router.post('/register', patientController.createPatient);
+router.get('/register', patientController.viewPatientRegister);
+router.post('/register', patientController.createPatient);
 
 // app.use(verifyToken);
 
