@@ -1,0 +1,28 @@
+<!-- admin_panel.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+<h1>Admin Panel</h1>
+
+<!-- Button to view doctor registrations -->
+<button type="button" onclick="redirectTo('/admin/getDoctorsReg')">View Doctor Registrations</button>
+
+<!-- Button to register a new admin -->
+<button type="button" onclick="redirectTo('/admin/register')">Register New Admin</button>
+
+<!-- Button to remove a user -->
+<button type="button" onclick="redirectTo('/admin/removeUser')">Remove User</button>
+
+<script>
+    function redirectTo(url) {
+        window.location.href = url;
+    }
+</script>
+</body>
+</html>

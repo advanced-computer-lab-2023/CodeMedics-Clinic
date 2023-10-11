@@ -8,7 +8,6 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
 
-
 const createAdmin = asyncHandler(async (req, res) => {
     //create an admin in the database
     //check req body
@@ -18,7 +17,8 @@ const createAdmin = asyncHandler(async (req, res) => {
     const requiredVariables = ['Name', 'Username', 'Password', 'Email'];
 
     for (const variable of requiredVariables) {
-        if (!req.body[variable]) {
+        console.log(req.body[variable]);
+        if (!req.body[variable] && (variable === 'Username' || variable === 'Password')) {
             return res.status(400).json({message: `Missing ${variable} in the request body`});
         }
     }
@@ -36,21 +36,17 @@ const createAdmin = asyncHandler(async (req, res) => {
     } else {
         return res.status(400).json({message: "Username already exists"});
     }
-})
+});
 
-const getAllAdmins = async (req, res) => {
-    try {
-        const admins = await adminModel.find(); // Assuming adminModel is your Mongoose model
+const getAllAdmins = asyncHandler(async (req, res) => {
+    const admins = await adminModel.find(); // Assuming adminModel is your Mongoose model
 
-        if (admins.length === 0) {
-            return res.status(404).json({message: 'No admins found'});
-        }
-
-        return res.status(200).json(admins);
-    } catch (error) {
-        return res.status(500).json({message: error.message});
+    if (admins.length === 0) {
+        return res.status(404).json({message: 'No admins found'});
     }
-};
+
+    return res.status(200).json(admins);
+});
 
 
 const updateAdmin = async (req, res) => {
@@ -59,46 +55,45 @@ const updateAdmin = async (req, res) => {
     }
 }
 
-const removeAdmin = async (req, res) => {
+const removeUser = asyncHandler(async (req, res) => {
     //delete an Admin from the database
     if (Object.keys(req.body).length === 0) {
-        return res.status(400).json({message: 'Request body is empty'});
+        return res.status(400).json("Request body is empty");
     }
     // Check if 'Username' is present in the request body
     if (!req.body['Username'] || req.body['Username'].trim() === '') {
-        return res.status(400).json({message: 'Missing Username in the request body'});
+        return res.status(400).json("Missing Username in the request body");
     }
     const {Username} = req.body;
     if (await getUsername.get(req, res) === '') {
+        console.log("User not found in database!");
         return res.status(404).json("User not found in database!");
     } else {
         const username = await getUsername.get(req, res);
-        try {
-            await Promise.all([
-                adminModel.deleteOne({Username: username}),
-                patientModel.deleteOne({Username: username}),
-                doctorModel.deleteOne({Username: username})
-            ]);
-            return res.status(201).json(Username + "'s account has been Deleted!")
-        } catch (error) {
-            return res.status(500).json({message: 'Error deleting user'});
-        }
+
+        await Promise.all([
+            adminModel.deleteOne({Username: username}),
+            patientModel.deleteOne({Username: username}),
+            doctorModel.deleteOne({Username: username})
+        ]);
+        return res.status(201).json(Username + "'s account has been Deleted!")
     }
-}
-const getAllDoctorsReg = async (req, res) => {
-    try {
-        const doctors = await doctorModel.find({Status: false});
+});
 
-        if (doctors.length === 0) {
-            return res.status(404).json({message: 'No doctor applications found'});
-        }
 
-        return res.status(200).json(doctors);
-    } catch (error) {
-        return res.status(500).json({message: error.message});
+const getDoctorsReg = asyncHandler(async (req, res) => {
+    const Username = req.body.Username;
+
+    const doctors = await doctorModel.find({Username: Username, Status: "Pending"});
+
+    if (doctors.length === 0) {
+        return res.status(404).json("No doctor applications found");
     }
 
-}
+    return res.status(200).json(doctors);
+
+
+});
 const addPackage = async (req, res) => {
     //add a package to the database
     if (Object.keys(req.body).length === 0) {
@@ -206,8 +201,8 @@ module.exports = {
     createAdmin,
     getAllAdmins,
     updateAdmin,
-    removeAdmin,
-    getAllDoctorsReg,
+    removeUser,
+    getDoctorsReg,
     addPackage,
     removePackage,
     updatePackage
