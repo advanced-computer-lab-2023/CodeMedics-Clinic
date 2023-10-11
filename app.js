@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const colors = require('colors');
+//const cors = require('cors');
 const dotenv = require('dotenv').config();
 const connectDB = require('./config/MongoDBConnection');
 const adminRoutes = require('./routes/AdminRoutes');
@@ -21,8 +22,8 @@ const Port = process.env.PORT || 3000;
 //DeleteModelRecords.deleteAllRecords(); //uncomment this line to delete all records from a specific model
 
 // view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -32,6 +33,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
+
+
+// const corsOptions = {
+//     origin: 'http://example.com', // Replace with your frontend's URL
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     credentials: true, // Enable credentials (e.g., cookies, authorization headers)
+// };
+//
+// app.use(cors(corsOptions));
 
 // routes
 

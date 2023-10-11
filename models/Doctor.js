@@ -44,11 +44,11 @@ const doctorSchema = new Schema({
         type: String,
         enum: ['Approved', 'Pending', 'Rejected'],
         default: 'Pending',
-        required: true,
+        required: false,
     },
     Specialty: {
         type: String,
-        required: [true, 'Please enter a specialty']
+        required: false
     },
     Patients:{
         type: [Patient.schema],
