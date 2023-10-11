@@ -7,12 +7,16 @@
     "server": "nodemon ./app.js"
   },
   "dependencies": {
+    "axios": "^1.5.1",
+    "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.3.1",
     "ejs": "3.1.7",
     "express": "~4.16.1",
+    "express-async-handler": "^1.2.0",
     "http-errors": "~1.6.3",
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",

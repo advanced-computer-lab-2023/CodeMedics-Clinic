@@ -1,16 +1,16 @@
-const patientModel = require('../../models/Patient.js');
+const doctorModel = require('../../models/Doctor.js');
 const getUsername = require('../../config/usernameGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
 
-const createPatient = asyncHandler(async (req, res) => {
+const createDoctor = asyncHandler(async (req, res) => {
     //create a Patient in the database
     //check req body
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({message: 'Request body is empty'});
     }
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'Gender', 'MobileNumber', 'EmergencyContactName', 'EmergencyContactNumber'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree'];
 
     for (const variable of requiredVariables) {
         console.log(req.body[variable]);
@@ -26,38 +26,35 @@ const createPatient = asyncHandler(async (req, res) => {
         Password,
         Email,
         DateOfBirth,
-        Gender,
-        MobileNumber,
-        EmergencyContactName,
-        EmergencyContactNumber
+        affiliation,
+        HourlyRate,
+        Degree,
     } = req.body;
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
     if (await getUsername.get(req, res) === '') {
-        const newPatient = new patientModel({
+        const newDoctor = new doctorModel({
                 FirstName: FirstName,
                 LastName: LastName,
                 Username: Username,
                 Password: hashedPassword,
                 Email: Email,
                 DateOfBirth: DateOfBirth,
-                Number: MobileNumber,
-                Gender: Gender,
-                EmergencyContacts: {
-                    EmergencyContactName: EmergencyContactName, EmergencyContactNumber: EmergencyContactNumber
-                }
+                HourlyRate: HourlyRate,
+                affiliation: affiliation,
+                Degree: Degree
             })
         ;
-        await newPatient.save();
-        return res.status(201).json("Patient created successfully!");
+        await newDoctor.save();
+        return res.status(201).json("Doctor created successfully!");
 
     } else {
         return res.status(400).json({message: "Username already exists"});
     }
 });
-const viewPatientRegister = asyncHandler(async (req, res) => {
-    res.render('PatientViews/RegisterPatient');
+const viewDoctorRegister = asyncHandler(async (req, res) => {
+    res.render('DoctorViews/RegisterDoctor');
 });
-module.exports = {createPatient, viewPatientRegister};
+module.exports = {createDoctor, viewDoctorRegister};

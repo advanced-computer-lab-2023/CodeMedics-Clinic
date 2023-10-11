@@ -1,16 +1,16 @@
 const Doctor = require('../../models/Doctor');
 
 exports.updateDoctor = async (req, res) => {
-   const user = res.locals.token;
-   if(user.type != 'Doctor')
-            return res.status(401).json({message: 'Unauthorized'});
-   const {id} = user;
-   const { Email, HourlyRate, Affiliation } = req.body;
-   const doctor = await Doctor.findById(id);
+   const {Username, Email, HourlyRate, Affiliation } = req.body;
+   const doctor = await Doctor.findOne({Username});
    if(doctor == null){
-      return res.status(404).json({message: 'Doctor not found'});
+      return res.status(404).json({message: 'Doctor does not exist'});
    }
    if(Email != null){  // check if the email already exists
+      const exists = await Doctor.findOne({Email});
+      if(exists){
+         return res.status(400).json({message: 'Email already exists'});
+      }
       doctor.Email = Email;
    }
    if(HourlyRate != null){

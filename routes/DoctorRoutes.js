@@ -8,7 +8,8 @@ const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
-const {getDoctors} = require('../controllers/Doctor/GetDoctors');
+const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
+const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/GetDoctors');
 const app = require('../app.js');
 
 function verifyToken(req, res, next) {
@@ -22,7 +23,10 @@ function verifyToken(req, res, next) {
     }
 }
 
+router.post('/register', createDoctor);
 //app.use(verifyToken);
+router.get('/register', viewDoctorRegister);
+
 
 router.put('/', updateDoctor);
 router.get('/viewAppointments', filterAppointments);
@@ -30,6 +34,7 @@ router.get('/searchPatient', searchPatient);
 router.get('/viewPatients', viewPatients);
 router.get('/getDoctors', getDoctors);
 router.get('/filterPatients', filterPatients);
+router.get('/getDoctorsAndSpecialties', getDoctorsAndSpecialties);
 router.get('/viewPatientDetails:Username', (req, res) => {
     const Username = req.params.Username;
     console.log(Username);
@@ -50,7 +55,7 @@ router.get('/viewPatientDetails:Username', (req, res) => {
 });
 router.get('/', (req, res) => {
     res.setHeader('Content-Type', 'text/html');
-    console.log('in the doctor route');
+    console.log('in the doctor page');
     const dr = new Doctor({
         FirstName: 'John',
         LastName: 'Smith',
