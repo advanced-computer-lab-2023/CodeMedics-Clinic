@@ -55,20 +55,20 @@ exports.filterPrescriptions = async (req, res) => {
 
 
 
-// // Get all prescriptions for a patient
-// exports.getPrescriptions = async (req, res) => {
-//   try {
-//     const { userName } = req.body;
+// Get all prescriptions for a patient
+exports.getPrescriptions = async (req, res) => {
+  try {
+    const { Username } = req.query;
     
-//     const prescriptions = await Prescription.find({ 
-//       Patient: userName 
-//     });
+    const prescriptions = await Prescription.find({ 
+      Patient: Username 
+    });
 
-//     res.status(200).json(prescriptions);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Server error' });
-//   }
-// };
+    res.status(200).json(prescriptions);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
 
 

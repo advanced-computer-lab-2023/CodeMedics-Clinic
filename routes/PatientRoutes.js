@@ -33,6 +33,7 @@ router.post('/register', patientController.createPatient);
 router.post('/familyMembers', addFamilyMember);
 router.get('/familyMembers', viewFamilyMembers);
 router.get('/prescriptions/filter', filterPrescriptions);
+router.get('/prescriptions', getPrescriptions);
 router.get('/viewappointments', filterAppointmentsPatient);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/doctorSearch', (req, res) => {

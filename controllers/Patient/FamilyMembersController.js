@@ -3,8 +3,8 @@ const FamilyMember = require('../../models/FamilyMember');
 
 exports.addFamilyMember = async (req, res) => {
    const {Username} = req.body;
-   const {Name , NationalID , Gender , DateOfBirth} = req.body;
-   const familyMember = new FamilyMember({Name , NationalID , Gender , DateOfBirth});
+   const {Name , NationalID , Gender , DateOfBirth , Relationship} = req.body;
+   const familyMember = new FamilyMember({Name , NationalID , Gender , DateOfBirth , Relationship});
    try{
       const patient = await Patient.findOne({Username});
       if(patient == null){
@@ -25,7 +25,7 @@ exports.addFamilyMember = async (req, res) => {
 };
 
 exports.viewFamilyMembers = async (req, res) => {
-   const {Username} = req.body;
+   const {Username} = req.query;
    const patient = await Patient.findOne({Username});
    if(patient == null){
       return res.status(404).json({message: 'Patient does not exist'});

@@ -27,7 +27,7 @@ const doctorSchema = new Schema({
         required: [true, 'Please enter a Date of Birth']
     },
     HourlyRate: {
-        type: String,
+        type: Number,
         required: [true, 'Please enter an hourly rate']
     },
     affiliation: {
