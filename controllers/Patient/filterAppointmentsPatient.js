@@ -1,18 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const Patient = require('../../models/Patient'); 
+const Patient = require('../../models/Patient');
 const Appointment = require('../../models/Appointment');
 
-exports.filterAppointmentsPatient = async (req, res) => { 
-    const status = req.query.status;
-    const date = req.query.date;
-    const Patient = await Patient.findOne({Username: req.session.username});
-    const appointments = await Appointment.find({PatientUserName: Patient.Username});
-    if(status != null && status != undefined && status != ""){
-        appointments = appointments.filter(appointment => appointment.status == status);
+exports.filterAppointmentsPatient = async (req, res) => {
+    try {
+        const patient = await Patient.findOne({ Username: req.query.Username });
+        if(patient == null){
+            return res.status(404).json({ message: 'Patient does not exist' });
+        }
+        const appointments = [];
+        for(let i=0; i<patient.appointments.length ;i++){
+            const appointment = await Appointment.findOne({ _id: patient.appointments[i] });
+            appointments.push(appointment);  
+        }
+        res.status(200).json({data: appointments});
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
-    if(date != null && date != undefined && date != ""){
-        appointments = appointments.filter(appointment => appointment.date == date);
-    }
-    res.render('Patient/viewappointments', {appointments: appointments});
-};;
+};
