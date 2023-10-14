@@ -51,6 +51,10 @@ const patientSchema = new Schema({
         type: [String],
         ref: 'FamilyMember',
     },
+    Appointments:{
+        type: [String],
+        required: false
+    }
 }, {timestamps: true});
 
 const Patient = mongoose.model('Patient', patientSchema, 'Patients');

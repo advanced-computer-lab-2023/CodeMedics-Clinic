@@ -52,6 +52,10 @@ const doctorSchema = new Schema({
     Patients:{
         type: [Patient.schema],
         required: false
+    },
+    Appointments:{
+        type: [String],
+        required: false
     }
 }, {timestamps: true});
 
