@@ -3,7 +3,7 @@ const doctorModel = require("../models/Doctor");
 const patientModel = require("../models/Patient");
 
 
-const get = async (req, res) => {
+const getUsername = async (req, res) => {
     const {Username} = req.body;
 
     try {
@@ -16,5 +16,19 @@ const get = async (req, res) => {
         res.status(409).json({message: error.message});
     }
 };
-module.exports = {get};
+const getEmail = async (req, res) => {
+    const {Email} = req.body;
+
+    try {
+        const emailExists = await adminModel.findOne({Email}) || await doctorModel.findOne({Email}) || await patientModel.findOne({Email});
+        if (emailExists) {
+            return emailExists.Email;
+        }
+        return '';
+    } catch (error) {
+        res.status(409).json({message: error.message});
+    }
+};
+
+module.exports = {getUsername, getEmail};
 

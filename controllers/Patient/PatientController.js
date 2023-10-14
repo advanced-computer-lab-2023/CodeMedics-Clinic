@@ -1,5 +1,5 @@
 const patientModel = require('../../models/Patient.js');
-const getUsername = require('../../config/usernameGetter.js');
+const getUsername = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
@@ -35,7 +35,7 @@ const createPatient = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
-    if (await getUsername.get(req, res) === '') {
+    if (await getUsername.getUsername(req, res) === '') {
         const newPatient = new patientModel({
                 FirstName: FirstName,
                 LastName: LastName,

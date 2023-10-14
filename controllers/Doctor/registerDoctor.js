@@ -1,5 +1,5 @@
 const doctorModel = require('../../models/Doctor.js');
-const getUsername = require('../../config/usernameGetter.js');
+const infoGetter = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
@@ -29,12 +29,13 @@ const createDoctor = asyncHandler(async (req, res) => {
         affiliation,
         HourlyRate,
         Degree,
+        Speciality
     } = req.body;
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
-    if (await getUsername.get(req, res) === '') {
+    if (await infoGetter.getUsername(req, res) === '' && await infoGetter.getEmail(req, res) === '') {
         const newDoctor = new doctorModel({
                 FirstName: FirstName,
                 LastName: LastName,
@@ -44,7 +45,8 @@ const createDoctor = asyncHandler(async (req, res) => {
                 DateOfBirth: DateOfBirth,
                 HourlyRate: HourlyRate,
                 affiliation: affiliation,
-                Degree: Degree
+                Degree: Degree,
+                Speciality: Speciality,
             })
         ;
         await newDoctor.save();

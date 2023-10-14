@@ -22,7 +22,12 @@ const Login = AsyncHandler(async (req, res) => {
 
     if (admin && (await bcrypt.compare(Password, admin.Password))) {
         //redirect to admin page
-        return res.status(200).json({message: "Admin login successful" + admin});
+        const formattedJson = JSON.stringify(admin, null, 2);
+
+        return res.status(200).json({
+            message: "Admin login successful",
+            admin: JSON.parse(formattedJson) // Parse it back to an object for the response
+        });
     }
     if (doctor && (await bcrypt.compare(Password, doctor.Password))) {
         //redirect to doctor page
