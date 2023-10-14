@@ -18,6 +18,10 @@ const familyMemberSchema = new Schema({
         type: String,
         required: true
     },
+    Relationship:{
+        type: String,
+        required: true
+    }
 }, { timestamps: true });
 
 const FamilyMember = mongoose.model('FamilyMember', familyMemberSchema);

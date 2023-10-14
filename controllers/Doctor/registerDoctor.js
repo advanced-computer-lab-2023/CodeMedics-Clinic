@@ -10,7 +10,7 @@ const createDoctor = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({message: 'Request body is empty'});
     }
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
 
     for (const variable of requiredVariables) {
         console.log(req.body[variable]);

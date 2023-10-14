@@ -47,7 +47,7 @@ const doctorSchema = new Schema({
     },
     Specialty: {
         type: String,
-        required: false
+        required: [true, 'Please enter a specialty']
     },
     Patients:{
         type: [Patient.schema],
