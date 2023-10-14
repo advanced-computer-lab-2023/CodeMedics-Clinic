@@ -31,12 +31,22 @@ const Login = AsyncHandler(async (req, res) => {
     }
     if (doctor && (await bcrypt.compare(Password, doctor.Password))) {
         //redirect to doctor page
-        return res.status(200).json({message: "Doctor login successful"});
+        const formattedJson = JSON.stringify(doctor, null, 2);
+
+        return res.status(200).json({
+            message: "doctor login successful",
+            admin: JSON.parse(formattedJson) // Parse it back to an object for the response
+        });
     }
 
     if (patient && (await bcrypt.compare(Password, patient.Password))) {
         //redirect to patient page
-        return res.status(200).json({message: "Patient login successful"});
+        const formattedJson = JSON.stringify(patient, null, 2);
+
+        return res.status(200).json({
+            message: "Patient login successful",
+            admin: JSON.parse(formattedJson) // Parse it back to an object for the response
+        });
     } else {
         return res.status(400).json({message: "Invalid username or password"});
     }
