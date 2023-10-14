@@ -7,6 +7,9 @@ exports.updateDoctor = async (req, res) => {
       return res.status(404).json({message: 'Doctor does not exist'});
    }
    if(Email != null){  // check if the email already exists
+      if(Email == doctor.Email){
+         return res.status(400).json({message: 'Email is the same as the current one'});
+      }
       const exists = await Doctor.findOne({Email});
       if(exists){
          return res.status(400).json({message: 'Email already exists'});
@@ -17,7 +20,7 @@ exports.updateDoctor = async (req, res) => {
       doctor.HourlyRate = HourlyRate;
    }
    if(Affiliation != null){
-      doctor.Affiliation = Affiliation;
+      doctor.affiliation = Affiliation;
    }
    try{
       const updatedDoctor = await doctor.save();

@@ -18,6 +18,9 @@ exports.getDoctorsAndSpecialties = async (req, res) => {
   try{
     const {Username} = req.body;
     const patient = await Patient.findOne({Username});
+    if(patient == null){
+      return res.status(404).json({message: "Patient not found"});
+    }
     const doctors = await Doctor.find();
     const package = await Package.findOne({Name: patient.Package});
     const data = [];
