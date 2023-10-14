@@ -23,11 +23,11 @@ const doctorSchema = new Schema({
         required: [true, 'Please enter an email']
     },
     DateOfBirth: {
-        type: Date,
+        type: String,
         required: [true, 'Please enter a Date of Birth']
     },
     HourlyRate: {
-        type: Number,
+        type: String,
         required: [true, 'Please enter an hourly rate']
     },
     affiliation: {

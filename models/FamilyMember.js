@@ -15,7 +15,7 @@ const familyMemberSchema = new Schema({
         required: true
     },
     DateOfBirth:{
-        type: Date,
+        type: String,
         required: true
     },
 }, { timestamps: true });

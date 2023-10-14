@@ -125,7 +125,6 @@ const addPackage = async (req, res) => {
 const removePackage = async (req, res) => {
     // delete a package from the database
     if (Object.keys(req.body).length === 0) {
-        console.log("Request body is empty");
         return res.status(400).json({message: 'Request body is empty'});
     }
 
