@@ -24,11 +24,11 @@ const patientSchema = new Schema({
         required: [true, 'Please enter an email']
     },
     DateOfBirth: {
-        type: Date,
+        type: String,
         required: false
     },
     Number: {
-        type: Number,
+        type: String,
         required: false
     },
     Gender: {

@@ -2,7 +2,7 @@ const adminModel = require('../../models/Administrator.js');
 const doctorModel = require('../../models/Doctor.js');
 const patientModel = require('../../models/Patient.js');
 const packageModel = require('../../models/Package.js');
-const getUsername = require('../../config/usernameGetter.js');
+const infoGetter = require('../../config/infoGetter.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -28,13 +28,13 @@ const createAdmin = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
-    if (await getUsername.get(req, res) === '') {
+    if (await infoGetter.getUsername(req, res) === '' && await infoGetter.getEmail(req, res) === '') {
         const newAdmin = new adminModel({Name, Username, Password: hashedPassword, Email});
         await newAdmin.save();
         return res.status(201).json("Admin created successfully!");
 
     } else {
-        return res.status(400).json({message: "Username already exists"});
+        return res.status(400).json("Username or Email already exists");
     }
 });
 
@@ -65,11 +65,11 @@ const removeUser = asyncHandler(async (req, res) => {
         return res.status(400).json("Missing Username in the request body");
     }
     const {Username} = req.body;
-    if (await getUsername.get(req, res) === '') {
+    if (await infoGetter.getUsername(req, res) === '') {
         console.log("User not found in database!");
         return res.status(404).json("User not found in database!");
     } else {
-        const username = await getUsername.get(req, res);
+        const username = await infoGetter.getUsername(req, res);
 
         await Promise.all([
             adminModel.deleteOne({Username: username}),
@@ -125,7 +125,6 @@ const addPackage = async (req, res) => {
 const removePackage = async (req, res) => {
     // delete a package from the database
     if (Object.keys(req.body).length === 0) {
-        console.log("Request body is empty");
         return res.status(400).json({message: 'Request body is empty'});
     }
 

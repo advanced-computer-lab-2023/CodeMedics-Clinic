@@ -23,7 +23,7 @@ const doctorSchema = new Schema({
         required: [true, 'Please enter an email']
     },
     DateOfBirth: {
-        type: Date,
+        type: String,
         required: [true, 'Please enter a Date of Birth']
     },
     HourlyRate: {
@@ -47,7 +47,7 @@ const doctorSchema = new Schema({
     },
     Specialty: {
         type: String,
-        required: false
+        required: [true, 'Please enter a specialty']
     },
     Patients:{
         type: [Patient.schema],

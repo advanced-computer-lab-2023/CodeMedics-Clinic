@@ -15,9 +15,13 @@ const familyMemberSchema = new Schema({
         required: true
     },
     DateOfBirth:{
-        type: Date,
+        type: String,
         required: true
     },
+    Relationship:{
+        type: String,
+        required: true
+    }
 }, { timestamps: true });
 
 const FamilyMember = mongoose.model('FamilyMember', familyMemberSchema);
