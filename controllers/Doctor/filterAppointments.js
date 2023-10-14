@@ -22,14 +22,16 @@ exports.filterAppointments = async (req, res) => {
     });
     res.locals.token = dr;
     const status = req.body.status;
-    const date = req.body.date;
+    const year = req.body.year;
+    const month = req.body.month;
+    const day = req.body.day;
     console.log(res.locals.token);
     const appointments = await Appointment.find({doctorUserName: res.locals.token.Username});
     if(status != null && status != undefined && status != ""){
         appointments = appointments.filter(appointment => appointment.status == status);
     }
     if(date != null && date != undefined && date != ""){
-        appointments = appointments.filter(appointment => appointment.date == date);
+        appointments = appointments.filter(appointment => (appointment.date.getFullYear() > year || (appointment.date.getFullYear() == year && appointment.date.getMonth() > month) || (appointment.date.getFullYear() == year && appointment.date.getMonth() == month && appointment.date.getDate() >= day)));
     }
     console.log(appointments);
     res.render('doctor/viewAppointments', {appointments: appointments});
