@@ -2,33 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Guest/View/Guest.dart';
-import 'package:ori_dx_app/Fetures/Home/Patient/Controllers/PatientPageController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/AdminPageController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/adminsWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/DoctorPageController.dart';
+import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Appointments/DoctorAppointmentsWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Widgets/Patients/PatientsWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/Appointments/PatientAppointmentsWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/Doctors/DoctorsWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/Prescriptions/PrescriptionsWidget.dart';
 import 'package:ori_dx_app/GeneralWidgets/AppText.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
+import 'package:ori_dx_app/shared/AppShared.dart';
 import 'package:ori_dx_app/shared/Fonts/FontModel.dart';
 
-import 'FamilyMember/FamilyMemberWidget.dart';
-
-class PatientPageBody extends StatelessWidget {
-  PatientPageBody({super.key}) {
-    Get.put(PatientPageController());
+class AdminPageBody extends StatelessWidget {
+  AdminPageBody({super.key}) {
+    Get.put(AdminPageController());
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<PatientPageController>(
-        id: 'patientPageBuilder',
+    return GetBuilder<AdminPageController>(
+        id: 'adminPageBuilder',
         builder: (ctr) {
           return SingleChildScrollView(
             child: Stack(
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 40, left: 10),
-                  child: GetBuilder<PatientPageController>(
+                  child: GetBuilder<AdminPageController>(
                     id: 'tapsBuilder',
                     builder: (ctrl) {
                       return Container(
@@ -50,69 +53,73 @@ class PatientPageBody extends StatelessWidget {
                             ),
                             const SizedBox(height: 20),
                             CustomButton(
-                              text: 'Family Members',
+                              text: 'Admins',
                               onTap: () {
-                                ctrl.onTapFamilyMember();
+                                ctrl.onTapAdmin();
                               },
-                              backgroundColor: ctrl.familyMemberColor,
-                              textColor: ctrl.familyMemberFontColor,
-                              prefixIcon: Image.asset(
-                                'assets/images/family.png',
-                                width: 20,
-                              ),
+                              backgroundColor: ctrl.adminColor,
+                              textColor: ctrl.adminFontColor,
                               borderRadius: 10,
                               fontSize: 13,
                               mainAxisAlignment: MainAxisAlignment.start,
                             ),
                             const SizedBox(height: 10),
+                            CustomButton(
+                              text: 'Patients',
+                              onTap: () {
+                                ctrl.onTapPatient();
+                              },
+                              backgroundColor: ctrl.patientsColor,
+                              textColor: ctrl.patientsFontColor,
+                              borderRadius: 10,
+                              fontSize: 13,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                            ),
+                            const SizedBox(height: 10),
+                            // CustomButton(
+                            //   text: 'Appointments',
+                            //   onTap: () {
+                            //     ctrl.onTapAppointments();
+                            //   },
+                            //   backgroundColor: ctrl.doctorsColor,
+                            //   textColor: ctrl.doctorsFontColor,
+                            //   prefixIcon: Image.asset(
+                            //     'assets/images/calendar.png',
+                            //     width: 20,
+                            //   ),
+                            //   borderRadius: 10,
+                            //   fontSize: 13,
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            // ),
+                            // const SizedBox(height: 10),
+                            // CustomButton(
+                            //   text: 'Prescriptions',
+                            //   onTap: () {
+                            //     ctrl.onTapPrescriptions();
+                            //   },
+                            //   backgroundColor: ctrl.prescriptionsColor,
+                            //   textColor: ctrl.prescriptionsFontColor,
+                            //   prefixIcon: Image.asset(
+                            //     'assets/images/prescription.png',
+                            //     width: 20,
+                            //   ),
+                            //   borderRadius: 10,
+                            //   fontSize: 13,
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            // ),
+                            // const SizedBox(height: 10),
                             CustomButton(
                               text: 'Doctors',
                               onTap: () {
                                 ctrl.onTapDoctors();
                               },
                               backgroundColor: ctrl.doctorsColor,
-                              textColor: ctrl.doctorsFontColor,
-                              prefixIcon: Image.asset(
-                                'assets/images/doctor6.png',
-                                width: 20,
-                              ),
+                              textColor: ctrl.doctorsColor,
                               borderRadius: 10,
                               fontSize: 13,
                               mainAxisAlignment: MainAxisAlignment.start,
                             ),
-                            const SizedBox(height: 10),
-                            CustomButton(
-                              text: 'Prescriptions',
-                              onTap: () {
-                                ctrl.onTapPrescriptions();
-                              },
-                              backgroundColor: ctrl.prescriptionsColor,
-                              textColor: ctrl.prescriptionsFontColor,
-                              prefixIcon: Image.asset(
-                                'assets/images/prescription.png',
-                                width: 20,
-                              ),
-                              borderRadius: 10,
-                              fontSize: 13,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                            ),
-                            const SizedBox(height: 10),
-                            CustomButton(
-                              text: 'Appointments',
-                              onTap: () {
-                                ctrl.onTapAppointments();
-                              },
-                              backgroundColor: ctrl.appointmentsColor,
-                              textColor: ctrl.appointmentsFontColor,
-                              prefixIcon: Image.asset(
-                                'assets/images/calendar.png',
-                                width: 20,
-                              ),
-                              borderRadius: 10,
-                              fontSize: 13,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                            ),
-                            const SizedBox(height: 150),
+                            const SizedBox(height: 350),
                             Container(
                               height: 150,
                               decoration: BoxDecoration(
@@ -149,10 +156,10 @@ class PatientPageBody extends StatelessWidget {
                     },
                   ),
                 ),
-                if (ctr.familyMemberSelected) FamilyMemberWidget(),
-                if (ctr.doctorsSelected) DoctorsWidget(),
-                if (ctr.appointmentsSelected) PatientAppointmentsWidget(),
-                if (ctr.prescriptionsSelected) PrescriptionsWidget(),
+                // if (ctr.patientsSelected) PatientsWidget(),
+                // if (ctr.doctorsSelected) DoctorsWidget(),
+                if (ctr.adminSelected) AdminsWidget(),
+                // if (ctr.prescriptionsSelected) PrescriptionsWidget(),
                 Padding(
                   padding: const EdgeInsets.only(left: 250, top: 50),
                   child: Column(
@@ -170,7 +177,7 @@ class PatientPageBody extends StatelessWidget {
                         height: 5,
                       ),
                       AppText(
-                        'Mohamed Ahmed',
+                        AppShared.admin!.name,
                         style: TextStyle(
                           color: AppColors.mainColor,
                           fontFamily: FontFamily.medium,

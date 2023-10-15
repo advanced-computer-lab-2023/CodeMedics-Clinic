@@ -4,8 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart' as getx;
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/AdminPage.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Views/DoctorPage.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/View/PatientPage.dart';
+import 'package:ori_dx_app/Models/Admin.dart';
 import 'package:ori_dx_app/Models/Doctor.dart';
 import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/Services/RequestService.dart';
@@ -86,7 +88,10 @@ class LoginController extends getx.GetxController {
         AppShared.doctor = Doctor.fromJson(response.data['admin']);
         getx.Get.offAll(() => const DoctorPage());
       }
-      if (s == 'admin') {}
+      if (s == 'admin') {
+        AppShared.admin = Admin.fromJson(response.data['admin']);
+        getx.Get.offAll(() => const AdminPage());
+      }
     } else {
       Helper.showMessage('Error', response.data["message"]);
     }

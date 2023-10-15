@@ -14,8 +14,8 @@ import 'package:ori_dx_app/Models/Doctor.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
 
 class AdminPageController extends getx.GetxController {
-  Color patientsColor = Colors.white;
-  Color patientsFontColor = AppColors.mainColor;
+  Color patientsColor = AppColors.mainColor;
+  Color patientsFontColor = Colors.white;
 
   Color doctorsColor = AppColors.mainColor;
   Color doctorsFontColor = Colors.white;
@@ -23,18 +23,18 @@ class AdminPageController extends getx.GetxController {
   Color prescriptionsColor = AppColors.mainColor;
   Color prescriptionsFontColor = Colors.white;
 
-  Color appointmentsColor = AppColors.mainColor;
-  Color appointmentsFontColor = Colors.white;
+  Color adminColor = Colors.white;
+  Color adminFontColor = AppColors.mainColor;
 
-  bool patientsSelected = true;
+  bool patientsSelected = false;
   bool doctorsSelected = false;
   bool prescriptionsSelected = false;
-  bool appointmentsSelected = false;
+  bool adminSelected = true;
 
-  bool familyMemberintialized = true;
+  bool familyMemberintialized = false;
   bool doctorsintialized = false;
   bool prescriptionsintialized = false;
-  bool appointmentsintialized = false;
+  bool adminintialized = true;
 
   List<Doctor> doctors = [];
   List<Doctor> filteredDoctors = [];
@@ -46,15 +46,15 @@ class AdminPageController extends getx.GetxController {
     doctorsFontColor = Colors.white;
     prescriptionsColor = AppColors.mainColor;
     prescriptionsFontColor = Colors.white;
-    appointmentsColor = AppColors.mainColor;
-    appointmentsFontColor = Colors.white;
+    adminColor = AppColors.mainColor;
+    adminFontColor = Colors.white;
   }
 
   void resetWidgets() {
     patientsSelected = false;
     doctorsSelected = false;
     prescriptionsSelected = false;
-    appointmentsSelected = false;
+    adminSelected = false;
   }
 
   void onTapPatient() {
@@ -104,16 +104,31 @@ class AdminPageController extends getx.GetxController {
 
   void onTapAppointments() {
     resetColors();
-    appointmentsColor = Colors.white;
-    appointmentsFontColor = AppColors.mainColor;
+    adminColor = Colors.white;
+    adminFontColor = AppColors.mainColor;
     update(['tapsBuilder']);
-    if (appointmentsSelected) return;
+    if (adminSelected) return;
     resetWidgets();
-    appointmentsSelected = true;
-    if (appointmentsintialized) {
+    adminSelected = true;
+    if (adminintialized) {
       getx.Get.find<DoctorAppointmentsController>().getAppointments();
     }
-    appointmentsintialized = true;
+    adminintialized = true;
+    update(['adminPageBuilder']);
+  }
+
+  void onTapAdmin() {
+    resetColors();
+    adminColor = Colors.white;
+    adminFontColor = AppColors.mainColor;
+    update(['tapsBuilder']);
+    if (adminSelected) return;
+    resetWidgets();
+    adminSelected = true;
+    if (adminintialized) {
+      // getx.Get.find<>().getAppointments();
+    }
+    adminintialized = true;
     update(['adminPageBuilder']);
   }
 }
