@@ -55,22 +55,10 @@ router.get('/viewPatientDetails:Username', (req, res) => {
 });
 router.get('/', (req, res) => {
     res.setHeader('Content-Type', 'text/html');
-    console.log('in the doctor page');
-    const dr = new Doctor({
-        FirstName: 'John',
-        LastName: 'Smith',
-        Username: 'thomasa',
-        Password: 'password',
-        Email: 'asf',
-        DateOfBirth: '12/12/12',
-        HourlyRate: 12,
-        affiliation: 'aff',
-        Degree: 'degree',
-        Status: 'Pending',
-        Specialty: 'specialty'
-
-    });
-    res.locals.token = dr;
+    const username = req.query.Username;
+    process.env.Username = username;
+    console.log("in the doctor route");
+    console.log(username);
     fs.readFile('./views/Doctor/Doctor.html', null, function (error, data) {
         if (error) {
             res.writeHead(404);
