@@ -6,10 +6,9 @@ import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Patients/AdminPatients
 import 'package:ori_dx_app/Fetures/Home/Patient/Controllers/FamilyMembersControllers/FamilyMembersController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomRichText.dart';
-import 'package:ori_dx_app/Models/Admin.dart';
+
 import 'package:ori_dx_app/Models/Doctor.dart';
-import 'package:ori_dx_app/Models/FamilyMember.dart';
-import 'package:ori_dx_app/Models/Patient.dart';
+
 import 'package:ori_dx_app/shared/AppColors.dart';
 
 class AdminDoctorInfoWidget extends StatelessWidget {

@@ -13,9 +13,9 @@ import 'package:ori_dx_app/shared/AppShared.dart';
 
 class UpdateDoctorController extends getx.GetxController {
   String name = '';
-  String email = "";
-  String hourlyRate = "";
-  String affiliation = "";
+  String email = AppShared.doctor!.email;
+  String hourlyRate = AppShared.doctor!.hourlyRate.toString();
+  String affiliation = AppShared.doctor!.affiliation;
 
   String? nameError;
   String? emailError;
@@ -56,6 +56,7 @@ class UpdateDoctorController extends getx.GetxController {
       );
       return;
     }
+    print(response);
     if (response.statusCode == 200) {
       getx.Get.back();
       await Helper.showMessage(
@@ -68,7 +69,7 @@ class UpdateDoctorController extends getx.GetxController {
       );
       // getx.Get.find<PackagesController>().loadPackages();
     } else {
-      Helper.showMessage('Error', response.data);
+      Helper.showMessage('Error', response.data['message']);
     }
   }
 
