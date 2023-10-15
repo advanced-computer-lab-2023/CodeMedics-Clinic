@@ -21,7 +21,7 @@ class AdminPatientInfoWidget extends StatelessWidget {
       return Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 150, left: 1200),
+            padding: const EdgeInsets.only(top: 120, left: 1200),
             child: Container(
               // height: 420,
               width: 300,

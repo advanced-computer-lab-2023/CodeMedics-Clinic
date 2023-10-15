@@ -5,11 +5,10 @@ import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AdminsControlle
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Patients/AdminPatientsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/AdminInfoWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/AdminPatientInfoWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/AdminPatientWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/Patients/PatientsController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
-
-import 'adminWidget.dart';
 
 class AdminPatientsWidget extends StatelessWidget {
   AdminPatientsWidget({super.key}) {
@@ -51,11 +50,11 @@ class AdminPatientsWidget extends StatelessWidget {
                             crossAxisCount: 4,
                             childAspectRatio: 0.8,
                             children: <Widget>[
-                              for (int i = 0; i < ctrl.admins.length; i++)
-                                AdminPatientInfoWidget(
-                                  patient: ctrl.admins[i],
+                              for (int i = 0; i < ctrl.patients.length; i++)
+                                AdminPatientWidget(
+                                  patient: ctrl.patients[i],
                                   onTap: () {
-                                    ctrl.onTapMember(ctrl.admins[i]);
+                                    ctrl.onTapMember(ctrl.patients[i]);
                                   },
                                 ),
                             ],
@@ -66,23 +65,8 @@ class AdminPatientsWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 50, left: 880, right: 403),
-                child: CustomButton(
-                  onTap: () {
-                    ctrl.onTapAddMember();
-                  },
-                  text: 'Add Admin',
-                  borderRadius: 10,
-                  suffixIcon: const Icon(
-                    FontAwesomeIcons.plus,
-                    color: Colors.white,
-                    size: 15,
-                  ),
-                ),
-              ),
-              if (ctrl.adminSelected)
-                AdminInfoWidget(admin: ctrl.selectedAdmin!),
+              if (ctrl.patientSelected)
+                AdminPatientInfoWidget(patient: ctrl.selectedPatient!),
             ],
           );
         });

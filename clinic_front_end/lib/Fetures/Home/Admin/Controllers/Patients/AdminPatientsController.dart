@@ -12,8 +12,8 @@ import 'package:ori_dx_app/Services/RequestService.dart';
 
 class AdminPatientsController extends getx.GetxController {
   List<Patient> patients = [];
-  bool adminSelected = false;
-  Admin? selectedAdmin;
+  bool patientSelected = false;
+  Patient? selectedPatient;
 
   @override
   void onInit() {
@@ -28,7 +28,7 @@ class AdminPatientsController extends getx.GetxController {
       'Loading...',
       'Please wait',
       () => RequestService().makeGetRequest(
-        '/patient/register',
+        '/patient/getPatients',
         {},
       ),
     );
@@ -40,9 +40,9 @@ class AdminPatientsController extends getx.GetxController {
       return;
     }
     if (response.statusCode == 200) {
-      admins.clear();
+      patients.clear();
       for (var item in response.data) {
-        admins.add(Admin.fromJson(item));
+        patients.add(Patient.fromJson(item));
       }
       update(['adminsBuilder']);
     } else {
@@ -50,9 +50,9 @@ class AdminPatientsController extends getx.GetxController {
     }
   }
 
-  void onTapMember(Admin admin) {
-    selectedAdmin = admin;
-    adminSelected = true;
+  void onTapMember(Patient patient) {
+    selectedPatient = patient;
+    patientSelected = true;
     update(['adminsBuilder']);
   }
 
@@ -65,7 +65,7 @@ class AdminPatientsController extends getx.GetxController {
   }
 
   void onTapDoneMemberInfo() {
-    adminSelected = false;
+    patientSelected = false;
     update(['adminsBuilder']);
   }
 

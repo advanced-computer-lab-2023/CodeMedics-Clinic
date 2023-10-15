@@ -115,7 +115,7 @@ class AdminPageBody extends StatelessWidget {
                               fontSize: 13,
                               mainAxisAlignment: MainAxisAlignment.start,
                             ),
-                            const SizedBox(height: 350),
+                            const SizedBox(height: 225),
                             Container(
                               height: 150,
                               decoration: BoxDecoration(

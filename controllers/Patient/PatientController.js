@@ -57,7 +57,15 @@ const createPatient = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "Username already exists"});
     }
 });
+const viewPatients = asyncHandler(async (req, res) => {
+    try{
+    const patients = await patientModel.find();
+    res.status(200).json(patients);
+    }catch(e){
+        res.status(400).json({message: e.message});
+    }
+});
 const viewPatientRegister = asyncHandler(async (req, res) => {
     res.render('PatientViews/RegisterPatient');
 });
-module.exports = {createPatient, viewPatientRegister};
+module.exports = {createPatient, viewPatientRegister , viewPatients};

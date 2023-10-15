@@ -3,16 +3,17 @@ import 'package:ori_dx_app/GeneralWidgets/CustomRichText.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomRichText2.dart';
 import 'package:ori_dx_app/Models/Admin.dart';
 import 'package:ori_dx_app/Models/FamilyMember.dart';
+import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
 
-class PatientWidget extends StatelessWidget {
-  const PatientWidget({
+class AdminPatientWidget extends StatelessWidget {
+  const AdminPatientWidget({
     super.key,
-    required this.admin,
+    required this.patient,
     required this.onTap,
   });
 
-  final Admin admin;
+  final Patient patient;
   final void Function() onTap;
 
   @override
@@ -44,7 +45,7 @@ class PatientWidget extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
-            CustomRichText2(title: 'Name', text: admin.name),
+            CustomRichText2(title: 'Name', text: '${patient.firstName} ${patient.lastName}'),
             const SizedBox(
               height: 5,
             ),
