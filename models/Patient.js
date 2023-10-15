@@ -45,6 +45,7 @@ const patientSchema = new Schema({
     },
     Package: {
         type: String,
+        default: 'Free',
         required: false
     },
     FamilyMembers: {

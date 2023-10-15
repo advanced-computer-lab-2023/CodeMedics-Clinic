@@ -10,8 +10,8 @@ exports.filterAppointmentsPatient = async (req, res) => {
             return res.status(404).json({ message: 'Patient does not exist' });
         }
         const appointments = [];
-        for(let i=0; i<patient.appointments.length ;i++){
-            const appointment = await Appointment.findOne({ _id: patient.appointments[i] });
+        for(let i=0; i<patient.Appointments.length ;i++){
+            const appointment = await Appointment.findOne({ _id: patient.Appointments[i] });
             appointments.push(appointment);  
         }
         res.status(200).json({data: appointments});

@@ -3,7 +3,7 @@ const router = express.Router();
 const Doctor = require('../models/Doctor');
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
-const { filterAppointments } = require('../controllers/Doctor/filterAppointments');
+const { filterAppointments , getAllApointments } = require('../controllers/Doctor/filterAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
@@ -30,6 +30,7 @@ router.get('/register', viewDoctorRegister);
 
 router.put('/', updateDoctor);
 router.get('/viewAppointments', filterAppointments);
+router.get('/getAllAppointments', getAllApointments);
 router.get('/searchPatient', searchPatient);
 router.get('/viewPatients', viewPatients);
 router.get('/getDoctors', getDoctors);

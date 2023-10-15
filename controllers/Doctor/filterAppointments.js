@@ -17,3 +17,14 @@ exports.filterAppointments = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+exports.getAllApointments = async (req, res) => {
+    try {
+        const appointments = await Appointment.find();
+        res.status(200).json({ appointments: appointments });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+

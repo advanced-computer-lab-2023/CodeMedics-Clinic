@@ -1,4 +1,4 @@
-const patientModel = require('../../models/Patient.js');
+const patientModel = require('../../models/Patient');
 const getUsername = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');

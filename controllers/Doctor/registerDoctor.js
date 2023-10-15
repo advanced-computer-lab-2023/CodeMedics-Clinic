@@ -10,7 +10,7 @@ const createDoctor = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({message: 'Request body is empty'});
     }
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Specialty'];
 
     for (const variable of requiredVariables) {
         console.log(req.body[variable]);
@@ -29,7 +29,7 @@ const createDoctor = asyncHandler(async (req, res) => {
         affiliation,
         HourlyRate,
         Degree,
-        Speciality
+        Specialty
     } = req.body;
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
@@ -46,7 +46,7 @@ const createDoctor = asyncHandler(async (req, res) => {
                 HourlyRate: HourlyRate,
                 affiliation: affiliation,
                 Degree: Degree,
-                Speciality: Speciality,
+                Specialty: Specialty,
             })
         ;
         await newDoctor.save();
