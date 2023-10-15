@@ -3,14 +3,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AdminsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/AdminInfoWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/AdminPatientInfoWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/Patients/PatientsController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
 
 import 'adminWidget.dart';
 
-class PatientsWidget extends StatelessWidget {
-  PatientsWidget({super.key}) {
+class AdminPatientsWidget extends StatelessWidget {
+  AdminPatientsWidget({super.key}) {
     Get.put(PatientsController());
   }
 
@@ -50,8 +51,8 @@ class PatientsWidget extends StatelessWidget {
                             childAspectRatio: 0.8,
                             children: <Widget>[
                               for (int i = 0; i < ctrl.admins.length; i++)
-                                AdminWidget(
-                                  admin: ctrl.admins[i],
+                                AdminPatientInfoWidget(
+                                  patient: ctrl.admins[i],
                                   onTap: () {
                                     ctrl.onTapMember(ctrl.admins[i]);
                                   },

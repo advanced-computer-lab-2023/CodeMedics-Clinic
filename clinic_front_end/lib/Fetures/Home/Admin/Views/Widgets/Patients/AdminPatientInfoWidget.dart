@@ -10,8 +10,8 @@ import 'package:ori_dx_app/Models/FamilyMember.dart';
 import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
 
-class PatientInfoWidget extends StatelessWidget {
-  PatientInfoWidget({super.key, required this.patient}) {
+class AdminPatientInfoWidget extends StatelessWidget {
+  AdminPatientInfoWidget({super.key, required this.patient}) {
     Get.put(AdminPatientsController());
   }
   final Patient patient;

@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Guest/View/Guest.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/AdminPageController.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/adminsWidget.dart';
-import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/PatientsWidget.dart';
-
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/AdminPatientsWidget.dart';
 
 import 'package:ori_dx_app/GeneralWidgets/AppText.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
@@ -153,7 +152,7 @@ class AdminPageBody extends StatelessWidget {
                     },
                   ),
                 ),
-                if (ctr.patientsSelected) PatientsWidget(),
+                if (ctr.patientsSelected) AdminPatientsWidget(),
                 // if (ctr.doctorsSelected) DoctorsWidget(),
                 if (ctr.adminSelected) AdminsWidget(),
                 // if (ctr.prescriptionsSelected) PrescriptionsWidget(),
