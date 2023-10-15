@@ -11,7 +11,7 @@ import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/Services/RequestService.dart';
 
 class AdminPatientsController extends getx.GetxController {
-  List<Admin> admins = [];
+  List<Patient> patients = [];
   bool adminSelected = false;
   Admin? selectedAdmin;
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AdminsController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Patients/AdminPatientsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/AdminInfoWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/AdminPatientInfoWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/Patients/PatientsController.dart';
@@ -12,12 +13,12 @@ import 'adminWidget.dart';
 
 class AdminPatientsWidget extends StatelessWidget {
   AdminPatientsWidget({super.key}) {
-    Get.put(PatientsController());
+    Get.put(AdminPatientsController());
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AdminsController>(
+    return GetBuilder<AdminPatientsController>(
         id: 'adminsBuilder',
         builder: (ctrl) {
           return Stack(
