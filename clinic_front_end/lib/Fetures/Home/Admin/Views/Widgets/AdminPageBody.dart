@@ -4,12 +4,9 @@ import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Guest/View/Guest.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/AdminPageController.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/adminsWidget.dart';
-import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/DoctorPageController.dart';
-import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Appointments/DoctorAppointmentsWidget.dart';
-import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Widgets/Patients/PatientsWidget.dart';
-import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/Appointments/PatientAppointmentsWidget.dart';
-import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/Doctors/DoctorsWidget.dart';
-import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/Prescriptions/PrescriptionsWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/PatientsWidget.dart';
+
+
 import 'package:ori_dx_app/GeneralWidgets/AppText.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
@@ -156,7 +153,7 @@ class AdminPageBody extends StatelessWidget {
                     },
                   ),
                 ),
-                // if (ctr.patientsSelected) PatientsWidget(),
+                if (ctr.patientsSelected) PatientsWidget(),
                 // if (ctr.doctorsSelected) DoctorsWidget(),
                 if (ctr.adminSelected) AdminsWidget(),
                 // if (ctr.prescriptionsSelected) PrescriptionsWidget(),

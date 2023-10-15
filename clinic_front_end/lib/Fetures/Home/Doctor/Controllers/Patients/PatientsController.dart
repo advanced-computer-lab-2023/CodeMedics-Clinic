@@ -7,7 +7,6 @@ import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/FamilyMember/AddFam
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/Helper/Helper.dart';
 import 'package:ori_dx_app/Models/Appointment.dart';
-import 'package:ori_dx_app/Models/FamilyMember.dart';
 import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/Services/RequestService.dart';
 import 'package:ori_dx_app/shared/AppShared.dart';

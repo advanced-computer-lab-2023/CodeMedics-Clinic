@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AdminsController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Patients/AdminPatientsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/Controllers/FamilyMembersControllers/FamilyMembersController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomRichText.dart';
 import 'package:ori_dx_app/Models/Admin.dart';
 import 'package:ori_dx_app/Models/FamilyMember.dart';
+import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
 
-class AdminInfoWidget extends StatelessWidget {
-  AdminInfoWidget({super.key, required this.admin}) {
-    Get.put(AdminsController());
+class PatientInfoWidget extends StatelessWidget {
+  PatientInfoWidget({super.key, required this.patient}) {
+    Get.put(AdminPatientsController());
   }
-  final Admin admin;
+  final Patient patient;
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AdminsController>(builder: (ctrl) {
+    return GetBuilder<AdminPatientsController>(builder: (ctrl) {
       return Stack(
         children: [
           Padding(
@@ -61,18 +63,15 @@ class AdminInfoWidget extends StatelessWidget {
                       children: [
                         CustomRichText(
                           title: 'Name',
-                          text: admin.name,
+                          text: '${patient.firstName} ${patient.lastName}',
                           size: 14,
-                        ),
-                        const SizedBox(
-                          height: 15,
                         ),
                         const SizedBox(
                           height: 15,
                         ),
                         CustomRichText(
                           title: 'Username',
-                          text: admin.username,
+                          text: patient.username,
                           size: 14,
                         ),
                         const SizedBox(
@@ -80,7 +79,31 @@ class AdminInfoWidget extends StatelessWidget {
                         ),
                         CustomRichText(
                           title: 'Email',
-                          text: admin.email,
+                          text: patient.email,
+                          size: 14,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomRichText(
+                          title: 'Date Of Birth',
+                          text: patient.dateOfBirth,
+                          size: 14,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomRichText(
+                          title: 'Gender',
+                          text: patient.gender,
+                          size: 14,
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        CustomRichText(
+                          title: 'Phone Number',
+                          text: patient.phoneNumber,
                           size: 14,
                         ),
                       ],
@@ -92,10 +115,9 @@ class AdminInfoWidget extends StatelessWidget {
                   CustomButton(
                     text: 'Remove',
                     onTap: () {
-                      ctrl.onTapRemoveAdmin(admin);
+                      ctrl.onTapRemovePatient(patient);
                     },
                     backgroundColor: Colors.red,
-                    
                     borderRadius: 10,
                   ),
                   const SizedBox(
