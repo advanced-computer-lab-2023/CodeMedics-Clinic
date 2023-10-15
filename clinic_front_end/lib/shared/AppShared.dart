@@ -6,7 +6,7 @@ import 'package:ori_dx_app/Models/Patient.dart';
 class AppShared extends GetxController {
   static String username = "mmoo";
   static Doctor? doctor;
-  static Patient? patient;
+  static Patient  ? patient;
   static Admin? admin;
 
   static Map<int, String> specialities = {

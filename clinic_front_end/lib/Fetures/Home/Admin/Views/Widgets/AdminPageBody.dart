@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:ori_dx_app/Fetures/Guest/View/Guest.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/AdminPageController.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/adminsWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Doctors/AdminDoctorsWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Packages/PackagessWidget.dart';
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Patients/AdminPatientsWidget.dart';
 
 import 'package:ori_dx_app/GeneralWidgets/AppText.dart';
@@ -110,7 +112,19 @@ class AdminPageBody extends StatelessWidget {
                                 ctrl.onTapDoctors();
                               },
                               backgroundColor: ctrl.doctorsColor,
-                              textColor: ctrl.doctorsColor,
+                              textColor: ctrl.doctorsFontColor,
+                              borderRadius: 10,
+                              fontSize: 13,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                            ),
+                            const SizedBox(height: 10),
+                            CustomButton(
+                              text: 'Packages',
+                              onTap: () {
+                                ctrl.onTapPackages();
+                              },
+                              backgroundColor: ctrl.packagesColor,
+                              textColor: ctrl.packagesFontColor,
                               borderRadius: 10,
                               fontSize: 13,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -153,9 +167,9 @@ class AdminPageBody extends StatelessWidget {
                   ),
                 ),
                 if (ctr.patientsSelected) AdminPatientsWidget(),
-                // if (ctr.doctorsSelected) DoctorsWidget(),
+                if (ctr.doctorsSelected) AdminDoctorsWidget(),
                 if (ctr.adminSelected) AdminsWidget(),
-                // if (ctr.prescriptionsSelected) PrescriptionsWidget(),
+                if (ctr.packagesSelected) PackagessWidget(),
                 Padding(
                   padding: const EdgeInsets.only(left: 250, top: 50),
                   child: Column(

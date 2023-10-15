@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart' as getx;
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Doctors/AdminDoctorController.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/AppointmentsControllers/DoctorAppointmentsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/Patients/PatientsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Widgets/Patients/PatientsWidget.dart';
@@ -20,20 +21,20 @@ class AdminPageController extends getx.GetxController {
   Color doctorsColor = AppColors.mainColor;
   Color doctorsFontColor = Colors.white;
 
-  Color prescriptionsColor = AppColors.mainColor;
-  Color prescriptionsFontColor = Colors.white;
+  Color packagesColor = AppColors.mainColor;
+  Color packagesFontColor = Colors.white;
 
   Color adminColor = Colors.white;
   Color adminFontColor = AppColors.mainColor;
 
   bool patientsSelected = false;
   bool doctorsSelected = false;
-  bool prescriptionsSelected = false;
+  bool packagesSelected = false;
   bool adminSelected = true;
 
   bool familyMemberintialized = false;
   bool doctorsintialized = false;
-  bool prescriptionsintialized = false;
+  bool packagesintialized = false;
   bool adminintialized = true;
 
   List<Doctor> doctors = [];
@@ -44,8 +45,8 @@ class AdminPageController extends getx.GetxController {
     patientsFontColor = Colors.white;
     doctorsColor = AppColors.mainColor;
     doctorsFontColor = Colors.white;
-    prescriptionsColor = AppColors.mainColor;
-    prescriptionsFontColor = Colors.white;
+    packagesColor = AppColors.mainColor;
+    packagesFontColor = Colors.white;
     adminColor = AppColors.mainColor;
     adminFontColor = Colors.white;
   }
@@ -53,7 +54,7 @@ class AdminPageController extends getx.GetxController {
   void resetWidgets() {
     patientsSelected = false;
     doctorsSelected = false;
-    prescriptionsSelected = false;
+    packagesSelected = false;
     adminSelected = false;
   }
 
@@ -81,24 +82,24 @@ class AdminPageController extends getx.GetxController {
     resetWidgets();
     doctorsSelected = true;
     if (doctorsintialized) {
-      getx.Get.find<DoctorsController>().loadDoctors();
+      getx.Get.find<AdminDoctorController>().loadDoctors();
     }
     doctorsintialized = true;
     update(['adminPageBuilder']);
   }
 
-  void onTapPrescriptions() {
+  void onTapPackages() {
     resetColors();
-    prescriptionsColor = Colors.white;
-    prescriptionsFontColor = AppColors.mainColor;
+    packagesColor = Colors.white;
+    packagesFontColor = AppColors.mainColor;
     update(['tapsBuilder']);
-    if (prescriptionsSelected) return;
+    if (packagesSelected) return;
     resetWidgets();
-    prescriptionsSelected = true;
-    if (prescriptionsintialized) {
+    packagesSelected = true;
+    if (packagesintialized) {
       getx.Get.find<DoctorsController>().loadDoctors();
     }
-    prescriptionsintialized = true;
+    packagesintialized = true;
     update(['adminPageBuilder']);
   }
 

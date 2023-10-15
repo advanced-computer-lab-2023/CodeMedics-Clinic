@@ -6,12 +6,15 @@ import 'package:get/get.dart' as getx;
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/AppointmentsControllers/DoctorAppointmentsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/Patients/PatientsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Widgets/Patients/PatientsWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Doctor/Views/Widgets/UpdateDoctor.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/Controllers/DoctorsControllers/DoctorsController.dart';
 import 'package:ori_dx_app/Fetures/Home/Patient/Controllers/FamilyMembersControllers/FamilyMembersController.dart';
+import 'package:ori_dx_app/Helper/Helper.dart';
 
 import 'package:ori_dx_app/Models/Doctor.dart';
 
 import 'package:ori_dx_app/shared/AppColors.dart';
+import 'package:ori_dx_app/shared/AppShared.dart';
 
 class DoctorPageController extends getx.GetxController {
   Color patientsColor = Colors.white;
@@ -115,5 +118,15 @@ class DoctorPageController extends getx.GetxController {
     }
     appointmentsintialized = true;
     update(['patientPageBuilder']);
+  }
+
+  void onPressSettings() async {
+    await Helper.showMessage1(
+      null,
+      UpdateDoctor(
+        package: AppShared.doctor!,
+      ),
+      ok: false,
+    );
   }
 }

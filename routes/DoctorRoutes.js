@@ -10,6 +10,7 @@ const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
 const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/GetDoctors');
+const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
 const app = require('../app.js');
 
 function verifyToken(req, res, next) {
@@ -26,9 +27,10 @@ function verifyToken(req, res, next) {
 router.post('/register', createDoctor);
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
+router.get('/getAllDoctors', getAllDoctors);
 
 
-router.put('/', updateDoctor);
+router.patch('/', updateDoctor);
 router.get('/viewAppointments', filterAppointments);
 router.get('/getAllAppointments', getAllApointments);
 router.get('/searchPatient', searchPatient);

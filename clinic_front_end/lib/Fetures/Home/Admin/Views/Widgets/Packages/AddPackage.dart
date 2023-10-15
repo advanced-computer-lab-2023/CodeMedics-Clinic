@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ori_dx_app/Fetures/Home/Patient/Controllers/FamilyMembersControllers/AddFamilyMemberController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AddAdminController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Packages/AddPackageController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
-import 'package:ori_dx_app/GeneralWidgets/CustomDateField.dart';
-import 'package:ori_dx_app/GeneralWidgets/CustomTextField.dart';
-import 'package:ori_dx_app/GeneralWidgets/SingleList.dart';
 
-class AddAdminWidget extends StatelessWidget {
-  AddAdminWidget({super.key}) {
-    Get.put(AddFamilyMemberController());
+import 'package:ori_dx_app/GeneralWidgets/CustomTextField.dart';
+
+class AddPackage extends StatelessWidget {
+  AddPackage({super.key}) {
+    Get.put(AddPackageController());
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AddFamilyMemberController>(builder: (ctrl) {
+    return GetBuilder<AddPackageController>(builder: (ctrl) {
       return SingleChildScrollView(
         child: Column(
           children: [
@@ -21,14 +21,14 @@ class AddAdminWidget extends StatelessWidget {
               height: 20,
             ),
             Image.asset(
-              'assets/images/family.png',
+              'assets/images/member1.png',
               height: 120,
             ),
             const SizedBox(
               height: 20,
             ),
             const Text(
-              'Add Family Member',
+              'Add Package',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -49,47 +49,46 @@ class AddAdminWidget extends StatelessWidget {
             ),
             CustomTextField(
               borderRadius: 10,
-              text: 'National ID',
-              onChanged: (name) => ctrl.onChangeNationalID(name),
+              text: 'Price',
+              onChanged: (name) => ctrl.onChangePrice(name),
               // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.nationalIDError,
+              errorMessage: ctrl.priceError,
             ),
             const SizedBox(
               height: 10,
             ),
-            SingleList(
-              onChanged: ctrl.onChangedGender,
-              errorMessage: ctrl.genderError,
-              items: const {1: "Male", 2: "Female"},
-              title: 'Gender',
-              searchEnabled: false,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomDateField(
+            CustomTextField(
               borderRadius: 10,
-              text: 'Date Of Birth',
-              onDateSelected: ctrl.onChagedDateOfBirth,
+              text: 'Session Discount',
+              onChanged: ctrl.onChagedSessionDiscount,
               // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.dateOfBirthError,
+              errorMessage: ctrl.sessionDiscountError,
             ),
             const SizedBox(
               height: 10,
             ),
-            SingleList(
-              onChanged: ctrl.onChangedRelationship,
+            CustomTextField(
+              borderRadius: 10,
+              text: 'MedicineDiscount',
+              onChanged: ctrl.onChagedMedicineDiscount,
               // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.relationError,
-              items: const {1: "Husband", 2: "Wife", 3: "Son", 4: "Daughter"},
-              title: 'Relationship',
-              searchEnabled: false,
+              errorMessage: ctrl.medicineDiscountError,
             ),
             const SizedBox(
-              height: 15,
+              height: 10,
+            ),
+            CustomTextField(
+              borderRadius: 10,
+              text: 'Family Discount',
+              onChanged: ctrl.onChagedFamilyDiscount,
+              // prefixIcon: const Icon(Icons.person),
+              errorMessage: ctrl.familyDiscountError,
+            ),
+            const SizedBox(
+              height: 10,
             ),
             CustomButton(
-              text: 'Add Member',
+              text: 'Add Package',
               onTap: () {
                 ctrl.onTapAddMember();
               },

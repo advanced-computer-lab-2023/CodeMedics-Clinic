@@ -51,7 +51,9 @@ class PatientsController extends getx.GetxController {
     if (response.statusCode == 200) {
       patients.clear();
       for (var item in response.data['data']) {
-        patients.add(Patient.fromJson(item));
+        if (item != null) {
+          patients.add(Patient.fromJson(item));
+        }
       }
       searchedPatients = patients;
       resPatients = patients;

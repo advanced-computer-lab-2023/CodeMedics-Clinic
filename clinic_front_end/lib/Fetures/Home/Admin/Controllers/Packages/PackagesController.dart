@@ -3,32 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart' as getx;
 import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/AddAdmin.dart';
-import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/FamilyMember/AddFamilyMemberWidget.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Packages/AddPackage.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Packages/UpadtePackage.dart';
 import 'package:ori_dx_app/Helper/Helper.dart';
 import 'package:ori_dx_app/Models/Admin.dart';
-import 'package:ori_dx_app/Models/FamilyMember.dart';
+
+import 'package:ori_dx_app/Models/Package.dart';
 import 'package:ori_dx_app/Services/RequestService.dart';
 import 'package:ori_dx_app/shared/AppShared.dart';
 
-class AdminsController extends getx.GetxController {
-  List<Admin> admins = [];
-  bool adminSelected = false;
-  Admin? selectedAdmin;
+class PackagesController extends getx.GetxController {
+  List<Package> packages = [];
+  bool packageSelected = false;
+  Package? selectedPackage;
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadAdmins();
+      loadPackages();
     });
   }
 
-  void loadAdmins() async {
+  void loadPackages() async {
     Response? response = await Helper.showLoading(
       'Loading...',
       'Please wait',
       () => RequestService().makeGetRequest(
-        '/admin/getAllAdmins',
+        '/admin/getPackages',
         {},
       ),
     );
@@ -40,9 +42,9 @@ class AdminsController extends getx.GetxController {
       return;
     }
     if (response.statusCode == 200) {
-      admins.clear();
+      packages.clear();
       for (var item in response.data) {
-        admins.add(Admin.fromJson(item));
+        packages.add(Package.fromJson(item));
       }
       update(['adminsBuilder']);
     } else {
@@ -50,44 +52,36 @@ class AdminsController extends getx.GetxController {
     }
   }
 
-  void onTapMember(Admin admin) {
-    selectedAdmin = admin;
-    adminSelected = true;
+  void onTapMember(Package package) {
+    selectedPackage = package;
+    packageSelected = true;
     update(['adminsBuilder']);
   }
 
   void onTapAddMember() async {
     await Helper.showMessage1(
       null,
-      AddAdmin(),
+      AddPackage(),
       ok: false,
     );
   }
 
   void onTapDoneMemberInfo() {
-    adminSelected = false;
+    packageSelected = false;
     update(['adminsBuilder']);
   }
 
-  void onTapRemoveAdmin(Admin admin) async {
-    if (admin.username == 'admin') {
-      Helper.showMessage('Error', 'You can\'t remove the main admin');
-      return;
-    }
-    if (admin.username == AppShared.username) {
-      Helper.showMessage('Error', 'You can\'t remove yourself');
-      return;
-    }
-    removeAdmin(admin);
+  void onTapRemovePackage(Package package) async {
+    removePackage(package);
   }
 
-  void removeAdmin(Admin admin) async {
+  void removePackage(Package package) async {
     Response? response = await Helper.showLoading(
       'Loading...',
       'Please wait',
       () => RequestService().makeDeleteRequest(
-        '/admin/removeUser',
-        {"Username": admin.username},
+        '/admin/removePackage',
+        {"Name": package.name},
       ),
     );
 
@@ -97,7 +91,8 @@ class AdminsController extends getx.GetxController {
           widget: const Icon(FontAwesomeIcons.globe, size: 50));
       return;
     }
-    if (response.statusCode == 201) {
+
+    if (response.statusCode == 200) {
       await Helper.showMessage(
         'Success',
         'Removed Successfully',
@@ -106,9 +101,19 @@ class AdminsController extends getx.GetxController {
           height: 90,
         ),
       );
-      loadAdmins();
+      loadPackages();
     } else {
-      Helper.showMessage('Error', response.data["message"]);
+      Helper.showMessage('Error', response.data);
     }
+  }
+
+  void onTapUpdate(Package package) async {
+    await Helper.showMessage1(
+      null,
+      UpdatePackage(
+        package: package,
+      ),
+      ok: false,
+    );
   }
 }

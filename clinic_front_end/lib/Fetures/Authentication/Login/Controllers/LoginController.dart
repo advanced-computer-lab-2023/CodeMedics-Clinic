@@ -77,6 +77,7 @@ class LoginController extends getx.GetxController {
       );
       return;
     }
+    print(response);
     if (response.statusCode == 200) {
       String s = response.data['message'].split(' ')[0].toLowerCase();
       AppShared.username = username;

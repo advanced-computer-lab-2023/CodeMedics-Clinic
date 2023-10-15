@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AddAdminController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Packages/UpadtePackageController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 
 import 'package:ori_dx_app/GeneralWidgets/CustomTextField.dart';
+import 'package:ori_dx_app/Models/Package.dart';
 
-class AddAdmin extends StatelessWidget {
-  AddAdmin({super.key}) {
-    Get.put(AddAdminController());
+class UpdatePackage extends StatelessWidget {
+  UpdatePackage({super.key, required this.package}) {
+    Get.put(UpdatePackageController());
   }
-
+  final Package package;
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AddAdminController>(builder: (ctrl) {
+    return GetBuilder<UpdatePackageController>(builder: (ctrl) {
       return SingleChildScrollView(
         child: Column(
           children: [
@@ -27,7 +28,7 @@ class AddAdmin extends StatelessWidget {
               height: 20,
             ),
             const Text(
-              'Add Admin',
+              'Update Package',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -38,49 +39,60 @@ class AddAdmin extends StatelessWidget {
             ),
             CustomTextField(
               borderRadius: 10,
-              text: 'Full Name',
+              text: 'Name',
               onChanged: (name) => ctrl.onChangeName(name),
               // prefixIcon: const Icon(Icons.person),
               errorMessage: ctrl.nameError,
+              intialValue: package.name,
+              enabled: false,
             ),
             const SizedBox(
               height: 10,
             ),
             CustomTextField(
               borderRadius: 10,
-              text: 'Username',
-              onChanged: (name) => ctrl.onChangeUsername(name),
+              text: 'Price',
+              onChanged: (name) => ctrl.onChangePrice(name),
               // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.usernameError,
+              errorMessage: ctrl.priceError,
             ),
             const SizedBox(
               height: 10,
             ),
             CustomTextField(
               borderRadius: 10,
-              text: 'Password',
-              onChanged: ctrl.onChagedPassword,
+              text: 'Session Discount',
+              onChanged: ctrl.onChagedSessionDiscount,
               // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.passwordError,
-              isPassword: true,
+              errorMessage: ctrl.sessionDiscountError,
             ),
             const SizedBox(
               height: 10,
             ),
             CustomTextField(
               borderRadius: 10,
-              text: 'Email',
-              onChanged: ctrl.onChagedEmail,
+              text: 'MedicineDiscount',
+              onChanged: ctrl.onChagedMedicineDiscount,
               // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.emailError,
+              errorMessage: ctrl.medicineDiscountError,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomTextField(
+              borderRadius: 10,
+              text: 'Family Discount',
+              onChanged: ctrl.onChagedFamilyDiscount,
+              // prefixIcon: const Icon(Icons.person),
+              errorMessage: ctrl.familyDiscountError,
             ),
             const SizedBox(
               height: 10,
             ),
             CustomButton(
-              text: 'Add Member',
+              text: 'Update',
               onTap: () {
-                ctrl.onTapAddMember();
+                ctrl.onTapAddMember(package);
               },
               borderRadius: 10,
             ),

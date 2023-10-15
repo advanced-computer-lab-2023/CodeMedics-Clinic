@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const AdminController = require('../controllers/Admin/AdminController');
 const adminGetter = require('../controllers/Admin/AdminGetters');
+const {getPackages} = require("../controllers/Admin/AdminController");
+
 //const JWTAuth = require('../config/JWTAuth.js');
 
 //const isAuth = JWTAuth.isAuth;
@@ -10,6 +12,7 @@ const adminGetter = require('../controllers/Admin/AdminGetters');
 //router.use(isAuth);
 //admin
 router.get('/', adminGetter.viewAdminPanel);
+router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();

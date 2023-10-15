@@ -196,6 +196,18 @@ class DoctorPageBody extends StatelessWidget {
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 1350, top: 10),
+                  child: IconButton(
+                    onPressed: () {
+                      ctr.onPressSettings();
+                    },
+                    icon: Image.asset(
+                      'assets/images/settings.png',
+                      height: 100,
+                    ),
+                  ),
+                )
               ],
             ),
           );

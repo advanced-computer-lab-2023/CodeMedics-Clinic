@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Admins/AddAdminController.dart';
+import 'package:ori_dx_app/Fetures/Home/Admin/Controllers/Packages/UpadtePackageController.dart';
+import 'package:ori_dx_app/Fetures/Home/Doctor/Controllers/UpdateDoctorController.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomButton.dart';
 
 import 'package:ori_dx_app/GeneralWidgets/CustomTextField.dart';
+import 'package:ori_dx_app/Models/Doctor.dart';
+import 'package:ori_dx_app/Models/Package.dart';
+import 'package:ori_dx_app/shared/AppShared.dart';
 
-class AddAdmin extends StatelessWidget {
-  AddAdmin({super.key}) {
-    Get.put(AddAdminController());
+class UpdateDoctor extends StatelessWidget {
+  UpdateDoctor({super.key, required this.package}) {
+    Get.put(UpdateDoctorController());
   }
-
+  final Doctor package;
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AddAdminController>(builder: (ctrl) {
+    return GetBuilder<UpdateDoctorController>(builder: (ctrl) {
       return SingleChildScrollView(
         child: Column(
           children: [
@@ -27,42 +31,11 @@ class AddAdmin extends StatelessWidget {
               height: 20,
             ),
             const Text(
-              'Add Admin',
+              'Update Doctor',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            CustomTextField(
-              borderRadius: 10,
-              text: 'Full Name',
-              onChanged: (name) => ctrl.onChangeName(name),
-              // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.nameError,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomTextField(
-              borderRadius: 10,
-              text: 'Username',
-              onChanged: (name) => ctrl.onChangeUsername(name),
-              // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.usernameError,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            CustomTextField(
-              borderRadius: 10,
-              text: 'Password',
-              onChanged: ctrl.onChagedPassword,
-              // prefixIcon: const Icon(Icons.person),
-              errorMessage: ctrl.passwordError,
-              isPassword: true,
             ),
             const SizedBox(
               height: 10,
@@ -70,17 +43,40 @@ class AddAdmin extends StatelessWidget {
             CustomTextField(
               borderRadius: 10,
               text: 'Email',
-              onChanged: ctrl.onChagedEmail,
+              intialValue: AppShared.doctor!.email,
+              onChanged: (name) => ctrl.onChangeEmail(name),
               // prefixIcon: const Icon(Icons.person),
               errorMessage: ctrl.emailError,
             ),
             const SizedBox(
               height: 10,
             ),
+            CustomTextField(
+              borderRadius: 10,
+              text: 'Hourly Rate',
+              intialValue: AppShared.doctor!.hourlyRate.toString(),
+              onChanged: ctrl.onChagedHourlyRate,
+              // prefixIcon: const Icon(Icons.person),
+              errorMessage: ctrl.hourlyRateError,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            CustomTextField(
+              borderRadius: 10,
+              text: 'Affiliation',
+              intialValue: AppShared.doctor!.affiliation,
+              onChanged: ctrl.onChagedAffiliation,
+              // prefixIcon: const Icon(Icons.person),
+              errorMessage: ctrl.affiliationError,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             CustomButton(
-              text: 'Add Member',
+              text: 'Update',
               onTap: () {
-                ctrl.onTapAddMember();
+                ctrl.onTapAddMember(package);
               },
               borderRadius: 10,
             ),

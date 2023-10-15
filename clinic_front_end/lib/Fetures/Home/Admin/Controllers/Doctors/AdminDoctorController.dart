@@ -6,29 +6,30 @@ import 'package:ori_dx_app/Fetures/Home/Admin/Views/Widgets/Admins/AddAdmin.dart
 import 'package:ori_dx_app/Fetures/Home/Patient/View/Widgets/FamilyMember/AddFamilyMemberWidget.dart';
 import 'package:ori_dx_app/Helper/Helper.dart';
 import 'package:ori_dx_app/Models/Admin.dart';
+import 'package:ori_dx_app/Models/Doctor.dart';
 import 'package:ori_dx_app/Models/FamilyMember.dart';
+import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/Services/RequestService.dart';
-import 'package:ori_dx_app/shared/AppShared.dart';
 
-class AdminsController extends getx.GetxController {
-  List<Admin> admins = [];
-  bool adminSelected = false;
-  Admin? selectedAdmin;
+class AdminDoctorController extends getx.GetxController {
+  List<Doctor> doctors = [];
+  bool doctorsSelected = false;
+  Doctor? selectedDoctor;
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadAdmins();
+      loadDoctors();
     });
   }
 
-  void loadAdmins() async {
+  void loadDoctors() async {
     Response? response = await Helper.showLoading(
       'Loading...',
       'Please wait',
       () => RequestService().makeGetRequest(
-        '/admin/getAllAdmins',
+        '/doctor/getAllDoctors',
         {},
       ),
     );
@@ -40,9 +41,9 @@ class AdminsController extends getx.GetxController {
       return;
     }
     if (response.statusCode == 200) {
-      admins.clear();
+      doctors.clear();
       for (var item in response.data) {
-        admins.add(Admin.fromJson(item));
+        doctors.add(Doctor.fromJson(item));
       }
       update(['adminsBuilder']);
     } else {
@@ -50,9 +51,9 @@ class AdminsController extends getx.GetxController {
     }
   }
 
-  void onTapMember(Admin admin) {
-    selectedAdmin = admin;
-    adminSelected = true;
+  void onTapMember(Doctor patient) {
+    selectedDoctor = patient;
+    doctorsSelected = true;
     update(['adminsBuilder']);
   }
 
@@ -65,29 +66,17 @@ class AdminsController extends getx.GetxController {
   }
 
   void onTapDoneMemberInfo() {
-    adminSelected = false;
+    doctorsSelected = false;
     update(['adminsBuilder']);
   }
 
-  void onTapRemoveAdmin(Admin admin) async {
-    if (admin.username == 'admin') {
-      Helper.showMessage('Error', 'You can\'t remove the main admin');
-      return;
-    }
-    if (admin.username == AppShared.username) {
-      Helper.showMessage('Error', 'You can\'t remove yourself');
-      return;
-    }
-    removeAdmin(admin);
-  }
-
-  void removeAdmin(Admin admin) async {
+  void removePatient(Doctor doctor) async {
     Response? response = await Helper.showLoading(
       'Loading...',
       'Please wait',
       () => RequestService().makeDeleteRequest(
         '/admin/removeUser',
-        {"Username": admin.username},
+        {"Username": doctor.username},
       ),
     );
 
@@ -106,9 +95,13 @@ class AdminsController extends getx.GetxController {
           height: 90,
         ),
       );
-      loadAdmins();
+      loadDoctors();
     } else {
       Helper.showMessage('Error', response.data["message"]);
     }
+  }
+
+  void onTapRemovePatient(Doctor doctor) {
+    removePatient(doctor);
   }
 }

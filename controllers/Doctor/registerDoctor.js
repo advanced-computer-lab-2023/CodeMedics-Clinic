@@ -56,7 +56,17 @@ const createDoctor = asyncHandler(async (req, res) => {
         return res.status(400).json({message: "Username already exists"});
     }
 });
+
+const getAllDoctors = asyncHandler(async (req, res) => {
+    try{
+    const doctors = await doctorModel.find({});
+    return res.status(200).json(doctors);
+    }catch(error){
+        return res.status(400).json({message: error.message});
+    }
+});
+
 const viewDoctorRegister = asyncHandler(async (req, res) => {
     res.render('DoctorViews/RegisterDoctor');
 });
-module.exports = {createDoctor, viewDoctorRegister};
+module.exports = {createDoctor, viewDoctorRegister,getAllDoctors};

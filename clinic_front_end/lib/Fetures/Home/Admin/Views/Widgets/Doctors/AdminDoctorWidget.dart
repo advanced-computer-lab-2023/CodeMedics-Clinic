@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomRichText.dart';
 import 'package:ori_dx_app/GeneralWidgets/CustomRichText2.dart';
 import 'package:ori_dx_app/Models/Admin.dart';
+import 'package:ori_dx_app/Models/Doctor.dart';
 import 'package:ori_dx_app/Models/FamilyMember.dart';
 import 'package:ori_dx_app/Models/Patient.dart';
 import 'package:ori_dx_app/shared/AppColors.dart';
 
-class AdminPatientWidget extends StatelessWidget {
-  const AdminPatientWidget({
+class AdminDoctorWidget extends StatelessWidget {
+  const AdminDoctorWidget({
     super.key,
-    required this.patient,
+    required this.doctor,
     required this.onTap,
   });
 
-  final Patient patient;
+  final Doctor doctor;
   final void Function() onTap;
 
   @override
@@ -45,9 +46,7 @@ class AdminPatientWidget extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
-            CustomRichText2(
-                title: 'Name',
-                text: '${patient.firstName} ${patient.lastName}'),
+            CustomRichText2(title: 'Name', text: '${doctor.firstName} ${doctor.lastName}'),
             const SizedBox(
               height: 5,
             ),
