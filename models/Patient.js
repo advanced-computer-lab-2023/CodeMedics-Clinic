@@ -5,13 +5,13 @@ const Schema = mongoose.Schema;
 const PaymentStatus = {
     Subscribed: "Subscribed",
     NotSubscribed: "Not Subscribed",
-    Overdue: "Overdue",
 };
 
 const Membership = {
     Platinum: "Platinum",
     Gold: "Gold",
     Silver: "Silver",
+    Free: "Free",
 };
 
 const patientSchema = new Schema({
@@ -69,11 +69,14 @@ const patientSchema = new Schema({
     },
     HealthPackage:{
         type: {
+            Name: String,
             membership: Membership,
             status: PaymentStatus,
+            Price: Number,
             date: Date
         },
         default: {
+            membership: "Free",
             status: "Not Subscribed",
             date: Date.now()
         },
