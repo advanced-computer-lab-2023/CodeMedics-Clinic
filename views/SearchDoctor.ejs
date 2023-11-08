@@ -115,14 +115,41 @@
       const queryString = `FirstName=${FirstName}&LastName=${LastName}&Speciality=${speciality}`;
 
       // Send a GET request to the backend
-      fetch(`../patient/SearchDoctor?${queryString}`, {
+      fetch(`../doctor/?${queryString}`, {
         method: "GET",
       })
         .then((response) => response.json())
         .then((data) => {
+          // Display the filtered prescriptions
+          const prescriptionsList =
+                document.getElementById("prescriptionsList");
+              prescriptionsList.innerHTML = "<h2>Doctors</h2>";
+              if(data.hasOwnProperty('error')){
+                const prescriptionDiv = document.createElement("div");
+                prescriptionDiv.classList.add("prescription");
+                prescriptionDiv.innerHTML = `<div class="property">First Name:</div>
+                                          <div class="value">${data.error}</div>`
+              }else{
+                data.forEach((prescription) => {
+                const prescriptionDiv = document.createElement("div");
 
+                prescriptionDiv.innerHTML = `
+                  <div class="property">First Name:</div>
+                  <div class="value">${prescription.FirstName}</div>
+                  <div class="property">Last Name:</div>
+                  <div class="value">${prescription.LastName}</div>
+                  <div class="property">Speciality:</div>
+                  <div class="value date">${prescription.Specialty}</div>
+                  <div class="property">Email:</div>
+                  <div class="value date">${prescription.Email}</div>
+              `;
 
+                prescriptionsList.appendChild(prescriptionDiv);
+                })
+              }
         });
+    
+        
 
     </script>
     <form id="filterForm">

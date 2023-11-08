@@ -2,6 +2,8 @@ const patientModel = require('../../models/Patient');
 const getUsername = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
+const FamilyMember = require('../../models/FamilyMember');
+const schedule = require('node-schedule');
 
 
 const createPatient = asyncHandler(async (req, res) => {
@@ -10,7 +12,7 @@ const createPatient = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({message: 'Request body is empty'});
     }
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'Gender', 'MobileNumber', 'EmergencyContactName', 'EmergencyContactNumber'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'NationalID', 'Email', 'DateOfBirth', 'Gender', 'MobileNumber', 'EmergencyContactName', 'EmergencyContactNumber'];
 
     for (const variable of requiredVariables) {
         console.log(req.body[variable]);
@@ -25,6 +27,7 @@ const createPatient = asyncHandler(async (req, res) => {
         Username,
         Password,
         Email,
+        NationalID,
         DateOfBirth,
         Gender,
         MobileNumber,
@@ -42,6 +45,7 @@ const createPatient = asyncHandler(async (req, res) => {
                 Username: Username,
                 Password: hashedPassword,
                 Email: Email,
+                NationalID: NationalID,
                 DateOfBirth: DateOfBirth,
                 Number: MobileNumber,
                 Gender: Gender,
@@ -68,4 +72,90 @@ const viewPatients = asyncHandler(async (req, res) => {
 const viewPatientRegister = asyncHandler(async (req, res) => {
     res.render('PatientViews/RegisterPatient');
 });
+
+
+const healthPackageSubscription = asyncHandler(async (req, res) => {
+
+    const patient = await patientModel.findOne({Username: process.env.Username});
+    if (patient && patient.HealthPackage.status === "Unsubscribed") {
+        patient.HealthPackage.status = "Subscribed";
+        patient.HealthPackage.date = Date.now();
+        const familyMembers = await patient.populate('FamilyMember').exec();
+
+        for (const member of familyMembers) {
+            const patientFamilyMember = await patientModel.findOne({NationalID: member.NationalID});
+            if (patientFamilyMember) {
+                patientFamilyMember.HealthPackage.status = "Subscribed";
+                patientFamilyMember.HealthPackage.date = Date.now();
+                await patientFamilyMember.save();
+            }
+        }
+        await patient.save();
+        
+        //schedule a job to check if the subscription is overdue
+        const rule = new schedule.RecurrenceRule();
+        rule.date = new Date(Date.now()).getDay();
+        const job = schedule.scheduleJob(rule, async function(){
+            if(patient.HealthPackage.status === "Subscribed"){
+        
+                if(patient.Wallet >= patientModel.calculatePackageCost(patient)){
+                    patient.Wallet -= patientModel.calculatePackageCost(patient);
+                    patient.HealthPackage.status = "Subscribed";
+                    patient.HealthPackage.date = Date.now();
+                    await patient.save();
+                    // TODO(nour): add notification
+                } else {
+                    patient.HealthPackage.status = "Overdue";
+                    // TODO(nour): add notification
+                    await patient.save();
+                }
+    
+            }
+        });
+
+        res.status(200).json({message: "Health Package Subscription Successful!"});
+    } else if(patient) {
+        res.status(400).json({message: "Patient already subscribed to health package!"});
+    } else {
+        res.status(400).json({message: "Patient not found!"});
+    }
+    
+});
+
+const healthPackageUnsubscription = asyncHandler(async (req, res) => {
+    
+        const patient = await patientModel.findOne({Username: process.env.Username});
+        if (patient && patient.HealthPackage.status !== "Unsubscribed") {
+            patient.HealthPackage.status = "Cancelled";
+            const familyMembers = await patient.populate('FamilyMember').exec();
+
+            for (const member of familyMembers) {
+                const patientFamilyMember = await patientModel.findOne({NationalID: member.NationalID});
+                if (patientFamilyMember) {
+                    patientFamilyMember.HealthPackage.status = "Cancelled";
+                    await patientFamilyMember.save();
+                }
+            }
+
+            await patient.save();
+            res.status(200).json({message: "Health Package Unsubscription Successful!"});
+        } else if(patient) {
+            res.status(400).json({message: "Patient already unsubscribed to health package!"});
+        } else {
+            res.status(400).json({message: "Patient not found!"});
+        }
+        
+    });
+
+const viewHealthPackage = asyncHandler(async (req, res) => {
+    const patient = await patientModel.findOne({Username: process.env.Username});
+    if (patient) {
+        res.status(200).json(patient.HealthPackage);
+    } else {
+        res.status(400).json({message: "Patient not found!"});
+    }
+});
+
+const calculateHealthPackageCost = patient => {};
+
 module.exports = {createPatient, viewPatientRegister , viewPatients};

@@ -56,7 +56,12 @@ const doctorSchema = new Schema({
     Appointments:{
         type: [String],
         required: false
-    }
+    },
+    Wallet:{
+        type: Number,
+        default: 0,
+        required: false
+    },
 }, {timestamps: true});
 
 const Doctor = mongoose.model('Doctor', doctorSchema, 'Doctors');

@@ -23,6 +23,10 @@ const patientSchema = new Schema({
         type: String,
         required: [true, 'Please enter an email']
     },
+    NationalID: {
+        type: String,
+        required: [true, 'Please enter a national ID']
+    },
     DateOfBirth: {
         type: String,
         required: false
@@ -49,17 +53,29 @@ const patientSchema = new Schema({
         required: false
     },
     FamilyMembers: {
-        type: [String],
+        type: [Schema.Types.ObjectId],
         ref: 'FamilyMember',
     },
     Appointments:{
         type: [String],
         required: false
     },
-    wallet:{
+    HealthPackage:{
+        type: {
+            status: String, // Subscribed, Not Subscribed, Overdue
+            date: Date
+        },
+        default: {
+            status: "Not Subscribed",
+            date: Date.now()
+        },
+        required: false
+    },
+    Wallet:{
         type: Number,
-        default: 0
-    }
+        default: 0,
+        required: false
+    },
 }, {timestamps: true});
 
 const Patient = mongoose.model('Patient', patientSchema, 'Patients');
