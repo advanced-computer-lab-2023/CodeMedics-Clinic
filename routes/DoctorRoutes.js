@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Doctor = require('../models/Doctor');
+const upload = require('../config/multerConfig'); 
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
 const { filterAppointments , getAllApointments } = require('../controllers/Doctor/filterAppointments');
@@ -24,7 +25,11 @@ function verifyToken(req, res, next) {
     }
 }
 
-router.post('/register', createDoctor);
+router.post('/register', upload.fields([
+    { name: 'IDDocument', maxCount: 1 },
+    { name: 'MedicalDegree', maxCount: 1 },
+    { name: 'MedicalLicense', maxCount: 1 }
+]), createDoctor);
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', getAllDoctors);

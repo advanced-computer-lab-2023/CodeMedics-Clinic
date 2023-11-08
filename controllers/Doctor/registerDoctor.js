@@ -1,61 +1,67 @@
 const doctorModel = require('../../models/Doctor.js');
 const infoGetter = require('../../config/infoGetter.js');
+const upload = require('../../config/multerConfig.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
 
 const createDoctor = asyncHandler(async (req, res) => {
-    //create a Patient in the database
-    //check req body
-    if (Object.keys(req.body).length === 0) {
-        return res.status(400).json({message: 'Request body is empty'});
-    }
+    // Check if the required variables are present in the request body
     const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Specialty'];
 
     for (const variable of requiredVariables) {
-        console.log(req.body[variable]);
+        
         if (!req.body[variable]) {
-            return res.status(400).json({message: `Missing ${variable} in the request body`});
+            return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
     }
-    // If all required variables are present, proceed with creating an admin
-    const {
-        FirstName,
-        LastName,
-        Username,
-        Password,
-        Email,
-        DateOfBirth,
-        affiliation,
-        HourlyRate,
-        Degree,
-        Specialty
-    } = req.body;
-    // Hash the password using bcrypt
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(Password, salt);
 
-    if (await infoGetter.getUsername(req, res) === '' && await infoGetter.getEmail(req, res) === '') {
-        const newDoctor = new doctorModel({
-                FirstName: FirstName,
-                LastName: LastName,
-                Username: Username,
+    // Check for uploaded files
+    const { IDDocument, MedicalDegree, MedicalLicense } = req.files;
+    if (!IDDocument || !MedicalDegree || !MedicalLicense) {
+        return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
+    }
+
+    try {
+        // Handle file uploads (files are available in req.files)
+        const idDocumentFile = IDDocument[0].filename;
+        const medicalDegreeFile = MedicalDegree[0].filename;
+        const medicalLicenseFile = MedicalLicense[0].filename;
+
+        // Hash the password using bcrypt
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.Password, salt);
+
+        // Check if the username and email are unique (you may need to implement these functions)
+        if (await infoGetter.getUsername(req, res) === '' && await infoGetter.getEmail(req, res) === '') {
+            const newDoctor = new doctorModel({
+                FirstName: req.body.FirstName,
+                LastName: req.body.LastName,
+                Username: req.body.Username,
                 Password: hashedPassword,
-                Email: Email,
-                DateOfBirth: DateOfBirth,
-                HourlyRate: HourlyRate,
-                affiliation: affiliation,
-                Degree: Degree,
-                Specialty: Specialty,
-            })
-        ;
-        await newDoctor.save();
-        return res.status(201).json("Doctor created successfully!");
-
-    } else {
-        return res.status(400).json({message: "Username already exists"});
+                Email: req.body.Email,
+                DateOfBirth: req.body.DateOfBirth,
+                HourlyRate: req.body.HourlyRate,
+                affiliation: req.body.affiliation,
+                Degree: req.body.Degree,
+                Specialty: req.body.Specialty,
+                IDDocument: idDocumentFile,
+                MedicalDegree: medicalDegreeFile,
+                MedicalLicense: medicalLicenseFile
+            });
+            await newDoctor.save();
+            return res.status(201).json("Doctor created successfully");
+        } else {
+            return res.status(400).json({ message: "Username or email already exists" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Internal server error" });
     }
 });
+
+module.exports = createDoctor;
+
 
 const getAllDoctors = asyncHandler(async (req, res) => {
     try{
