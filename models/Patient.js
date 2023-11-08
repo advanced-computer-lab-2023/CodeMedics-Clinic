@@ -2,18 +2,6 @@ const mongoose = require('mongoose');
 const Prescription = require('./Prescription');
 const Schema = mongoose.Schema;
 
-const PaymentStatus = {
-    Subscribed: "Subscribed",
-    NotSubscribed: "Not Subscribed",
-};
-
-const Membership = {
-    Platinum: "Platinum",
-    Gold: "Gold",
-    Silver: "Silver",
-    Free: "Free",
-};
-
 const patientSchema = new Schema({
     FirstName: {
         type: String,
@@ -70,8 +58,8 @@ const patientSchema = new Schema({
     HealthPackage:{
         type: {
             Name: String,
-            membership: Membership,
-            status: PaymentStatus,
+            membership: String, // Free, Silver, Gold, Platinum
+            status: String, // Subscribed, Unsubscribed
             Price: Number,
             date: Date
         },

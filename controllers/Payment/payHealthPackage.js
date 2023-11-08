@@ -30,7 +30,7 @@ const payPackage = async(req, res) =>{
         res.status.json({message : "Patient not found"});
     }
 
-    const discount = getDiscountAmountForHealthPackage(packageName);
+    const discount = getDiscountAmountForHealthPackage(patient.HealthPackage.Name);
     const package = await Package.find({Name : packageName});
     const amount = package.Price * (1 - discount);
 

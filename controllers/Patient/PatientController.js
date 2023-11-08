@@ -5,7 +5,6 @@ const asyncHandler = require('express-async-handler');
 const FamilyMember = require('../../models/FamilyMember');
 const schedule = require('node-schedule');
 
-
 const createPatient = asyncHandler(async (req, res) => {
     //create a Patient in the database
     //check req body
@@ -97,18 +96,10 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
         const job = schedule.scheduleJob(jobInterval, async function(){
             if(patient.HealthPackage.status === "Subscribed"){
                 
-                if(patient.Wallet >= calculatePackageCost(patient)){
-                    patient.Wallet -= calculatePackageCost(patient);
-                    patient.HealthPackage.status = "Subscribed";
-                    patient.HealthPackage.date = Date.now();
-                    await patient.save();
-                    // TODO(nour): add notification
-                } else {
-                    patient.HealthPackage.status = "Unsubscribed";
-                    // TODO(nour): add notification
-                    schedule.gracefulShutdown();
-                    await patient.save();
-                }
+                patient.HealthPackage.status = "Unsubscribed";
+                // TODO(nour): add notification
+                schedule.gracefulShutdown();
+                await patient.save();
     
             }
         });
