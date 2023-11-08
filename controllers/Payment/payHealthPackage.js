@@ -1,6 +1,6 @@
 const Doctor = require('../../models/Doctor');
 const Patient = require('../../models/Patient');
-const Package = require('../../models/Appointment');
+const Package = require('../../models/Package');
 const stripe = require("stripe")(process.env.SECRET_KEY);
 
 
@@ -23,27 +23,23 @@ function getDiscountAmountForHealthPackage(package){
 }
 
 const payPackage = async(req, res) =>{
-    const {patientId, packageId, paymentMethod} = req.body;
+    const {patientId, packageName, paymentMethod} = req.body;
     
     const patient = await Patient.findById(patientId);
     if(!patient){
         res.status.json({message : "Patient not found"});
     }
 
-    const package = await Package.findById(packageId);
-    if(!package){
-        res.status.json({message : "Package not found"});
-    }
-
-    const discount = getDiscountAmountForHealthPackage(patient.Package);
+    const discount = getDiscountAmountForHealthPackage(packageName);
+    const package = await Package.find({Name : packageName});
     const amount = package.Price * (1 - discount);
 
     if(paymentMethod == "Wallet"){
-        if(patient.wallet < amount){
+        if(patient.Wallet < amount){
             res.status.json({message : "Insufficient funds"});
         }
         else{
-            patient.wallet -= amount;
+            patient.Wallet -= amount;
             await patient.save();
             res.status.json({message : "Health Pacakge has been purchased successfully"});
         }

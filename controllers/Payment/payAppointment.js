@@ -37,7 +37,7 @@ const payAppointment = async(req, res) =>{
 
     const doctor = await Doctor.findById(appointment.DoctorId);
 
-    const discount = getDiscountAmountForAppointments(patient.package);
+    const discount = getDiscountAmountForAppointments(patient.HealthPackage.Membership);
     const amount = appointment.Duration * doctor.HourlyRate * (1 - discount);
 
     if(paymentMethod == "Wallet"){
