@@ -37,7 +37,7 @@ const payAppointment = async(req, res) =>{
 
     const doctor = await Doctor.findById(appointment.DoctorId);
 
-    const discount = getDiscountAmountForAppointments(patient.Package);
+    const discount = getDiscountAmountForAppointments(patient.package);
     const amount = appointment.Duration * doctor.HourlyRate * (1 - discount);
 
     if(paymentMethod == "Wallet"){
@@ -47,8 +47,6 @@ const payAppointment = async(req, res) =>{
         else{
             patient.wallet -= amount;
             await patient.save();
-            doctor.wallet += amount;
-            await doctor.save();
             appointment.status = "upcoming";
             await appointment.save();
             res.status.json({message : "Appointment has been scheduled successfully"});
