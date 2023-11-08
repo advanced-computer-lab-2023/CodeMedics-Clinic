@@ -83,7 +83,7 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
         const familyMembers = await patient.populate('FamilyMember').exec();
 
         for (const member of familyMembers) {
-            const patientFamilyMember = await patientModel.findOne({NationalID: member.NationalID});
+            const patientFamilyMember = await patientModel.findOne({Email: member.Email});
             if (patientFamilyMember) {
                 patientFamilyMember.HealthPackage.status = "Subscribed";
                 patientFamilyMember.HealthPackage.date = Date.now();
@@ -93,20 +93,20 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
         await patient.save();
         
         //schedule a job to check if the subscription is overdue
-        const rule = new schedule.RecurrenceRule();
-        rule.date = new Date(Date.now()).getDay();
-        const job = schedule.scheduleJob(rule, async function(){
+        const jobInterval = `0 0 ${new Date().getDay()} * *`;
+        const job = schedule.scheduleJob(jobInterval, async function(){
             if(patient.HealthPackage.status === "Subscribed"){
-        
-                if(patient.Wallet >= patientModel.calculatePackageCost(patient)){
-                    patient.Wallet -= patientModel.calculatePackageCost(patient);
+                
+                if(patient.Wallet >= calculatePackageCost(patient)){
+                    patient.Wallet -= calculatePackageCost(patient);
                     patient.HealthPackage.status = "Subscribed";
                     patient.HealthPackage.date = Date.now();
                     await patient.save();
                     // TODO(nour): add notification
                 } else {
-                    patient.HealthPackage.status = "Overdue";
+                    patient.HealthPackage.status = "Unsubscribed";
                     // TODO(nour): add notification
+                    schedule.gracefulShutdown();
                     await patient.save();
                 }
     
@@ -125,14 +125,14 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
 const healthPackageUnsubscription = asyncHandler(async (req, res) => {
     
         const patient = await patientModel.findOne({Username: process.env.Username});
-        if (patient && patient.HealthPackage.status !== "Unsubscribed") {
-            patient.HealthPackage.status = "Cancelled";
+        if (patient && patient.HealthPackage.status === "Subscribed") {
+            patient.HealthPackage.status = "Unsubscribed";
             const familyMembers = await patient.populate('FamilyMember').exec();
-
+            schedule.gracefulShutdown();
             for (const member of familyMembers) {
-                const patientFamilyMember = await patientModel.findOne({NationalID: member.NationalID});
+                const patientFamilyMember = await patientModel.findOne({Email: member.Email});
                 if (patientFamilyMember) {
-                    patientFamilyMember.HealthPackage.status = "Cancelled";
+                    patientFamilyMember.HealthPackage.status = "Unsubscribed";
                     await patientFamilyMember.save();
                 }
             }

@@ -23,14 +23,14 @@ function getDiscountAmountForHealthPackage(package){
 }
 
 const payPackage = async(req, res) =>{
-    const {patientId, packageId, paymentMethod} = req.body;
+    const {patientId, packageName, paymentMethod} = req.body;
     
     const patient = await Patient.findById(patientId);
     if(!patient){
         res.status.json({message : "Patient not found"});
     }
 
-    const package = await Package.findById(packageId);
+    const package = await Package.findById(packageName);
     if(!package){
         res.status.json({message : "Package not found"});
     }
