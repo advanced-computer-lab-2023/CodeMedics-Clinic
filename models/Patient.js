@@ -55,6 +55,10 @@ const patientSchema = new Schema({
     Appointments:{
         type: [String],
         required: false
+    },
+    wallet:{
+        type: Number,
+        default: 0
     }
 }, {timestamps: true});
 
