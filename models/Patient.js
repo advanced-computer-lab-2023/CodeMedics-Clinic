@@ -2,6 +2,18 @@ const mongoose = require('mongoose');
 const Prescription = require('./Prescription');
 const Schema = mongoose.Schema;
 
+const PaymentStatus = {
+    Subscribed: "Subscribed",
+    NotSubscribed: "Not Subscribed",
+    Overdue: "Overdue",
+};
+
+const Membership = {
+    Platinum: "Platinum",
+    Gold: "Gold",
+    Silver: "Silver",
+};
+
 const patientSchema = new Schema({
     FirstName: {
         type: String,
@@ -47,11 +59,6 @@ const patientSchema = new Schema({
         type: {String, String},
         required: false
     },
-    Package: {
-        type: String,
-        default: 'Free',
-        required: false
-    },
     FamilyMembers: {
         type: [Schema.Types.ObjectId],
         ref: 'FamilyMember',
@@ -62,7 +69,8 @@ const patientSchema = new Schema({
     },
     HealthPackage:{
         type: {
-            status: String, // Subscribed, Not Subscribed, Overdue
+            membership: Membership,
+            status: PaymentStatus,
             date: Date
         },
         default: {
