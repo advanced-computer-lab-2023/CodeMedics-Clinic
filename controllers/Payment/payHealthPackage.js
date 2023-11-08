@@ -40,6 +40,7 @@ const payPackage = async(req, res) =>{
         }
         else{
             patient.Wallet -= amount;
+            patient.HealthPackage.Price = package.Price;
             await patient.save();
             res.status.json({message : "Health Pacakge has been purchased successfully"});
         }
