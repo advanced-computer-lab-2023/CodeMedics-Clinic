@@ -7,12 +7,16 @@ const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
 const { filterAppointments , getAllApointments } = require('../controllers/Doctor/filterAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
+
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
 const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/GetDoctors');
 const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
+const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
+
+;
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -34,6 +38,7 @@ router.post('/register', upload.fields([
 router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', getAllDoctors);
 
+router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 
 router.patch('/', updateDoctor);
 router.get('/viewAppointments', filterAppointments);
