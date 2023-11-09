@@ -38,6 +38,9 @@ router.post('/register', patientController.createPatient);
 router.post('/payAppointment', payAppointment);
 router.post('/payHealthPackage', payHealthPackage);
 
+router.post('/subscribeHealthPackage', patientController.healthPackageSubscription);
+router.post('/unsubscribeHealthPackage', patientController.healthPackageUnsubscription);
+
 // app.use(verifyToken);
 
 router.post('/familyMembers', addFamilyMember);

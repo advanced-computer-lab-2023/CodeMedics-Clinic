@@ -1,9 +1,18 @@
 const patientModel = require('../../models/Patient');
-const getUsername = require('../../config/infoGetter.js');
+const {getUsername} = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const FamilyMember = require('../../models/FamilyMember');
 const schedule = require('node-schedule');
+const jwt = require('jsonwebtoken');
+
+
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (username) => {
+    return jwt.sign({ username }, 'supersecret', {
+        expiresIn: maxAge
+    });
+};
 
 const createPatient = asyncHandler(async (req, res) => {
     //create a Patient in the database
@@ -11,7 +20,7 @@ const createPatient = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({message: 'Request body is empty'});
     }
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'NationalID', 'Email', 'DateOfBirth', 'Gender', 'MobileNumber', 'EmergencyContactName', 'EmergencyContactNumber'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'Gender', 'MobileNumber', 'EmergencyContactName', 'EmergencyContactNumber'];
 
     for (const variable of requiredVariables) {
         console.log(req.body[variable]);
@@ -26,7 +35,6 @@ const createPatient = asyncHandler(async (req, res) => {
         Username,
         Password,
         Email,
-        NationalID,
         DateOfBirth,
         Gender,
         MobileNumber,
@@ -37,28 +45,24 @@ const createPatient = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
-    if (await getUsername.getUsername(req, res) === '') {
-        const newPatient = new patientModel({
-                FirstName: FirstName,
-                LastName: LastName,
-                Username: Username,
-                Password: hashedPassword,
-                Email: Email,
-                NationalID: NationalID,
-                DateOfBirth: DateOfBirth,
-                Number: MobileNumber,
-                Gender: Gender,
-                EmergencyContacts: {
-                    EmergencyContactName: EmergencyContactName, EmergencyContactNumber: EmergencyContactNumber
-                }
-            })
-        ;
-        await newPatient.save();
-        return res.status(201).json("Patient created successfully!");
-
-    } else {
-        return res.status(400).json({message: "Username already exists"});
-    }
+    const newPatient = new patientModel({
+            FirstName: FirstName,
+            LastName: LastName,
+            Username: Username,
+            Password: hashedPassword,
+            Email: Email,
+            DateOfBirth: DateOfBirth,
+            Number: MobileNumber,
+            Gender: Gender,
+            EmergencyContacts: {
+                EmergencyContactName: EmergencyContactName, EmergencyContactNumber: EmergencyContactNumber
+            }
+        })
+    ;
+    await newPatient.save();
+    const token = createToken(Username);
+    res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+    return res.status(201).json("Patient created successfully!");
 });
 const viewPatients = asyncHandler(async (req, res) => {
     try{
@@ -75,30 +79,43 @@ const viewPatientRegister = asyncHandler(async (req, res) => {
 
 const healthPackageSubscription = asyncHandler(async (req, res) => {
 
-    const patient = await patientModel.findOne({Username: process.env.Username});
+    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
     if (patient && patient.HealthPackage.status === "Unsubscribed") {
-        patient.HealthPackage.status = "Subscribed";
+        patient.HealthPackage.status = "Subscribed1";
         patient.HealthPackage.date = Date.now();
-        const familyMembers = await patient.populate('FamilyMember').exec();
-
-        for (const member of familyMembers) {
-            const patientFamilyMember = await patientModel.findOne({Email: member.Email});
-            if (patientFamilyMember) {
-                patientFamilyMember.HealthPackage.status = "Subscribed";
-                patientFamilyMember.HealthPackage.date = Date.now();
-                await patientFamilyMember.save();
+        patient.HealthPackage.date.setFullYear(patient.HealthPackage.date.getFullYear() + 1);
+        patient.HealthPackage.membership = req.body.membership;
+        for(const member of patient.FamilyMembers){
+            const familyMember = await patientModel.findOne({_id: member});
+            if(familyMember && familyMember.HealthPackage.status === "Unsubscribed"){
+                familyMember.HealthPackage.status = "Subscribed2";
+                familyMember.HealthPackage.date = Date.now();
+                familyMember.HealthPackage.date.setFullYear(familyMember.HealthPackage.date.getFullYear() + 1);
+                familyMember.HealthPackage.membership = req.body.membership;
+                await familyMember.save();
             }
         }
         await patient.save();
         
         //schedule a job to check if the subscription is overdue
-        const jobInterval = `0 0 ${new Date().getDay()} * *`;
-        const job = schedule.scheduleJob(jobInterval, async function(){
-            if(patient.HealthPackage.status === "Subscribed"){
+        const jobInterval = new Date(Date.now());
+        jobInterval.setFullYear(jobInterval.getFullYear() + 1);
+        schedule.scheduleJob(jobInterval, async function(){
+            if(patient.HealthPackage.status === "Subscribed1"){
                 
                 patient.HealthPackage.status = "Unsubscribed";
-                // TODO(nour): add notification
-                schedule.gracefulShutdown();
+                patient.HealthPackage.membership = "Free";
+                
+                for(const member of patient.FamilyMembers){
+                    const familyMember = await patientModel.findOne({_id: member});
+                    if(familyMember && familyMember.HealthPackage.status === "Subscribed2"){
+                        familyMember.HealthPackage.status = "Unsubscribed";
+                        familyMember.HealthPackage.membership = "Free";
+                        
+                        await familyMember.save();
+                    }
+                }
+
                 await patient.save();
     
             }
@@ -115,18 +132,20 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
 
 const healthPackageUnsubscription = asyncHandler(async (req, res) => {
     
-        const patient = await patientModel.findOne({Username: process.env.Username});
-        if (patient && patient.HealthPackage.status === "Subscribed") {
-            patient.HealthPackage.status = "Unsubscribed";
-            const familyMembers = await patient.populate('FamilyMember').exec();
-            schedule.gracefulShutdown();
-            for (const member of familyMembers) {
-                const patientFamilyMember = await patientModel.findOne({Email: member.Email});
-                if (patientFamilyMember) {
-                    patientFamilyMember.HealthPackage.status = "Unsubscribed";
-                    await patientFamilyMember.save();
+        const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+        if (patient && patient.HealthPackage.status !== "Unsubscribed") {
+            if(patient.HealthPackage.status === "Subscribed1"){
+                for (const member of patient.FamilyMembers) {
+                    const patientFamilyMember = await patientModel.findOne({_id: member});
+                    if (patientFamilyMember && patientFamilyMember.HealthPackage.status === "Subscribed2") {
+                        patientFamilyMember.HealthPackage.status = "Unsubscribed";
+                        await patientFamilyMember.save();
+                    }
                 }
             }
+            patient.HealthPackage.status = "Unsubscribed";
+            patient.HealthPackage.membership = "Free";
+            patient.HealthPackage.date = Date.now();
 
             await patient.save();
             res.status(200).json({message: "Health Package Unsubscription Successful!"});
@@ -139,7 +158,7 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
     });
 
 const viewHealthPackage = asyncHandler(async (req, res) => {
-    const patient = await patientModel.findOne({Username: process.env.Username});
+    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
     if (patient) {
         res.status(200).json(patient.HealthPackage);
     } else {
@@ -147,6 +166,4 @@ const viewHealthPackage = asyncHandler(async (req, res) => {
     }
 });
 
-const calculateHealthPackageCost = patient => {};
-
-module.exports = {createPatient, viewPatientRegister , viewPatients};
+module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};

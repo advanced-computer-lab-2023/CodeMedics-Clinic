@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 const Doctor = require('../../models/Doctor');
 const Patient = require('../../models/Patient');
 const express = require('express');
+const {getUsername} = require('../../config/infoGetter');
 
 exports.viewPatients = async (req, res) =>{
-    const username = process.env.Username;
+    const username = await getUsername(req, res);
     console.log("in view patients");
     console.log(username);
     const doctor = await Doctor.find({Username: username});

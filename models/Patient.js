@@ -23,10 +23,6 @@ const patientSchema = new Schema({
         type: String,
         required: [true, 'Please enter an email']
     },
-    NationalID: {
-        type: String,
-       // required: [true, 'Please enter a national ID']
-    },
     DateOfBirth: {
         type: String,
         required: false
@@ -54,7 +50,7 @@ const patientSchema = new Schema({
     },
     FamilyMembers: {
         type: [Schema.Types.ObjectId],
-        ref: 'FamilyMember',
+        ref: 'Patient',
     },
     Appointments:{
         type: [String],
@@ -69,7 +65,7 @@ const patientSchema = new Schema({
         },
         default: {
             membership: "Free",
-            status: "Not Subscribed",
+            status: "Unsubscribed",
             date: Date.now()
         },
         required: false
