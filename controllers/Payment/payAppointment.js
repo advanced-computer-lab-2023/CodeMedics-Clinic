@@ -36,16 +36,17 @@ const payAppointment = async(req, res) =>{
     }
 
     const doctor = await Doctor.findOne({Username: appointment.doctorUsername})
-    console.log(patient, doctor, appointment);
-    const discount = getDiscountAmountForAppointments(patient.HealthPackage.Membership);
-    const amount = appointment.Duration * doctor.HourlyRate * (1 - discount);
+    console.log(patient, doctor, appointment, patient.HealthPackage, patient.HealthPackage.membership);
+    const discount = getDiscountAmountForAppointments(patient.HealthPackage.membership);
+    const duration = appointment.endHour - appointment.startHour;
+    const amount = duration * doctor.HourlyRate * (1 - discount);
 
     if(paymentMethod == "Wallet"){
         if(patient.Wallet < amount){
-            res.status.json({message : "Insufficient funds"});
+            res.status(200).json({message : "Insufficient funds"});
         }
         else{
-            console.log(patient.Wallet);
+            console.log(patient.Wallet, patient.Wallet - 100, amount);
             patient.Wallet -= amount;
             await patient.save();
             appointment.status = "upcoming";
@@ -53,7 +54,7 @@ const payAppointment = async(req, res) =>{
             await appointment.save();
             doctor.Wallet += amount;
             await doctor.save();
-            res.status.json({message : "Appointment has been scheduled successfully"});
+            res.status(200).json({message : "Appointment has been scheduled successfully"});
         }
     }
     else if(paymentMethod == "Card"){
@@ -70,7 +71,7 @@ const payAppointment = async(req, res) =>{
           });
     }
     else{
-        res.status.json({message : "Invalid payment method"});
+        res.status(404).json({message : "Invalid payment method"});
     }
 }
 
