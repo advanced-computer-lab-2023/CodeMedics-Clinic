@@ -24,45 +24,41 @@ const createDoctor = asyncHandler(async (req, res) => {
     }
 
     // Check for uploaded files
-    /*if (!req.files || Object.keys(req.files).length !== 3) {
+    if (!req.files || Object.keys(req.files).length !== 3) {
         return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
     }
-    const { IDDocument, MedicalDegree, MedicalLicense } = req.files;*/
+    const { IDDocument, MedicalDegree, MedicalLicense } = req.files;
 
     try {
         // Handle file uploads (files are available in req.files)
-        /*const idDocumentFile = IDDocument[0].filename;
+        const idDocumentFile = IDDocument[0].filename;
         const medicalDegreeFile = MedicalDegree[0].filename;
-        const medicalLicenseFile = MedicalLicense[0].filename;*/
+        const medicalLicenseFile = MedicalLicense[0].filename;
 
         // Hash the password using bcrypt
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.Password, salt);
 
         // Check if the username and email are unique (you may need to implement these functions)
-        if (await infoGetter.getUsername(req, res) === '') {
-            const newDoctor = new doctorModel({
-                FirstName: req.body.FirstName,
-                LastName: req.body.LastName,
-                Username: req.body.Username,
-                Password: hashedPassword,
-                Email: req.body.Email,
-                DateOfBirth: req.body.DateOfBirth,
-                HourlyRate: req.body.HourlyRate,
-                affiliation: req.body.affiliation,
-                Degree: req.body.Degree,
-                Specialty: req.body.Specialty,
-                /*IDDocument: idDocumentFile,
-                MedicalDegree: medicalDegreeFile,
-                MedicalLicense: medicalLicenseFile*/
-            });
-            await newDoctor.save();
-            const token = createToken(req.body.Username);
-            res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-            return res.status(201).json("Doctor created successfully");
-        } else {
-            return res.status(400).json({ message: "Username or email already exists" });
-        }
+        const newDoctor = new doctorModel({
+            FirstName: req.body.FirstName,
+            LastName: req.body.LastName,
+            Username: req.body.Username,
+            Password: hashedPassword,
+            Email: req.body.Email,
+            DateOfBirth: req.body.DateOfBirth,
+            HourlyRate: req.body.HourlyRate,
+            affiliation: req.body.affiliation,
+            Degree: req.body.Degree,
+            Specialty: req.body.Specialty,
+            IDDocument: idDocumentFile,
+            MedicalDegree: medicalDegreeFile,
+            MedicalLicense: medicalLicenseFile
+        });
+        await newDoctor.save();
+        const token = createToken(req.body.Username);
+        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+        return res.status(201).json("Doctor created successfully");
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
