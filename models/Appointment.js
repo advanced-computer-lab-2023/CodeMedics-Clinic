@@ -6,6 +6,10 @@ const appointmentSchema = new Schema({
         type: String,
         required: true
     },
+    doctorUsername: {
+        type: String,
+        required: true
+    },
     patient: {
         type: String,
         required: true

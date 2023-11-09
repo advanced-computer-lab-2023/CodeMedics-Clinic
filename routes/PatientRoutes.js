@@ -21,7 +21,7 @@ const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
-    try {
+    try {   
         const model = jwt.verify(token, process.env.SECRET_KEY);
         res.locals.token = model;
         next();

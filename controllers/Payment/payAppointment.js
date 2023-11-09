@@ -35,8 +35,8 @@ const payAppointment = async(req, res) =>{
         res.status.json({message : "Appointment not found"});
     }
 
-    const doctor = await Doctor.findById(appointment.DoctorId);
-
+    const doctor = await Doctor.findOne({Username: appointment.doctorUsername})
+    console.log(patient, doctor, appointment);
     const discount = getDiscountAmountForAppointments(patient.HealthPackage.Membership);
     const amount = appointment.Duration * doctor.HourlyRate * (1 - discount);
 

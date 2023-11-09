@@ -25,7 +25,7 @@ const patientSchema = new Schema({
     },
     NationalID: {
         type: String,
-        required: [true, 'Please enter a national ID']
+       // required: [true, 'Please enter a national ID']
     },
     DateOfBirth: {
         type: String,
@@ -62,10 +62,13 @@ const patientSchema = new Schema({
     },
     HealthPackage:{
         type: {
-            status: String, // Subscribed, Not Subscribed, Overdue
+            membership: String, // Free, Silver, Gold, Platinum
+            status: String, // Subscribed, Unsubscribed
+            Price: Number,
             date: Date
         },
         default: {
+            membership: "Free",
             status: "Not Subscribed",
             date: Date.now()
         },
