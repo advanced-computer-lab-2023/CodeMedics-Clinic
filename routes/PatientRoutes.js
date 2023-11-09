@@ -15,6 +15,9 @@ const {
 const app = require('../app.js');
 const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
 
+const {payAppointment} = require('../controllers/Payment/payAppointment');
+const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -29,6 +32,10 @@ function verifyToken(req, res, next) {
 router.get('/register', patientController.viewPatientRegister);
 router.get('/getPatients', viewPatients);
 router.post('/register', patientController.createPatient);
+
+
+router.post('/payAppointment', payAppointment);
+router.post('/payHealthPackage', payHealthPackage);
 
 // app.use(verifyToken);
 

@@ -22,7 +22,7 @@ function getDiscountAmountForHealthPackage(package){
     }
 }
 
-const payPackage = async(req, res) =>{
+const payHealthPackage = async(req, res) =>{
     const {patientId, packageName, paymentMethod} = req.body;
     
     const patient = await Patient.findById(patientId);
@@ -63,4 +63,4 @@ const payPackage = async(req, res) =>{
     }
 }
 
-module.exports = {payPackage};
+module.exports = {payHealthPackage};

@@ -23,14 +23,14 @@ function getDiscountAmountForAppointments(package){
 }
 
 const payAppointment = async(req, res) =>{
-    const {patientId, appiontmentId, paymentMethod} = req.body;
+    const {patientId, appointmentId, paymentMethod} = req.body;
     
     const patient = await Patient.findById(patientId);
     if(!patient){
         res.status.json({message : "Patient not found"});
     }
 
-    const appointment = await Appointment.findById(appiontmentId);
+    const appointment = await Appointment.findById(appointmentId);
     if(!appointment){
         res.status.json({message : "Appointment not found"});
     }
@@ -41,14 +41,18 @@ const payAppointment = async(req, res) =>{
     const amount = appointment.Duration * doctor.HourlyRate * (1 - discount);
 
     if(paymentMethod == "Wallet"){
-        if(patient.wallet < amount){
+        if(patient.Wallet < amount){
             res.status.json({message : "Insufficient funds"});
         }
         else{
-            patient.wallet -= amount;
+            console.log(patient.Wallet);
+            patient.Wallet -= amount;
             await patient.save();
             appointment.status = "upcoming";
+            console.log(patient.Wallet);
             await appointment.save();
+            doctor.Wallet += amount;
+            await doctor.save();
             res.status.json({message : "Appointment has been scheduled successfully"});
         }
     }
