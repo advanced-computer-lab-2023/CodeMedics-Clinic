@@ -15,8 +15,7 @@ const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/Ge
 const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
 const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
-
-;
+const { requireAuth } = require('../Middleware/authMiddleware');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -36,7 +35,7 @@ router.post('/register', upload.fields([
 ]), createDoctor);
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
-router.get('/getAllDoctors', getAllDoctors);
+router.get('/getAllDoctors', requireAuth, getAllDoctors);
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 
@@ -69,7 +68,6 @@ router.get('/viewPatientDetails:Username', (req, res) => {
 router.get('/', (req, res) => {
     res.setHeader('Content-Type', 'text/html');
     const username = req.query.Username;
-    process.env.Username = username;
     console.log("in the doctor route");
     console.log(username);
     fs.readFile('./views/Doctor/Doctor.html', null, function (error, data) {

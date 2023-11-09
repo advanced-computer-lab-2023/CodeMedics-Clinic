@@ -1,34 +1,25 @@
-const adminModel = require("../models/Administrator");
-const doctorModel = require("../models/Doctor");
-const patientModel = require("../models/Patient");
-
+const jwt = require('jsonwebtoken');
 
 const getUsername = async (req, res) => {
-    const {Username} = req.body;
-
-    try {
-        const usernameExists = await adminModel.findOne({Username}) || await doctorModel.findOne({Username}) || await patientModel.findOne({Username});
-        if (usernameExists) {
-            return usernameExists.Username;
-        }
-        return '';
-    } catch (error) {
-        res.status(409).json({message: error.message});
-    }
-};
-const getEmail = async (req, res) => {
-    const {Email} = req.body;
-
-    try {
-        const emailExists = await adminModel.findOne({Email}) || await doctorModel.findOne({Email}) || await patientModel.findOne({Email});
-        if (emailExists) {
-            return emailExists.Email;
-        }
-        return '';
-    } catch (error) {
-        res.status(409).json({message: error.message});
-    }
+    const token = req.cookies.jwt;
+    let username = "";
+  if(token){
+    jwt.verify(token, 'supersecret', (err, decodedToken) => {
+      if (err) {
+        // console.log('You are not logged in.');
+        // res send status 401 you are not logged in
+        res.status(401).json({message:"You are not logged in."})
+        // res.redirect('/login');
+      } else {
+        console.log(decodedToken, decodedToken.username);
+        username = decodedToken.username;
+      }
+    });
+  }else{
+    res.status(401).json({message:"You are not logged in."})
+  }
+    return username;
 };
 
-module.exports = {getUsername, getEmail};
+module.exports = {getUsername};
 
