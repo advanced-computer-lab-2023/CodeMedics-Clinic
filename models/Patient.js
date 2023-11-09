@@ -47,6 +47,11 @@ const patientSchema = new Schema({
         type: {String, String},
         required: false
     },
+    Package: {
+        type: String,
+        default: 'Free',
+        required: false
+    },
     FamilyMembers: {
         type: [Schema.Types.ObjectId],
         ref: 'FamilyMember',
@@ -57,14 +62,10 @@ const patientSchema = new Schema({
     },
     HealthPackage:{
         type: {
-            Name: String,
-            membership: String, // Free, Silver, Gold, Platinum
-            status: String, // Subscribed, Unsubscribed
-            Price: Number,
+            status: String, // Subscribed, Not Subscribed, Overdue
             date: Date
         },
         default: {
-            membership: "Free",
             status: "Not Subscribed",
             date: Date.now()
         },
@@ -75,6 +76,10 @@ const patientSchema = new Schema({
         default: 0,
         required: false
     },
+    MedicalDocuments: [{ //for medical history
+        filename: String,
+        originalname: String,
+    }],
 }, {timestamps: true});
 
 const Patient = mongoose.model('Patient', patientSchema, 'Patients');
