@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const patientController = require('../controllers/Patient/PatientController');
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/FamilyMembersController');
+const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const {
     getPrescriptions,
@@ -33,6 +34,11 @@ router.post('/register', patientController.createPatient);
 // app.use(verifyToken);
 
 router.post('/familyMembers', addFamilyMember);
+
+router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
+router.delete('/:username/MedicalHistory/:documentId', removeDocument);
+
+
 router.get('/familyMembers', viewFamilyMembers);
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/prescriptions', getPrescriptions);
