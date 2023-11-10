@@ -17,6 +17,7 @@ const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
 const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
 const { requireAuth } = require('../Middleware/authMiddleware');
+const {addAppointments} = require('../controllers/Doctor/addAppointment');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -37,6 +38,8 @@ router.post('/register', upload.fields([
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', requireAuth, getAllDoctors);
+
+router.post('/addAppointments', addAppointments);
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);

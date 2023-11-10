@@ -28,8 +28,8 @@ const appointmentSchema = new Schema({
     },
     status:{
         type: String,
-        enum: ['upcoming', 'completed', 'cancelled', 'rescheduled'],
-        default: 'upcoming', 
+        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled'],
+        default: 'unreserved', 
         required: true }
 } , {timestamps: true});
 
