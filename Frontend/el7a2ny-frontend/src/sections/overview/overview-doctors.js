@@ -38,7 +38,7 @@ export const OverviewDoctors = (props) => {
   console.log(username);
   const getSelectedDoctorAppointments = (username) => {
     console.log(username);
-    router.push(`/user/appointments?username=${username}`);
+    router.push(`/user/appointments?doctorUsername=${username}`);
   }
 
  

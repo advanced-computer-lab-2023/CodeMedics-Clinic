@@ -36,9 +36,9 @@ export async function getServerSideProps() {
     // Fetch data from the provided API
 
     const params = new URLSearchParams(window.location.search);
-    const username = params.get('username');
+    const doctorUsername = params.get('doctorUsername');
 
-    const response = await axios.get(`http://localhost:8000/doctor/viewAppointments?username=${username}`);
+    const response = await axios.get(`http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername=${doctorUsername}`);
     const appointments = response.data;
 
     console.log(appointments);

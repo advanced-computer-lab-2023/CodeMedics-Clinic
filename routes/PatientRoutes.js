@@ -38,7 +38,7 @@ router.get('/getPatients', viewPatients);
 router.post('/register', patientController.createPatient);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
-router.get('getFreeSlotsOfDoctor', filterDoctorFreeSlots);
+router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 
 
 router.post('/payAppointment', payAppointment);

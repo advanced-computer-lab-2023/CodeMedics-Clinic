@@ -32,6 +32,8 @@ export const OverviewAppointments = (props) => {
   const router = useRouter();
   const { appointments=[], sx } = props;
 
+  console.log(appointments);
+
   const [selectedDoctors, setSelectedDoctors] = useState({});
 
   const username = Cookies.get("username");

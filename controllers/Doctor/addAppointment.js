@@ -9,9 +9,9 @@ exports.addAppointments = async (req, res) => {
         const {startHour, endHour, date} = req.body;
         const Username = getUsername();
         const doctor = await Doctor.findById(Username);
-        const doctorId = doctor._id;
+        const doctorName = doctor.FirstName + " " + doctor.LastName;
         const appointment = new Appointment({  
-            doctor: doctorId,
+            doctor: doctorName,
             doctorUsername: Username,
             patient: null,
             date: date,
