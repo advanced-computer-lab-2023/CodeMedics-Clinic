@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, FormHelperText, Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import axios from 'axios';
@@ -19,10 +19,11 @@ const Page = () => {
       Username: '',
       Password: '',
       Email: '',
-      NationalID: '',
       DateOfBirth: '',
       Number: '',
-      Gender: ''
+      Gender: '',
+      EmergencyContactName: '',
+      EmergencyContactNumber: '',
     },
     validationSchema: Yup.object({
       FirstName: Yup
@@ -46,34 +47,40 @@ const Page = () => {
         .email('Must be a valid email')
         .max(255)
         .required('Email is required'),
-      NationalID: Yup
-      .string()
-      .max(255)
-      .required('National ID is required'),
       DateOfBirth: Yup
         .date()
         .required('Date of birth is required'),
       Number: Yup
-      .string()
-      .max(255)
-      .required('Phone number is required'),
+        .string()
+        .max(255),
       Gender: Yup
-      .string()
-      .max(255)
-      .required('Gender is required')
+        .string()
+        .max(255)
+        .required('Gender is required'),
+      EmergencyContactName: Yup
+        .string() 
+        .max(255)
+        .required('Emergency Contact Name is required'),
+      EmergencyContactNumber: Yup
+        .string()
+        .max(255)
+        .required('Emergency Contact Number is required'),  
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const body = {"FirstName": values.FirstName,
+        const body = {
+        "FirstName": values.FirstName,
         "LastName": values.LastName, 
         "Username":values.Username , 
         "Password": values.Password,
         "Email": values.Email,
-        "NationalID": values.NationalID,
         "DateOfBirth": values.DateOfBirth,
         "Number": values.Number,
-        "Gender": values.Gender };
-          await axios.post('http://localhost:8000/addUser' , body)
+        "Gender": values.Gender,
+        "EmergencyContactName": values.EmergencyContactName,
+        "EmergencyContactNumber": values.EmergencyContactNumber 
+        };
+          await axios.post('http://localhost:8000/Patient/register' , body)
           .then((res) => { 
             if(res.status != 200){
               throw new Error(res.data.message); 
@@ -85,7 +92,7 @@ const Page = () => {
             });
       } catch (err) {
         helpers.setStatus({ success: false });
-        helpers.setErrors({ Submit: err.response.data.error});
+        helpers.setErrors({ Submit: err.response.data.message});
         helpers.setSubmitting(false);
       }
     }
@@ -196,16 +203,6 @@ const Page = () => {
                   value={formik.values.Email}
                 />
                 <TextField
-                  error={!!(formik.touched.NationalID && formik.errors.NationalID)}
-                  fullWidth
-                  helperText={formik.touched.NationalID && formik.errors.NationalID}
-                  label="National ID"
-                  name="NationalID"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.NationalID}
-                />
-                <TextField
                   error={!!(formik.touched.DateOfBirth && formik.errors.DateOfBirth)}
                   fullWidth
                   helperText={formik.touched.DateOfBirth && formik.errors.DateOfBirth}
@@ -242,15 +239,45 @@ const Page = () => {
                   onChange={formik.handleChange}
                   value={formik.values.Number}
                 />
+                <FormControl fullWidth>
+                  {/* Gender */}
+                  <InputLabel shrink={formik.values.Gender !== ''} htmlFor="Gender">
+                    Gender
+                  </InputLabel>
+                  <Select
+                    name="Gender"
+                    value={formik.values.Gender}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={!!(formik.touched.Gender && formik.errors.Gender)}
+                  >
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                    <MenuItem value="others">Others</MenuItem>
+                  </Select>
+                  {formik.touched.Gender && formik.errors.Gender && (
+                    <FormHelperText>{formik.errors.Gender}</FormHelperText>
+                  )}  
+                </FormControl>
                 <TextField
-                  error={!!(formik.touched.Gender && formik.errors.Gender)}
+                  error={!!(formik.touched.EmergencyContactName && formik.errors.EmergencyContactName)}
                   fullWidth
-                  helperText={formik.touched.Gender && formik.errors.Gender}
-                  label="Gender"
-                  name="Gender"
+                  helperText={formik.touched.EmergencyContactName && formik.errors.EmergencyContactName}
+                  label="Emergency Contact Name"
+                  name="EmergencyContactName"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.Gender}
+                  value={formik.values.EmergencyContactName}
+                />
+                <TextField
+                  error={!!(formik.touched.EmergencyContactNumber && formik.errors.EmergencyContactNumber)}
+                  fullWidth
+                  helperText={formik.touched.EmergencyContactNumber && formik.errors.EmergencyContactNumber}
+                  label="Emergency Contact Number"
+                  name="EmergencyContactNumber"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.EmergencyContactNumber}
                 />
               </Stack>
               {formik.errors.Submit && (
