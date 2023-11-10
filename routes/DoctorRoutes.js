@@ -17,6 +17,9 @@ const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
 const { requireAuth } = require('../Middleware/authMiddleware');
 
+const { changePassword } = require('../controllers/Doctor/registerDoctor');
+
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -38,6 +41,8 @@ router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', requireAuth, getAllDoctors);
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
+router.post('/changePassword', requireAuth, changePassword);
+
 
 router.patch('/', updateDoctor);
 router.get('/viewAppointments', filterAppointments);

@@ -208,6 +208,37 @@ const updatePackage = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+
+    try {
+        // Fetch the doctor's current data from the database using their username
+        const admin = await adminModel.findOne({ Username: username });
+
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found' });
+        }
+
+        // Verify if the current password matches the one in the database
+        const passwordMatch = await bcrypt.compare(currentPassword, admin.Password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({ error: 'Current password is incorrect' });
+        }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update the admin's password in the database
+        admin.Password = hashedPassword;
+        await admin.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
 
 module.exports = {
     createAdmin,
@@ -218,5 +249,6 @@ module.exports = {
     addPackage,
     removePackage,
     updatePackage,
-    getPackages
+    getPackages,
+    changePassword
 };

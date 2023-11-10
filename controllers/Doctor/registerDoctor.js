@@ -5,6 +5,9 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 
+
+
+
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
     return jwt.sign({ username }, 'supersecret', {
@@ -80,4 +83,37 @@ const getAllDoctors = asyncHandler(async (req, res) => {
 const viewDoctorRegister = asyncHandler(async (req, res) => {
     res.render('DoctorViews/RegisterDoctor');
 });
-module.exports = {createDoctor, viewDoctorRegister,getAllDoctors};
+
+const changePassword = async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+
+    try {
+        // Fetch the doctor's current data from the database using their username
+        const doctor = await doctorModel.findOne({ Username: username });
+
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor not found' });
+        }
+
+        // Verify if the current password matches the one in the database
+        const passwordMatch = await bcrypt.compare(currentPassword, doctor.Password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({ error: 'Current password is incorrect' });
+        }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update the doctor's password in the database
+        doctor.Password = hashedPassword;
+        await doctor.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = {createDoctor, viewDoctorRegister,getAllDoctors, changePassword};
