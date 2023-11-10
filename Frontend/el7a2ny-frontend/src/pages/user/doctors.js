@@ -36,9 +36,6 @@ export async function getServerSideProps() {
     // Fetch data from the provided API
     const response = await axios.get('http://localhost:8000/doctor/getDoctors');
     const doctors = response.data;
-
-    console.log(doctors);
-
     return {
       props:  {doctors} ,
     };

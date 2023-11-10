@@ -6,10 +6,10 @@ const Appointment = require('../../models/Appointment');
 exports.filterDoctorFreeSlots = async (req, res) => {
     try {
         const { doctorUsername } = req.query;
-        const doctor = await Doctor.findById(doctorUsername);
+        const doctor = await Doctor.find({Username: doctorUsername});
         const appointments = [];
-        for (let i = 0; i < doctor.Appointments.length; i++) {
-            const appointment = await Appointment.findOne({ _id: doctor.Appointments[i] });
+        for (let i = 0; i < doctor[0].Appointments.length; i++) {
+            const appointment = await Appointment.findOne({ _id: doctor[0].Appointments[i] });
             if(appointment.status == "unreserved" && appointment.date >= Date.now()){
                 appointments.push(appointment);
             }

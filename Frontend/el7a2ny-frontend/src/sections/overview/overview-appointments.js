@@ -28,17 +28,20 @@ import {
 } from '@mui/material';
 import { get } from 'http';
 
-export const OverviewAppointments = (props) => {
-  const router = useRouter();
-  const { appointments=[], sx } = props;
+export const OverviewAppointments = ({username}) => {
+  const [appointments, setAppointments] = useState([]);
 
-  console.log(appointments);
-
-  const [selectedDoctors, setSelectedDoctors] = useState({});
-
-  const username = Cookies.get("username");
-  console.log(username);
-
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername=${username}`)
+      .then((res) => {
+        console.log(res.data.appointments);
+        setAppointments(res.data.appointments);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
  
   return (
     <CardContent>
