@@ -13,8 +13,9 @@ const createToken = (username) => {
 };
 
 const createDoctor = asyncHandler(async (req, res) => {
+    console.log(req.body);
     // Check if the required variables are present in the request body
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Specialty'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
 
     for (const variable of requiredVariables) {
         
@@ -23,17 +24,17 @@ const createDoctor = asyncHandler(async (req, res) => {
         }
     }
 
-    // Check for uploaded files
-    if (!req.files || Object.keys(req.files).length !== 3) {
-        return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
-    }
-    const { IDDocument, MedicalDegree, MedicalLicense } = req.files;
+    // // Check for uploaded files
+    // if (!req.files || Object.keys(req.files).length !== 3) {
+    //     return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
+    // }
+    // const { IDDocument, MedicalDegree, MedicalLicense } = req.files;
 
     try {
         // Handle file uploads (files are available in req.files)
-        const idDocumentFile = IDDocument[0].filename;
-        const medicalDegreeFile = MedicalDegree[0].filename;
-        const medicalLicenseFile = MedicalLicense[0].filename;
+        // const idDocumentFile = IDDocument[0].filename;
+        // const medicalDegreeFile = MedicalDegree[0].filename;
+        // const medicalLicenseFile = MedicalLicense[0].filename;
 
         // Hash the password using bcrypt
         const salt = await bcrypt.genSalt(10);
@@ -50,15 +51,12 @@ const createDoctor = asyncHandler(async (req, res) => {
             HourlyRate: req.body.HourlyRate,
             affiliation: req.body.affiliation,
             Degree: req.body.Degree,
-            Specialty: req.body.Specialty,
-            IDDocument: idDocumentFile,
-            MedicalDegree: medicalDegreeFile,
-            MedicalLicense: medicalLicenseFile
+            Speciality: req.body.Speciality
         });
         await newDoctor.save();
         const token = createToken(req.body.Username);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        return res.status(201).json("Doctor created successfully");
+        return res.status(200).json("Doctor created successfully");
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });

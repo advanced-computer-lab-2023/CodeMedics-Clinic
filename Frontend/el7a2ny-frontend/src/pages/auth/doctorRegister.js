@@ -14,7 +14,8 @@ const Page = () => {
   const auth = useAuth();
   const formik = useFormik({
     initialValues: {
-      Name: '',
+      FirstName: '',
+      LastName: '',
       Username: '',
       Password: '',
       Email: '',
@@ -22,13 +23,18 @@ const Page = () => {
       HourlyRate: '',
       affiliation: '',
       Degree: '',
-        Submit: null
+      Speciality: '',
+      Submit: null
     },
     validationSchema: Yup.object({
-      Name: Yup
+      FirstName: Yup
         .string()
         .max(255)
-        .required('Name is required'),
+        .required('First name is required'),
+      LastName: Yup
+        .string()
+        .max(255)
+        .required('Last name is required'), 
       Username: Yup
         .string()
         .max(255)
@@ -53,23 +59,31 @@ const Page = () => {
         .required('Affiliation is required'),
       Degree: Yup
         .string()
-        .required('Degree is required')  
+        .required('Degree is required')  ,
+      Speciality: Yup
+        .string()
+        .required('Speciality is required')  
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const body = {"Name": values.Name, 
+        const body = {
+        "FirstName": values.FirstName, 
+        "LastName": values.LastName,
         "Username":values.Username , 
         "Password": values.Password,
         "Email": values.Email,
         "DateOfBirth": values.DateOfBirth,
         "HourlyRate": values.HourlyRate,
         "affiliation": values.affiliation,
-        "Degree": values.Degree };
-          await axios.post('http://localhost:8000/createPharmacist' , body)
+        "Degree": values.Degree, 
+        "Speciality": values.Speciality
+        };
+          await axios.post('http://localhost:8000/Doctor/register' , body)
           .then((res) => { 
             if(res.status != 200){
               throw new Error(res.data.message); 
             }
+              console.log(res);
               return res['data'];
             })
             .then((data) => {
@@ -77,7 +91,7 @@ const Page = () => {
             });
       } catch (err) {
         helpers.setStatus({ success: false });
-        helpers.setErrors({ Submit: err.response.data.error});
+        helpers.setErrors({ Submit: err.response.data.message});
         helpers.setSubmitting(false);
       }
     }
@@ -87,7 +101,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Pharmacist Register
+          Doctor Register
         </title>
       </Head>
       <Box
@@ -112,7 +126,7 @@ const Page = () => {
               sx={{ mb: 3 }}
             >
               <Typography variant="h4">
-                Register as Pharmacist
+                Register as Doctor
               </Typography>
               <Typography
                 color="text.secondary"
@@ -136,14 +150,24 @@ const Page = () => {
             >
               <Stack spacing={3}>
                 <TextField
-                  error={!!(formik.touched.Name && formik.errors.Name)}
+                  error={!!(formik.touched.FirstName && formik.errors.FirstName)}
                   fullWidth
-                  helperText={formik.touched.Name && formik.errors.Name}
-                  label="Name"
-                  name="Name"
+                  helperText={formik.touched.FirstName && formik.errors.FirstName}
+                  label="FirstName"
+                  name="FirstName"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.Name}
+                  value={formik.values.FirstName}
+                />
+                <TextField
+                  error={!!(formik.touched.LastName && formik.errors.LastName)}
+                  fullWidth
+                  helperText={formik.touched.LastName && formik.errors.LastName}
+                  label="LastName"
+                  name="LastName"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.LastName}
                 />
                 <TextField
                   error={!!(formik.touched.Username && formik.errors.Username)}
@@ -234,6 +258,16 @@ const Page = () => {
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                   value={formik.values.Degree}
+                />
+                <TextField
+                  error={!!(formik.touched.Speciality && formik.errors.Speciality)}
+                  fullWidth
+                  helperText={formik.touched.Speciality && formik.errors.Speciality}
+                  label="Speciality"
+                  name="Speciality"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.Speciality}
                 />
               </Stack>
               {formik.errors.Submit && (

@@ -173,11 +173,11 @@ const Page = () => {
                 &nbsp;
                 <Link
                   component={NextLink}
-                  href="/auth/pharmacistRegister"
+                  href="/auth/doctorRegister"
                   underline="hover"
                   variant="subtitle2"
                 >
-                  Pharmacist
+                  Doctor
                 </Link>
                 &nbsp; , &nbsp;
                 <Link

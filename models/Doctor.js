@@ -45,7 +45,7 @@ const doctorSchema = new Schema({
         default: 'Pending',
         required: false,
     },
-    Specialty: {
+    Speciality: {
         type: String,
         required: [true, 'Please enter a specialty']
     },
