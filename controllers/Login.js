@@ -15,31 +15,57 @@ const createToken = (username) => {
 };
 
 const login = async (req, res) => {
-    const { Username, password } = req.body;
+    const { username, email, password } = req.body;
     try {
-        const user1 = await adminModel.findOne({ Username });
-        const user2 = await doctorModel.findOne({ Username });
-        const user3 = await patientModel.findOne({ Username });
-        
-        const user = user1 || user2 || user3;
-
-
-        if (user) {
-            const auth = await bcrypt.compare(password, user.Password);
+        var patient = null, doctor = null, admin = null;
+        if (username) {
+            patient = await patientModel.findOne({ Username: username });
+            doctor = await doctorModel.findOne({ username });
+            admin = await adminModel.findOne({Username: username });
+        } if (email) {
+            patient = await patientModel.findOne({ email });
+            doctor = await doctorModel.findOne({ email });
+            admin = await adminModel.findOne({Email: email });
+        }
+        if (!patient && !doctor && !admin) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (patient) {
+            const auth = await bcrypt.compare(password, patient.Password);
             if (auth) {
-                const token = createToken(user.Username);
+                const token = createToken(patient.Username);
                 res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-                res.status(200).json(user)
-            } else {
-                res.status(400).json({ error: "Wrong password" })
+                return res.status(200).json({ Type: 'Patient', message: 'Login successful' , patient , token});
             }
-        } else {
-            res.status(400).json({ error: "User not found" })
+            else {
+                return res.status(401).json({ message: 'Wrong password' });
+            }
+        } else if (doctor) {
+            const auth = await bcrypt.compare(password, doctor.password);
+            if (auth) {
+                const token = createToken(doctor.username);
+                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+                return res.status(200).json({ Type: 'Doctor', message: 'Login successful' , doctor , token});
+            }
+            else {
+                return res.status(401).json({ message: 'Wrong password' });
+            }
+        } else if (admin) {
+            const auth = await bcrypt.compare(password, admin.Password);
+            if (auth) {
+                const token = createToken(admin.Username);
+                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+                return res.status(200).json({ Type: 'Admin', message: 'Login successful' , admin , token});
+            }
+            else {
+                return res.status(401).json({ message: 'Wrong password' });
+            }
         }
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        return res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 const logout = async (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 });

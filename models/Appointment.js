@@ -28,8 +28,9 @@ const appointmentSchema = new Schema({
     },
     status:{
         type: String,
-        required: true
-    }
+        enum: ['upcoming', 'completed', 'cancelled', 'rescheduled'],
+        default: 'upcoming', 
+        required: true }
 } , {timestamps: true});
 
 const Appointment = mongoose.model('Appointment', appointmentSchema, 'Appointments');

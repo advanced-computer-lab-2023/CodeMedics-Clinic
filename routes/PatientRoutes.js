@@ -5,6 +5,7 @@ const patientController = require('../controllers/Patient/PatientController');
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
+const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const {
     getPrescriptions,
@@ -33,6 +34,8 @@ function verifyToken(req, res, next) {
 router.get('/register', patientController.viewPatientRegister);
 router.get('/getPatients', viewPatients);
 router.post('/register', patientController.createPatient);
+router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
+router.get('/:patientUsername/past-appointments', viewPastAppointments);
 
 
 router.post('/payAppointment', payAppointment);

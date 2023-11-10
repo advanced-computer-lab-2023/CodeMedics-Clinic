@@ -14,7 +14,7 @@ exports.scheduleFollowUp = async (req, res) => {
         if (!doctor || !patient) {
             return res.status(404).json({ error: 'Doctor or patient not found' });
         }
-
+        const utcDate = new Date(date).toISOString();
         // Create a new Appointment object
         const appointment = new Appointment({
             doctor: doctor.Username ,
