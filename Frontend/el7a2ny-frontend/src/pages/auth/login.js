@@ -54,7 +54,7 @@ const Page = () => {
             .then((data) => {
               if (data['Type'] === 'Patient') {
                 Cookies.set('username', data['patient']['username']);
-                router.push(`/user/medicines`);
+                router.push(`/user/doctors`);
               } else if (data['Type'] === 'Pharmacist') {
                 Cookies.set('username', data['pharmacist']['username']);
                 router.push(`/pharmacist`);
@@ -101,7 +101,7 @@ const Page = () => {
             .then((data) => {              
               if (data['Type'] === 'Patient') {
                 Cookies.set('username', data['patient']['Username']);
-                router.push(`/user/medicines`);
+                router.push(`/user/doctors`);
               } else if (data['Type'] === 'Pharmacist') {
                 Cookies.set('username', data['pharmacist']['username']);
                 router.push(`/pharmacist`);

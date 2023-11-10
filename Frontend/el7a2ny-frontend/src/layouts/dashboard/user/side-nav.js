@@ -77,7 +77,7 @@ export const SideNav = (props) => {
                 color="neutral.400"
                 variant="body2"
               >
-                Pharmacy
+                Clinic
               </Typography>
             </div>
             <SvgIcon

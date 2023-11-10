@@ -16,15 +16,16 @@ const createToken = (username) => {
 
 const login = async (req, res) => {
     const { username, email, password } = req.body;
+    console.log(username, email, password);
     try {
         var patient = null, doctor = null, admin = null;
         if (username) {
             patient = await patientModel.findOne({ Username: username });
-            doctor = await doctorModel.findOne({ username });
+            doctor = await doctorModel.findOne({ Username: username });
             admin = await adminModel.findOne({Username: username });
         } if (email) {
-            patient = await patientModel.findOne({ email });
-            doctor = await doctorModel.findOne({ email });
+            patient = await patientModel.findOne({ Email: email });
+            doctor = await doctorModel.findOne({ Email: email });
             admin = await adminModel.findOne({Email: email });
         }
         if (!patient && !doctor && !admin) {
