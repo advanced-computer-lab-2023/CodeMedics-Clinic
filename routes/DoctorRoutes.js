@@ -5,6 +5,7 @@ const upload = require('../config/multerConfig');
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
 const { filterAppointments , getAllApointments } = require('../controllers/Doctor/filterAppointments');
+const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Doctor/viewAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
 
@@ -39,6 +40,8 @@ router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', getAllDoctors);
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
+router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);
+router.get('/:doctorUsername/past-appointments', viewPastAppointments);
 
 router.patch('/', updateDoctor);
 router.get('/viewAppointments', filterAppointments);
