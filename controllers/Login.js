@@ -1,56 +1,76 @@
 const adminModel = require("../models/Administrator");
 const doctorModel = require("../models/Doctor");
 const patientModel = require("../models/Patient");
-const AsyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
+const {getUsername} = require('../config/infoGetter.js');
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
 
-const Login = AsyncHandler(async (req, res) => {
-    if (Object.keys(req.body).length === 0) {
-        return res.status(400).json({message: 'Request body is empty'});
+
+// create json web token
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (username) => {
+    return jwt.sign({ username }, 'supersecret', {
+        expiresIn: maxAge
+    });
+};
+
+const login = async (req, res) => {
+    const { username, email, password } = req.body;
+    console.log(username, email, password);
+    try {
+        var patient = null, doctor = null, admin = null;
+        if (username) {
+            patient = await patientModel.findOne({ Username: username });
+            doctor = await doctorModel.findOne({ Username: username });
+            admin = await adminModel.findOne({Username: username });
+        } if (email) {
+            patient = await patientModel.findOne({ Email: email });
+            doctor = await doctorModel.findOne({ Email: email });
+            admin = await adminModel.findOne({Email: email });
+        }
+        if (!patient && !doctor && !admin) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (patient) {
+            const auth = await bcrypt.compare(password, patient.Password);
+            if (auth) {
+                const token = createToken(patient.Username);
+                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+                return res.status(200).json({ Type: 'Patient', message: 'Login successful' , patient , token});
+            }
+            else {
+                return res.status(401).json({ message: 'Wrong password' });
+            }
+        } else if (doctor) {
+            const auth = await bcrypt.compare(password, doctor.Password);
+            if (auth) {
+                const token = createToken(doctor.Username);
+                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+                return res.status(200).json({ Type: 'Doctor', message: 'Login successful' , doctor , token});
+            }
+            else {
+                return res.status(401).json({ message: 'Wrong password' });
+            }
+        } else if (admin) {
+            const auth = await bcrypt.compare(password, admin.Password);
+            if (auth) {
+                const token = createToken(admin.Username);
+                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+                return res.status(200).json({ Type: 'Admin', message: 'Login successful' , admin , token});
+            }
+            else {
+                return res.status(401).json({ message: 'Wrong password' });
+            }
+        }
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-    if (!req.body.Username || req.body.Username === '') {
-        return res.status(400).json({message: 'Missing Username in the request body'});
-    }
-    if (!req.body.Password || req.body.Password === '') {
-        return res.status(400).json({message: 'Missing Password in the request body'});
-    }
-    const {Username, Password} = req.body;
-
-    const admin = await adminModel.findOne({Username});
-    const doctor = await doctorModel.findOne({Username});
-    const patient = await patientModel.findOne({Username});
-
-    if (admin && (await bcrypt.compare(Password, admin.Password))) {
-        //redirect to admin page
-        const formattedJson = JSON.stringify(admin, null, 2);
-
-        return res.status(200).json({
-            message: "Admin login successful",
-            admin: JSON.parse(formattedJson) // Parse it back to an object for the response
-        });
-    }
-    if (doctor && (await bcrypt.compare(Password, doctor.Password))) {
-        //redirect to doctor page
-        const formattedJson = JSON.stringify(doctor, null, 2);
-
-        return res.status(200).json({
-            message: "doctor login successful",
-            admin: JSON.parse(formattedJson) // Parse it back to an object for the response
-        });
-    }
-
-    if (patient && (await bcrypt.compare(Password, patient.Password))) {
-        //redirect to patient page
-        const formattedJson = JSON.stringify(patient, null, 2);
-
-        return res.status(200).json({
-            message: "Patient login successful",
-            admin: JSON.parse(formattedJson) // Parse it back to an object for the response
-        });
-    } else {
-        return res.status(400).json({message: "Invalid username or password"});
-    }
+};
 
 
-});
-module.exports = {Login};
+const logout = async (req, res) => {
+    res.cookie('jwt', '', { maxAge: 1 });
+    res.status(200).json({ message: "User logged out" });
+}
+
+module.exports = { logout, login };

@@ -22,27 +22,27 @@ function getDiscountAmountForHealthPackage(package){
     }
 }
 
-const payPackage = async(req, res) =>{
+const payHealthPackage = async(req, res) =>{
     const {patientId, packageName, paymentMethod} = req.body;
     
     const patient = await Patient.findById(patientId);
     if(!patient){
-        res.status.json({message : "Patient not found"});
+        res.status(400).json({message : "Patient not found"});
     }
 
-    const discount = getDiscountAmountForHealthPackage(patient.HealthPackage.Name);
-    const package = await Package.find({Name : packageName});
+    const discount = getDiscountAmountForHealthPackage(patient.HealthPackage.membership);
+    const package = await Package.findOne({Name : packageName});
     const amount = package.Price * (1 - discount);
-
+    console.log(patient, package, amount, patient.Wallet, patient.Wallet - 100, discount)
     if(paymentMethod == "Wallet"){
         if(patient.Wallet < amount){
-            res.status.json({message : "Insufficient funds"});
+            res.status(200).json({message : "Insufficient funds"});
         }
         else{
             patient.Wallet -= amount;
             patient.HealthPackage.Price = package.Price;
             await patient.save();
-            res.status.json({message : "Health Pacakge has been purchased successfully"});
+            res.status(200).json({message : "Health Pacakge has been purchased successfully"});
         }
     }
     else if(paymentMethod == "Card"){
@@ -50,17 +50,14 @@ const payPackage = async(req, res) =>{
             amount: amount,
             currency: 'usd',
             payment_method_types: ['card'],
-            automatic_payment_methods: {
-                enabled: true
-            }
-        });
+        }).catch(err => console.log(err));
         res.send({
             clientSecret: paymentIntent.client_secret,
           });
     }
     else{
-        res.status.json({message : "Invalid payment method"});
+        res.status(400).json({message : "Invalid payment method"});
     }
 }
 
-module.exports = {payPackage};
+module.exports = {payHealthPackage};

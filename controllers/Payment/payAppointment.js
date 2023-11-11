@@ -23,33 +23,38 @@ function getDiscountAmountForAppointments(package){
 }
 
 const payAppointment = async(req, res) =>{
-    const {patientId, appiontmentId, paymentMethod} = req.body;
+    const {patientId, appointmentId, paymentMethod} = req.body;
     
     const patient = await Patient.findById(patientId);
     if(!patient){
         res.status.json({message : "Patient not found"});
     }
 
-    const appointment = await Appointment.findById(appiontmentId);
+    const appointment = await Appointment.findById(appointmentId);
     if(!appointment){
         res.status.json({message : "Appointment not found"});
     }
 
-    const doctor = await Doctor.findById(appointment.DoctorId);
-
-    const discount = getDiscountAmountForAppointments(patient.HealthPackage.Membership);
-    const amount = appointment.Duration * doctor.HourlyRate * (1 - discount);
+    const doctor = await Doctor.findOne({Username: appointment.doctorUsername})
+    console.log(patient, doctor, appointment, patient.HealthPackage, patient.HealthPackage.membership);
+    const discount = getDiscountAmountForAppointments(patient.HealthPackage.membership);
+    const duration = appointment.endHour - appointment.startHour;
+    const amount = duration * doctor.HourlyRate * (1 - discount);
 
     if(paymentMethod == "Wallet"){
-        if(patient.wallet < amount){
-            res.status.json({message : "Insufficient funds"});
+        if(patient.Wallet < amount){
+            res.status(200).json({message : "Insufficient funds"});
         }
         else{
-            patient.wallet -= amount;
+            console.log(patient.Wallet, patient.Wallet - 100, amount);
+            patient.Wallet -= amount;
             await patient.save();
             appointment.status = "upcoming";
+            console.log(patient.Wallet);
             await appointment.save();
-            res.status.json({message : "Appointment has been scheduled successfully"});
+            doctor.Wallet += amount;
+            await doctor.save();
+            res.status(200).json({message : "Appointment has been scheduled successfully"});
         }
     }
     else if(paymentMethod == "Card"){
@@ -66,7 +71,7 @@ const payAppointment = async(req, res) =>{
           });
     }
     else{
-        res.status.json({message : "Invalid payment method"});
+        res.status(404).json({message : "Invalid payment method"});
     }
 }
 

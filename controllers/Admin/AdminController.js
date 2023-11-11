@@ -7,6 +7,12 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (username) => {
+    return jwt.sign({ username }, 'supersecret', {
+        expiresIn: maxAge
+    });
+};
 
 const createAdmin = asyncHandler(async (req, res) => {
     //create an admin in the database
@@ -28,14 +34,11 @@ const createAdmin = asyncHandler(async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
-    if (await infoGetter.getUsername(req, res) === '' && await infoGetter.getEmail(req, res) === '') {
-        const newAdmin = new adminModel({ Name, Username, Password: hashedPassword, Email });
-        await newAdmin.save();
-        return res.status(201).json("Admin created successfully!");
-
-    } else {
-        return res.status(400).json("Username or Email already exists");
-    }
+    const newAdmin = new adminModel({ Name, Username, Password: hashedPassword, Email });
+    await newAdmin.save();
+    const token = createToken(Username);
+    res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+    return res.status(201).json("Admin created successfully!");
 });
 
 const getAllAdmins = asyncHandler(async (req, res) => {
@@ -65,19 +68,15 @@ const removeUser = asyncHandler(async (req, res) => {
         return res.status(400).json("Missing Username in the request body");
     }
     const { Username } = req.body;
-    if (await infoGetter.getUsername(req, res) === '') {
-        console.log("User not found in database!");
-        return res.status(404).json("User not found in database!");
-    } else {
-        const username = await infoGetter.getUsername(req, res);
+   
+    const username = await infoGetter.getUsername(req, res);
 
-        await Promise.all([
-            adminModel.deleteOne({ Username: username }),
-            patientModel.deleteOne({ Username: username }),
-            doctorModel.deleteOne({ Username: username })
-        ]);
-        return res.status(201).json(Username + "'s account has been Deleted!")
-    }
+    await Promise.all([
+        adminModel.deleteOne({ Username: username }),
+        patientModel.deleteOne({ Username: username }),
+        doctorModel.deleteOne({ Username: username })
+    ]);
+    return res.status(201).json(Username + "'s account has been Deleted!")
 });
 
 

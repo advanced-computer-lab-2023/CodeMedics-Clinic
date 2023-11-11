@@ -16,8 +16,8 @@ const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/Ge
 const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
 const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
-
-;
+const { requireAuth } = require('../Middleware/authMiddleware');
+const {addAppointments} = require('../controllers/Doctor/addAppointment');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -31,13 +31,15 @@ function verifyToken(req, res, next) {
 }
 
 router.post('/register', upload.fields([
-    { name: 'IDDocument', maxCount: 1 },
-    { name: 'MedicalDegree', maxCount: 1 },
-    { name: 'MedicalLicense', maxCount: 1 }
+    { name: 'nationalIdFile', maxCount: 1 },
+    { name: 'medicalDegreeFile', maxCount: 1 },
+    { name: 'medicalLicenseFile', maxCount: 1 }
 ]), createDoctor);
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
-router.get('/getAllDoctors', getAllDoctors);
+router.get('/getAllDoctors', requireAuth, getAllDoctors);
+
+router.post('/addAppointments', addAppointments);
 
 
 router.post('/add-time-slot/:username', addTimeSlot);
@@ -76,7 +78,6 @@ router.get('/viewPatientDetails:Username', (req, res) => {
 router.get('/', (req, res) => {
     res.setHeader('Content-Type', 'text/html');
     const username = req.query.Username;
-    process.env.Username = username;
     console.log("in the doctor route");
     console.log(username);
     fs.readFile('./views/Doctor/Doctor.html', null, function (error, data) {

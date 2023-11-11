@@ -6,9 +6,13 @@ const appointmentSchema = new Schema({
         type: String,
         required: true
     },
-    patient: {
+    doctorUsername: {
         type: String,
         required: true
+    },
+    patient: {
+        type: String,
+        required: false
     },
     date: {
         type: String,
@@ -24,8 +28,8 @@ const appointmentSchema = new Schema({
     },
     status:{
         type: String,
-        enum: ['upcoming', 'completed', 'cancelled', 'rescheduled'],
-        default: 'upcoming', 
+        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled'],
+        default: 'unreserved', 
         required: true }
 } , {timestamps: true});
 

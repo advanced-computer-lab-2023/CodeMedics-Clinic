@@ -23,17 +23,13 @@ const patientSchema = new Schema({
         type: String,
         required: [true, 'Please enter an email']
     },
-    NationalID: {
-        type: String,
-        required: [true, 'Please enter a national ID']
-    },
     DateOfBirth: {
         type: String,
-        required: false
+        required: true
     },
     Number: {
         type: String,
-        required: false
+        required: true
     },
     Gender: {
         type: String,
@@ -44,8 +40,12 @@ const patientSchema = new Schema({
         required: false
     },
     EmergencyContacts: {
-        type: {String, String},
-        required: false
+        type: {
+            Name: String, 
+            Number: String,
+            Relation: String
+        },
+        required: true
     },
     Package: {
         type: String,
@@ -54,7 +54,7 @@ const patientSchema = new Schema({
     },
     FamilyMembers: {
         type: [Schema.Types.ObjectId],
-        ref: 'FamilyMember',
+        ref: 'Patient',
     },
     Appointments:{
         type: [String],
@@ -62,11 +62,14 @@ const patientSchema = new Schema({
     },
     HealthPackage:{
         type: {
-            status: String, // Subscribed, Not Subscribed, Overdue
+            membership: String, // Free, Silver, Gold, Platinum
+            status: String, // Subscribed, Unsubscribed
+            Price: Number,
             date: Date
         },
         default: {
-            status: "Not Subscribed",
+            membership: "Free",
+            status: "Unsubscribed",
             date: Date.now()
         },
         required: false
