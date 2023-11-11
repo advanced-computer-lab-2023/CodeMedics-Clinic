@@ -40,8 +40,12 @@ const patientSchema = new Schema({
         required: false
     },
     EmergencyContacts: {
-        type: {String, String},
-        required: false
+        type: {
+            Name: String, 
+            Number: String,
+            Relation: String
+        },
+        required: true
     },
     Package: {
         type: String,

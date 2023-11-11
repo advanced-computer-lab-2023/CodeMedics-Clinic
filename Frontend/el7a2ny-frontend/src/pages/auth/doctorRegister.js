@@ -3,11 +3,15 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Link, Stack, TextField, Typography, SvgIcon } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import axios from 'axios';
+import React from 'react';
+import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
 //import { error } from 'console';
+
+
 
 const Page = () => {
   const router = useRouter();
@@ -24,6 +28,9 @@ const Page = () => {
       affiliation: '',
       Degree: '',
       Speciality: '',
+      nationalIdFile: null,
+      medicalDegreeFile: null,
+      medicalLicenseFile: null,
       Submit: null
     },
     validationSchema: Yup.object({
@@ -62,36 +69,45 @@ const Page = () => {
         .required('Degree is required')  ,
       Speciality: Yup
         .string()
-        .required('Speciality is required')  
+        .required('Speciality is required') ,
+      nationalIdFile: Yup
+        .mixed()
+        .test('fileRequired', 'National ID is required', value => value !== null),
+      medicalDegreeFile: Yup
+        .mixed()
+        .test('fileRequired', 'Medical Degree is required', value => value !== null),
+      medicalLicenseFile: Yup
+        .mixed()
+        .test('fileRequired', 'Medical License is required', value => value !== null),     
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const body = {
-        "FirstName": values.FirstName, 
-        "LastName": values.LastName,
-        "Username":values.Username , 
-        "Password": values.Password,
-        "Email": values.Email,
-        "DateOfBirth": values.DateOfBirth,
-        "HourlyRate": values.HourlyRate,
-        "affiliation": values.affiliation,
-        "Degree": values.Degree, 
-        "Speciality": values.Speciality
-        };
-          await axios.post('http://localhost:8000/Doctor/register' , body)
-          .then((res) => { 
-            if(res.status != 200){
-              throw new Error(res.data.message); 
-            }
-              console.log(res);
-              return res['data'];
-            })
-            .then((data) => {
-              router.push('/auth/login');
-            });
+        const formData = new FormData();
+        formData.append('FirstName', values.FirstName);
+        formData.append('LastName', values.LastName);
+        formData.append('Username', values.Username);
+        formData.append('Password', values.Password);
+        formData.append('Email', values.Email);
+        formData.append('DateOfBirth', values.DateOfBirth);
+        formData.append('HourlyRate', values.HourlyRate);
+        formData.append('affiliation', values.affiliation);
+        formData.append('Degree', values.Degree);
+        formData.append('Speciality', values.Speciality);
+        formData.append('nationalIdFile', values.nationalIdFile);
+        formData.append('medicalDegreeFile', values.medicalDegreeFile);
+        formData.append('medicalLicenseFile', values.medicalLicenseFile);
+    
+        const response = await axios.post('http://localhost:8000/Doctor/register', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+    
+        console.log(response.data);
+        router.push('/auth/login');
       } catch (err) {
         helpers.setStatus({ success: false });
-        helpers.setErrors({ Submit: err.response.data.message});
+        helpers.setErrors({ Submit: err.response.data.message });
         helpers.setSubmitting(false);
       }
     }
@@ -147,6 +163,7 @@ const Page = () => {
             <form
               noValidate
               onSubmit={formik.handleSubmit}
+              encType="multipart/form-data"
             >
               <Stack spacing={3}>
                 <TextField
@@ -259,6 +276,7 @@ const Page = () => {
                   onChange={formik.handleChange}
                   value={formik.values.Degree}
                 />
+                
                 <TextField
                   error={!!(formik.touched.Speciality && formik.errors.Speciality)}
                   fullWidth
@@ -269,6 +287,141 @@ const Page = () => {
                   onChange={formik.handleChange}
                   value={formik.values.Speciality}
                 />
+                
+                
+                <label htmlFor="nationalIdFile">
+                  <Button
+                    component="span"
+                    fullWidth
+                    size="medium"
+                    sx={{
+                      mt: 3,
+                      backgroundColor: '#F8F8F8', // Blue color
+                      '&:hover': {
+                        backgroundColor: '#F1F1F1', // Darker blue color on hover
+                      },
+                    }}
+                    endIcon={(
+                    <SvgIcon fontSize="small">
+                      <DocumentArrowUpIcon/>
+                    </SvgIcon>
+                  )}
+                  >
+                    Upload National ID    
+                  </Button>
+                  {formik.submitCount > 0 && !formik.values.nationalIdFile && formik.touched.nationalIdFile && (
+                    <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                      National ID is required
+                    </Typography>
+                  )}
+                  {formik.touched.nationalIdFile && formik.errors.nationalIdFile && (
+                    <Typography color="error" variant="body2" sx={{ mt: 1 }}/>
+                  )}
+                  {formik.values.nationalIdFile && (
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {formik.values.nationalIdFile.name}
+                    </Typography>
+                  )}
+                  <input
+                    id="nationalIdFile"
+                    name="nationalIdFile"
+                    type="file"
+                    accept=".jpg, .jpeg, .png, .pdf"
+                    onChange={(event) => {
+                      formik.setFieldValue('nationalIdFile', event.currentTarget.files[0]);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+
+                <label htmlFor="medicalDegreeFile">
+                  <Button
+                    component="span"
+                    fullWidth
+                    size="medium"
+                    sx={{
+                      mt: 3,
+                      backgroundColor: '#F8F8F8', // Blue color
+                      '&:hover': {
+                        backgroundColor: '#F1F1F1', // Darker blue color on hover
+                      },
+                    }}
+                    endIcon={(
+                    <SvgIcon fontSize="small">
+                      <DocumentArrowUpIcon/>
+                    </SvgIcon>
+                  )}
+                  >
+                    Upload Medical Degree
+                  </Button>
+                  {formik.submitCount > 0 && !formik.values.medicalDegreeFile && formik.touched.medicalDegreeFile && (
+                    <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                      Medical Degree is required
+                    </Typography>
+                  )}
+                  {formik.touched.medicalDegreeFile && formik.errors.medicalDegreeFile && (
+                    <Typography color="error" variant="body2" sx={{ mt: 1 }}/>
+                  )}
+                  {formik.values.medicalDegreeFile && (
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {formik.values.medicalDegreeFile.name}
+                    </Typography>
+                  )}
+                  <input
+                    id="medicalDegreeFile"
+                    name="medicalDegreeFile"
+                    type="file"
+                    accept=".jpg, .jpeg, .png, .pdf"
+                    onChange={(event) => {
+                      formik.setFieldValue('medicalDegreeFile', event.currentTarget.files[0]);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+                <label htmlFor="medicalLicenseFile">
+                  <Button
+                    component="span"
+                    fullWidth
+                    size="medium"
+                    sx={{
+                      mt: 3,
+                      backgroundColor: '#F8F8F8', // Blue color
+                      '&:hover': {
+                        backgroundColor: '#F1F1F1', // Darker blue color on hover
+                      },
+                    }}
+                    endIcon={(
+                    <SvgIcon fontSize="small">
+                      <DocumentArrowUpIcon/>
+                    </SvgIcon>
+                  )}
+                  >
+                    Upload Medical License
+                  </Button>
+                  {formik.submitCount > 0 && !formik.values.medicalLicenseFile && formik.touched.medicalLicenseFile && (
+                    <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                      Medical License is required
+                    </Typography>
+                  )}
+                  {formik.touched.medicalLicenseFile && formik.errors.medicalLicenseFile && (
+                    <Typography color="error" variant="body2" sx={{ mt: 1 }}/>
+                  )}
+                  {formik.values.medicalLicenseFile && (
+                    <Typography variant="body2" sx={{ mt: 1 }}>
+                      {formik.values.medicalLicenseFile.name}
+                    </Typography>
+                  )}
+                  <input
+                    id="medicalLicenseFile"
+                    name="medicalLicenseFile"
+                    type="file"
+                    accept=".jpg, .jpeg, .png, .pdf"
+                    onChange={(event) => {
+                      formik.setFieldValue('medicalLicenseFile', event.currentTarget.files[0]);
+                    }}
+                    style={{ display: 'none' }}
+                  />
+                </label>
               </Stack>
               {formik.errors.Submit && (
                 <Typography
@@ -282,7 +435,9 @@ const Page = () => {
               <Button
                 fullWidth
                 size="large"
-                sx={{ mt: 3 }}
+                sx={{
+                  mt: 5,
+                }}
                 type="submit"
                 variant="contained"
               >

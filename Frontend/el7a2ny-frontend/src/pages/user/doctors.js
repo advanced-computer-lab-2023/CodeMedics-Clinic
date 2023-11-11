@@ -2,11 +2,29 @@ import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
+import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
+import { useState } from 'react';
 
 const now = new Date();
 
-const Page = ({ doctors }) => (
+const Page = ({ doctors }) => {
+  
+  const [data, setData] = useState(doctors);
+
+  const handleSearch = (str) => {
+    console.log("HERE:", str, str === "")
+    if(str === ""){
+      setData(doctors);
+    }else{
+      setData(doctors.filter((doctor) => {
+        const fullName = doctor.FirstName + " " + doctor.LastName;
+        return fullName.toLowerCase().includes(str.toLowerCase());
+      }));
+    }
+  };
+
+  return (
   <>
     <Head>
       <title>El7a2ny Clinic</title>
@@ -19,15 +37,16 @@ const Page = ({ doctors }) => (
       }}
     >
       <Container maxWidth="xl">
+        <DoctorsSearch handleSearch={handleSearch} />
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
-            <OverviewDoctors doctors={doctors} sx={{ height: '100%' }} />
+            <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
           </Grid>
         </Grid>
       </Container>
     </Box>
   </>
-);
+);}
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 

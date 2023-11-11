@@ -8,7 +8,7 @@ const { filterAppointments , getAllApointments } = require('../controllers/Docto
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Doctor/viewAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
-
+const{addTimeSlot}=require('../controllers/Doctor/AvailableTImeSlots.js');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
@@ -32,15 +32,19 @@ function verifyToken(req, res, next) {
 }
 
 router.post('/register', upload.fields([
-    { name: 'IDDocument', maxCount: 1 },
-    { name: 'MedicalDegree', maxCount: 1 },
-    { name: 'MedicalLicense', maxCount: 1 }
+    { name: 'nationalIdFile', maxCount: 1 },
+    { name: 'medicalDegreeFile', maxCount: 1 },
+    { name: 'medicalLicenseFile', maxCount: 1 }
 ]), createDoctor);
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', requireAuth, getAllDoctors);
 
 router.post('/addAppointments', addAppointments);
+
+
+router.post('/add-time-slot/:username', addTimeSlot);
+
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);

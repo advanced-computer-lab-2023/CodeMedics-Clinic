@@ -41,7 +41,8 @@ const createPatient = asyncHandler(async (req, res) => {
         Gender,
         Number,
         EmergencyContactName,
-        EmergencyContactNumber
+        EmergencyContactNumber,
+        EmergencyContactRelation
     } = req.body;
 
     const existingUser = await adminModel.findOne({ Username: Username }) || await doctorModel.findOne({ Username: Username }) || await patientModel.findOne({ Username: Username });
@@ -71,7 +72,7 @@ const createPatient = asyncHandler(async (req, res) => {
             Number: Number,
             Gender: Gender,
             EmergencyContacts: {
-                EmergencyContactName: EmergencyContactName, EmergencyContactNumber: EmergencyContactNumber
+                Name: EmergencyContactName, Number: EmergencyContactNumber, Relation: EmergencyContactRelation
             }
         })
     ;

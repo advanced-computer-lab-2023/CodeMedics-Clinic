@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpTrayIcon';
+import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
+import { useEffect, useState } from 'react';
+
+
+import Cookies from 'js-cookie';
 import {
   Avatar,
   Box,
@@ -17,12 +21,15 @@ import {
   SvgIcon,
   TableRow,
   IconButton,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
-export const MedicinesTable = (props) => {
+export const AppointmentsTable = (props) => {
   const {
     count = 0,
     items = [],
@@ -39,6 +46,9 @@ export const MedicinesTable = (props) => {
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const router = useRouter();
+
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   return (
     <Card>
@@ -47,101 +57,69 @@ export const MedicinesTable = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedSome}
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        onSelectAll?.();
-                      } else {
-                        onDeselectAll?.();
-                      }
-                    }}
-                  />
+                <TableCell>
+                  Date
                 </TableCell>
                 <TableCell>
-                  Name
+                  Day
                 </TableCell>
                 <TableCell>
-                  Price
+                  From
                 </TableCell>
                 <TableCell>
-                  Description
+                  To
                 </TableCell>
                 <TableCell>
-                  Actions
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((medicine) => {
-                const isSelected = selected.includes(medicine.id);
+              {items.map((appointment) => {
+                const isSelected = selected.includes(appointment.id);
                 // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
                     hover
-                    key={medicine._id}
+                    key={appointment._id}
                     selected={isSelected}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => {
-                          if (event.target.checked) {
-                            onSelectOne?.(medicine.id);
-                          } else {
-                            onDeselectOne?.(medicine.id);
-                          }
-                        }}
-                      />
-                    </TableCell>
                     <TableCell>
                       <Stack
                         alignItems="center"
                         direction="row"
                         spacing={2}
                       >
-                        <Avatar src={medicine.avatar}>
-                          {getInitials(medicine.name)}
-                        </Avatar>
                         <Typography variant="subtitle2">
-                          {medicine.name}
+                          {appointment.date}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {medicine.price}
+                      {days[new Date(appointment.date).getDay()]}
                     </TableCell>
                     <TableCell>
-                      {medicine.Description}
+                      {appointment.startHour}
                     </TableCell>
                     <TableCell>
+                      {appointment.endHour}
+                    </TableCell>
+                    <TableCell>
+                    <Tooltip title="Book Appointment">
                       <IconButton 
                         children ={(
                           <SvgIcon fontSize="small">
-                            <ArrowUpOnSquareIcon />
+                            <CheckIcon />
                           </SvgIcon>
                         )}
                         color="primary"
                         onClick={() => {
-                          console.log('hi');
+                          axios.patch(`http://localhost:8000/patient/bookAppointment?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`)
+                          router.push(`/user/doctors`);
                         }}
                       >
                       </IconButton >
-                      <IconButton 
-                        children ={(
-                          <SvgIcon fontSize="small">
-                            <PencilIcon />
-                          </SvgIcon>
-                        )}
-                        color="primary"
-                        onClick={() => {
-                          console.log('hi');
-                        }}
-                      >
-                      </IconButton >
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );
@@ -163,7 +141,7 @@ export const MedicinesTable = (props) => {
   );
 };
 
-MedicinesTable.propTypes = {
+AppointmentsTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,

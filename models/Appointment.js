@@ -12,18 +12,18 @@ const appointmentSchema = new Schema({
     },
     patient: {
         type: String,
-        required: true
+        required: false
     },
     date: {
-        type: Date,
+        type: String,
         required: true
     },
     startHour:{
-        type: Number,
+        type: String,
         required: true
     },
     endHour:{
-        type: Number,
+        type: String,
         required: true
     },
     status:{

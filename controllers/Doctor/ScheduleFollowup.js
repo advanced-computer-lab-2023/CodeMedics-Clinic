@@ -7,15 +7,17 @@ exports.scheduleFollowUp = async (req, res) => {
     const { patientUsername, date, startHour, endHour, status, purpose } = req.body;
 
     try {
-        const doctor = await Doctor.findOne({ Username: doctorUsername }); // Assuming you have a user object in req.user after authentication
+        const doctor = await Doctor.findOne({ Username: doctorUsername });
         const patient = await Patient.findOne({ Username: patientUsername });
 
         // Check if the doctor and patient exist
         if (!doctor || !patient) {
             return res.status(404).json({ error: 'Doctor or patient not found' });
         }
-        const utcDate = new Date(date).toISOString();
-        // Create a new Appointment object
+        /*
+        // const utcDate = new Date(date).toISOString();
+        // Create a new Appointment object */
+
         const appointment = new Appointment({
             doctor: doctor.Username ,
             patient: patient.Username, 
@@ -26,10 +28,9 @@ exports.scheduleFollowUp = async (req, res) => {
             purpose: purpose
         });
 
-        // Save the appointment
+
         await appointment.save();
 
-        // Update doctor's and patient's appointments arrays with the new appointment ID
         doctor.Appointments.push(appointment._id);
         patient.Appointments.push(appointment._id);
 

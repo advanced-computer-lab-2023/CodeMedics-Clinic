@@ -9,9 +9,9 @@ import {
     Typography
   } from '@mui/material';
   
-  export const OverviewDoctorInfoProfile = ({doctor}) => {
+  export const OverviewDoctorInfoProfile = ({doctor, counter}) => {
     
-    
+
 
     return (
     <Card>
@@ -23,8 +23,9 @@ import {
             flexDirection: 'column'
           }}
         >
-          <Avatar
-            src={doctor.avatar}
+          <Box
+            component="img"
+            src={`/assets/avatars/${counter}.png`}
             sx={{
               height: 80,
               mb: 2,
