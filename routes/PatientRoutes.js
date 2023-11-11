@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const patientController = require('../controllers/Patient/PatientController');
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
+const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
@@ -39,6 +40,8 @@ router.post('/register', patientController.createPatient);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
+router.get('/SearchDoctor', searchDoctor);
+router.get('/getDoctorByUsername', getDoctorByUsername);
 
 
 router.post('/payAppointment', payAppointment);

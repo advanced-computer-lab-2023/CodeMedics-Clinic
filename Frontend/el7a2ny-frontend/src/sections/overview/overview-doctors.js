@@ -41,6 +41,11 @@ export const OverviewDoctors = (props) => {
     router.push(`/user/appointments?doctorUsername=${username}`);
   }
 
+  const viewDoctorProfile = (username) => {
+    console.log(username);
+    router.push(`/user/doctor-info?doctorUsername=${username}`);
+  }
+
  
   return (
     <CardContent>
@@ -115,6 +120,16 @@ export const OverviewDoctors = (props) => {
                   onClick={() => {getSelectedDoctorAppointments(doctor.Username)}}
                 >
                   View Appointments
+                </Button>
+              </CardActions>
+              <CardActions>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                  onClick={() => {viewDoctorProfile(doctor.Username)}}
+                >
+                  View Profile
                 </Button>
               </CardActions>
             </Card>

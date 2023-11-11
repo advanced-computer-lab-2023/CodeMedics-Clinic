@@ -9,16 +9,11 @@ import {
   Typography
 } from '@mui/material';
 
-const user = {
-  avatar: '/assets/avatars/avatar-anika-visser.png',
-  city: 'Los Angeles',
-  country: 'USA',
-  jobTitle: 'Senior Developer',
-  name: 'Anika Visser',
-  timezone: 'GTM-7'
-};
+export const AccountProfile = () => {
+  
+  //get user here.
 
-export const AccountProfile = () => (
+  return(
   <Card>
     <CardContent>
       <Box
@@ -66,4 +61,4 @@ export const AccountProfile = () => (
       </Button>
     </CardActions>
   </Card>
-);
+)};
