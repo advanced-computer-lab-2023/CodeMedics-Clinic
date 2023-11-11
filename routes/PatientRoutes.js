@@ -9,6 +9,8 @@ const { uploadDocument, addDocument, removeDocument } = require('../controllers/
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
 const { bookAppointment } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
+const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
+
 const {
     getPrescriptions,
     getPrescriptionsByDate,
@@ -40,6 +42,9 @@ router.get('/getPatients', viewPatients);
 router.post('/register', patientController.createPatient);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
+
+router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
+
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
@@ -51,6 +56,7 @@ router.post('/payHealthPackage', payHealthPackage);
 
 router.post('/subscribeHealthPackage', patientController.healthPackageSubscription);
 router.post('/unsubscribeHealthPackage', patientController.healthPackageUnsubscription);
+
 
 // app.use(verifyToken);
 
