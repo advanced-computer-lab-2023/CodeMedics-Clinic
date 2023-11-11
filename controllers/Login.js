@@ -42,9 +42,9 @@ const login = async (req, res) => {
                 return res.status(401).json({ message: 'Wrong password' });
             }
         } else if (doctor) {
-            const auth = await bcrypt.compare(password, doctor.password);
+            const auth = await bcrypt.compare(password, doctor.Password);
             if (auth) {
-                const token = createToken(doctor.username);
+                const token = createToken(doctor.Username);
                 res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
                 return res.status(200).json({ Type: 'Doctor', message: 'Login successful' , doctor , token});
             }

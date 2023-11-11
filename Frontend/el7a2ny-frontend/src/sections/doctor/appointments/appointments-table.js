@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
-import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointments-filter';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 import Cookies from 'js-cookie';
@@ -51,25 +50,8 @@ export const AppointmentsTable = (props) => {
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
-
-  const handleFilter = (date) => {
-    console.log(date, date === '')
-    if (date === '') {
-      setFilteredAppointments(items);
-    } else {
-      setFilteredAppointments(
-        items.filter((appointment) => {
-          const dateObj = new Date(appointment.Date);
-          return dateObj === date;
-        })  
-      );
-    }
-  };
-
   return (
     <Card>
-      <AppointmentsFilter handleFilter={handleFilter} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -92,7 +74,7 @@ export const AppointmentsTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredAppointments.map((appointment) => {
+              {items.map((appointment) => {
                 const isSelected = selected.includes(appointment.id);
                 // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
