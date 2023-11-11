@@ -12,6 +12,20 @@ import axios from 'axios';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
+  const Gender = [  
+    {
+      value: 'Male',
+      label: 'Male',
+    },
+    {
+      value: 'Female',
+      label: 'Female',
+    },
+    {
+      value: 'Other',
+      label: 'Other'
+    }
+  ];
   const formik = useFormik({
     initialValues: {
       FirstName: '',
@@ -24,6 +38,7 @@ const Page = () => {
       Gender: '',
       EmergencyContactName: '',
       EmergencyContactNumber: '',
+      EmergencyContactRelation: ''
     },
     validationSchema: Yup.object({
       FirstName: Yup
@@ -52,7 +67,8 @@ const Page = () => {
         .required('Date of birth is required'),
       Number: Yup
         .string()
-        .max(255),
+        .max(255)
+        .required('Number is required'),
       Gender: Yup
         .string()
         .max(255)
@@ -65,6 +81,10 @@ const Page = () => {
         .string()
         .max(255)
         .required('Emergency Contact Number is required'),  
+      EmergencyContactRelation: Yup
+        .string()
+        .max(255)
+        .required('Emergency Contact Relation is required'),  
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -78,7 +98,8 @@ const Page = () => {
         "Number": values.Number,
         "Gender": values.Gender,
         "EmergencyContactName": values.EmergencyContactName,
-        "EmergencyContactNumber": values.EmergencyContactNumber 
+        "EmergencyContactNumber": values.EmergencyContactNumber, 
+        "EmergencyContactRelation": values.EmergencyContactRelation
         };
           await axios.post('http://localhost:8000/Patient/register' , body)
           .then((res) => { 
@@ -239,26 +260,24 @@ const Page = () => {
                   onChange={formik.handleChange}
                   value={formik.values.Number}
                 />
-                <FormControl fullWidth>
-                  {/* Gender */}
-                  <InputLabel shrink={formik.values.Gender !== ''} htmlFor="Gender">
-                    Gender
-                  </InputLabel>
-                  <Select
-                    name="Gender"
-                    value={formik.values.Gender}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={!!(formik.touched.Gender && formik.errors.Gender)}
-                  >
-                    <MenuItem value="male">Male</MenuItem>
-                    <MenuItem value="female">Female</MenuItem>
-                    <MenuItem value="others">Others</MenuItem>
-                  </Select>
-                  {formik.touched.Gender && formik.errors.Gender && (
-                    <FormHelperText>{formik.errors.Gender}</FormHelperText>
-                  )}  
-                </FormControl>
+                <TextField
+                  sx={{ width: 500 }}
+                  name="Gender"
+                  select
+                  label="Gender"
+                  defaultValue=""
+                  helperText=""
+                  onChange={(event) => {
+                    formik.handleChange(event);
+                    formik.setFieldValue("Gender", event.target.value);
+                  }}
+                >
+                {Gender.map((option) => (
+                    <MenuItem key={option.value} value={option.value} >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 <TextField
                   error={!!(formik.touched.EmergencyContactName && formik.errors.EmergencyContactName)}
                   fullWidth
@@ -279,6 +298,16 @@ const Page = () => {
                   onChange={formik.handleChange}
                   value={formik.values.EmergencyContactNumber}
                 />
+                <TextField
+                  error={!!(formik.touched.EmergencyContactRelation && formik.errors.EmergencyContactRelation)}
+                  fullWidth
+                  helperText={formik.touched.EmergencyContactRelation && formik.errors.EmergencyContactRelation}
+                  label="Emergency Contact Relation"
+                  name="EmergencyContactRelation"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.EmergencyContactRelation}
+                />
               </Stack>
               {formik.errors.Submit && (
                 <Typography
@@ -292,7 +321,9 @@ const Page = () => {
               <Button
                 fullWidth
                 size="large"
-                sx={{ mt: 3 }}
+                sx={{
+                  mt: 5,
+                }}
                 type="submit"
                 variant="contained"
               >

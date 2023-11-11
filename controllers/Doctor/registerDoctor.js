@@ -1,9 +1,11 @@
 const doctorModel = require('../../models/Doctor.js');
+const asyncHandler = require('express-async-handler');  
+const multer = require('multer');
+const uploads = require('../../config/multerConfig.js');
 const infoGetter = require('../../config/infoGetter.js');
-const upload = require('../../config/multerConfig.js');
 const bcrypt = require('bcryptjs');
-const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
+
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
@@ -18,23 +20,21 @@ const createDoctor = asyncHandler(async (req, res) => {
     const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
 
     for (const variable of requiredVariables) {
-        
         if (!req.body[variable]) {
             return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
     }
 
-    // // Check for uploaded files
-    // if (!req.files || Object.keys(req.files).length !== 3) {
-    //     return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
-    // }
-    // const { IDDocument, MedicalDegree, MedicalLicense } = req.files;
-
+    // Check for uploaded files
+    if (!req.files || Object.keys(req.files).length !== 3) {
+        return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
+    }
+    
     try {
-        // Handle file uploads (files are available in req.files)
-        // const idDocumentFile = IDDocument[0].filename;
-        // const medicalDegreeFile = MedicalDegree[0].filename;
-        // const medicalLicenseFile = MedicalLicense[0].filename;
+        // Access files in req.files with updated keys
+        const idDocumentFile = req.files['nationalIdFile'][0].filename;
+        const medicalDegreeFile = req.files['medicalDegreeFile'][0].filename;
+        const medicalLicenseFile = req.files['medicalLicenseFile'][0].filename;
 
         // Hash the password using bcrypt
         const salt = await bcrypt.genSalt(10);
@@ -51,11 +51,16 @@ const createDoctor = asyncHandler(async (req, res) => {
             HourlyRate: req.body.HourlyRate,
             affiliation: req.body.affiliation,
             Degree: req.body.Degree,
-            Speciality: req.body.Speciality
+            Speciality: req.body.Speciality,
+            IDDocument: idDocumentFile,
+            MedicalDegree: medicalDegreeFile,
+            MedicalLicense: medicalLicenseFile
         });
         await newDoctor.save();
+
         const token = createToken(req.body.Username);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+
         return res.status(200).json("Doctor created successfully");
     } catch (error) {
         console.error(error);
