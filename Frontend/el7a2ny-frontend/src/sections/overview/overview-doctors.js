@@ -106,11 +106,6 @@ export const OverviewDoctors = (props) => {
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
-              <ListItemText
-                secondary={doctor.HourlyRate}
-                primaryTypographyProps={{variant: 'subtitle2'}}
-                secondaryTypographyProps={{variant: 'body2'}}
-                />
 
               <CardActions>
                 <Button
