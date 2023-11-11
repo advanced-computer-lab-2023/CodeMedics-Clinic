@@ -7,6 +7,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/pharmacist/layo
 import { AppointmentsTable } from 'src/sections/doctor/appointments/appointments-table';
 import { applyPagination } from 'src/utils/apply-pagination';
 import { useRouter } from 'next/navigation';
+import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointments-filter';
 
 const now = new Date();
 
@@ -49,14 +50,44 @@ const Page = () => {
         return res.json();
       })
       .then((data) => {
-        setData(data['appointments']);
-        setAllData(data['appointments']);
+
+        const appointments = data.appointments;
+
+        appointments.sort((a, b) => {
+          if(new Date(a.date) < new Date(b.date))
+              return -1;
+          if(new Date(a.date) > new Date(b.date))
+              return 1;
+          if(a.startHour < b.startHour)
+              return -1;
+          if(a.startHour > b.startHour)
+              return 1;
+          return 0;
+        });
+
+        setAllData(appointments);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
+  const [filter1, setFilter1] = useState('');
+  const [filter2, setFilter2] = useState('');
+
+  useEffect(() => {
+    const filtered = allData.filter((appointment) => {
+      if(filter1 === '' && filter2 === '')
+        return true;
+      if(filter1 !== '' && filter2 !== '')
+        return appointment.date >= filter1 && appointment.date <= filter2;
+      if(filter1 !== '')
+        return appointment.date >= filter1;
+      if(filter2 !== '')
+        return appointment.date <= filter2;
+    });
+    setData(filtered);
+  }, [filter1, filter2, allData]);
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -71,10 +102,6 @@ const Page = () => {
     },
     []
   );
-
-  const handleSearch = (str) => {
-    setData(allData.filter((medicine) => medicine.name.toLowerCase().includes(str.toLowerCase())));
-  }
 
   return (
     <>
@@ -109,6 +136,7 @@ const Page = () => {
                 </Stack>
               </Stack>
             </Stack>
+            <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} />
             { <AppointmentsTable
               count={data.length}
               items={customers}

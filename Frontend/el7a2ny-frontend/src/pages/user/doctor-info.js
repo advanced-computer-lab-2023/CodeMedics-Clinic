@@ -10,6 +10,7 @@ const Page = () => {
     
     const params = new URLSearchParams(window.location.search);
     const doctorUsername = params.get('doctorUsername');
+    const counter = params.get('counter');
 
     const [doctor, setDoctor] = useState({});
 
@@ -56,7 +57,7 @@ const Page = () => {
                 md={6}
                 lg={4}
               >
-                <OverviewDoctorInfoProfile doctor={doctor} />
+                <OverviewDoctorInfoProfile doctor={doctor} counter={counter} />
               </Grid>
               <Grid
                 xs={12}

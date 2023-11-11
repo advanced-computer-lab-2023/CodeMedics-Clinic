@@ -32,8 +32,6 @@ export const OverviewDoctors = (props) => {
   const router = useRouter();
   const { doctors=[], sx } = props;
 
-  const [selectedDoctors, setSelectedDoctors] = useState({});
-
   const username = Cookies.get("username");
   console.log(username);
   const getSelectedDoctorAppointments = (username) => {
@@ -41,11 +39,10 @@ export const OverviewDoctors = (props) => {
     router.push(`/user/appointments?doctorUsername=${username}`);
   }
 
-  const viewDoctorProfile = (username) => {
+  const viewDoctorProfile = (username, counter) => {
     console.log(username);
-    router.push(`/user/doctor-info?doctorUsername=${username}`);
+    router.push(`/user/doctor-info?doctorUsername=${username}&counter=${counter}`);
   }
-
  
   return (
     <CardContent>
@@ -54,7 +51,7 @@ export const OverviewDoctors = (props) => {
         gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
         gap={2}
       >
-        {doctors.map((doctor) => {
+        {doctors.map((doctor, index) => {
           return (
             <Card
               key={doctor._id}
@@ -80,7 +77,7 @@ export const OverviewDoctors = (props) => {
                   {doctor.Picture ? (
                     <Box
                       component="img"
-                      src={product.Picture}
+                      src={doctor.Picture}
                       sx={{
                         borderRadius: '70%',
                         height: 130,
@@ -91,6 +88,8 @@ export const OverviewDoctors = (props) => {
                     />
                   ) : (
                     <Box
+                      component="img"
+                      src={`/assets/avatars/${index%16}.png`}
                       sx={{
                         borderRadius: '50%',
                         backgroundColor: 'neutral.200',
@@ -106,11 +105,6 @@ export const OverviewDoctors = (props) => {
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
-              <ListItemText
-                secondary={doctor.HourlyRate}
-                primaryTypographyProps={{variant: 'subtitle2'}}
-                secondaryTypographyProps={{variant: 'body2'}}
-                />
 
               <CardActions>
                 <Button
@@ -127,7 +121,7 @@ export const OverviewDoctors = (props) => {
                   color="primary"
                   variant="contained"
                   size="small"
-                  onClick={() => {viewDoctorProfile(doctor.Username)}}
+                  onClick={() => {viewDoctorProfile(doctor.Username, index)}}
                 >
                   View Profile
                 </Button>
