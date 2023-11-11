@@ -8,7 +8,7 @@ const { filterAppointments , getAllApointments } = require('../controllers/Docto
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Doctor/viewAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
-
+const{addTimeSlot}=require('../controllers/Doctor/AvailableTImeSlots.js');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
@@ -38,6 +38,10 @@ router.post('/register', upload.fields([
 //app.use(verifyToken);
 router.get('/register', viewDoctorRegister);
 router.get('/getAllDoctors', getAllDoctors);
+
+
+router.post('/add-time-slot/:username', addTimeSlot);
+
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);

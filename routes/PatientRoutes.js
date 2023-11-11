@@ -7,6 +7,8 @@ const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/Fam
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
 const {viewPatients} = require('../controllers/Patient/PatientController');
+const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
+
 const {
     getPrescriptions,
     getPrescriptionsByDate,
@@ -33,6 +35,7 @@ router.get('/getPatients', viewPatients);
 router.post('/register', patientController.createPatient);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
+router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
 
 // app.use(verifyToken);
 
