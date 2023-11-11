@@ -22,6 +22,7 @@ const {payAppointment} = require('../controllers/Payment/payAppointment');
 const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
 
 const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
+const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -69,4 +70,6 @@ router.get('/doctorSearch', (req, res) => {
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
+router.get('/:username/health-records', viewHealthRecords);
+
 module.exports = router;
