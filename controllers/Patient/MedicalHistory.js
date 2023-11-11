@@ -6,13 +6,16 @@ exports.uploadDocument = upload.single('document'); // Assuming the field name i
 exports.addDocument = async (req, res) => {
     try {
         const { filename, originalname } = req.file;
+        console.log(req.files);
         const { username } = req.params;
+        console.log(req.params);
         const patient = await Patient.findOne({ Username : username });
+        console.log(patient);
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
-        patient.MedicalDocuments.push({ filename, originalname });
+        patient.HealthRecords.push({ filename, originalname, username});
         await patient.save();
 
         res.status(201).json({ message: 'Document uploaded successfully' });
@@ -31,13 +34,13 @@ exports.removeDocument = async (req, res) => {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
-        const documentIndex = patient.MedicalDocuments.findIndex(doc => doc._id.toString() === documentId);
+        const documentIndex = patient.HealthRecords.findIndex(doc => doc._id.toString() === documentId);
         if (documentIndex === -1) {
             return res.status(404).json({ error: 'Document not found' });
         }
 
         // Remove the document from the array
-        patient.MedicalDocuments.splice(documentIndex, 1);
+        patient.HealthRecords.splice(documentIndex, 1);
         await patient.save();
 
         res.status(200).json({ message: 'Document removed successfully' });

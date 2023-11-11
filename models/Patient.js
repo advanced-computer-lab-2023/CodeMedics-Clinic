@@ -79,9 +79,10 @@ const patientSchema = new Schema({
         default: 0,
         required: false
     },
-    MedicalDocuments: [{ //for medical history
+    HealthRecords: [{ //for medical history and doctor notes
         filename: String,
         originalname: String,
+        uploadedBy: String,
     }],
 }, {timestamps: true});
 
