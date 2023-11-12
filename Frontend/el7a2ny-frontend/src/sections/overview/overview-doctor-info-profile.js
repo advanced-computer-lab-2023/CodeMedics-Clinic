@@ -27,9 +27,11 @@ import {
             component="img"
             src={`/assets/avatars/${counter}.png`}
             sx={{
-              height: 80,
+              borderRadius: '100%',
+              height: 150,
               mb: 2,
-              width: 80
+              width: 150
+              
             }}
           />
           <Typography
