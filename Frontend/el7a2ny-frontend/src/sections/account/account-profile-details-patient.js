@@ -17,6 +17,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import Cookies from 'js-cookie';
 
 export const AccountProfileDetailsPatient = ({ values, setValues }) => {
 
@@ -31,11 +32,9 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
       Email: values.Email,
       Number: values.Number,
       DateOfBirth: values.DateOfBirth,
-      EmergencyContact: {
-        Name: values.EmergencyContact.Name,
-        Number: values.EmergencyContact.Number,
-        Relation: values.EmergencyContact.Relation
-      },
+      EmergencyContactName: values.EmergencyContact.Name,
+      EmergencyContactNumber: values.EmergencyContact.Number,
+      EmergencyContactRelation: values.EmergencyContact.Relation,
     },
     validationSchema: Yup.object({
       FirstName: Yup
@@ -68,15 +67,15 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
       EmergencyContactName: Yup
         .string()
         .max(255)
-        .required('Emergency Contact Name is required'),
+        .required('Name is required'),
       EmergencyContactNumber: Yup
         .string()
         .max(255)
-        .required('Emergency Contact Number is required'),
+        .required('Number is required'),
       EmergencyContactRelation: Yup
         .string()
         .max(255)
-        .required('Emergency Contact Relation is required'),
+        .required('Relation is required'),
     }),
     onSubmit: async (values, helpers) => {
       try {
@@ -90,13 +89,16 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
           "Number": values.Number,
           "Gender": values.Gender,
           "EmergencyContact": {
-            "Name": values.EmergencyContact.Name,
-            "Number": values.EmergencyContact.Number,
-            "Relation": values.EmergencyContact.Relation
+            "Name": values.EmergencyContactName,
+            "Number": values.EmergencyContactNumber,
+            "Relation": values.EmergencyContactRelation
           },
         };
-        console.log(body);
-        await axios.patch('http://localhost:8000/patient/updateMe', body)
+        await axios('http://localhost:8000/patient/updateMe', {
+            method: 'PATCH',
+            data: body,
+            withCredentials: true
+        })
           .then((res) => {
             if (res.status != 200) {
               throw new Error(res.data.message);
@@ -258,14 +260,14 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
                 md={6}
               >
                 <TextField
-                  error={!!(formik.touched.EmergencyContact && formik.touched.EmergencyContact.Name && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Name)}
+                  error={!!(formik.touched.EmergencyContactName && formik.errors.EmergencyContactName)}
                   fullWidth
-                  helperText={formik.touched.EmergencyContact && formik.touched.EmergencyContact.Name && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Name}
+                  helperText={formik.touched.EmergencyContactName  && formik.errors.EmergencyContactName}
                   label="Emergency Contact Name"
                   name="EmergencyContactName"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.EmergencyContact.Name}
+                  value={formik.values.EmergencyContactName}
                 />
               </Grid>
               <Grid
@@ -273,14 +275,14 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
                 md={6}
               >
                 <TextField
-                  error={!!(formik.touched.EmergencyContact && formik.touched.EmergencyContact.Number && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Number)}
+                  error={!!(formik.touched.EmergencyContactNumber && formik.errors.EmergencyContactNumber)}
                   fullWidth
-                  helperText={formik.touched.EmergencyContact && formik.touched.EmergencyContact.Number && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Number}
+                  helperText={formik.touched.EmergencyContactNumber && formik.errors.EmergencyContactNumber}
                   label="Emergency Contact Number"
                   name="EmergencyContactNumber"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.EmergencyContact.Number}
+                  value={formik.values.EmergencyContactNumber}
                 />
               </Grid>
               <Grid
@@ -288,14 +290,14 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
                 md={6}
               >
                 <TextField
-                  error={!!(formik.touched.EmergencyContact && formik.touched.EmergencyContact.Relation && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Relation)}
+                  error={!!( formik.touched.EmergencyContactRelation && formik.errors.EmergencyContactRelation)}
                   fullWidth
-                  helperText={formik.touched.EmergencyContact && formik.touched.EmergencyContact.Relation && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Relation}
+                  helperText={ formik.touched.EmergencyContactRelation && formik.errors.EmergencyContactRelation}
                   label="Emergency Contact Relation"
                   name="EmergencyContactRelation"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.EmergencyContact.Relation}
+                  value={formik.values.EmergencyContactRelation}
                 />
               </Grid>
             </Grid>
