@@ -46,26 +46,26 @@ const Page = () => {
     onSubmit: async (values, helpers) => {
       try {
           const body = {"email": values.email, "password": values.password};
-          const cred = {withCredentials: true};
-          const res = {...body, ...cred};
-          await axios.post('http://localhost:8000/login', res)
+          await axios.post('http://localhost:8000/login' , body)
             .then((res) => { 
               console.log(res);
               return res['data'];
             })
             .then((data) => {
+              console.log(data);
               if (data['Type'] === 'Patient') {
                 Cookies.set('username', data['patient']['username']);
                 router.push(`/user/doctors`);
-              } else if (data['Type'] === 'Pharmacist') {
-                Cookies.set('username', data['pharmacist']['username']);
-                router.push(`/pharmacist`);
+              } else if (data['Type'] === 'Doctor') {
+                Cookies.set('username', data['doctor']['username']);
+                router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {
                 Cookies.set('username', data['admin']['username']);
                 router.push(`/admin`);
               }
             });
       } catch (err) {
+        console.log(err);
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.response.data.message });
         helpers.setSubmitting(false);
@@ -92,10 +92,8 @@ const Page = () => {
     onSubmit: async (values, helpers) => {
       try {
         const body = {"username": values.username, "password": values.password};
-        const cred = {withCredentials: true};
-        const res = {...body, ...cred};
-        await axios.post('http://localhost:8000/login', res)
-        .then((res) => { 
+          await axios.post('http://localhost:8000/login' , body)
+            .then((res) => { 
               if(res.status != 200){
                 console.log(res.status);
                 throw new Error(res.data.message);
@@ -106,9 +104,9 @@ const Page = () => {
               if (data['Type'] === 'Patient') {
                 Cookies.set('username', data['patient']['Username']);
                 router.push(`/user/doctors`);
-              } else if (data['Type'] === 'Pharmacist') {
-                Cookies.set('username', data['pharmacist']['username']);
-                router.push(`/pharmacist`);
+              } else if (data['Type'] === 'Doctor') {
+                Cookies.set('username', data['doctor']['username']);
+                router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {
                 Cookies.set('username', data['admin']['username']);
                 router.push(`/admin`);
