@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
+import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
 import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
@@ -37,6 +37,9 @@ const Page = ({ doctors }) => {
       }}
     >
       <Container maxWidth="xl">
+        <Typography variant="h3" gutterBottom>
+          Doctors
+        </Typography>
         <DoctorsSearch handleSearch={handleSearch} />
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>

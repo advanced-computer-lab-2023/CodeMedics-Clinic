@@ -25,6 +25,7 @@ import {
   Select,
   MenuItem,
   Typography,
+  Stack
 } from '@mui/material';
 import { get } from 'http';
 
@@ -105,27 +106,28 @@ export const OverviewDoctors = (props) => {
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
-
-              <CardActions>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {getSelectedDoctorAppointments(doctor.Username)}}
-                >
-                  View Appointments
-                </Button>
-              </CardActions>
-              <CardActions>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {viewDoctorProfile(doctor.Username, index)}}
-                >
-                  View Profile
-                </Button>
-              </CardActions>
+              <Stack direction="row">
+                <CardActions>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => {getSelectedDoctorAppointments(doctor.Username)}}
+                  >
+                     Appointments
+                  </Button>
+                </CardActions>
+                <CardActions>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => {viewDoctorProfile(doctor.Username, index)}}
+                  >
+                    View Profile
+                  </Button>
+                </CardActions>
+              </Stack>
             </Card>
           );
         })}
