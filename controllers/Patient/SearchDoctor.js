@@ -37,3 +37,21 @@ exports.searchDoctor = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while searching for doctors.' });
     }
 };
+
+exports.getDoctorByUsername = async (req, res) => {
+    const username = req.query.username;// Assuming the request contains a 'username' property.
+    console.log(username);
+    if(username.length == 0){
+        res.status(400).json({ error: 'A username must be provided.' });
+        return;
+    }
+
+    // Query the Doctor model (assuming it's a Mongoose model) to find doctors by name.
+    try {
+        const doctorByUsername = await doctor.findOne({Username: username});
+        res.status(200).json({doctor: doctorByUsername});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'An error occurred while searching for doctors.' });
+    }
+};

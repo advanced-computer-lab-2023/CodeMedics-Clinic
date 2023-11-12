@@ -25,11 +25,11 @@ const patientSchema = new Schema({
     },
     DateOfBirth: {
         type: String,
-        required: false
+        required: true
     },
     Number: {
         type: String,
-        required: false
+        required: true
     },
     Gender: {
         type: String,
@@ -40,8 +40,12 @@ const patientSchema = new Schema({
         required: false
     },
     EmergencyContacts: {
-        type: {String, String},
-        required: false
+        type: {
+            Name: String, 
+            Number: String,
+            Relation: String
+        },
+        required: true
     },
     Package: {
         type: String,
@@ -75,9 +79,10 @@ const patientSchema = new Schema({
         default: 0,
         required: false
     },
-    MedicalDocuments: [{ //for medical history
+    HealthRecords: [{ //for medical history and doctor notes
         filename: String,
         originalname: String,
+        uploadedBy: String,
     }],
 }, {timestamps: true});
 

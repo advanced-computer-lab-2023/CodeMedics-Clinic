@@ -3,11 +3,14 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const patientController = require('../controllers/Patient/PatientController');
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
+const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
+const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
+const { bookAppointment } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
-
 const { changePassword } = require('../controllers/Patient/PatientController');
+const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
 
 
 const {
@@ -22,6 +25,9 @@ const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppoin
 
 const {payAppointment} = require('../controllers/Payment/payAppointment');
 const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
+
+const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
+const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -38,12 +44,22 @@ router.get('/register', patientController.viewPatientRegister);
 router.get('/getPatients', viewPatients);
 router.post('/register', patientController.createPatient);
 router.post('/changePassword', changePassword);
+router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
+router.get('/:patientUsername/past-appointments', viewPastAppointments);
+
+router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
+
+router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
+router.get('/SearchDoctor', searchDoctor);
+router.get('/getDoctorByUsername', getDoctorByUsername);
+router.patch('/bookAppointment', bookAppointment);
 
 router.post('/payAppointment', payAppointment);
 router.post('/payHealthPackage', payHealthPackage);
 
 router.post('/subscribeHealthPackage', patientController.healthPackageSubscription);
 router.post('/unsubscribeHealthPackage', patientController.healthPackageUnsubscription);
+
 
 // app.use(verifyToken);
 
@@ -64,4 +80,6 @@ router.get('/doctorSearch', (req, res) => {
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
+router.get('/:username/health-records', viewHealthRecords);
+
 module.exports = router;

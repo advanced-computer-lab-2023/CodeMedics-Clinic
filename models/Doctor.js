@@ -45,7 +45,7 @@ const doctorSchema = new Schema({
         default: 'Pending',
         required: false,
     },
-    Specialty: {
+    Speciality: {
         type: String,
         required: [true, 'Please enter a specialty']
     },
@@ -65,6 +65,11 @@ const doctorSchema = new Schema({
     IDDocument: { type: String }, 
     MedicalDegree: { type: String }, 
     MedicalLicense: { type: String },
+    AvailableTimeSlots: [{
+        day: { type: String, required: true },
+        startTime: { type: String, required: true },
+        endTime: { type: String, required: true },
+    }],
 }, {timestamps: true});
 
 const Doctor = mongoose.model('Doctor', doctorSchema, 'Doctors');

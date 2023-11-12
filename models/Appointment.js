@@ -12,7 +12,7 @@ const appointmentSchema = new Schema({
     },
     patient: {
         type: String,
-        required: true
+        required: false
     },
     date: {
         type: String,
@@ -28,8 +28,9 @@ const appointmentSchema = new Schema({
     },
     status:{
         type: String,
-        required: true
-    }
+        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled'],
+        default: 'unreserved', 
+        required: true }
 } , {timestamps: true});
 
 const Appointment = mongoose.model('Appointment', appointmentSchema, 'Appointments');

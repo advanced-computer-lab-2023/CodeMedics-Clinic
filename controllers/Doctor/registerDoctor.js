@@ -1,12 +1,12 @@
 const doctorModel = require('../../models/Doctor.js');
+const adminModel = require('../../models/Administrator.js');
+const patientModel = require('../../models/Patient.js');
+const asyncHandler = require('express-async-handler');  
+const multer = require('multer');
+const uploads = require('../../config/multerConfig.js');
 const infoGetter = require('../../config/infoGetter.js');
-const upload = require('../../config/multerConfig.js');
 const bcrypt = require('bcryptjs');
-const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
-
-
-
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
@@ -16,11 +16,25 @@ const createToken = (username) => {
 };
 
 const createDoctor = asyncHandler(async (req, res) => {
+    console.log(req.body);
     // Check if the required variables are present in the request body
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Specialty'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
+    
+    const { Username, Email } = req.body;
+
+    //check if the username is already taken
+    const existingUser = await adminModel.findOne({ Username: Username }) || await doctorModel.findOne({ Username: Username }) || await patientModel.findOne({ Username: Username });
+    if (existingUser) {
+        return res.status(400).json({message: 'Username already taken'});
+    }
+
+    //check if the email is already taken
+    const existingEmail = await adminModel.findOne({ Email: Email }) || await doctorModel.findOne({ Email: Email }) || await patientModel.findOne({ Email: Email });
+    if (existingEmail) {
+        return res.status(400).json({message: 'Email already taken'});
+    }
 
     for (const variable of requiredVariables) {
-        
         if (!req.body[variable]) {
             return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
@@ -30,19 +44,17 @@ const createDoctor = asyncHandler(async (req, res) => {
     if (!req.files || Object.keys(req.files).length !== 3) {
         return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
     }
-    const { IDDocument, MedicalDegree, MedicalLicense } = req.files;
-
+    
     try {
-        // Handle file uploads (files are available in req.files)
-        const idDocumentFile = IDDocument[0].filename;
-        const medicalDegreeFile = MedicalDegree[0].filename;
-        const medicalLicenseFile = MedicalLicense[0].filename;
+        // Access files in req.files with updated keys
+        const idDocumentFile = req.files['nationalIdFile'][0].filename;
+        const medicalDegreeFile = req.files['medicalDegreeFile'][0].filename;
+        const medicalLicenseFile = req.files['medicalLicenseFile'][0].filename;
 
         // Hash the password using bcrypt
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.Password, salt);
 
-        // Check if the username and email are unique (you may need to implement these functions)
         const newDoctor = new doctorModel({
             FirstName: req.body.FirstName,
             LastName: req.body.LastName,
@@ -53,15 +65,17 @@ const createDoctor = asyncHandler(async (req, res) => {
             HourlyRate: req.body.HourlyRate,
             affiliation: req.body.affiliation,
             Degree: req.body.Degree,
-            Specialty: req.body.Specialty,
+            Speciality: req.body.Speciality,
             IDDocument: idDocumentFile,
             MedicalDegree: medicalDegreeFile,
             MedicalLicense: medicalLicenseFile
         });
         await newDoctor.save();
+
         const token = createToken(req.body.Username);
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        return res.status(201).json("Doctor created successfully");
+
+        return res.status(200).json("Doctor created successfully");
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });

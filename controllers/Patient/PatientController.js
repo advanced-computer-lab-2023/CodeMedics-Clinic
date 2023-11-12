@@ -1,4 +1,6 @@
 const patientModel = require('../../models/Patient');
+const adminModel = require('../../models/Administrator');
+const doctorModel = require('../../models/Doctor');
 const {getUsername} = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -21,7 +23,7 @@ const createPatient = asyncHandler(async (req, res) => {
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({message: 'Request body is empty'});
     }
-    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'Gender', 'MobileNumber', 'EmergencyContactName', 'EmergencyContactNumber'];
+    const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'Gender', 'Number', 'EmergencyContactName', 'EmergencyContactNumber'];
 
     for (const variable of requiredVariables) {
         console.log(req.body[variable]);
@@ -29,7 +31,7 @@ const createPatient = asyncHandler(async (req, res) => {
             return res.status(400).json({message: `Missing ${variable} in the request body`});
         }
     }
-    // If all required variables are present, proceed with creating an admin
+    // If all required variables are present, proceed with creating the patient
     const {
         FirstName,
         LastName,
@@ -38,13 +40,29 @@ const createPatient = asyncHandler(async (req, res) => {
         Email,
         DateOfBirth,
         Gender,
-        MobileNumber,
+        Number,
         EmergencyContactName,
-        EmergencyContactNumber
+        EmergencyContactNumber,
+        EmergencyContactRelation
     } = req.body;
+
+    //check if the username is already taken
+    const existingUser = await adminModel.findOne({ Username: Username }) || await doctorModel.findOne({ Username: Username }) || await patientModel.findOne({ Username: Username });
+    if (existingUser) {
+        return res.status(400).json({message: 'Username already taken'});
+    }
+
+    //check if the email is already taken
+    const existingEmail = await adminModel.findOne({ Email: Email }) || await doctorModel.findOne({ Email: Email }) || await patientModel.findOne({ Email: Email });
+    if (existingEmail) {
+        return res.status(400).json({message: 'Email already taken'});
+    }
+
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
+
+    //check if the username is already taken
 
     const newPatient = new patientModel({
             FirstName: FirstName,
@@ -53,18 +71,19 @@ const createPatient = asyncHandler(async (req, res) => {
             Password: hashedPassword,
             Email: Email,
             DateOfBirth: DateOfBirth,
-            Number: MobileNumber,
+            Number: Number,
             Gender: Gender,
             EmergencyContacts: {
-                EmergencyContactName: EmergencyContactName, EmergencyContactNumber: EmergencyContactNumber
+                Name: EmergencyContactName, Number: EmergencyContactNumber, Relation: EmergencyContactRelation
             }
         })
     ;
     await newPatient.save();
     const token = createToken(Username);
     res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-    return res.status(201).json("Patient created successfully!");
+    return res.status(200).json("Patient created successfully!");
 });
+
 const viewPatients = asyncHandler(async (req, res) => {
     try{
     const patients = await patientModel.find();
