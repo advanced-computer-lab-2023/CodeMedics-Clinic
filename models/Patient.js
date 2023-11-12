@@ -45,7 +45,7 @@ const patientSchema = new Schema({
             Number: String,
             Relation: String
         },
-        required: true
+        required: false
     },
     Package: {
         type: String,

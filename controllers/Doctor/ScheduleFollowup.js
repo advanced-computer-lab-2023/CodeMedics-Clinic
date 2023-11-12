@@ -19,7 +19,8 @@ exports.scheduleFollowUp = async (req, res) => {
         // Create a new Appointment object */
 
         const appointment = new Appointment({
-            doctor: doctor.Username ,
+            doctor: doctor.FirstName,
+            doctorUsername: doctor.Username ,
             patient: patient.Username, 
             date: new Date(date),
             startHour: startHour,
