@@ -19,11 +19,11 @@ const appointmentSchema = new Schema({
         required: true
     },
     startHour:{
-        type: String,
+        type: Number,
         required: true
     },
     endHour:{
-        type: String,
+        type: Number,
         required: true
     },
     status:{
