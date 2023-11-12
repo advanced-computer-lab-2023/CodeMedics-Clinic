@@ -241,38 +241,6 @@ const changePassword = async (req, res) => {
     }
 };
 
-// Add these functions to AdminController.js
-const generateOTP = () => {
-    // Generate a 6-digit OTP
-    return Math.floor(100000 + Math.random() * 900000);
-};
-
-const sendOTP = (email, otp) => {
-    // Use nodemailer to send the OTP to the provided email
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'your_email@gmail.com', // Replace with your email
-            pass: 'your_email_password', // Replace with your email password
-        },
-    });
-
-    const mailOptions = {
-        from: 'your_email@gmail.com', // Replace with your email
-        to: email,
-        subject: 'Password Reset OTP',
-        text: `Your OTP for password reset is: ${otp}`,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-};
-
 
 
 module.exports = {
@@ -285,7 +253,5 @@ module.exports = {
     removePackage,
     updatePackage,
     getPackages,
-    changePassword, 
-    sendOTP,
-    generateOTP
+    changePassword
 };
