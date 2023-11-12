@@ -254,4 +254,4 @@ const updateMe = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {updateMe, getMe, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};
+module.exports = {updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};
