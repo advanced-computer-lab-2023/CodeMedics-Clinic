@@ -87,13 +87,13 @@ const createPatient = asyncHandler(async (req, res) => {
 const viewPatients = asyncHandler(async (req, res) => {
     try{
     const patients = await patientModel.find();
-    res.status(200).json(patients);
+    return res.status(200).json(patients);
     }catch(e){
-        res.status(400).json({message: e.message});
+        return res.status(400).json({message: e.message});
     }
 });
 const viewPatientRegister = asyncHandler(async (req, res) => {
-    res.render('PatientViews/RegisterPatient');
+    return res.render('PatientViews/RegisterPatient');
 });
 
 
@@ -141,11 +141,11 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
             }
         });
 
-        res.status(200).json({message: "Health Package Subscription Successful!"});
+        return res.status(200).json({message: "Health Package Subscription Successful!"});
     } else if(patient) {
-        res.status(400).json({message: "Patient already subscribed to health package!"});
+        return res.status(400).json({message: "Patient already subscribed to health package!"});
     } else {
-        res.status(400).json({message: "Patient not found!"});
+        return res.status(400).json({message: "Patient not found!"});
     }
     
 });
@@ -168,11 +168,11 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
             patient.HealthPackage.date = Date.now();
 
             await patient.save();
-            res.status(200).json({message: "Health Package Unsubscription Successful!"});
+            return res.status(200).json({message: "Health Package Unsubscription Successful!"});
         } else if(patient) {
-            res.status(400).json({message: "Patient already unsubscribed to health package!"});
+            return res.status(400).json({message: "Patient already unsubscribed to health package!"});
         } else {
-            res.status(400).json({message: "Patient not found!"});
+            return res.status(400).json({message: "Patient not found!"});
         }
         
     });
@@ -180,9 +180,9 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
 const viewHealthPackage = asyncHandler(async (req, res) => {
     const patient = await patientModel.findOne({Username: await getUsername(req, res)});
     if (patient) {
-        res.status(200).json(patient.HealthPackage);
+        return res.status(200).json(patient.HealthPackage);
     } else {
-        res.status(400).json({message: "Patient not found!"});
+        return res.status(400).json({message: "Patient not found!"});
     }
 });
 
@@ -223,3 +223,35 @@ const changePassword = async (req, res) => {
 
 module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, 
     healthPackageUnsubscription, viewHealthPackage , viewPatients, changePassword};
+const getMe = asyncHandler(async (req, res) => {
+    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+    if (patient) {
+        return res.status(200).json(patient);
+    } else {
+        return res.status(400).json({message: "Patient not found!"});
+    }
+});
+
+const updateMe = asyncHandler(async (req, res) => {
+    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+    if (patient) {
+        const {FirstName, LastName, Email, Number, DateOfBirth, EmergencyContact, Password} = req.body;
+        if(Password){
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(Password, salt);
+            patient.Password = hashedPassword;
+        }
+        patient.FirstName = FirstName;
+        patient.LastName = LastName;
+        patient.Email = Email;
+        patient.Number = Number;
+        patient.EmergencyContact = EmergencyContact;
+        patient.DateOfBirth = DateOfBirth;
+        await patient.save();
+        return res.status(200).json({message: "Patient details updated successfully!"});
+    } else {
+        return res.status(400).json({message: "Patient not found!"});
+    }
+});
+
+module.exports = {updateMe, getMe, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};

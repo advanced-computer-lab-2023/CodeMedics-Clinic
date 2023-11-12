@@ -39,7 +39,7 @@ const patientSchema = new Schema({
         type: [Prescription.schema],
         required: false
     },
-    EmergencyContacts: {
+    EmergencyContact: {
         type: {
             Name: String, 
             Number: String,

@@ -42,6 +42,8 @@ function verifyToken(req, res, next) {
 
 router.get('/register', patientController.viewPatientRegister);
 router.get('/getPatients', viewPatients);
+router.get('/getMe', patientController.getMe);
+router.patch('/updateMe', patientController.updateMe);
 router.post('/register', patientController.createPatient);
 router.post('/changePassword', changePassword);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);

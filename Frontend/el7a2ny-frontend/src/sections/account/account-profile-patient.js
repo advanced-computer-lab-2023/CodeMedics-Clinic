@@ -9,10 +9,8 @@ import {
   Typography
 } from '@mui/material';
 
-export const AccountProfile = () => {
+export const AccountProfilePatient = ({user}) => {
   
-  //get user here.
-
   return(
   <Card>
     <CardContent>
@@ -35,30 +33,28 @@ export const AccountProfile = () => {
           gutterBottom
           variant="h5"
         >
-          {user.name}
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
-          {user.city} {user.country}
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
-          {user.timezone}
+          {user.FirstName}
         </Typography>
       </Box>
     </CardContent>
     <Divider />
-    <CardActions>
-      <Button
-        fullWidth
-        variant="text"
+    <CardContent>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
       >
-        Upload picture
-      </Button>
-    </CardActions>
+        <Typography
+          gutterBottom
+          variant="h5"
+          color="green"
+        >
+          {user.Wallet} $
+        </Typography>
+      </Box>
+    </CardContent>
   </Card>
+  
 )};
