@@ -73,7 +73,7 @@ const createPatient = asyncHandler(async (req, res) => {
             DateOfBirth: DateOfBirth,
             Number: Number,
             Gender: Gender,
-            EmergencyContacts: {
+            EmergencyContact: {
                 Name: EmergencyContactName, Number: EmergencyContactNumber, Relation: EmergencyContactRelation
             }
         })

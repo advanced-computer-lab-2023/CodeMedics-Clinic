@@ -8,56 +8,116 @@ import {
   CardHeader,
   Divider,
   TextField,
+  Typography,
+  MenuItem,
+  Stack,
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
-export const AccountProfileDetailsPatient = ({values, setValues}) => {
+export const AccountProfileDetailsPatient = ({ values, setValues }) => {
 
   const router = useRouter();
-  
-  console.log("HERE",values);
 
-  const solve = (prevState, name, value) => {
-    const tmp = name.split('.');
-    if(tmp.length === 1) {
-      return {
-        ...prevState,
-        [name]: value
-      };
-    }
-
-    console.log(prevState);
-
-    return {
-      ...prevState,
-      [tmp[0]]: {
-        ...prevState[tmp[0]],
-        [tmp[1]]: value
+  const formik = useFormik({
+    initialValues: {
+      FirstName: values.FirstName,
+      LastName: values.LastName,
+      Username: values.Username,
+      Password: '',
+      Email: values.Email,
+      Number: values.Number,
+      DateOfBirth: values.DateOfBirth,
+      EmergencyContact: {
+        Name: values.EmergencyContact.Name,
+        Number: values.EmergencyContact.Number,
+        Relation: values.EmergencyContact.Relation
+      },
+    },
+    validationSchema: Yup.object({
+      FirstName: Yup
+        .string()
+        .max(255)
+        .required('Name is required'),
+      LastName: Yup
+        .string()
+        .max(255)
+        .required('Name is required'),
+      Username: Yup
+        .string()
+        .max(255)
+        .required('Username is required'),
+      Password: Yup
+        .string()
+        .max(255),
+      Email: Yup
+        .string()
+        .email('Must be a valid email')
+        .max(255)
+        .required('Email is required'),
+      DateOfBirth: Yup
+        .date()
+        .required('Date of birth is required'),
+      Number: Yup
+        .string()
+        .max(255)
+        .required('Number is required'),
+      EmergencyContactName: Yup
+        .string()
+        .max(255)
+        .required('Emergency Contact Name is required'),
+      EmergencyContactNumber: Yup
+        .string()
+        .max(255)
+        .required('Emergency Contact Number is required'),
+      EmergencyContactRelation: Yup
+        .string()
+        .max(255)
+        .required('Emergency Contact Relation is required'),
+    }),
+    onSubmit: async (values, helpers) => {
+      try {
+        const body = {
+          "FirstName": values.FirstName,
+          "LastName": values.LastName,
+          "Username": values.Username,
+          "Password": values.Password,
+          "Email": values.Email,
+          "DateOfBirth": values.DateOfBirth,
+          "Number": values.Number,
+          "Gender": values.Gender,
+          "EmergencyContact": {
+            "Name": values.EmergencyContact.Name,
+            "Number": values.EmergencyContact.Number,
+            "Relation": values.EmergencyContact.Relation
+          },
+        };
+        console.log(body);
+        await axios.patch('http://localhost:8000/patient/updateMe', body)
+          .then((res) => {
+            if (res.status != 200) {
+              throw new Error(res.data.message);
+            }
+            return res['data'];
+          })
+          .then((data) => {
+            router.push('/auth/login');
+          });
+      } catch (err) {
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ Submit: err.response.data.message });
+        helpers.setSubmitting(false);
       }
     }
-  }
-
-  const handleChange = useCallback(
-    (event) => {
-      setValues((prevState) => solve(prevState, event.target.name, event.target.value));
-    },
-    []
-  );
-
-  const handleSubmit = () => {
-      console.log("SUBMITTING", values);
-      axios.patch('http://localhost:8000/patient/updateMe', values, {withCredentials: true})
-        .then(() => {
-          router.push('/user/doctors');
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-
+  });
   return (
+    <form
+      noValidate
+      onSubmit={formik.handleSubmit}
+    >
       <Card>
         <CardHeader
           subheader="The information can be edited"
@@ -74,12 +134,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.FirstName && formik.errors.FirstName)}
                   fullWidth
-                  label="First name"
+                  helperText={formik.touched.FirstName && formik.errors.FirstName}
+                  label="FirstName"
                   name="FirstName"
-                  onChange={handleChange}
-                  required
-                  value={values.FirstName}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.FirstName}
                 />
               </Grid>
               <Grid
@@ -87,12 +149,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.LastName && formik.errors.LastName)}
                   fullWidth
-                  label="Last name"
+                  helperText={formik.touched.LastName && formik.errors.LastName}
+                  label="LastName"
                   name="LastName"
-                  onChange={handleChange}
-                  required
-                  value={values.LastName}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.LastName}
                 />
               </Grid>
               <Grid
@@ -100,12 +164,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.Username && formik.errors.Username)}
                   fullWidth
+                  helperText={formik.touched.Username && formik.errors.Username}
                   label="Username"
                   name="Username"
-                  onChange={handleChange}
-                  disabled
-                  value={values.Username}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.Username}
                 />
               </Grid>
               <Grid
@@ -113,12 +179,15 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.Email && formik.errors.Email)}
                   fullWidth
+                  helperText={formik.touched.Email && formik.errors.Email}
                   label="Email Address"
                   name="Email"
-                  onChange={handleChange}
-                  required
-                  value={values.Email}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="email"
+                  value={formik.values.Email}
                 />
               </Grid>
               <Grid
@@ -126,11 +195,15 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
-                  type="password"
+                  error={!!(formik.touched.Password && formik.errors.Password)}
                   fullWidth
+                  helperText={formik.touched.Password && formik.errors.Password}
                   label="Password"
                   name="Password"
-                  onChange={handleChange}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  type="password"
+                  value={formik.values.Password}
                 />
               </Grid>
               <Grid
@@ -138,12 +211,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.Number && formik.errors.Number)}
                   fullWidth
-                  label="Phone Number"
+                  helperText={formik.touched.Number && formik.errors.Number}
+                  label="Mobile Number"
                   name="Number"
-                  onChange={handleChange}
-                  type="number"
-                  value={values.Number}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.Number}
                 />
               </Grid>
               <Grid
@@ -151,13 +226,31 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
-                  type="date"
+                  error={!!(formik.touched.DateOfBirth && formik.errors.DateOfBirth)}
                   fullWidth
-                  label="Date of birth"
+                  helperText={formik.touched.DateOfBirth && formik.errors.DateOfBirth}
+                  label="Date of Birth"
                   name="DateOfBirth"
-                  onChange={handleChange}
-                  required
-                  value={values.DateOfBirth}
+                  onBlur={formik.handleBlur}
+                  onChange={(event) => {
+                  const value = event.target.value;
+                  if (value.length <= 10) { // Limit the total length to 10 characters
+                    // Allow only digits (0-9) in the "yyyy" part
+                    const yyyy = value.slice(0, 4).replace(/[^0-9]/g, '');
+
+                    // Ensure "mm" and "dd" are not affected
+                    const mmdd = value.slice(4);
+
+                    // Combine the parts and format
+                    const formattedValue = `${yyyy}${mmdd}`;
+
+                    // Update the formik value
+                    formik.setFieldValue("DateOfBirth", formattedValue);
+                  }
+                }}
+                  type="date"
+                  value={formik.values.DateOfBirth}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>              
               <Grid
@@ -165,12 +258,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.EmergencyContact && formik.touched.EmergencyContact.Name && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Name)}
                   fullWidth
+                  helperText={formik.touched.EmergencyContact && formik.touched.EmergencyContact.Name && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Name}
                   label="Emergency Contact Name"
-                  name="EmergencyContact.Name"
-                  onChange={handleChange}
-                  required
-                  value={values.EmergencyContact.Name}
+                  name="EmergencyContactName"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.EmergencyContact.Name}
                 />
               </Grid>
               <Grid
@@ -178,12 +273,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.EmergencyContact && formik.touched.EmergencyContact.Number && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Number)}
                   fullWidth
+                  helperText={formik.touched.EmergencyContact && formik.touched.EmergencyContact.Number && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Number}
                   label="Emergency Contact Number"
-                  name="EmergencyContact.Number"
-                  onChange={handleChange}
-                  required
-                  value={values.EmergencyContact.Number}
+                  name="EmergencyContactNumber"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.EmergencyContact.Number}
                 />
               </Grid>
               <Grid
@@ -191,12 +288,14 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
                 md={6}
               >
                 <TextField
+                  error={!!(formik.touched.EmergencyContact && formik.touched.EmergencyContact.Relation && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Relation)}
                   fullWidth
+                  helperText={formik.touched.EmergencyContact && formik.touched.EmergencyContact.Relation && formik.errors.EmergencyContact && formik.errors.EmergencyContact.Relation}
                   label="Emergency Contact Relation"
-                  name="EmergencyContact.Relation"
-                  onChange={handleChange}
-                  required
-                  value={values.EmergencyContact.Relation}
+                  name="EmergencyContactRelation"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.EmergencyContact.Relation}
                 />
               </Grid>
             </Grid>
@@ -204,10 +303,11 @@ export const AccountProfileDetailsPatient = ({values, setValues}) => {
         </CardContent>
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={handleSubmit}>
-            Save details
+          <Button variant="contained" type="submit">
+            Save
           </Button>
         </CardActions>
       </Card>
+    </form>
   );
 };
