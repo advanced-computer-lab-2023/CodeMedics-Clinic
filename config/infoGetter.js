@@ -8,7 +8,7 @@ const getUsername = async (req, res) => {
       if (err) {
         // console.log('You are not logged in.');
         // res send status 401 you are not logged in
-        res.status(401).json({message:"You are not logged in."})
+        console.log("Failed auth verification");
         // res.redirect('/login');
       } else {
         console.log(decodedToken, decodedToken.username);
@@ -16,7 +16,7 @@ const getUsername = async (req, res) => {
       }
     });
   }else{
-    res.status(401).json({message:"You are not logged in."})
+    console.log("Token not found");
   }
     return username;
 };

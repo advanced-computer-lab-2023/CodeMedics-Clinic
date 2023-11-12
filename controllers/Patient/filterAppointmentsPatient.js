@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const Patient = require('../../models/Patient');
 const Appointment = require('../../models/Appointment');
+const { getUsername } = require('../../config/infoGetter');
 
 exports.filterAppointmentsPatient = async (req, res) => {
     try {
-        const patient = await Patient.findOne({ Username: req.query.Username });
+        const patient = await Patient.findOne({ Username: await getUsername(req, res) });
         if(patient == null){
             return res.status(404).json({ message: 'Patient does not exist' });
         }
@@ -14,8 +15,8 @@ exports.filterAppointmentsPatient = async (req, res) => {
             const appointment = await Appointment.findOne({ _id: patient.Appointments[i] });
             appointments.push(appointment);  
         }
-        res.status(200).json({data: appointments});
+        return res.status(200).json({appointments});
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        return res.status(400).json({ message: error.message });
     }
 };
