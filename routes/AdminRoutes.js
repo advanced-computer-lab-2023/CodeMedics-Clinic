@@ -3,7 +3,11 @@ const router = express.Router();
 const AdminController = require('../controllers/Admin/AdminController');
 const adminGetter = require('../controllers/Admin/AdminGetters');
 const {getPackages} = require("../controllers/Admin/AdminController");
-const { changePassword } = require('../controllers/Admin/AdminController.js');
+const { changePassword,generateOTP, sendOTP } = require('../controllers/Admin/AdminController');
+const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const adminModel = require('../models/Administrator');
 
 //const JWTAuth = require('../config/JWTAuth.js');
 
@@ -54,4 +58,68 @@ router.delete('/removePackage', (req, res) => {
 router.patch('/updatePackage', (req, res) => {
     AdminController.updatePackage(req, res).then();
 });
+
+
+
+
+// Define a route for initiating the password reset process
+router.post('/forgotPassword', async (req, res) => {
+    const { email } = req.body;
+
+    // Generate a unique reset token (using crypto) and store it in the database along with the admin's email
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    const resetExpiry = Date.now() + 3600000; // Token valid for 1 hour
+
+    try {
+        const admin = await adminModel.findOneAndUpdate(
+            { Email: email },
+            { $set: { resetToken, resetExpiry } },
+            { new: true }
+        );
+
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found' });
+        }
+
+        // Send the OTP to the admin's email
+        const otp = generateOTP(); // You need to implement this function in AdminController
+        sendOTP(email, otp); // You need to implement this function in AdminController
+
+        return res.status(200).json({ message: 'Password reset initiated. Check your email for OTP.' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error initiating password reset' });
+    }
+});
+
+// Define a route for verifying the OTP and updating the password
+router.post('/resetPassword', async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+
+    try {
+        const admin = await adminModel.findOne({
+            Email: email,
+            resetToken: otp,
+            resetExpiry: { $gt: Date.now() },
+        });
+
+        if (!admin) {
+            return res.status(400).json({ error: 'Invalid or expired OTP' });
+        }
+
+        // Hash the new password and update it in the database
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        admin.Password = hashedPassword;
+        admin.resetToken = undefined;
+        admin.resetExpiry = undefined;
+        await admin.save();
+
+        return res.status(200).json({ message: 'Password reset successful' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Error resetting password' });
+    }
+});
+
+
 module.exports = router;
