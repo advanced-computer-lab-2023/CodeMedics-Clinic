@@ -9,6 +9,7 @@ const schedule = require('node-schedule');
 const jwt = require('jsonwebtoken');
 
 
+
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
     return jwt.sign({ username }, 'supersecret', {
@@ -185,4 +186,40 @@ const viewHealthPackage = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};
+
+
+const changePassword = async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+
+    try {
+        // Fetch the doctor's current data from the database using their username
+        const patient = await patientModel.findOne({ Username: username });
+
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+
+        // Verify if the current password matches the one in the database
+        const passwordMatch = await bcrypt.compare(currentPassword, patient.Password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({ error: 'Current password is incorrect' });
+        }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update the doctor's password in the database
+        patient.Password = hashedPassword;
+        await patient.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+
+module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, 
+    healthPackageUnsubscription, viewHealthPackage , viewPatients, changePassword};
