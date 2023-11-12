@@ -18,7 +18,7 @@ const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
 const { requireAuth } = require('../Middleware/authMiddleware');
 const {addAppointments} = require('../controllers/Doctor/addAppointment');
-const docViewHealthRecords = require('../controllers/Doctor/docViewHealthRecords');
+const {docViewHealthRecords} = require('../controllers/Doctor/docViewHealthRecords');
 const {addHealthRecord, uploadDocument} = require('../controllers/Doctor/addHealthRecord')
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -92,7 +92,7 @@ router.get('/', (req, res) => {
     });
 });
 router.post('/:doctorUsername/addHealthRecord',uploadDocument, addHealthRecord);
-//router.get('/:doctorUsername/health-records',docViewHealthRecords);
+router.get('/:doctorUsername/health-records',docViewHealthRecords);
 
 module.exports = router;
 
