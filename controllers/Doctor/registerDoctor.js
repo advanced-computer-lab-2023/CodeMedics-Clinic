@@ -1,4 +1,6 @@
 const doctorModel = require('../../models/Doctor.js');
+const adminModel = require('../../models/Administrator.js');
+const patientModel = require('../../models/Patient.js');
 const asyncHandler = require('express-async-handler');  
 const multer = require('multer');
 const uploads = require('../../config/multerConfig.js');
@@ -18,6 +20,20 @@ const createDoctor = asyncHandler(async (req, res) => {
     console.log(req.body);
     // Check if the required variables are present in the request body
     const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
+    
+    const { Username, Email } = req.body;
+
+    //check if the username is already taken
+    const existingUser = await adminModel.findOne({ Username: Username }) || await doctorModel.findOne({ Username: Username }) || await patientModel.findOne({ Username: Username });
+    if (existingUser) {
+        return res.status(400).json({message: 'Username already taken'});
+    }
+
+    //check if the email is already taken
+    const existingEmail = await adminModel.findOne({ Email: Email }) || await doctorModel.findOne({ Email: Email }) || await patientModel.findOne({ Email: Email });
+    if (existingEmail) {
+        return res.status(400).json({message: 'Email already taken'});
+    }
 
     for (const variable of requiredVariables) {
         if (!req.body[variable]) {
@@ -40,7 +56,6 @@ const createDoctor = asyncHandler(async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.Password, salt);
 
-        // Check if the username and email are unique (you may need to implement these functions)
         const newDoctor = new doctorModel({
             FirstName: req.body.FirstName,
             LastName: req.body.LastName,

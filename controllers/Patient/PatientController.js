@@ -30,7 +30,7 @@ const createPatient = asyncHandler(async (req, res) => {
             return res.status(400).json({message: `Missing ${variable} in the request body`});
         }
     }
-    // If all required variables are present, proceed with creating an admin
+    // If all required variables are present, proceed with creating the patient
     const {
         FirstName,
         LastName,
@@ -45,6 +45,7 @@ const createPatient = asyncHandler(async (req, res) => {
         EmergencyContactRelation
     } = req.body;
 
+    //check if the username is already taken
     const existingUser = await adminModel.findOne({ Username: Username }) || await doctorModel.findOne({ Username: Username }) || await patientModel.findOne({ Username: Username });
     if (existingUser) {
         return res.status(400).json({message: 'Username already taken'});
