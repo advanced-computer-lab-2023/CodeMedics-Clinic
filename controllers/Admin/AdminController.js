@@ -241,6 +241,41 @@ const changePassword = async (req, res) => {
     }
 };
 
+// In AdminController.js
+
+const acceptRejectDoctorRequest = async (req, res) => {
+    const { username, action } = req.body;
+
+    try {
+        // Find the doctor by username
+        const doctor = await doctorModel.findOne({ Username: username, Status: 'Pending' });
+
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor request not found or already processed' });
+        }
+
+        // Update the doctor's status based on the action (Accept or Reject)
+        if (action === 'accept') {
+            doctor.Status = 'Approved';
+            // You may perform additional logic here if needed
+        } else if (action === 'reject') {
+            // If rejected, delete the doctor's record from the database
+            await doctorModel.deleteOne({ Username: username, Status: 'Pending' });
+            // Return success message or any relevant information
+            return res.status(200).json({ message: 'Doctor request rejected and record deleted' });
+        } else {
+            return res.status(400).json({ error: 'Invalid action' });
+        }
+
+        // Save the updated doctor
+        await doctor.save();
+
+        // Return the updated doctor
+        return res.status(200).json(doctor);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
 
 
 module.exports = {
@@ -253,5 +288,6 @@ module.exports = {
     removePackage,
     updatePackage,
     getPackages,
-    changePassword
+    changePassword,
+    acceptRejectDoctorRequest
 };
