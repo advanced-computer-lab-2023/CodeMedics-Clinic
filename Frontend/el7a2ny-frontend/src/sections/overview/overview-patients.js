@@ -20,16 +20,19 @@ import {
 
 export const OverviewLatestProducts = (props) => {
   const { products = [], sx } = props;
-
-  console.log(products);
+   
 
   return (
     <Card sx={{ width: '100%', ...sx }}>
       <CardHeader title="Patients" />
       <List>
         {products.map((product, index) => {
+
+            const handleViewPatient = (productID) =>{
+                console.log("HELLO FINALLY");
+            }
+
           const hasDivider = index < products.length - 1;
-          const ago = formatDistanceToNow(product.updatedAt);
 
           return (
             <ListItem
@@ -63,9 +66,8 @@ export const OverviewLatestProducts = (props) => {
                 }
               </ListItemAvatar>
               <ListItemText
-                primary={product.FirstName}
+                primary={product.FirstName + " " + product.LastName}
                 primaryTypographyProps={{ variant: 'subtitle1' }}
-                secondary={`Updated ${ago} ago`}
                 secondaryTypographyProps={{ variant: 'body2' }}
               />
               <ListItemSecondaryAction>

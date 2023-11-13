@@ -16,25 +16,29 @@ import Cookies from 'js-cookie';
 const now = new Date();
 
 
-console.log("TEST COOKIES", Cookies.get("token"));
-// const getPatients = async () => {
-//   await axios.get(`http://localhost:8000/doctor/viewPatients`, {
-//     withCredentials: true
-//   })
-//   .then(response => {
-//     console.log(response.data);
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   })
-// };
+const Page = () => {
 
-// //const data = await getPatients();
-// console.log("HERE IN DOCTOR PATIENTS")
-// console.log(data);
+  const [patients, setPatients] = useState([]);
 
-const Page = ({ patients }) => {
-  const [data, setData] = useState(patients);
+  useEffect(() => {
+    getPatients();
+  }, []);
+
+  const getPatients = () => {
+    axios({
+      method: 'GET',
+      url: 'http://localhost:8000/doctor/viewPatients',
+      withCredentials: true,
+    })
+      .then((response) => {
+        setPatients(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  
 return (
   <>
     <Head>
@@ -57,7 +61,7 @@ return (
 
           
             <OverviewLatestProducts 
-              products={data}
+              products={patients}
               sx={{ height: '100%' }}
             />
           <Grid
@@ -78,26 +82,6 @@ Page.getLayout = (page) => (
     {page}
   </DashboardLayout>
 );
-
-export async function getServerSideProps() {
-  try {
-    // Fetch data from the provided API
-    const response = await axios('http://localhost:8000/doctor/viewPatients', {
-      method: "GET",
-      withCredentials: true
-    });
-    const patients = response.data;
-    console.log(patients);
-    return {
-      props: patients,
-    };
-  } catch (error) {
-    console.error('Error fetching patients:', error);
-    return {
-      props: { patients: [] }, // Return an empty array in case of an error
-    };
-  }
-}
 
 
 export default Page;

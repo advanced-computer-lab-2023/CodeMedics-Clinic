@@ -15,5 +15,5 @@ exports.viewPatients = async (req, res) =>{
         patients.push(cur);
     }
     console.log(patients);
-    res.status(200).json({patients: patients});
+    return res.status(200).json(patients);
 };
