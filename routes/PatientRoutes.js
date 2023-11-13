@@ -15,10 +15,8 @@ const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAp
 
 const {
     getPrescriptions,
-    getPrescriptionsByDate,
-    getPrescriptionsByDoctor,
-    getPrescriptionsByStatus,
-    filterPrescriptions
+    filterPrescriptions,
+    addPrescription
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
 const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
@@ -75,16 +73,19 @@ router.delete('/familyMembers', removeFamilyMember);
 router.delete('/familyMembersNoAccount', removeFamilyMemberNoAccount);
 router.get('/familyMembers', viewFamilyMembers);
 router.post('/familyMembersNoAccount', addFamilyMemberNoAccount);
-router.get('/prescriptions/filter', filterPrescriptions);
-router.get('/prescriptions', getPrescriptions);
 router.get('/viewappointments', filterAppointmentsPatient);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/doctorSearch', (req, res) => {
     res.render('SearchDoctor');
 });
+
+router.get('/prescriptions/filter', filterPrescriptions);
+router.get('/prescriptions', getPrescriptions);
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
+router.post('/addPrescription', addPrescription);
+
 router.get('/:username/health-records', viewHealthRecords);
 
 module.exports = router;
