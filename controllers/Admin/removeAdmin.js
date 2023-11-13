@@ -3,9 +3,8 @@ const { getUsername } = require('../../config/infoGetter');
 const removeAdmin = async (req, res) => {
     const { Username } = req.body;
     const admin = await Admin.findOne({Username: Username });
-    // TODO: find the username of the current user;
-    // const curUsername = getUsername();
-    const curUsername = 'admin';
+    
+    const curUsername = await getUsername(req , res);
     if(admin.isCreator){
         return res.status(400).json({message: 'Cannot remove creator.'});
     }

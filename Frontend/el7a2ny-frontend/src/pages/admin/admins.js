@@ -4,12 +4,13 @@ import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography , Alert } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
 import { AdminsTable } from 'src/sections/admin/Admins/AdminsTable';
 import { AdminsSearch } from 'src/sections/admin/Admins/AdminsSearch';
 import { applyPagination } from 'src/utils/apply-pagination';
+import Cookies from 'js-cookie';
 
 const axios = require('axios');
 
@@ -40,6 +41,8 @@ const Page = () => {
   const customers = useCustomers(data, page, rowsPerPage);
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
+  const [alert , setAlert] = useState(false);
+  const [alertMessage , setAlertMessage] = useState("");
 
   useEffect(() => {
     fetch('http://localhost:8000/admin/viewAdmins')
@@ -57,6 +60,24 @@ const Page = () => {
   })
     .catch((err) => {});
 }, []);
+
+const handleRemove = (username)  => {
+  console.log(Cookies.username);
+  axios.post('http://localhost:8000/admin/removeAdmin', {Username: username})
+  .then((res) => {
+    console.log(res);
+    if(res.status == 200) {
+      console.log("removed");
+      window.location.reload();
+    }
+  })
+  .catch((err) => {
+    setAlert(true);
+    setAlertMessage(err.response.data.message);
+  }
+  )
+}
+
 const handlePageChange = useCallback(
   (event, value) => {
     setPage(value);
@@ -78,6 +99,12 @@ return (
         Admins
       </title>
     </Head>
+    {alert && 
+      <Stack sx={{width: 600 , ml: 35}} spacing={20}>
+        <></>
+        <Alert onClose={() => {setAlert(false);}} severity="warning" style={{ backgroundColor: '#fff4e5',  }}>{alertMessage}</Alert>
+      </Stack>
+    }
     <Box
       component="main"
       sx={{
@@ -85,6 +112,7 @@ return (
         py: 8
       }}
     >
+      
       <Container maxWidth="xl">
         <Stack spacing={3}>
           <Stack
@@ -126,6 +154,7 @@ return (
           </Stack>
           <AdminsSearch/>
           <AdminsTable
+            handleRemove = {handleRemove}
             count={data.length}
             items={customers}
             onPageChange={handlePageChange}
