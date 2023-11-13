@@ -1,5 +1,3 @@
-
-const { get } = require('lodash');
 const Admin = require('../../models/Administrator'); 
 const { getUsername } = require('../../config/infoGetter');
 const removeAdmin = async (req, res) => {
