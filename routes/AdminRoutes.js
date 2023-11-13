@@ -40,6 +40,7 @@ router.post('/removeAdmin', removeAdmin);
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
 });
+
 router.get('/register', (req, res) => {
     adminGetter.viewRegisterAdmin(req, res).then();
 });

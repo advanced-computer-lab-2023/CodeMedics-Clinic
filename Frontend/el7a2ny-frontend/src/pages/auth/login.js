@@ -67,7 +67,7 @@ const Page = () => {
                 router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {
                 Cookies.set('username', data['admin']['username']);
-                router.push(`/admin`);
+                router.push(`/admin/admins`);
               }
             });
       } catch (err) {
@@ -122,7 +122,7 @@ const Page = () => {
                 router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {
                 Cookies.set('username', data['admin']['username']);
-                router.push(`/admin`);
+                router.push(`/admin/admins`);
               }
             });
       } catch (err) {

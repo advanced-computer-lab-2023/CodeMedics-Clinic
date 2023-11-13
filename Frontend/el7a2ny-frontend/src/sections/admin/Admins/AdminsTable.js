@@ -14,7 +14,7 @@ import {
   TableCell,
   TableHead, Button,
   TablePagination,
-  TableRow,
+  TableRow, Alert,
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -30,6 +30,7 @@ export const AdminsTable = (props) => {
   const {
     count = 0,
     items = [],
+    handleRemove,
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
@@ -40,7 +41,8 @@ export const AdminsTable = (props) => {
     rowsPerPage = 0,
     selected = []
   } = props;
-  const [isOpen, setIsOpen] = useState(false);
+
+  
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -52,7 +54,7 @@ export const AdminsTable = (props) => {
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
-  return (
+  return (  
     <Card>
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
@@ -130,45 +132,9 @@ export const AdminsTable = (props) => {
                     <TableCell>
                       <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
                       onClick={() => {
-                          const userName = customer.Username;
-                          axios.post('http://localhost:8000/admin/removeAdmin', {Username: customer.Username})
-                          .then((res) => {
-                            if (res.status == 200) {
-                              console.log("removed"); 
-                              window.location.reload();
-                            }
-                            else if(res.status == 400){
-                              <div>
-                              <Button className="openButton" onClick={handleOpen}>
-                                Open Popup
-                              </Button>
-                              
-                              {isOpen && (
-                                <div className="overlay">
-                                  <div className="popup">
-                                    <div className="popup-header">
-                                      <Span className="closeButton" onClick={handleClose}>
-                                        &times;
-                                      </Span>
-                                      <h2>Popup Title</h2>
-                                    </div>
-                                    <div className="popup-content">
-                                      <p>Popup Content goes here.</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                            }
-                            else{
-                              
-                            }
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          }
-                          )
-                        }}>
+                        const userName = customer.Username;
+                        handleRemove(userName);
+                      }}>
                         Remove
                       </Button>
                     </TableCell>
