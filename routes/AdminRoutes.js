@@ -12,7 +12,7 @@ const adminModel = require('../models/Administrator');
 const viewDoctors = require('../controllers/Admin/viewDoctors');
 const viewPatients = require('../controllers/Admin/viewPatients');
 const removePatient = require('../controllers/Admin/removePatient');
-
+const removeDoctor = require('../controllers/Admin/removeDoctor');
 //const JWTAuth = require('../config/JWTAuth.js');
 
 //const isAuth = JWTAuth.isAuth;
@@ -30,6 +30,7 @@ router.get('/viewDoctors',  viewDoctors);
 router.get('/viewPatients',  viewPatients);
 router.post('/changePassword', changePassword);
 router.post('/removePatient', removePatient);
+router.post('/removeDoctor', removePatient);
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();

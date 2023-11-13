@@ -65,9 +65,9 @@ export const RequestTable = (props) => {
                 <TableCell>
                   Email
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Password
-                </TableCell>
+                </TableCell> */}
                 {/* <TableCell>
                   Gender
                 </TableCell> */}
@@ -118,9 +118,9 @@ export const RequestTable = (props) => {
                     <TableCell>
                       {customer.Email}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {customer.Password}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       {customer.HourlyRate}
                     </TableCell>
@@ -134,7 +134,7 @@ export const RequestTable = (props) => {
                       {customer.educationalBackground}
                     </TableCell>
                     <TableCell>
-                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
+                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginRight: '10px' }} 
                       onClick={() => {
                           const userName = customer.Username;
                           axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "reject"})

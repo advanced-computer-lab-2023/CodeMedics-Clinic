@@ -115,7 +115,7 @@ export const PatientTable = (props) => {
                           axios.post('http://localhost:8000/admin/removePatient', {Username: customer.Username})
                           .then((res) => {
                             if (res.status == 200) {
-                              console.log("removed");
+                              console.log("removed"); 
                               window.location.reload();
                             }
                           })

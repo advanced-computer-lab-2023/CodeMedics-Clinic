@@ -27,8 +27,17 @@ export const items = [
       </SvgIcon>
     )
   },{
-    title: 'Pharmacists',
-    path: '/admin/pharmacists',
+    title: 'Doctors',
+    path: '/admin/doctors',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Admins',
+    path: '/admin/Admins',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
@@ -64,7 +73,7 @@ export const items = [
   },
   {
     title: 'New Admin',
-    path: '/admin/register',
+    path: '/admin/addAdmin',
     icon: (
       <SvgIcon fontSize="small">
         <UserPlusIcon />

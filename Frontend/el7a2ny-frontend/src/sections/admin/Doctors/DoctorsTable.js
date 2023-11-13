@@ -12,7 +12,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
+  TableHead, Button,
   TablePagination,
   TableRow,
   Typography
@@ -25,8 +25,8 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
-
-export const PharmacistsTable = (props) => {
+import axios from 'axios';
+export const DoctorsTable = (props) => {
   const {
     count = 0,
     items = [],
@@ -120,24 +120,23 @@ export const PharmacistsTable = (props) => {
                       {customer.Degree}
                     </TableCell>
                     <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <Xmark/>
-                        </SvgIcon>
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <PencilIcon/>
-                        </SvgIcon>
-                      </IconButton>
+                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
+                      onClick={() => {
+                          const userName = customer.Username;
+                          axios.post('http://localhost:8000/admin/removeDoctor', {Username: customer.Username})
+                          .then((res) => {
+                            if (res.status == 200) {
+                              console.log("removed"); 
+                              window.location.reload();
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          }
+                          )
+                        }}>
+                        Remove
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );
@@ -159,7 +158,7 @@ export const PharmacistsTable = (props) => {
   );
 };
 
-PharmacistsTable.propTypes = {
+DoctorsTable.propTypes = {
   count: PropTypes.number,
   items: PropTypes.array,
   onDeselectAll: PropTypes.func,
