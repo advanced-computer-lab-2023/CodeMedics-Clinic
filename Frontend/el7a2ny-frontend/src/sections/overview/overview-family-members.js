@@ -179,11 +179,20 @@ export const OverviewFamilyMembers = (props) => {
                                     )}
                                 </ListItemAvatar>
                                 <ListItemText
-                                    primary={familyMember.FirstName + ' ' + familyMember.LastName}
+                                    primary={familyMember.Name}
                                     primaryTypographyProps={{ variant: 'subtitle1' }}
                                     secondaryTypographyProps={{ variant: 'body2' }}
                                 />
                             </ListItem>
+                            <Stack direction="row">
+                                <CardActions>
+                                    <ListItemText
+                                        primary={"Relation: " + familyMember.Relationship}
+                                        primaryTypographyProps={{ variant: 'subtitle1' }}
+                                        secondaryTypographyProps={{ variant: 'body2' }}
+                                    />
+                                </CardActions>
+                            </Stack>
                             <Stack direction="row">
                                 <CardActions>
                                     <Button

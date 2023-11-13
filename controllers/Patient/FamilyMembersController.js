@@ -31,9 +31,9 @@ exports.addFamilyMemberNoAccount = async (req, res) => {
    const {Name, NationalId, Gender, DateOfBirth, Relationship} = req.body;
 
    try{
-      const familyMember = new FamilyMember({Name, NationalId, Gender, DateOfBirth, Relationship});
+      const familyMember = new FamilyMember({Name, NationalID: NationalId, Gender, DateOfBirth, Relationship});
       const savedFamilyMember = await familyMember.save();
-      const me = Patient.findOne({Username});
+      const me = await Patient.findOne({Username});
       me.FamilyMembersNoAccount.push(savedFamilyMember._id);
       await me.save();
       return res.status(200).json({message: 'Family member added successfully'});
@@ -47,7 +47,7 @@ exports.removeFamilyMemberNoAccount = async (req, res) => {
    const Username = await getUsername(req, res);
    const {familyMemberId} = req.body;
    try{
-      const me = Patient.findOne({Username});
+      const me = await Patient.findOne({Username});
       me.FamilyMembersNoAccount = me.FamilyMembersNoAccount.filter(member => member.toString() != familyMemberId);
       await me.save();
       return res.status(200).json({message: 'Family member removed successfully'});
