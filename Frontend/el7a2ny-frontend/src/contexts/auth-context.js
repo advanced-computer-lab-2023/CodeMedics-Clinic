@@ -155,6 +155,13 @@ export const AuthProvider = (props) => {
   const signOut = () => {
     Cookies.remove('username');
     Cookies.remove('jwt');
+    axios.post('http://localhost:8000/patient/logout')
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     dispatch({
       type: HANDLERS.SIGN_OUT
     });
