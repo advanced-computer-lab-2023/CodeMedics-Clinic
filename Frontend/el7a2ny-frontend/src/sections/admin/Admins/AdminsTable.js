@@ -14,7 +14,7 @@ import {
   TableCell,
   TableHead, Button,
   TablePagination,
-  TableRow,
+  TableRow, Alert,
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -40,15 +40,7 @@ export const AdminsTable = (props) => {
     rowsPerPage = 0,
     selected = []
   } = props;
-  const [isOpen, setIsOpen] = useState(false);
 
-  const handleOpen = () => {
-    setIsOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
@@ -138,27 +130,7 @@ export const AdminsTable = (props) => {
                               window.location.reload();
                             }
                             else if(res.status == 400){
-                              <div>
-                              <Button className="openButton" onClick={handleOpen}>
-                                Open Popup
-                              </Button>
-                              
-                              {isOpen && (
-                                <div className="overlay">
-                                  <div className="popup">
-                                    <div className="popup-header">
-                                      <Span className="closeButton" onClick={handleClose}>
-                                        &times;
-                                      </Span>
-                                      <h2>Popup Title</h2>
-                                    </div>
-                                    <div className="popup-content">
-                                      <p>Popup Content goes here.</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                              <Alert severity="error">This is an error alert — check it out!</Alert>
                             }
                             else{
                               
