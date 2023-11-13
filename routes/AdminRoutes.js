@@ -9,6 +9,9 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const adminModel = require('../models/Administrator');
+const viewDoctors = require('../controllers/Admin/viewDoctors');
+const viewPatients = require('../controllers/Admin/viewPatients');
+const removePatient = require('../controllers/Admin/removePatient');
 
 //const JWTAuth = require('../config/JWTAuth.js');
 
@@ -23,7 +26,10 @@ router.get('/', adminGetter.viewAdminPanel);
 router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
 router.get('/viewDoctorApplications',  viewDoctorApplications);
+router.get('/viewDoctors',  viewDoctors);
+router.get('/viewPatients',  viewPatients);
 router.post('/changePassword', changePassword);
+router.post('/removePatient', removePatient);
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
