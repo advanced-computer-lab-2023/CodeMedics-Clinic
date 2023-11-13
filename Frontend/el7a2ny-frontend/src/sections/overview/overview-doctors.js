@@ -34,14 +34,11 @@ export const OverviewDoctors = (props) => {
   const { doctors=[], sx } = props;
 
   const username = Cookies.get("username");
-  console.log(username);
   const getSelectedDoctorAppointments = (username) => {
-    console.log(username);
     router.push(`/user/appointments?doctorUsername=${username}`);
   }
 
   const viewDoctorProfile = (username, counter) => {
-    console.log(username);
     router.push(`/user/doctor-info?doctorUsername=${username}&counter=${counter}`);
   }
  
@@ -101,11 +98,17 @@ export const OverviewDoctors = (props) => {
                   )}
                 </ListItemAvatar>
                 <ListItemText
+                  primary={doctor.Speciality}
+                  primaryTypographyProps={{ variant: 'subtitle2' }}
+                  // secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
                   primary={doctor.FirstName + ' ' + doctor.LastName}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
+              
               <Stack direction="row">
                 <CardActions>
                   <Button
