@@ -56,12 +56,14 @@ const Page = () => {
               return res['data'];
             })
             .then((data) => {
-              console.log(data);
+              console.log('Here ----> ');
               if (data['Type'] === 'Patient') {
                 Cookies.set('username', data['patient']['username']);
                 router.push(`/user/doctors`);
               } else if (data['Type'] === 'Doctor') {
                 Cookies.set('username', data['doctor']['username']);
+                console.log(Cookies.get('token'));
+                console.log(Cookies.get('jwt'));
                 router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {
                 Cookies.set('username', data['admin']['username']);
@@ -108,11 +110,14 @@ const Page = () => {
               }
               return res['data'];
             })
-            .then((data) => {              
+            .then((data) => {    
+              console.log('Here ----> ');    
               if (data['Type'] === 'Patient') {
                 Cookies.set('username', data['patient']['Username']);
                 router.push(`/user/doctors`);
               } else if (data['Type'] === 'Doctor') {
+                console.log(Cookies.get('token'));
+                console.log(Cookies.get('jwt'));
                 Cookies.set('username', data['doctor']['username']);
                 router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {

@@ -21,6 +21,8 @@ import {
 export const OverviewLatestProducts = (props) => {
   const { products = [], sx } = props;
 
+  console.log(products);
+
   return (
     <Card sx={{ width: '100%', ...sx }}>
       <CardHeader title="Patients" />
@@ -61,7 +63,7 @@ export const OverviewLatestProducts = (props) => {
                 }
               </ListItemAvatar>
               <ListItemText
-                primary={product.name}
+                primary={product.FirstName}
                 primaryTypographyProps={{ variant: 'subtitle1' }}
                 secondary={`Updated ${ago} ago`}
                 secondaryTypographyProps={{ variant: 'body2' }}
