@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const AdminController = require('../controllers/Admin/AdminController');
 const adminGetter = require('../controllers/Admin/AdminGetters');
+const viewDoctorApplications = require('../controllers/Admin/DoctorsApplications');
 const {getPackages} = require("../controllers/Admin/AdminController");
 const { changePassword, acceptRejectDoctorRequest} = require('../controllers/Admin/AdminController');
 const nodemailer = require('nodemailer');
@@ -21,7 +22,7 @@ const adminModel = require('../models/Administrator');
 router.get('/', adminGetter.viewAdminPanel);
 router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
-router.get('/viewDoctorApplications', adminGetter.viewPackageManager);
+router.get('/viewDoctorApplications',  viewDoctorApplications);
 router.post('/changePassword', changePassword);
 
 router.post('/createAdmin', (req, res) => {

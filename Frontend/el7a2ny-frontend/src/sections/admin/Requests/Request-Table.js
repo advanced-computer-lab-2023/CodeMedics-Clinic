@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import IdentificationIcon from '@heroicons/react/24/solid/IdentificationIcon';
 import Xmark from '@heroicons/react/24/solid/XMarkIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import CheckIcon from '@heroicons/react/24/solid/CheckIcon';; 
 import {
   Avatar,
   Box,
@@ -14,18 +15,18 @@ import {
   TableCell,
   TableHead,
   TablePagination,
-  TableRow,
+  TableRow, Button,
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
-
+import axios from 'axios';
 export const RequestTable = (props) => {
   const {
     count = 0,
@@ -44,6 +45,10 @@ export const RequestTable = (props) => {
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
+  useEffect(() => {
+    console.log(items.length);
+  }, [items]);
+
   return (
     <Card>
       <Scrollbar>
@@ -63,18 +68,18 @@ export const RequestTable = (props) => {
                 <TableCell>
                   Password
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Gender
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   HourlyRate
                 </TableCell>
                 <TableCell>
                   affiliation
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Date of Birth
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   educationalBackground
                 </TableCell>
@@ -103,53 +108,67 @@ export const RequestTable = (props) => {
                           {getInitials(customer.Name)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {customer.FirstName + " " + customer.LastName}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.username}
+                      {customer.Username}
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {customer.Email}
                     </TableCell>
                     <TableCell>
-                      {customer.password}
+                      {customer.Password}
                     </TableCell>
                     <TableCell>
-                      {customer.gender}
-                    </TableCell>
-                    <TableCell>
-                      {customer.hourlyRate}
+                      {customer.HourlyRate}
                     </TableCell>
                     <TableCell>
                       {customer.affiliation}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {customer.dob.substring(0, customer.dob.indexOf('T'))}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       {customer.educationalBackground}
                     </TableCell>
                     <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <Xmark/>
-                        </SvgIcon>
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <PencilIcon/>
-                        </SvgIcon>
-                      </IconButton>
+                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
+                      onClick={() => {
+                          const userName = customer.Username;
+                          axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "reject"})
+                          .then((res) => {
+                            console.log("should be rejected");
+                            if (res.status == 200) {
+                              console.log("rejected");
+                              window.location.reload();
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          }
+                          )
+                        }}>
+                        Reject
+                      </Button>
+                      <Button variant="contained" style={{ backgroundColor: '#d1ffd1', color: 'black'  }}
+                      onClick={() => {
+                        const userName = customer.Username;
+                        axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "accept"})
+                        .then((res) => {
+                          if (res.status == 200) {
+                            console.log("accepted");
+                            window.location.reload();
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        }
+                        )
+                      }}>
+                        Accept
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );

@@ -245,11 +245,12 @@ const changePassword = async (req, res) => {
 
 const acceptRejectDoctorRequest = async (req, res) => {
     const { username, action } = req.body;
-
+    console.log("I am here");
     try {
         // Find the doctor by username
         const doctor = await doctorModel.findOne({ Username: username, Status: 'Pending' });
-
+        console.log(username, action);
+        console.log(doctor);
         if (!doctor) {
             return res.status(404).json({ error: 'Doctor request not found or already processed' });
         }
