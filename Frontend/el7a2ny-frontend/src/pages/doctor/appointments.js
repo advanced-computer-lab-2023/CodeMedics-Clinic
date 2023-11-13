@@ -20,48 +20,49 @@ const now = new Date();
 
 //const data = 
 
-const useCustomers = (page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [page, rowsPerPage]
-  );
-};
+// const useCustomers = (page, rowsPerPage) => {
+//   return useMemo(
+//     () => {
+//       return applyPagination(data, page, rowsPerPage);
+//     },
+//     [page, rowsPerPage]
+//   );
+// };
 
-const useCustomerIds = (customers) => {
-  return useMemo(
-    () => {
-      return customers.map((customer) => customer.id);
-    },
-    [customers]
-  );
-};
+// const useCustomerIds = (customers) => {
+//   return useMemo(
+//     () => {
+//       return customers.map((customer) => customer.id);
+//     },
+//     [customers]
+//   );
+// };
 
 const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
+  // const customers = useCustomers(page, rowsPerPage);
+  // const customersIds = useCustomerIds(customers);
+  // const customersSelection = useSelection(customersIds);
   const [appointments, setAppointments] = useState([]);
   
   useEffect(() => {
+    getAppointments();
+  }, []);
+
+  const getAppointments = () =>{
     axios({
       method: 'GET',
-      url: '',
+      url: 'http://localhost:8000/doctor/getAllDocAppointments',
       withCredentials: true
     })
     .then((response => {
+      console.log("APPOINTMENTS___", response.data);
       setAppointments(response.data);
     }))
     .catch(error => {
       console.log(error);
     })
-  })
-
-  const getAppointments = () =>{
-    
   };
 
   const handlePageChange = useCallback(
@@ -145,17 +146,17 @@ const Page = () => {
             </Stack>
             <CustomersSearch />
             <CustomersTable
-              count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
+              count={appointments.length}
+              items={appointments}
+              // onDeselectAll={customersSelection.handleDeselectAll}
+              // onDeselectOne={customersSelection.handleDeselectOne}
+              // onPageChange={handlePageChange}
+              // onRowsPerPageChange={handleRowsPerPageChange}
+              // onSelectAll={customersSelection.handleSelectAll}
+              // onSelectOne={customersSelection.handleSelectOne}
               page={page}
               rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
+              // selected={customersSelection.selected}
             />
           </Stack>
         </Container>

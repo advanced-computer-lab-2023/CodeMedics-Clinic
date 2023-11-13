@@ -5,7 +5,7 @@ const upload = require('../config/multerConfig');
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
 const { filterAppointments , getAllApointments } = require('../controllers/Doctor/filterAppointments');
-const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Doctor/viewAppointments');
+const { viewUpcomingAppointments , viewPastAppointments, getAllDocAppointments } = require('../controllers/Doctor/viewAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
 const { viewPatients } = require('../controllers/Doctor/viewPatients');
 const{addTimeSlot}=require('../controllers/Doctor/AvailableTImeSlots.js');
@@ -61,6 +61,8 @@ router.get('/viewPatients', viewPatients);
 router.get('/getDoctors', getDoctors);
 router.get('/filterPatients', filterPatients);
 router.get('/getDoctorsAndAppointments', getDoctorsAndAppointments);
+router.get("/getAllDocAppointments", getAllDocAppointments);
+
 
 router.get('/viewPatientDetails:Username', (req, res) => {
     const Username = req.params.Username;

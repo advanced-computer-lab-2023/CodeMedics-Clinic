@@ -78,7 +78,7 @@ export const CustomersTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
 
                 return (
                   <TableRow
@@ -105,7 +105,7 @@ export const CustomersTable = (props) => {
                         spacing={2}
                       >
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {customer.patient}
                         </Typography>
                       </Stack>
                     </TableCell>
@@ -113,13 +113,13 @@ export const CustomersTable = (props) => {
                       {customer.email}
                     </TableCell>
                     <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
+                      {/* {customer.address.city}, {customer.address.state}, {customer.address.country} */}
                     </TableCell>
                     <TableCell>
                       {customer.phone}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      {customer.status}
                     </TableCell>
                   </TableRow>
                 );
