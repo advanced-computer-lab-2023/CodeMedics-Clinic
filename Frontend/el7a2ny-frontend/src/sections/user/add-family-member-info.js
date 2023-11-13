@@ -116,7 +116,7 @@ export const AddFamilyMemberInfo = () => {
         <Divider />
         <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button variant="contained" type="submit">
-            Save
+            Add
           </Button>
         </CardActions>
       </Card>

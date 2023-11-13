@@ -81,7 +81,6 @@ const Page = () => {
         <Typography variant="h3" gutterBottom>
           Family Members
         </Typography>
-        <DoctorsSearch handleSearch={handleSearch} />
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
             <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />

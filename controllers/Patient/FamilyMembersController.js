@@ -14,6 +14,9 @@ exports.addFamilyMember = async (req, res) => {
       if(exists == null){  
          return res.status(400).json({message: 'Family member does not exist'});
       }
+      if(exists._id.toString() == patient._id.toString()){
+         return res.status(400).json({message: 'You cannot add yourself as a family member'});
+      }
       if(patient.FamilyMembers.some(el => el.id.toString() == exists._id.toString())){
          return res.status(400).json({message: 'Family member already added'});
       }
@@ -31,9 +34,9 @@ exports.addFamilyMemberNoAccount = async (req, res) => {
    const {Name, NationalId, Gender, DateOfBirth, Relationship} = req.body;
 
    try{
-      const familyMember = new FamilyMember({Name, NationalId, Gender, DateOfBirth, Relationship});
+      const familyMember = new FamilyMember({Name, NationalID: NationalId, Gender, DateOfBirth, Relationship});
       const savedFamilyMember = await familyMember.save();
-      const me = Patient.findOne({Username});
+      const me = await Patient.findOne({Username});
       me.FamilyMembersNoAccount.push(savedFamilyMember._id);
       await me.save();
       return res.status(200).json({message: 'Family member added successfully'});
@@ -47,7 +50,7 @@ exports.removeFamilyMemberNoAccount = async (req, res) => {
    const Username = await getUsername(req, res);
    const {familyMemberId} = req.body;
    try{
-      const me = Patient.findOne({Username});
+      const me = await Patient.findOne({Username});
       me.FamilyMembersNoAccount = me.FamilyMembersNoAccount.filter(member => member.toString() != familyMemberId);
       await me.save();
       return res.status(200).json({message: 'Family member removed successfully'});

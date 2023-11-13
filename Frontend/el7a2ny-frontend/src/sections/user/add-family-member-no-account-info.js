@@ -20,20 +20,20 @@ import * as Yup from 'yup';
 import Cookies from 'js-cookie';
 
 export const AddFamilyMemberNoAccountInfo = () => {
-    const Gender = [
+    const Gender = [  
         {
-            value: 'Male',
-            label: 'Male',
+          value: 'Male',
+          label: 'Male',
         },
         {
-            value: 'Female',
-            label: 'Female',
+          value: 'Female',
+          label: 'Female',
         },
         {
-            value: 'Other',
-            label: 'Other'
+          value: 'Other',
+          label: 'Other'
         }
-    ]; 2
+      ];2
     const router = useRouter();
 
     const formik = useFormik({
@@ -52,7 +52,7 @@ export const AddFamilyMemberNoAccountInfo = () => {
             NationalId: Yup
                 .string()
                 .max(255)
-                .required('National ID is required'),
+                .required('National Id is required'),
             Relationship: Yup
                 .string()
                 .max(255)
@@ -68,8 +68,11 @@ export const AddFamilyMemberNoAccountInfo = () => {
         onSubmit: async (values, helpers) => {
             try {
                 const body = {
-                    "familyMemberUsername": values.Username,
-                    "relation": values.Relation
+                    "Name": values.Name,
+                    "NationalId": values.NationalId,
+                    "Gender": values.Gender,
+                    "DateOfBirth": values.DateOfBirth,
+                    "Relationship": values.Relationship
                 };
                 await axios('http://localhost:8000/patient/familyMembersNoAccount', {
                     method: 'POST',
@@ -131,7 +134,7 @@ export const AddFamilyMemberNoAccountInfo = () => {
                                     fullWidth
                                     helperText={formik.touched.NationalId && formik.errors.NationalId}
                                     label="National ID"
-                                    name="NationalID"
+                                    name="NationalId"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     value={formik.values.NationalId}
@@ -213,7 +216,7 @@ export const AddFamilyMemberNoAccountInfo = () => {
                 <Divider />
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
                     <Button variant="contained" type="submit">
-                        Save
+                        Add
                     </Button>
                 </CardActions>
             </Card>
