@@ -15,6 +15,7 @@ const removePatient = require('../controllers/Admin/removePatient');
 const removeDoctor = require('../controllers/Admin/removeDoctor');
 const viewAdmins = require('../controllers/Admin/viewAdmins');
 const removeAdmin = require('../controllers/Admin/removeAdmin');
+const addAdmin = require('../controllers/Admin/addAdmin');
 //const JWTAuth = require('../config/JWTAuth.js');
 
 //const isAuth = JWTAuth.isAuth;
@@ -36,6 +37,7 @@ router.post('/changePassword', changePassword);
 router.post('/removePatient', removePatient);
 router.post('/removeDoctor', removePatient);
 router.post('/removeAdmin', removeAdmin);
+router.post('/addAdmin', addAdmin);
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
