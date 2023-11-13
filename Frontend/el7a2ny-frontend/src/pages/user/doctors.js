@@ -4,24 +4,45 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
 import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 
 const now = new Date();
 
-const Page = ({ doctors }) => {
-  
+const Page = ({ doctors , sepcialities }) => {
+
+  const [filterSpeciality , setFilterSpeciality] = useState(doctors);
+  const [search , setSearch] = useState(doctors);
   const [data, setData] = useState(doctors);
+  
+
+  useEffect(() => {
+    handleData();
+  }, [search , filterSpeciality]);
+
+  const handleData = () => {
+    setData(doctors.filter((doctor) => search.includes(doctor) && filterSpeciality.includes(doctor)));
+  };
 
   const handleSearch = (str) => {
     if(str === ""){
-      setData(doctors);
+      setSearch(doctors);
     }else{
-      setData(doctors.filter((doctor) => {
+      setSearch(doctors.filter((doctor) => {
         const fullName = doctor.FirstName + " " + doctor.LastName;
         return fullName.toLowerCase().includes(str.toLowerCase());
       }));
     }
   };
+
+  const handleSpecialityFilter = (str) => {
+    if(str === "None"){
+      setFilterSpeciality(doctors);
+    }else{
+      setFilterSpeciality(doctors.filter((doctor) => {
+        return doctor.Speciality === str;
+      }));
+    }
+  }
 
   return (
   <>
@@ -39,7 +60,7 @@ const Page = ({ doctors }) => {
         <Typography variant="h3" gutterBottom>
           Doctors
         </Typography>
-        <DoctorsSearch handleSearch={handleSearch} />
+        <DoctorsSearch handleSearch={handleSearch} sepcialities={sepcialities} handleSpecialityFilter={handleSpecialityFilter}/>
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
             <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
@@ -57,8 +78,14 @@ export async function getServerSideProps() {
     // Fetch data from the provided API
     const response = await axios.get('http://localhost:8000/doctor/getDoctors');
     const doctors = response.data;
+    const sepcialities = [{value: "None", label: "None"}];
+    for(let i=0; i<doctors.length; i++){
+      if(!sepcialities.includes(doctors[i].Speciality)){
+        sepcialities.push({value: doctors[i].Speciality, label: doctors[i].Speciality});
+      }
+    }
     return {
-      props:  {doctors} ,
+      props:  {doctors , sepcialities} ,
     };
   } catch (error) {
     console.error('Error fetching doctors:', error);
