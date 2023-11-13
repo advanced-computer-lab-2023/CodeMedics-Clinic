@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Prescription = require('../../models/Prescription');
+const { getUsername } = require('../../config/infoGetter');
 
 
 exports.filterPrescriptions = async (req, res) => {
@@ -53,12 +54,10 @@ exports.filterPrescriptions = async (req, res) => {
   }
 };
 
-
-
 // Get all prescriptions for a patient
 exports.getPrescriptions = async (req, res) => {
   try {
-    const { Username } = req.query;
+    const Username = await getUsername(req, res);
     
     const prescriptions = await Prescription.find({ 
       Patient: Username 
@@ -69,6 +68,27 @@ exports.getPrescriptions = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+// add prescription
+exports.addPrescription = async (req, res) => {
+  try {
+    const { Drug, Doctor, Date, filled, Patient } = req.body;
+
+    const prescription = new Prescription({
+      Drug,
+      Doctor,
+      Date,
+      filled,
+      Patient,
+    });
+
+    await prescription.save();
+
+    res.status(200).json({ message: 'Prescription added successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};""
 
 
 

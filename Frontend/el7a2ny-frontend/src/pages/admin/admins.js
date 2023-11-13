@@ -62,8 +62,12 @@ const Page = () => {
 }, []);
 
 const handleRemove = (username)  => {
-  console.log(Cookies.username);
-  axios.post('http://localhost:8000/admin/removeAdmin', {Username: username})
+//   console.log(Cookies.username);
+  axios('http://localhost:8000/admin/removeAdmin', {
+            method: 'POST',
+            data: { username },
+            withCredentials: true
+        })
   .then((res) => {
     console.log(res);
     if(res.status == 200) {

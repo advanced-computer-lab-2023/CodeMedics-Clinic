@@ -7,10 +7,19 @@ import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import { useState } from 'react';
+import axios from 'axios';
 
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+
+    setMessage('Submission successful!');
+  };
   const [error, setError] = useState('');
   const formik = useFormik({
     initialValues: {
@@ -29,31 +38,23 @@ const Page = () => {
         .required('Password is required')
     }),
     onSubmit: async (values, helpers) => { // Call the handleFormSubmit function
-      fetch('http://localhost:8000/CreateAdmin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          Username: formik.values.username,
-          Password: formik.values.password
-        })
-      })
+        axios.post('http://localhost:8000/admin/addAdmin', {
+            Username: values.username,
+            Password: values.password
+          })
         .then((response) => {
-          if (response.ok) {
-            alert('Admin created successfully!');
-            return response.json();
-          } else {
-            alert('Username already exists. Please choose another one.');
+          if (response.status === 200) {
+            event.preventDefault();
+            setError('');
+            setMessage('Submission successful!');
           }
         })
         .then((data) => {
-          //console.log(data);
-          router.push('/admin');
+          router.push('/admin/admins');
         })
         .catch((error) => {
-          // Handle errors here
-          console.error('Error:', error);
+          console.log('Error:', error);
+          setMessage('Username already exists. Please choose another one.');
           setError('Error occurred: ' + error.message);
         });
     }
@@ -137,6 +138,7 @@ const Page = () => {
                 Add
               </Button>
             </form>
+            <div style={{ color: error === '' ? 'green' : 'red', fontWeight: 'bold', marginTop: '10px' }}>{message}</div>
           </div>
         </Box>
       </Box>
