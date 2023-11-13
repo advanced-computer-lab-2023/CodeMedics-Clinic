@@ -40,7 +40,7 @@ const Page = () => {
   const customersSelection = useSelection(customersIds);
 
   useEffect(() => {
-    fetch('http://localhost:8000/viewDoctorApplications')
+    fetch('http://localhost:8000/admin/viewDoctorApplications')
       .then((res) => {
 
         if (res.statusCode == 401) {
@@ -122,18 +122,6 @@ const Page = () => {
                   </Button>
                 </Stack>
               </Stack>
-              <div>
-                <Button
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon/>
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                >
-                  Add
-                </Button>
-              </div>
             </Stack>
             <RequestSearch/>
             <RequestTable
