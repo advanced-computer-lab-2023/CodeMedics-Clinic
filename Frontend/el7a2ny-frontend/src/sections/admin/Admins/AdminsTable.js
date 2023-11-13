@@ -30,6 +30,7 @@ export const AdminsTable = (props) => {
   const {
     count = 0,
     items = [],
+    handleRemove,
     onDeselectAll,
     onDeselectOne,
     onPageChange = () => {},
@@ -41,10 +42,19 @@ export const AdminsTable = (props) => {
     selected = []
   } = props;
 
+  
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
-  return (
+  return (  
     <Card>
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
@@ -122,25 +132,9 @@ export const AdminsTable = (props) => {
                     <TableCell>
                       <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
                       onClick={() => {
-                          const userName = customer.Username;
-                          axios.post('http://localhost:8000/admin/removeAdmin', {Username: customer.Username})
-                          .then((res) => {
-                            if (res.status == 200) {
-                              console.log("removed"); 
-                              window.location.reload();
-                            }
-                            else if(res.status == 400){
-                              <Alert severity="error">This is an error alert — check it out!</Alert>
-                            }
-                            else{
-                              
-                            }
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          }
-                          )
-                        }}>
+                        const userName = customer.Username;
+                        handleRemove(userName);
+                      }}>
                         Remove
                       </Button>
                     </TableCell>

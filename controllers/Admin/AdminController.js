@@ -31,6 +31,10 @@ const createAdmin = asyncHandler(async (req, res) => {
     }
     // If all required variables are present, proceed with creating an admin
     const { Name, Username, Password, Email } = req.body;
+    const found = await adminModel.findOne({ Username });
+    if(found){
+        return res.status(400).json({ message: "Username already exists" });
+    }
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
