@@ -14,6 +14,9 @@ exports.addFamilyMember = async (req, res) => {
       if(exists == null){  
          return res.status(400).json({message: 'Family member does not exist'});
       }
+      if(exists._id.toString() == patient._id.toString()){
+         return res.status(400).json({message: 'You cannot add yourself as a family member'});
+      }
       if(patient.FamilyMembers.some(el => el.id.toString() == exists._id.toString())){
          return res.status(400).json({message: 'Family member already added'});
       }
