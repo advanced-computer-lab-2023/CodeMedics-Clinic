@@ -1,7 +1,7 @@
 const Admin = require('../../models/Administrator'); 
 const Doctor = require('../../models/Doctor');
 const Patient = require('../../models/Patient');
-
+const bcrypt = require('bcryptjs');
 const addAdmin = async (req, res) => {
     const { Username, Password } = req.body;
     console.log("addAdmin");
@@ -18,9 +18,11 @@ const addAdmin = async (req, res) => {
     if(temp2){
         return res.status(400).json({message: 'Patient already exists.'});
     }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(Password, salt);
     const newAdmin = new Admin({
         Username: Username,
-        Password: Password,
+        Password: hashedPassword,
         isCreator: false
     });
     await newAdmin.save();
