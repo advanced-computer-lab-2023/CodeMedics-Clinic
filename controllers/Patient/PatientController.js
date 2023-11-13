@@ -100,18 +100,18 @@ const viewPatientRegister = asyncHandler(async (req, res) => {
 const healthPackageSubscription = asyncHandler(async (req, res) => {
 
     const patient = await patientModel.findOne({Username: await getUsername(req, res)});
-    if (patient && patient.HealthPackage.status === "Unsubscribed") {
-        patient.HealthPackage.status = "Subscribed1";
+    const {membership} = req.body;
+    if (patient && patient.HealthPackage.membership === "Free") {
+        patient.HealthPackage.membership = membership;
         patient.HealthPackage.date = Date.now();
         patient.HealthPackage.date.setFullYear(patient.HealthPackage.date.getFullYear() + 1);
-        patient.HealthPackage.membership = req.body.membership;
+        patient.HealthPackage.status = "main";
         for(const member of patient.FamilyMembers){
             const familyMember = await patientModel.findOne({_id: member});
-            if(familyMember && familyMember.HealthPackage.status === "Unsubscribed"){
-                familyMember.HealthPackage.status = "Subscribed2";
+            if(familyMember && familyMember.HealthPackage.membership === "Free"){
+                familyMember.HealthPackage.status = "linked";
                 familyMember.HealthPackage.date = Date.now();
                 familyMember.HealthPackage.date.setFullYear(familyMember.HealthPackage.date.getFullYear() + 1);
-                familyMember.HealthPackage.membership = req.body.membership;
                 await familyMember.save();
             }
         }
@@ -121,17 +121,15 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
         const jobInterval = new Date(Date.now());
         jobInterval.setFullYear(jobInterval.getFullYear() + 1);
         schedule.scheduleJob(jobInterval, async function(){
-            if(patient.HealthPackage.status === "Subscribed1"){
+            if(patient.HealthPackage.membership !== "Free"){
                 
-                patient.HealthPackage.status = "Unsubscribed";
                 patient.HealthPackage.membership = "Free";
+                patient.HealthPackage.status = "";
                 
                 for(const member of patient.FamilyMembers){
                     const familyMember = await patientModel.findOne({_id: member});
-                    if(familyMember && familyMember.HealthPackage.status === "Subscribed2"){
-                        familyMember.HealthPackage.status = "Unsubscribed";
-                        familyMember.HealthPackage.membership = "Free";
-                        
+                    if(familyMember && familyMember.HealthPackage.status === "linked"){
+                        familyMember.HealthPackage.status = "";                        
                         await familyMember.save();
                     }
                 }
@@ -153,17 +151,15 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
 const healthPackageUnsubscription = asyncHandler(async (req, res) => {
     
         const patient = await patientModel.findOne({Username: await getUsername(req, res)});
-        if (patient && patient.HealthPackage.status !== "Unsubscribed") {
-            if(patient.HealthPackage.status === "Subscribed1"){
-                for (const member of patient.FamilyMembers) {
-                    const patientFamilyMember = await patientModel.findOne({_id: member});
-                    if (patientFamilyMember && patientFamilyMember.HealthPackage.status === "Subscribed2") {
-                        patientFamilyMember.HealthPackage.status = "Unsubscribed";
-                        await patientFamilyMember.save();
-                    }
+        if (patient && patient.HealthPackage.membership !== "Free") {
+            for (const member of patient.FamilyMembers) {
+                const patientFamilyMember = await patientModel.findOne({_id: member});
+                if (patientFamilyMember && patientFamilyMember.HealthPackage.status === "linked") {
+                    patientFamilyMember.HealthPackage.status = "";
+                    await patientFamilyMember.save();
                 }
             }
-            patient.HealthPackage.status = "Unsubscribed";
+            patient.HealthPackage.status = "";
             patient.HealthPackage.membership = "Free";
             patient.HealthPackage.date = Date.now();
 

@@ -4,17 +4,20 @@ const {getUsername} = require('../../config/infoGetter');
 
 exports.addFamilyMember = async (req, res) => {
    const Username = await getUsername(req, res);
-   const {familyMemberUsername} = req.body;
+   const {familyMemberUsername, relation} = req.body;
    try{
       const patient = await Patient.findOne({Username});
       if(patient == null){
          return res.status(404).json({message: 'Patient does not exist'});
       }
-      const exists = await Patient.findOne({familyMemberUsername});
-      if(exists == null){
+      const exists = await Patient.findOne({Username: familyMemberUsername});
+      if(exists == null){  
          return res.status(400).json({message: 'Family member does not exist'});
       }
-      patient.FamilyMembers.push(exists._id);
+      if(patient.FamilyMembers.some(el => el.id.toString() == exists._id.toString())){
+         return res.status(400).json({message: 'Family member already added'});
+      }
+      patient.FamilyMembers.push({id:exists._id, relation:relation});
       const updatedPatient = await patient.save();
       res.status(200).json({message: 'Family member added successfully' , data: updatedPatient});
    }
@@ -32,10 +35,39 @@ exports.viewFamilyMembers = async (req, res) => {
    try{
       const familyMembers = [];
       for(let i=0; i<patient.FamilyMembers.length; i++){
-         const familyMember = await Patient.findOne({_id: patient.FamilyMembers[i]});
-         familyMembers.push(familyMember);
+         const familyMember = await Patient.findOne({_id: patient.FamilyMembers[i].id});
+         familyMembers.push({familyMember: familyMember, relation: patient.FamilyMembers[i].relation});
       }
-      res.status(200).json({message: 'Family members fetched successfully' , data: familyMembers});
+
+      const familyMembersNoAccount = [];
+      for(let i=0; i<patient.FamilyMembersNoAccount.length; i++){
+         const familyMemberNoAccount = await FamilyMember.findOne({_id: patient.FamilyMembersNoAccount[i]});
+         familyMembersNoAccount.push(familyMemberNoAccount);
+      }
+      res.status(200).json({message: 'Family members fetched successfully' , familyMembers, familyMembersNoAccount});
+   }
+   catch(e){
+      res.status(400).json({message: e.message});
+   }
+};
+
+exports.removeFamilyMember = async (req, res) => {
+   const Username = await getUsername(req, res);
+   const patient = await Patient.findOne({Username});
+   if(patient == null){
+      return res.status(404).json({message: 'Patient does not exist'});
+   }
+   try{
+      const {familyMemberId} = req.body;
+      if(!patient.FamilyMembers.some(el => el.id.toString() == familyMemberId)){
+         return res.status(400).json({message: 'Family member does not exist'});
+      }
+
+      patient.FamilyMembers = patient.FamilyMembers.filter(member => member.id.toString() != familyMemberId);
+
+      await patient.save();
+
+      res.status(200).json({message: 'Family members fetched successfully'});
    }
    catch(e){
       res.status(400).json({message: e.message});

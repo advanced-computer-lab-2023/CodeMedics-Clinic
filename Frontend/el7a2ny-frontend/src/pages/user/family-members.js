@@ -1,16 +1,22 @@
 import Head from 'next/head';
-import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
+import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import { OverviewFamilyMembers } from 'src/sections/overview/overview-doctors';
-import { FamilyMembersSearch } from 'src/sections/doctor/doctor-search';
+import { OverviewFamilyMembers } from 'src/sections/overview/overview-family-members';
+import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const now = new Date();
 
-const Page = ({ familyMembers }) => {
+const Page = () => {
+
+  const router = useRouter();
   
-  const [data, setData] = useState(familyMembers);
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [familyMembersNoAccount, setFamilyMembersNoAccount] = useState([]);
+
 
   const handleSearch = (str) => {
     if(str === ""){
@@ -22,6 +28,34 @@ const Page = ({ familyMembers }) => {
       }));
     }
   };
+
+  const addFamilyMember = () => {
+    router.push(`/user/add-family-member`);
+  }
+
+  useEffect(() => {
+    axios('http://localhost:8000/patient/familyMembers', {
+      method: 'GET',  
+      withCredentials: true
+    }).then(response => {
+      console.log(response);
+      setFamilyMembers(response.data.familyMembers);
+      setFamilyMembersNoAccount(response.data.familyMembersNoAccount);
+    }).catch(error => {
+      console.log(error);
+    });
+  }, []);
+
+  console.log("My family: ", familyMembers, familyMembersNoAccount);
+
+
+  const addFamilyMemberRedirect = () => {
+    router.push(`/user/add-family-member`);
+  }
+
+  const addFamilyMemberNoAccountRedirect = () => {
+    router.push(`/user/add-family-member-no-account`);
+  }
 
   return (
   <>
@@ -35,14 +69,22 @@ const Page = ({ familyMembers }) => {
         py: 8,
       }}
     >
+      <Button
+        onClick={addFamilyMemberRedirect}>
+        Add Family Member
+      </Button>
+      <Button 
+        onClick={addFamilyMemberNoAccountRedirect}>
+        Add Family Member Without Account
+      </Button>
       <Container maxWidth="xl">
         <Typography variant="h3" gutterBottom>
           Family Members
         </Typography>
-        <FamilyMembersSearch handleSearch={handleSearch} />
+        <DoctorsSearch handleSearch={handleSearch} />
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
-            <OverviewFamilyMembers familyMembers={data} sx={{ height: '100%' }} />
+            <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
           </Grid>
         </Grid>
       </Container>
@@ -51,21 +93,5 @@ const Page = ({ familyMembers }) => {
 );}
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
-
-export async function getServerSideProps() {
-  try {
-    // Fetch data from the provided API
-    const response = await axios.get('http://localhost:8000/patient/familyMembers');
-    const doctors = response.data;
-    return {
-      props:  {doctors} ,
-    };
-  } catch (error) {
-    console.error('Error fetching doctors:', error);
-    return {
-      props: { doctors: [] }, // Return an empty array in case of an error
-    };
-  }
-}
 
 export default Page;
