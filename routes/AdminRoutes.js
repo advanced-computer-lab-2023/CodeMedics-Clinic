@@ -14,6 +14,8 @@ const {getPackages} = require("../controllers/Admin/AdminController");
 router.get('/', adminGetter.viewAdminPanel);
 router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
+router.get('/viewDoctorApplications', adminGetter.viewPackageManager);
+
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
 });
