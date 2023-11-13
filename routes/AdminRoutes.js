@@ -13,6 +13,8 @@ const viewDoctors = require('../controllers/Admin/viewDoctors');
 const viewPatients = require('../controllers/Admin/viewPatients');
 const removePatient = require('../controllers/Admin/removePatient');
 const removeDoctor = require('../controllers/Admin/removeDoctor');
+const viewAdmins = require('../controllers/Admin/viewAdmins');
+const removeAdmin = require('../controllers/Admin/removeAdmin');
 //const JWTAuth = require('../config/JWTAuth.js');
 
 //const isAuth = JWTAuth.isAuth;
@@ -28,9 +30,12 @@ router.get('/packageManager', adminGetter.viewPackageManager);
 router.get('/viewDoctorApplications',  viewDoctorApplications);
 router.get('/viewDoctors',  viewDoctors);
 router.get('/viewPatients',  viewPatients);
+router.get('/viewAdmins',  viewAdmins);
+
 router.post('/changePassword', changePassword);
 router.post('/removePatient', removePatient);
 router.post('/removeDoctor', removePatient);
+router.post('/removeAdmin', removeAdmin);
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();

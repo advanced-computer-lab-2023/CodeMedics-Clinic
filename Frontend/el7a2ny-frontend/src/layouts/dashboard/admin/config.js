@@ -37,7 +37,7 @@ export const items = [
   },
   {
     title: 'Admins',
-    path: '/admin/Admins',
+    path: '/admin/admins',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
