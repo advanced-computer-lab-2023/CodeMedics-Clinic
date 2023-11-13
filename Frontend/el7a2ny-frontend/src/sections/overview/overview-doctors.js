@@ -52,7 +52,7 @@ export const OverviewDoctors = (props) => {
         {doctors.map((doctor, index) => {
           return (
             <Card
-              key={doctor._id}
+              key={doctor.doctor._id}
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -72,7 +72,7 @@ export const OverviewDoctors = (props) => {
                 }}
               >
                 <ListItemAvatar>
-                  {doctor.Picture ? (
+                  {doctor.doctor.Picture ? (
                     <Box
                       component="img"
                       src={doctor.Picture}
@@ -98,14 +98,19 @@ export const OverviewDoctors = (props) => {
                   )}
                 </ListItemAvatar>
                 <ListItemText
-                  primary={doctor.Speciality}
+                  primary={doctor.doctor.FirstName + ' ' + doctor.doctor.LastName}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  primary= {'Speciality: ' + doctor.doctor.Speciality}
                   primaryTypographyProps={{ variant: 'subtitle2' }}
                   // secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary={doctor.FirstName + ' ' + doctor.LastName}
-                  primaryTypographyProps={{ variant: 'subtitle1' }}
-                  secondaryTypographyProps={{ variant: 'body2' }}
+                  primary= {'Session Price: ' + doctor.price}
+                  primaryTypographyProps={{ variant: 'subtitle2' }}
+                  // secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
               
@@ -115,7 +120,7 @@ export const OverviewDoctors = (props) => {
                     color="primary"
                     variant="contained"
                     size="small"
-                    onClick={() => {getSelectedDoctorAppointments(doctor.Username)}}
+                    onClick={() => {getSelectedDoctorAppointments(doctor.doctor.Username)}}
                   >
                      Appointments
                   </Button>
@@ -125,7 +130,7 @@ export const OverviewDoctors = (props) => {
                     color="primary"
                     variant="contained"
                     size="small"
-                    onClick={() => {viewDoctorProfile(doctor.Username, index)}}
+                    onClick={() => {viewDoctorProfile(doctor.doctor.Username, index)}}
                   >
                     View Profile
                   </Button>

@@ -1,7 +1,7 @@
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon,Stack,TextField,MenuItem } from '@mui/material';
 
-export const DoctorsSearch = ({handleDoctorSearch , handleSpecialitySearch , sepcialities , handleSpecialityFilter}) => {
+export const DoctorsSearch = ({handleDateFilter , handleDoctorSearch , handleSpecialitySearch , sepcialities , handleSpecialityFilter}) => {
   return(
   <Card sx={{ p: 2 }}>
     <Stack direction="row" spacing = {3}>
@@ -56,20 +56,25 @@ export const DoctorsSearch = ({handleDoctorSearch , handleSpecialitySearch , sep
           ))}
     </TextField>
     <TextField
-                  label="Available Date"
-                  name="DateOfBirth"
-                  onChange={(event) => {
-                  const value = event.target.value;
-                  if (value.length <= 10) {
-                    const yyyy = value.slice(0, 4).replace(/[^0-9]/g, '');
-                    const mmdd = value.slice(4);
-                    const formattedValue = `${yyyy}${mmdd}`;
-                  }
-                }}
-                // text field for setting date and time 
-                  type="datetime-local"
-                  InputLabelProps={{ shrink: true }}
-                />
+        label="Available Date"
+        name="DateOfBirth"
+        onChange={(event) => {
+        const value = event.target.value;
+        if (value.length > 0) {
+          const date = value.substring(0, 10);
+          const time = value.substring(11, 16);
+          const h = value.substring(11, 13);
+          const m = value.substring(14, 16);
+          handleDateFilter(date , h);
+        }
+        else{
+          handleDateFilter("" , 0);
+        }
+      }}
+      // text field for setting date and time 
+        type="datetime-local"
+        InputLabelProps={{ shrink: true }}
+      />
     </Stack>
   </Card>
 );}

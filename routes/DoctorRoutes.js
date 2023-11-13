@@ -12,7 +12,7 @@ const{addTimeSlot}=require('../controllers/Doctor/AvailableTImeSlots.js');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
-const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/GetDoctors');
+const {getDoctors, getDoctorsAndAppointments} = require('../controllers/Doctor/GetDoctors');
 const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
 const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
@@ -60,7 +60,8 @@ router.get('/searchPatient', searchPatient);
 router.get('/viewPatients', viewPatients);
 router.get('/getDoctors', getDoctors);
 router.get('/filterPatients', filterPatients);
-router.get('/getDoctorsAndSpecialties', getDoctorsAndSpecialties);
+router.get('/getDoctorsAndAppointments', getDoctorsAndAppointments);
+
 router.get('/viewPatientDetails:Username', (req, res) => {
     const Username = req.params.Username;
     console.log(Username);
