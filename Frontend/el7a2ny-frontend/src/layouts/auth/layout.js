@@ -97,7 +97,7 @@ export const Layout = (props) => {
             </Typography> */}
             <img
               alt=""
-              src="/assets/Pharmacy-Logo.png"
+              src="/assets/Clinic.png"
             />
           </Box>
         </Grid>

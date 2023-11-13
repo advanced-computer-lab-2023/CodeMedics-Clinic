@@ -1,23 +1,23 @@
 import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
-import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
+import { OverviewFamilyMembers } from 'src/sections/overview/overview-doctors';
+import { FamilyMembersSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState } from 'react';
 
 const now = new Date();
 
-const Page = ({ doctors }) => {
+const Page = ({ familyMembers }) => {
   
-  const [data, setData] = useState(doctors);
+  const [data, setData] = useState(familyMembers);
 
   const handleSearch = (str) => {
     if(str === ""){
-      setData(doctors);
+      setData(familyMembers);
     }else{
-      setData(doctors.filter((doctor) => {
-        const fullName = doctor.FirstName + " " + doctor.LastName;
+      setData(familyMembers.filter((familyMember) => {
+        const fullName = familyMember.FirstName + " " + familyMember.LastName;
         return fullName.toLowerCase().includes(str.toLowerCase());
       }));
     }
@@ -37,12 +37,12 @@ const Page = ({ doctors }) => {
     >
       <Container maxWidth="xl">
         <Typography variant="h3" gutterBottom>
-          Doctors
+          Family Members
         </Typography>
-        <DoctorsSearch handleSearch={handleSearch} />
+        <FamilyMembersSearch handleSearch={handleSearch} />
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
-            <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
+            <OverviewFamilyMembers familyMembers={data} sx={{ height: '100%' }} />
           </Grid>
         </Grid>
       </Container>
@@ -55,7 +55,7 @@ Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 export async function getServerSideProps() {
   try {
     // Fetch data from the provided API
-    const response = await axios.get('http://localhost:8000/doctor/getDoctors');
+    const response = await axios.get('http://localhost:8000/patient/familyMembers');
     const doctors = response.data;
     return {
       props:  {doctors} ,

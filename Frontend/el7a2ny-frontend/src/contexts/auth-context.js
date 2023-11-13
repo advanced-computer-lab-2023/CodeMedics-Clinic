@@ -154,6 +154,7 @@ export const AuthProvider = (props) => {
 
   const signOut = () => {
     Cookies.remove('username');
+    Cookies.remove('jwt');
     dispatch({
       type: HANDLERS.SIGN_OUT
     });

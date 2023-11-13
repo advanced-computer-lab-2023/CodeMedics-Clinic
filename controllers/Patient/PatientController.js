@@ -9,6 +9,7 @@ const schedule = require('node-schedule');
 const jwt = require('jsonwebtoken');
 
 
+
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
     return jwt.sign({ username }, 'supersecret', {
@@ -72,7 +73,7 @@ const createPatient = asyncHandler(async (req, res) => {
             DateOfBirth: DateOfBirth,
             Number: Number,
             Gender: Gender,
-            EmergencyContacts: {
+            EmergencyContact: {
                 Name: EmergencyContactName, Number: EmergencyContactNumber, Relation: EmergencyContactRelation
             }
         })
@@ -86,13 +87,13 @@ const createPatient = asyncHandler(async (req, res) => {
 const viewPatients = asyncHandler(async (req, res) => {
     try{
     const patients = await patientModel.find();
-    res.status(200).json(patients);
+    return res.status(200).json(patients);
     }catch(e){
-        res.status(400).json({message: e.message});
+        return res.status(400).json({message: e.message});
     }
 });
 const viewPatientRegister = asyncHandler(async (req, res) => {
-    res.render('PatientViews/RegisterPatient');
+    return res.render('PatientViews/RegisterPatient');
 });
 
 
@@ -140,11 +141,11 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
             }
         });
 
-        res.status(200).json({message: "Health Package Subscription Successful!"});
+        return res.status(200).json({message: "Health Package Subscription Successful!"});
     } else if(patient) {
-        res.status(400).json({message: "Patient already subscribed to health package!"});
+        return res.status(400).json({message: "Patient already subscribed to health package!"});
     } else {
-        res.status(400).json({message: "Patient not found!"});
+        return res.status(400).json({message: "Patient not found!"});
     }
     
 });
@@ -167,11 +168,11 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
             patient.HealthPackage.date = Date.now();
 
             await patient.save();
-            res.status(200).json({message: "Health Package Unsubscription Successful!"});
+            return res.status(200).json({message: "Health Package Unsubscription Successful!"});
         } else if(patient) {
-            res.status(400).json({message: "Patient already unsubscribed to health package!"});
+            return res.status(400).json({message: "Patient already unsubscribed to health package!"});
         } else {
-            res.status(400).json({message: "Patient not found!"});
+            return res.status(400).json({message: "Patient not found!"});
         }
         
     });
@@ -179,10 +180,78 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
 const viewHealthPackage = asyncHandler(async (req, res) => {
     const patient = await patientModel.findOne({Username: await getUsername(req, res)});
     if (patient) {
-        res.status(200).json(patient.HealthPackage);
+        return res.status(200).json(patient.HealthPackage);
     } else {
-        res.status(400).json({message: "Patient not found!"});
+        return res.status(400).json({message: "Patient not found!"});
     }
 });
 
-module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};
+
+
+const changePassword = async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+
+    try {
+        // Fetch the doctor's current data from the database using their username
+        const patient = await patientModel.findOne({ Username: username });
+
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+
+        // Verify if the current password matches the one in the database
+        const passwordMatch = await bcrypt.compare(currentPassword, patient.Password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({ error: 'Current password is incorrect' });
+        }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update the doctor's password in the database
+        patient.Password = hashedPassword;
+        await patient.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+
+module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, 
+    healthPackageUnsubscription, viewHealthPackage , viewPatients, changePassword};
+const getMe = asyncHandler(async (req, res) => {
+    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+    if (patient) {
+        return res.status(200).json(patient);
+    } else {
+        return res.status(400).json({message: "Patient not found!"});
+    }
+});
+
+const updateMe = asyncHandler(async (req, res) => {
+    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+    if (patient) {
+        const {FirstName, LastName, Email, Number, DateOfBirth, EmergencyContact, Password} = req.body;
+        if(Password){
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(Password, salt);
+            patient.Password = hashedPassword;
+        }
+        patient.FirstName = FirstName;
+        patient.LastName = LastName;
+        patient.Email = Email;
+        patient.Number = Number;
+        patient.EmergencyContact = EmergencyContact;
+        patient.DateOfBirth = DateOfBirth;
+        await patient.save();
+        return res.status(200).json({message: "Patient details updated successfully!"});
+    } else {
+        return res.status(400).json({message: "Patient not found!"});
+    }
+});
+
+module.exports = {updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};

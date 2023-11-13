@@ -3,6 +3,11 @@ const router = express.Router();
 const AdminController = require('../controllers/Admin/AdminController');
 const adminGetter = require('../controllers/Admin/AdminGetters');
 const {getPackages} = require("../controllers/Admin/AdminController");
+const { changePassword, acceptRejectDoctorRequest} = require('../controllers/Admin/AdminController');
+const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
+const adminModel = require('../models/Administrator');
 
 //const JWTAuth = require('../config/JWTAuth.js');
 
@@ -11,10 +16,13 @@ const {getPackages} = require("../controllers/Admin/AdminController");
 // Middleware to check authentication for the routes below
 //router.use(isAuth);
 //admin
+
+
 router.get('/', adminGetter.viewAdminPanel);
 router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
 router.get('/viewDoctorApplications', adminGetter.viewPackageManager);
+router.post('/changePassword', changePassword);
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
@@ -41,6 +49,7 @@ router.post('/getDoctorsReg', (req, res) => {
 });
 router.get('/getDoctorsReg', adminGetter.viewDoctorRegister);
 
+router.post('/acceptRejectDoctorRequest', acceptRejectDoctorRequest);
 
 //packages
 
@@ -53,4 +62,7 @@ router.delete('/removePackage', (req, res) => {
 router.patch('/updatePackage', (req, res) => {
     AdminController.updatePackage(req, res).then();
 });
+
+
+
 module.exports = router;
