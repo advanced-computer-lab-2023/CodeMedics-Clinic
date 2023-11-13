@@ -11,26 +11,35 @@ const now = new Date();
 const Page = ({ doctors , sepcialities }) => {
 
   const [filterSpeciality , setFilterSpeciality] = useState(doctors);
-  const [search , setSearch] = useState(doctors);
+  const [searchDoctor , setSearchDoctor] = useState(doctors);
+  const [searchSpeciality , setSearchSpeciality] = useState(doctors);
   const [data, setData] = useState(doctors);
   
 
   useEffect(() => {
     handleData();
-  }, [search , filterSpeciality]);
+  }, [searchDoctor , filterSpeciality , searchSpeciality]);
 
   const handleData = () => {
-    setData(doctors.filter((doctor) => search.includes(doctor) && filterSpeciality.includes(doctor)));
+    setData(doctors.filter((doctor) => searchDoctor.includes(doctor) && filterSpeciality.includes(doctor) && searchSpeciality.includes(doctor)));
   };
 
-  const handleSearch = (str) => {
+  const handleDoctorSearch = (str) => {
     if(str === ""){
-      setSearch(doctors);
+      setSearchDoctor(doctors);
     }else{
-      setSearch(doctors.filter((doctor) => {
+      setSearchDoctor(doctors.filter((doctor) => {
         const fullName = doctor.FirstName + " " + doctor.LastName;
         return fullName.toLowerCase().includes(str.toLowerCase());
       }));
+    }
+  };
+
+  const handleSpecialitySearch = (str) => {
+    if(str === ""){
+      setSearchSpeciality(doctors);
+    }else{
+      setSearchSpeciality(doctors.filter((doctor) => doctor.Speciality.toLowerCase().includes(str.toLowerCase())));
     }
   };
 
@@ -60,7 +69,12 @@ const Page = ({ doctors , sepcialities }) => {
         <Typography variant="h3" gutterBottom>
           Doctors
         </Typography>
-        <DoctorsSearch handleSearch={handleSearch} sepcialities={sepcialities} handleSpecialityFilter={handleSpecialityFilter}/>
+        <DoctorsSearch 
+          handleSpecialitySearch={handleSpecialitySearch} 
+          handleDoctorSearch={handleDoctorSearch} 
+          sepcialities={sepcialities} 
+          handleSpecialityFilter={handleSpecialityFilter}
+        />
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
             <OverviewDoctors doctors={data} sx={{ height: '100%' }} />

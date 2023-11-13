@@ -1,16 +1,15 @@
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon,Stack,TextField,MenuItem } from '@mui/material';
 
-export const DoctorsSearch = ({handleSearch , sepcialities , handleSpecialityFilter}) => {
+export const DoctorsSearch = ({handleDoctorSearch , handleSpecialitySearch , sepcialities , handleSpecialityFilter}) => {
   return(
   <Card sx={{ p: 2 }}>
     <Stack direction="row" spacing = {3}>
     <OutlinedInput
       defaultValue=""
       onChange={(str) => {
-        handleSearch(str.target.value);
+        handleDoctorSearch(str.target.value);
       }}
-      fullWidth
       placeholder="Search Doctor"
       startAdornment={(
         <InputAdornment position="start">
@@ -22,10 +21,27 @@ export const DoctorsSearch = ({handleSearch , sepcialities , handleSpecialityFil
           </SvgIcon>
         </InputAdornment>
       )}
-      sx={{ maxWidth: 400 }}
+    />
+    <OutlinedInput
+      defaultValue=""
+      onChange={(str) => {
+        handleSpecialitySearch(str.target.value);
+        console.log('Here ----> ');
+      }}
+      placeholder="Search Speciality"
+      startAdornment={(
+        <InputAdornment position="start">
+          <SvgIcon
+            color="action"
+            fontSize="small"
+          >
+            <MagnifyingGlassIcon />
+          </SvgIcon>
+        </InputAdornment>
+      )}
     />
     <TextField
-          sx={{width: 220}}
+          sx={{width: 200}}
           id="speciality"
           select
           label="Speciality"
