@@ -49,7 +49,7 @@ export const DoctorsSearch = ({handleDateFilter , handleDoctorSearch , handleSpe
           helperText=""
           onChange={(str) => {handleSpecialityFilter(str.target.value)}}
         >
-        {sepcialities.map((option) => (
+        {sepcialities && sepcialities.map((option) => (
             <MenuItem key={option.value} value={option.value} >
               {option.label}
             </MenuItem>

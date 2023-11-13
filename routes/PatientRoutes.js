@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const patientController = require('../controllers/Patient/PatientController');
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
-const {addFamilyMember, viewFamilyMembers, removeFamilyMember} = require('../controllers/Patient/FamilyMembersController');
+const {addFamilyMember, viewFamilyMembers, removeFamilyMember, addFamilyMemberNoAccount, removeFamilyMemberNoAccount} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
 const { bookAppointment } = require('../controllers/Patient/BookAppointment');
@@ -72,7 +72,9 @@ router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
 router.patch('/familyMembers', addFamilyMember);
 router.delete('/familyMembers', removeFamilyMember);
+router.delete('/familyMembersNoAccount', removeFamilyMemberNoAccount);
 router.get('/familyMembers', viewFamilyMembers);
+router.post('/familyMembersNoAccount', addFamilyMemberNoAccount);
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/prescriptions', getPrescriptions);
 router.get('/viewappointments', filterAppointmentsPatient);

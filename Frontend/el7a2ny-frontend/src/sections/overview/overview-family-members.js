@@ -27,7 +27,6 @@ import {
     Typography,
     Stack
 } from '@mui/material';
-import { get } from 'http';
 
 export const OverviewFamilyMembers = (props) => {
     const router = useRouter();
@@ -36,6 +35,19 @@ export const OverviewFamilyMembers = (props) => {
 
     const removeFamilyMember = (familyMemberId) => {
         axios('http://localhost:8000/patient/familyMembers', {
+            method: 'DELETE',
+            data: { familyMemberId },
+            withCredentials: true
+        }).then(response => {
+            console.log(response);
+            router.refresh();
+        }).catch(error => {
+            console.log(error);
+        });
+    };
+
+    const removeFamilyMemberNoAccount = (familyMemberId) => {
+        axios('http://localhost:8000/patient/familyMembersNoAccount', {
             method: 'DELETE',
             data: { familyMemberId },
             withCredentials: true
@@ -178,9 +190,9 @@ export const OverviewFamilyMembers = (props) => {
                                         color="primary"
                                         variant="contained"
                                         size="small"
-                                        onClick={() => { /** remove family member no account */ }}
+                                        onClick={() => { removeFamilyMemberNoAccount(familyMember._id) }}
                                     >
-                                        View Profile
+                                        Remove
                                     </Button>
                                 </CardActions>
                             </Stack>
