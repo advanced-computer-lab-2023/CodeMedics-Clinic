@@ -116,10 +116,16 @@ const Page = () => {
                 Cookies.set('username', data['patient']['Username']);
                 router.push(`/user/doctors`);
               } else if (data['Type'] === 'Doctor') {
-                console.log(Cookies.get('token'));
-                console.log(Cookies.get('jwt'));
+                console.log(data);
+                if(data.doctor.Status == 'Pending'){
+                  helpers.setStatus({ success: false });
+                  helpers.setErrors({ submit: 'Your request is still pending' });
+                  helpers.setSubmitting(false);
+                }
+                else{
                 Cookies.set('username', data['doctor']['Username']);
                 router.push(`/doctor/patients`);
+                }
               } else if (data['Type'] === 'Admin') {
                 Cookies.set('username', data['admin']['Username']);
                 router.push(`/admin/admins`);

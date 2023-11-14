@@ -171,12 +171,12 @@ const viewHealthPackage = asyncHandler(async (req, res) => {
 
 const changePassword = async (req, res) => {
     const {username, currentPassword, newPassword } = req.body;
-
+    console.log(username , newPassword);
     try {
         // Fetch the doctor's current data from the database using their username
-        const patient = await patientModel.findOne({ Username: username });
+        const user = await patientModel.findOne({ Username: username }) || await doctorModel.findOne({Username: username}) || await adminModel.findOne({Username: username});
 
-        if (!patient) {
+        if (!user) {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
@@ -192,8 +192,8 @@ const changePassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
         // Update the doctor's password in the database
-        patient.Password = hashedPassword;
-        await patient.save();
+        user.Password = hashedPassword;
+        await user.save();
 
         return res.status(200).json({ message: 'Password changed successfully' });
     } catch (error) {

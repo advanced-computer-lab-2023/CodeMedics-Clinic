@@ -25,7 +25,7 @@ exports.getDoctorsAndAppointments = async (req, res) => {
     if (patient == null) {
       return res.status(404).json({ message: "Patient not found" });
     }
-    const doctors = await Doctor.find();
+    const doctors = await Doctor.find({Status : "Approved"});
     const package = await Package.findOne({ Name: patient.HealthPackage.membership });
     const data = [];
     for (let i = 0; i < doctors.length; i++) {
