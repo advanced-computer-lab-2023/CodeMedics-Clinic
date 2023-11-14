@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { SettingsNotifications } from 'src/sections/settings/settings-notifications';
-import { SettingsPassword } from 'src/sections/doctor/settings/settings-password';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
+import { SettingsPassword } from 'src/sections/admin/settings/settings-password';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
 
 const Page = () => (
   <>

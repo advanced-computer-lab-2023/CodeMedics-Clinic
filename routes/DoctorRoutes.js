@@ -49,7 +49,7 @@ router.post('/add-time-slot/:username', addTimeSlot);
 
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
-router.post('/changePassword', requireAuth, changePassword);
+router.post('/changePassword', changePassword);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:doctorUsername/past-appointments', viewPastAppointments);
 

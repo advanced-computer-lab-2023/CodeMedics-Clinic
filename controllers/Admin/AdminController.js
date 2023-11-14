@@ -225,11 +225,11 @@ const changePassword = async (req, res) => {
         }
 
         // Verify if the current password matches the one in the database
-        const passwordMatch = await bcrypt.compare(currentPassword, admin.Password);
+        // const passwordMatch = await bcrypt.compare(currentPassword, admin.Password);
 
-        if (!passwordMatch) {
-            return res.status(400).json({ error: 'Current password is incorrect' });
-        }
+        // if (!passwordMatch) {
+        //     return res.status(400).json({ error: 'Current password is incorrect' });
+        // }
 
         // Hash the new password
         const salt = await bcrypt.genSalt(10);

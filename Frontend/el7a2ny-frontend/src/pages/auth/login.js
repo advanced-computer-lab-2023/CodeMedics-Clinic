@@ -118,10 +118,10 @@ const Page = () => {
               } else if (data['Type'] === 'Doctor') {
                 console.log(Cookies.get('token'));
                 console.log(Cookies.get('jwt'));
-                Cookies.set('username', data['doctor']['username']);
+                Cookies.set('username', data['doctor']['Username']);
                 router.push(`/doctor/patients`);
               } else if (data['Type'] === 'Admin') {
-                Cookies.set('username', data['admin']['username']);
+                Cookies.set('username', data['admin']['Username']);
                 router.push(`/admin/admins`);
               }
             });
@@ -344,7 +344,7 @@ const Page = () => {
                   color="primary"
                   severity="info"
                   sx={{ mt: 3 }}
-                > 
+                >
                   <div>
                     You can use <b>demo@devias.io</b> and password <b>Password123!</b>
                   </div>

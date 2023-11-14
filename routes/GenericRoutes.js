@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Login = require('../controllers/Login.js');
 const {resetPassword} = require('../controllers/ResetPassword.js');
+const {getMe} = require('../controllers/GetMe.js');
 
 router.get('/login', (req, res) => {
     res.render('login');
@@ -16,5 +17,6 @@ router.post('/logout', (req, res) => {
 });
 
 router.post('/resetPassword', resetPassword);
+router.get('/getMe' , getMe);
 
 module.exports = router;
