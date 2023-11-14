@@ -51,7 +51,7 @@ export const AccountProfilePatient = ({user}) => {
           variant="h5"
           color="green"
         >
-          {user.Wallet} $
+          {user.Wallet} EGP
         </Typography>
       </Box>
     </CardContent>

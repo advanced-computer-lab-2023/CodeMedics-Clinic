@@ -37,7 +37,16 @@ export const items = [
     )
   },
   {
-    title: 'prescriptions',
+    title: 'Health Packages',
+    path: '/user/packages',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Prescriptions',
     path: '/user/prescriptions',
     icon: (
       <SvgIcon fontSize="small">

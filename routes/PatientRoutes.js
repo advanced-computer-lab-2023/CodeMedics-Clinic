@@ -26,6 +26,7 @@ const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
 
 const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
 const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
+const Patient = require('../models/Patient.js');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -72,6 +73,8 @@ router.patch('/familyMembers', addFamilyMember);
 router.delete('/familyMembers', removeFamilyMember);
 router.delete('/familyMembersNoAccount', removeFamilyMemberNoAccount);
 router.get('/familyMembers', viewFamilyMembers);
+router.get('/getAvailablePackages', patientController.getAvailablePackages);
+router.get('/getPackage', patientController.getPackage);
 router.post('/familyMembersNoAccount', addFamilyMemberNoAccount);
 router.get('/viewappointments', filterAppointmentsPatient);
 router.get('/SearchDoctor', searchDoctor);

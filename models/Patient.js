@@ -73,11 +73,13 @@ const patientSchema = new Schema({
         type: {
             membership: String, // Free, Silver, Gold, Platinum
             status: String, // Subscribed, Unsubscribed
+            date: Date,
             Price: Number
         },
         default: {
             membership: "Free",
             status: "Unsubscribed",
+            date: null,
             Price: 0
         },
         required: false

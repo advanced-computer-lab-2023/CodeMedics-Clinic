@@ -1,6 +1,7 @@
 const patientModel = require('../../models/Patient');
 const adminModel = require('../../models/Administrator');
 const doctorModel = require('../../models/Doctor');
+const packageModel = require('../../models/Package');
 const {getUsername} = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
@@ -101,7 +102,7 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
 
     const patient = await patientModel.findOne({Username: await getUsername(req, res)});
     const {membership} = req.body;
-    if (patient && patient.HealthPackage.membership === "Free") {
+    if (patient && patient.HealthPackage.membership !== membership) {
         patient.HealthPackage.membership = membership;
         patient.HealthPackage.date = Date.now();
         patient.HealthPackage.date.setFullYear(patient.HealthPackage.date.getFullYear() + 1);
@@ -116,28 +117,6 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
             }
         }
         await patient.save();
-        
-        //schedule a job to check if the subscription is overdue
-        const jobInterval = new Date(Date.now());
-        jobInterval.setFullYear(jobInterval.getFullYear() + 1);
-        schedule.scheduleJob(jobInterval, async function(){
-            if(patient.HealthPackage.membership !== "Free"){
-                
-                patient.HealthPackage.membership = "Free";
-                patient.HealthPackage.status = "";
-                
-                for(const member of patient.FamilyMembers){
-                    const familyMember = await patientModel.findOne({_id: member});
-                    if(familyMember && familyMember.HealthPackage.status === "linked"){
-                        familyMember.HealthPackage.status = "";                        
-                        await familyMember.save();
-                    }
-                }
-
-                await patient.save();
-    
-            }
-        });
 
         return res.status(200).json({message: "Health Package Subscription Successful!"});
     } else if(patient) {
@@ -161,7 +140,7 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
             }
             patient.HealthPackage.status = "";
             patient.HealthPackage.membership = "Free";
-            patient.HealthPackage.date = Date.now();
+            patient.HealthPackage.date = null;
 
             await patient.save();
             return res.status(200).json({message: "Health Package Unsubscription Successful!"});
@@ -216,9 +195,6 @@ const changePassword = async (req, res) => {
     }
 };
 
-
-module.exports = {createPatient, viewPatientRegister, healthPackageSubscription, 
-    healthPackageUnsubscription, viewHealthPackage , viewPatients, changePassword};
 const getMe = asyncHandler(async (req, res) => {
     const patient = await patientModel.findOne({Username: await getUsername(req, res)});
     if (patient) {
@@ -250,4 +226,23 @@ const updateMe = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};
+const getAvailablePackages = asyncHandler(async (req, res) => {
+    const packages = await packageModel.find();
+    if (packages) {
+        return res.status(200).json(packages);
+    } else {
+        return res.status(400).json({message: "packages model is empty!"});
+    }
+});
+
+const getPackage = asyncHandler(async (req, res) => {
+    const {packageName} = req.query;
+    const package = await packageModel.findOne({Name: packageName});
+    if (package) {
+        return res.status(200).json(package);
+    } else {
+        return res.status(400).json({message: "package not found!"});
+    }
+});
+
+module.exports = {getPackage, getAvailablePackages, updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage , viewPatients};
