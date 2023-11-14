@@ -71,7 +71,7 @@ export const CustomersTable = (props) => {
                   To
                 </TableCell>
                 <TableCell>
-                  Sattus
+                  Status
                 </TableCell>
               </TableRow>
             </TableHead>

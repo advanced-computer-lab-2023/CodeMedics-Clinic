@@ -4,7 +4,7 @@ import { subDays, subHours } from 'date-fns';
 import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography, TextField } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
 import { CustomersTable } from 'src/sections/customer/patient-table';
@@ -15,29 +15,6 @@ import axios from 'axios';
 const now = new Date();
 
 
-
-
-
-//const data = 
-
-// const useCustomers = (page, rowsPerPage) => {
-//   return useMemo(
-//     () => {
-//       return applyPagination(data, page, rowsPerPage);
-//     },
-//     [page, rowsPerPage]
-//   );
-// };
-
-// const useCustomerIds = (customers) => {
-//   return useMemo(
-//     () => {
-//       return customers.map((customer) => customer.id);
-//     },
-//     [customers]
-//   );
-// };
-
 const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -45,6 +22,9 @@ const Page = () => {
   // const customersIds = useCustomerIds(customers);
   // const customersSelection = useSelection(customersIds);
   const [appointments, setAppointments] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [startHour, setStartHour] = useState('09:00'); // Initial start hour
+  const [endHour, setEndHour] = useState('17:00'); // Initial end hour
   
   useEffect(() => {
     getAppointments();
@@ -79,6 +59,27 @@ const Page = () => {
     []
   );
 
+  const handleDateChange = (event) => {
+    setSelectedDate(new Date(event.target.value));
+  };
+
+  const handleStartHourChange = (event) => {
+    setStartHour(event.target.value);
+  };
+
+  const handleEndHourChange = (event) => {
+    setEndHour(event.target.value);
+  };
+
+  const addAppointment = async (startHour, endHour, date) => {
+    await axios('http://localhost:8000/doctor/addAppointments', {
+      method: 'POST',
+      withCredentials: true,
+      data: {startHour: startHour, endHour, endHour, date, date}
+    })
+  }
+
+
   return (
     <>
       <Head>
@@ -109,26 +110,32 @@ const Page = () => {
                   direction="row"
                   spacing={1}
                 >
-                  <Button
-                    color="inherit"
-                    startIcon={(
-                      <SvgIcon fontSize="small">
-                        <ArrowUpOnSquareIcon />
-                      </SvgIcon>
-                    )}
-                  >
-                    Import
-                  </Button>
-                  <Button
-                    color="inherit"
-                    startIcon={(
-                      <SvgIcon fontSize="small">
-                        <ArrowDownOnSquareIcon />
-                      </SvgIcon>
-                    )}
-                  >
-                    Export
-                  </Button>
+                  <Box sx={{ ml: 'auto' }}>
+                    {/* Date selector */}
+                    <TextField
+                      type="date"
+                      label=""
+                      id='appDate'
+                      value={selectedDate.toISOString().split('T')[0]}
+                      onChange={handleDateChange}
+                    />
+                  </Box>
+                  {/* Start Hour selector */}
+                  <TextField
+                    type="time"
+                    label="Start Hour"
+                    value={startHour}
+                    onChange={handleStartHourChange}
+                    sx={{ ml: 1 }}
+                  />
+                  {/* End Hour selector */}
+                  <TextField
+                    type="time"
+                    label="End Hour"
+                    value={endHour}
+                    onChange={handleEndHourChange}
+                    sx={{ ml: 1 }}
+                  />
                 </Stack>
               </Stack>
               <div>
@@ -139,8 +146,9 @@ const Page = () => {
                     </SvgIcon>
                   )}
                   variant="contained"
+                  onClick={() => { addAppointment(startHour, endHour, selectedDate) }}
                 >
-                  Add
+                  Add Appointment
                 </Button>
               </div>
             </Stack>
