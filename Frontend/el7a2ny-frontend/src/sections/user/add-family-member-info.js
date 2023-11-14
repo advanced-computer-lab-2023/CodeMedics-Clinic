@@ -32,8 +32,7 @@ export const AddFamilyMemberInfo = () => {
       Email: Yup
         .string()
         .max(255)
-        .email('Must be a valid email')
-        .required('Email is required'),
+        .required('Email or Phone Number is required'),
       Relation: Yup
         .string()
         .max(255)
@@ -89,7 +88,7 @@ export const AddFamilyMemberInfo = () => {
                   error={!!(formik.touched.Email && formik.errors.Email)}
                   fullWidth
                   helperText={formik.touched.Email && formik.errors.Email}
-                  label="Email"
+                  label="Enter Email or Phone Number"
                   name="Email"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}

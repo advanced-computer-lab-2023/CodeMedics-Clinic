@@ -10,6 +10,7 @@ import {
   TextField,
   Unstable_Grid2 as Grid
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 export const OverviewPatientInfoDetails = ({patient}) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -33,7 +34,7 @@ export const OverviewPatientInfoDetails = ({patient}) => {
     fileInputRef.current.click();
     //handleAddHealthRecord();
   };
-
+  const router = useRouter();
   // Create a ref for the file input
   const fileInputRef = createRef();
 
@@ -117,7 +118,9 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                   fullWidth
                   variant="contained"
                   color="primary"
-                  //onClick={handleViewHealthRecords}
+                  onClick={() => {
+                    router.push(`/doctor/medical-history?username=${patient.Username}`)
+                  }}
                 >
                   View Health Records
                 </Button>
@@ -130,9 +133,6 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                     onChange={handleFileChange}
                     ref={fileInputRef}
                 />
-                <Button variant="contained" color="primary" onClick={handleAddHealthRecordButtonClick}>
-                    Add Health Record
-                </Button>
             </Grid>
           </Grid>
         </Box>}

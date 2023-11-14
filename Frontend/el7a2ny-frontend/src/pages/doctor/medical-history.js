@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import { OverviewMedicalRecords } from 'src/sections/overview/overview-medical-records';
+import { OverviewMedicalRecords } from 'src/sections/doctor/medicalHistory/overview-medical-records';
 import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState } from 'react';
@@ -17,7 +17,8 @@ const now = new Date();
 const Page = () => {
 
   const router = useRouter();
-  const username = Cookies.get('username');
+  const params = new URLSearchParams(window.location.search);
+  const username = params.get('username');
   const [medicalRecords, setMedicalRecords] = useState([]); 
 
   useEffect(() => {

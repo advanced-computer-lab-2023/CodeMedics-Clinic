@@ -114,8 +114,8 @@ const Page = () => {
                     {/* Date selector */}
                     <TextField
                       type="date"
-                      label=""
-                      id='appDate'
+                      label="Date"
+                      id='appDate'  
                       value={selectedDate.toISOString().split('T')[0]}
                       onChange={handleDateChange}
                     />

@@ -57,6 +57,15 @@ export const items = [
     )
   },
   {
+    title: 'Medical History',
+    path: '/user/medical-history',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ClipboardDocumentListIcon   />
+      </SvgIcon>
+    )
+  },
+  {
     title: 'Account',
     path: '/user/account',
     icon: (

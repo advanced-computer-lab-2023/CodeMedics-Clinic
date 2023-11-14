@@ -128,7 +128,7 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
             if(familyMember){
                 familyMember.HealthPackage.discount = getDiscountAmountForHealthPackage(membership);
                 familyMember.HealthPackage.discountEndDate = Date.now();
-                familyMember.HealthPackage.discountEndDate.setFullYear(familyMember.HealthPackage.date.getFullYear() + 1);
+                familyMember.HealthPackage.discountEndDate.setFullYear(familyMember.HealthPackage.discountEndDate.getFullYear() + 1);
                 await familyMember.save();
             }
         }
