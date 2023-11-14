@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, createRef } from 'react';
 import {
   Box,
   Button,
@@ -12,6 +12,32 @@ import {
 } from '@mui/material';
 
 export const OverviewPatientInfoDetails = ({patient}) => {
+    const [selectedFile, setSelectedFile] = useState(null);
+
+    const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedFile(file);
+  };
+  const handleAddHealthRecord = useCallback(() => {
+    // Add logic to handle the selected file
+    if (selectedFile) {
+      console.log('Selected File:', selectedFile);
+      
+    } else {
+      console.log('No file selected');
+    }
+  }, [selectedFile]);
+
+  const handleAddHealthRecordButtonClick = () => {
+    // Trigger the click event on the hidden file input
+    fileInputRef.current.click();
+    //handleAddHealthRecord();
+  };
+
+  // Create a ref for the file input
+  const fileInputRef = createRef();
+
+
   
 
   return (
@@ -94,6 +120,18 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                   //onClick={handleViewHealthRecords}
                 >
                   View Health Records
+                </Button>
+            </Grid>
+            <Grid  item xs={12} md={12}>
+                <input
+                    type="file"
+                    accept=".pdf, .doc, .docx" // Specify the allowed file types
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                />
+                <Button variant="contained" color="primary" onClick={handleAddHealthRecordButtonClick}>
+                    Add Health Record
                 </Button>
             </Grid>
           </Grid>
