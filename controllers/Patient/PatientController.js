@@ -185,7 +185,7 @@ const viewHealthPackage = asyncHandler(async (req, res) => {
 
 
 const changePassword = async (req, res) => {
-    const { username, currentPassword, newPassword } = req.body;
+    const {username, currentPassword, newPassword } = req.body;
 
     try {
         // Fetch the doctor's current data from the database using their username
@@ -195,12 +195,12 @@ const changePassword = async (req, res) => {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
-        // Verify if the current password matches the one in the database
-        const passwordMatch = await bcrypt.compare(currentPassword, patient.Password);
+        // // Verify if the current password matches the one in the database
+        // const passwordMatch = await bcrypt.compare(currentPassword, patient.Password);
 
-        if (!passwordMatch) {
-            return res.status(400).json({ error: 'Current password is incorrect' });
-        }
+        // if (!passwordMatch) {
+        //     return res.status(400).json({ error: 'Current password is incorrect' });
+        // }
 
         // Hash the new password
         const salt = await bcrypt.genSalt(10);
@@ -212,7 +212,7 @@ const changePassword = async (req, res) => {
 
         return res.status(200).json({ message: 'Password changed successfully' });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 

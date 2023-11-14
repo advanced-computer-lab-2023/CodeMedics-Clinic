@@ -4,13 +4,13 @@ const {getUsername} = require('../../config/infoGetter');
 
 exports.addFamilyMember = async (req, res) => {
    const Username = await getUsername(req, res);
-   const {familyMemberUsername, relation} = req.body;
+   const {familyMemberEmail, relation} = req.body;
    try{
       const patient = await Patient.findOne({Username});
       if(patient == null){
          return res.status(404).json({message: 'Patient does not exist'});
       }
-      const exists = await Patient.findOne({Username: familyMemberUsername});
+      const exists = await Patient.findOne({Email: familyMemberEmail});
       if(exists == null){  
          return res.status(400).json({message: 'Family member does not exist'});
       }

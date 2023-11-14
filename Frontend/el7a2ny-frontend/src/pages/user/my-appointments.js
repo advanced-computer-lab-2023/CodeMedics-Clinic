@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography , TextField} from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { AppointmentsTable } from 'src/sections/doctor/appointments/appointments-table';
@@ -71,6 +71,7 @@ const Page = () => {
 
   const [filter1, setFilter1] = useState('');
   const [filter2, setFilter2] = useState('');
+  const [filter3 , setFilter3] = useState('None');
 
   useEffect(() => {
     const filtered = allData.filter((appointment) => {
@@ -83,8 +84,13 @@ const Page = () => {
       if(filter2 !== '')
         return appointment.date <= filter2;
     });
-    setData(filtered);
-  }, [filter1, filter2, allData]);
+    const filtered2 = filtered.filter((appointment) => {
+      if(filter3 === 'None')
+        return true;
+      return appointment.status === filter3;
+    });
+    setData(filtered2);
+  }, [filter1, filter2,filter3, allData]);
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -133,8 +139,9 @@ const Page = () => {
                 </Stack>
               </Stack>
             </Stack>
-            <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} />
-            { <PatientAppointmentsTable
+            <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} filterStatus={true} />
+            
+            <PatientAppointmentsTable
               count={data.length}
               items={customers}
               onDeselectAll={customersSelection.handleDeselectAll}
@@ -146,7 +153,7 @@ const Page = () => {
               page={page}
               rowsPerPage={rowsPerPage}
               selected={customersSelection.selected}
-            />}
+            />
           </Stack>
         </Container>
       </Box>

@@ -336,7 +336,7 @@ const Page = () => {
                   fullWidth
                   size="large"
                   sx={{ mt: 3 }}
-                  // onClick={handleSkip}
+                  onClick={() => {router.push('/auth/forgotPassword');}}
                 >
                   Forgot Password?
                 </Button>
@@ -344,7 +344,7 @@ const Page = () => {
                   color="primary"
                   severity="info"
                   sx={{ mt: 3 }}
-                >
+                > 
                   <div>
                     You can use <b>demo@devias.io</b> and password <b>Password123!</b>
                   </div>

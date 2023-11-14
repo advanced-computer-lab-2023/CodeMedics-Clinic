@@ -25,14 +25,15 @@ export const AddFamilyMemberInfo = () => {
 
   const formik = useFormik({
     initialValues: {
-      Username: '',
+      Email: '',
       Relation: '',
     },
     validationSchema: Yup.object({
-      Username: Yup
+      Email: Yup
         .string()
         .max(255)
-        .required('Username is required'),
+        .email('Must be a valid email')
+        .required('Email is required'),
       Relation: Yup
         .string()
         .max(255)
@@ -41,7 +42,7 @@ export const AddFamilyMemberInfo = () => {
     onSubmit: async (values, helpers) => {
       try {
         const body = {
-          "familyMemberUsername": values.Username,
+          "familyMemberEmail": values.Email,
           "relation": values.Relation
         };
         await axios('http://localhost:8000/patient/familyMembers', {
@@ -85,14 +86,14 @@ export const AddFamilyMemberInfo = () => {
                 md={6}
               >
                 <TextField
-                  error={!!(formik.touched.Username && formik.errors.Username)}
+                  error={!!(formik.touched.Email && formik.errors.Email)}
                   fullWidth
-                  helperText={formik.touched.Username && formik.errors.Username}
-                  label="Username"
-                  name="Username"
+                  helperText={formik.touched.Email && formik.errors.Email}
+                  label="Email"
+                  name="Email"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.Username}
+                  value={formik.values.Email}
                 />
               </Grid>
               <Grid
