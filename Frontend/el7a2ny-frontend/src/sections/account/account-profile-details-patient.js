@@ -350,7 +350,7 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
                 label="Health Package Price"
                 disabled
                 name="HealthPackagePrice"
-                value={values.HealthPackage.Price}
+                value={values.HealthPackage.status == "EndDateCancelled" ? "Cancelled with end date" : values.HealthPackage.status == "Inactive" ? "Free Package Active" : "Active"}
               />
               <TextField
                 fullWidth
