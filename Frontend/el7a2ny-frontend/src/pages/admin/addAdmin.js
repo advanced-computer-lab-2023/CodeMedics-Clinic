@@ -134,10 +134,23 @@ const Page = () => {
                 sx={{ mt: 3 }}
                 type="submit"
                 variant="contained"
+                style = {{ backgroundColor: 'rgba(0, 0, 255, 0.5)', color: 'black' }}
               >
                 Add
               </Button>
             </form>
+            <Button
+                fullWidth
+                size="large"
+                sx={{ mt: 3 }}
+                onClick = {() => {
+                    router.push('/admin/admins');
+                }}
+                variant="contained"
+                style={{ backgroundColor: 'rgba(255, 0, 0, 0.5)', color: 'black' }}
+              >
+                Cancel
+              </Button>
             <div style={{ color: error === '' ? 'green' : 'red', fontWeight: 'bold', marginTop: '10px' }}>{message}</div>
           </div>
         </Box>

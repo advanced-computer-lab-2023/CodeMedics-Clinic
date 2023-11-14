@@ -11,7 +11,7 @@ const removeAdmin = async (req, res) => {
         return res.status(400).json({message: 'Cannot remove creator.'});
     }
     
-    await Admin.deleteOne({Username: Username });
+    await Admin.deleteOne({Username: username });
     return res.status(200).json({message: 'Admin removed.'});
 };
 
