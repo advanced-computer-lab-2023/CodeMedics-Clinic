@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
+import { useRouter } from 'next/navigation';
 import {
   Box,
   Button,
@@ -21,7 +22,7 @@ import {
 export const OverviewLatestProducts = (props) => {
   const { products = [], sx } = props;
    
-
+  const router = useRouter();
   return (
     <Card sx={{ width: '100%', ...sx }}>
       <CardHeader title="Patients" />
@@ -29,8 +30,9 @@ export const OverviewLatestProducts = (props) => {
         {products.map((product, index) => {
 
             const handleViewPatient = (productID) =>{
-                console.log("HELLO FINALLY");
+                router.push(`/doctor/patient-info?patientUsername=${product.Username}`);
             }
+
 
           const hasDivider = index < products.length - 1;
 

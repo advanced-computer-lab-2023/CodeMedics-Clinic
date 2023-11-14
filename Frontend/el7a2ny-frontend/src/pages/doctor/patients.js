@@ -38,6 +38,9 @@ const Page = () => {
       });
   };
 
+  console.log("ABOUT TO PRINT PATIENTS");
+  console.log(patients);
+
   
 return (
   <>
