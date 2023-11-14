@@ -3,6 +3,8 @@ import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
+import CalendarDaysIcon from '@heroicons/react/24/solid/CalendarDaysIcon';
+import ClipboardDocumentListIcon from '@heroicons/react/24/solid/ClipboardDocumentListIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
@@ -23,7 +25,7 @@ export const items = [
     path: '/user/my-appointments',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <CalendarDaysIcon />
       </SvgIcon>
     )
   },
@@ -41,7 +43,7 @@ export const items = [
     path: '/user/packages',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <ClipboardDocumentListIcon />
       </SvgIcon>
     )
   },
@@ -50,7 +52,7 @@ export const items = [
     path: '/user/prescriptions',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <ClipboardDocumentListIcon   />
       </SvgIcon>
     )
   },

@@ -3,7 +3,10 @@ import { format } from 'date-fns';
 import IdentificationIcon from '@heroicons/react/24/solid/IdentificationIcon';
 import Xmark from '@heroicons/react/24/solid/XMarkIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import CheckIcon from '@heroicons/react/24/solid/CheckIcon';; 
+import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
+import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
+import ArrowDownTrayIcon from '@heroicons/react/24/solid/ArrowDownTrayIcon';
+import file from '../../../file.png'
 import {
   Avatar,
   Box,
@@ -16,7 +19,9 @@ import {
   TableHead,
   TablePagination,
   TableRow, Button,
-  Typography
+  Typography,
+  Tooltip,
+  Link
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
@@ -27,6 +32,7 @@ import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
 import axios from 'axios';
+import FileSaver from 'file-saver';
 export const RequestTable = (props) => {
   const {
     count = 0,
@@ -45,6 +51,7 @@ export const RequestTable = (props) => {
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
+
   useEffect(() => {
     console.log(items.length);
   }, [items]);
@@ -81,7 +88,10 @@ export const RequestTable = (props) => {
                   Date of Birth
                 </TableCell> */}
                 <TableCell>
-                  educationalBackground
+                  edu 
+                </TableCell>
+                <TableCell>
+                  Documents
                 </TableCell>
                 <TableCell>
                   Actions
@@ -131,28 +141,55 @@ export const RequestTable = (props) => {
                       {customer.dob.substring(0, customer.dob.indexOf('T'))}
                     </TableCell> */}
                     <TableCell>
-                      {customer.educationalBackground}
+                      {customer.Degree}
                     </TableCell>
                     <TableCell>
-                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginRight: '10px' }} 
-                      onClick={() => {
-                          const userName = customer.Username;
-                          axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "reject"})
-                          .then((res) => {
-                            console.log("should be rejected");
-                            if (res.status == 200) {
-                              console.log("rejected");
-                              window.location.reload();
-                            }
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          }
-                          )
-                        }}>
-                        Reject
-                      </Button>
-                      <Button variant="contained" style={{ backgroundColor: '#d1ffd1', color: 'black'  }}
+                    <Tooltip title="National ID">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {FileSaver.saveAs(`/uploads/${customer.IDDocument}`, `${customer.IDDocument}`);}}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    <Tooltip title="Medical License">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {FileSaver.saveAs(`/uploads/${customer.MedicalLicense}`, `${customer.MedicalLicense}`);}}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    <Tooltip title="Medical Degree">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {FileSaver.saveAs(`/uploads/${customer.MedicalDegree}`, `${customer.MedicalDegree}`);}}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                    <Tooltip title="Accept Doctor">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <CheckIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
                       onClick={() => {
                         const userName = customer.Username;
                         axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "accept"})
@@ -166,9 +203,37 @@ export const RequestTable = (props) => {
                           console.log(err);
                         }
                         )
-                      }}>
-                        Accept
-                      </Button>
+                      }}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    <Tooltip title="Reject Doctor">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <XMarkIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {
+                        const userName = customer.Username;
+                          axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "reject"})
+                          .then((res) => {
+                            console.log("should be rejected");
+                            if (res.status == 200) {
+                              console.log("rejected");
+                              window.location.reload();
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          }
+                          );
+                      }}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    
                     </TableCell>
                   </TableRow>
                 );
