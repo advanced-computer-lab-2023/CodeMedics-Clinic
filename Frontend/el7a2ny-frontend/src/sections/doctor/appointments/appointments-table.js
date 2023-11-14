@@ -108,17 +108,7 @@ export const AppointmentsTable = (props) => {
                     </TableCell>
                     <TableCell padding="checkbox">
                       <Stack direction="row">
-                      <TextField
-                        sx={{ width: 200 }}
-                        id="Status"
-                        select
-                        fullWidth
-                        label="Book Appointment"
-                        helperText=""
-                        onChange={(str) => { setState3(str.target.value) }}
-                      >
-                      </TextField>
-                      <Tooltip title="Book Appointment" sx={{mt:1 , ml:2}}>
+                      <Tooltip title="Book Appointment" sx={{mt:1 , mr:5}}>
                         <IconButton
                           children={(
                             <SvgIcon fontSize="small">

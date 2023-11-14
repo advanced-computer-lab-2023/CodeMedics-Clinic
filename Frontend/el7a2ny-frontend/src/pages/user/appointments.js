@@ -43,24 +43,6 @@ const Page = () => {
   const router = useRouter();
   const [filter1, setFilter1] = useState('');
   const [filter2, setFilter2] = useState('');
-  const [familyList , setFamilyList] = useState([]);
-
-  useEffect(() => {
-    fetch('http://localhost:8000/patient/familyMembers')
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        const familyMembers = [{value: Cookies.get('username') , label: "Me"}];
-        for(let i=0; i<data.familyMembers.length; i++){
-          familyMembers.push({value: data.familyMembers[i].username , label: data.familyMembers[i].name});
-        }
-        setAllData(appointments);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   useEffect(() => {
     fetch('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername)
