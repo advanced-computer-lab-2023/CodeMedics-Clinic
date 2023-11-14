@@ -347,14 +347,14 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
             >
               <TextField
                 fullWidth
-                label="Health Package Price"
+                label="Health Package Status"
                 disabled
                 name="HealthPackagePrice"
                 value={values.HealthPackage.status == "EndDateCancelled" ? "Cancelled with end date" : values.HealthPackage.status == "Inactive" ? "Free Package Active" : "Active"}
               />
               <TextField
                 fullWidth
-                label="Health Package Name"
+                label="Health Package Type"
                 disabled
                 name="EmergencyContactName"
                 value={values.HealthPackage.status == "main" ? "Main" : "Family"}
