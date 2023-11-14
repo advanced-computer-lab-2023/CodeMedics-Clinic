@@ -9,7 +9,23 @@ const FamilyMember = require('../../models/FamilyMember');
 const schedule = require('node-schedule');
 const jwt = require('jsonwebtoken');
 
-
+function getDiscountAmountForHealthPackage(package){
+    if(package == "Free"){
+        return 0;
+    }
+    else if(package == "Silver"){
+        return 0.1;
+    }
+    else if(package == "Gold"){
+        return 0.15;
+    }
+    else if(package == "Platinum"){
+        return 0.2;
+    }
+    else{
+        console.error("Invalid package");
+    }
+}
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
@@ -106,13 +122,13 @@ const healthPackageSubscription = asyncHandler(async (req, res) => {
         patient.HealthPackage.membership = membership;
         patient.HealthPackage.date = Date.now();
         patient.HealthPackage.date.setFullYear(patient.HealthPackage.date.getFullYear() + 1);
-        patient.HealthPackage.status = "main";
+        patient.HealthPackage.status = "Active";
         for(const member of patient.FamilyMembers){
-            const familyMember = await patientModel.findOne({_id: member});
-            if(familyMember && familyMember.HealthPackage.membership === "Free"){
-                familyMember.HealthPackage.status = "linked";
-                familyMember.HealthPackage.date = Date.now();
-                familyMember.HealthPackage.date.setFullYear(familyMember.HealthPackage.date.getFullYear() + 1);
+            const familyMember = await patientModel.findOne({_id: member.id});
+            if(familyMember){
+                familyMember.HealthPackage.discount = getDiscountAmountForHealthPackage(membership);
+                familyMember.HealthPackage.discountEndDate = Date.now();
+                familyMember.HealthPackage.discountEndDate.setFullYear(familyMember.HealthPackage.date.getFullYear() + 1);
                 await familyMember.save();
             }
         }
@@ -131,17 +147,7 @@ const healthPackageUnsubscription = asyncHandler(async (req, res) => {
     
         const patient = await patientModel.findOne({Username: await getUsername(req, res)});
         if (patient && patient.HealthPackage.membership !== "Free") {
-            for (const member of patient.FamilyMembers) {
-                const patientFamilyMember = await patientModel.findOne({_id: member});
-                if (patientFamilyMember && patientFamilyMember.HealthPackage.status === "linked") {
-                    patientFamilyMember.HealthPackage.status = "";
-                    await patientFamilyMember.save();
-                }
-            }
-            patient.HealthPackage.status = "";
-            patient.HealthPackage.membership = "Free";
-            patient.HealthPackage.date = null;
-
+            patient.HealthPackage.status = "EndDateCancelled";
             await patient.save();
             return res.status(200).json({message: "Health Package Unsubscription Successful!"});
         } else if(patient) {

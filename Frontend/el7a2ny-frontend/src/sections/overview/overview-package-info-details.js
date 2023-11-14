@@ -118,7 +118,11 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
             </CardContent>
             <Divider />
             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                {Object.keys(me).length !== 0 && me.HealthPackage.membership !== curPackage.Name ?
+                {Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' ?
+                    <Button variant="contained" disabled>
+                        Subscribe
+                    </Button>
+                    : Object.keys(me).length !== 0 && me.HealthPackage.status === 'Inactive' ?
                     <Button variant="contained" onClick={subscribeHealthPackage}>
                         Subscribe
                     </Button> :

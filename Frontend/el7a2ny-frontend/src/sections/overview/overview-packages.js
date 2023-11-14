@@ -31,9 +31,7 @@ import { get } from 'http';
 
 export const OverviewPackages = (props) => {
   const router = useRouter();
-  const { packages=[] } = props;
-
-  console.log(packages);
+  const { packages=[], me } = props;
 
   const viewPackageDetails = (Name, counter) => {
     router.push(`/user/package-info?packageName=${Name}`);
@@ -100,7 +98,7 @@ export const OverviewPackages = (props) => {
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary= {"Price: " + myPackage.Price + ' EGP'}
+                  primary= {Object.keys(me).length !== 0 && "Price: " + (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
                   primaryTypographyProps={{ variant: 'subtitle2' }}
                   // secondaryTypographyProps={{ variant: 'body2' }}
                 />

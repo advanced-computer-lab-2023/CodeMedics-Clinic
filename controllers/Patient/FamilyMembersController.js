@@ -17,12 +17,17 @@ exports.addFamilyMember = async (req, res) => {
       if(exists._id.toString() == patient._id.toString()){
          return res.status(400).json({message: 'You cannot add yourself as a family member'});
       }
+      if(exists.Linked != undefined){
+         return res.status(400).json({message: 'Family member already linked to another account'});
+      }
       if(patient.FamilyMembers.some(el => el.id.toString() == exists._id.toString())){
          return res.status(400).json({message: 'Family member already added'});
       }
       patient.FamilyMembers.push({id:exists._id, relation:relation});
-      const updatedPatient = await patient.save();
-      res.status(200).json({message: 'Family member added successfully' , data: updatedPatient});
+      exists.Linked = patient._id;
+      await patient.save();
+      await exists.save();
+      res.status(200).json({message: 'Family member added successfully'});
    }
    catch(e){
       res.status(400).json({message: e.message});

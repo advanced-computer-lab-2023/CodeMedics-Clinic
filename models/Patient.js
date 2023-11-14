@@ -65,22 +65,26 @@ const patientSchema = new Schema({
         required: false
     },
     Linked: {
-        type: String,
-        default: '',
-        required: false
+        type: Schema.Types.ObjectId,
+        required: false,
+        ref: 'Patient'
     },
     HealthPackage:{
         type: {
             membership: String, // Free, Silver, Gold, Platinum
-            status: String, // Subscribed, Unsubscribed
             date: Date,
-            Price: Number
+            Price: Number,
+            discount: Number,
+            discountEndDate: Date,
+            status: String,
         },
         default: {
             membership: "Free",
-            status: "Unsubscribed",
             date: null,
-            Price: 0
+            Price: 0,
+            discount: 0,
+            discountEndDate: null,
+            status: "Inactive",
         },
         required: false
     },

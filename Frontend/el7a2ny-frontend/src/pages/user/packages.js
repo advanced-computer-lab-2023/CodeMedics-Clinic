@@ -10,6 +10,7 @@ const now = new Date();
 const Page = () => {
 
   const [packages, setPackages] = useState([]);
+  const [me, setMe] = useState({});
 
   useEffect(() => {
     axios.get('http://localhost:8000/patient/getAvailablePackages' , {withCredentials: true})
@@ -18,6 +19,20 @@ const Page = () => {
     })
     .then((data) => {
       setPackages(data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  },[]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/patient/getMe' , {withCredentials: true})
+    .then((response) => {
+      return response.data;
+    })
+    .then((data) => {
+      console.log(data);
+      setMe(data);
     })
     .catch((error) => {
       console.log(error);
@@ -42,7 +57,7 @@ const Page = () => {
         </Typography>
         <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
-            <OverviewPackages packages={packages} sx={{ height: '100%' }} />
+            <OverviewPackages packages={packages} me={me} sx={{ height: '100%' }} />
           </Grid>
         </Grid>
       </Container>
