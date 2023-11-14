@@ -29,9 +29,9 @@ const createAdmin = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
     }
+    const found = adminModel.findOne({ Username: req.body.Username });
     // If all required variables are present, proceed with creating an admin
     const { Name, Username, Password, Email } = req.body;
-    const found = await adminModel.findOne({ Username });
     if(found){
         return res.status(400).json({ message: "Username already exists" });
     }
