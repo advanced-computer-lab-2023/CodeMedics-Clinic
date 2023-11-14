@@ -6,16 +6,18 @@ exports.uploadDocument = upload.single('document'); // Assuming the field name i
 exports.addDocument = async (req, res) => {
     try {
         const { filename, originalname } = req.file;
-        console.log(req.files);
-        const { username } = req.params;
-        console.log(req.params);
-        const patient = await Patient.findOne({ Username : username });
-        console.log(patient);
+        const { username, linkedId } = req.params; // Assuming linkedId is sent in the request parameters
+
+        const patient = await Patient.findOne({ Username: username });
+
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
-        patient.HealthRecords.push({ filename, originalname, username});
+        // Handle the Linked field
+        patient.Linked = linkedId || null; // Set to null if linkedId is empty
+
+        patient.HealthRecords.push({ filename, originalname, uploadedBy: username });
         await patient.save();
 
         res.status(201).json({ message: 'Document uploaded successfully' });
