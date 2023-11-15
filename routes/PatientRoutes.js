@@ -23,7 +23,7 @@ const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppoin
 
 const {payAppointment} = require('../controllers/Payment/payAppointment');
 const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
-
+const {getAppointmentAmount} = require('../controllers/Patient/getAppointmentAmount');
 const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
 const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
 const Patient = require('../models/Patient.js');
@@ -47,7 +47,7 @@ router.post('/register', patientController.createPatient);
 router.post('/changePassword', changePassword);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
-
+router.get('/getAppointmentAmount', getAppointmentAmount);
 router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
 
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
