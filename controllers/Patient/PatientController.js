@@ -28,6 +28,18 @@ function getDiscountAmountForHealthPackage(package) {
     }
 }
 
+function getPackagePrice(membership) {
+    if(membership == "Silver") {
+        return 3600;
+    }else if(membership == "Gold") {
+        return 6000;
+    }else if(membership == "Platinum") {
+        return 9000;
+    }else{
+        console.error("Invalid membership");
+    }
+}
+
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
     return jwt.sign({ username }, 'supersecret', {
@@ -297,4 +309,25 @@ const payWithWallet = async (req, res) => {
     }
 };
 
-module.exports = { payWithWallet, getPackage, getAvailablePackages, updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage, viewPatients };
+const payWithWalletPackage = async (req, res) => {
+    try {
+        const Username = await getUsername(req, res);
+        const {membership} = req.body;
+        const price = getPackagePrice(membership);
+        const patient = await patientModel.findOne({ Username });
+        if (!patient) {
+            return res.status(404).json({ message: "Patient not found" });
+        }
+        if (patient.Wallet < price) {
+            return res.status(400).json({ message: "Insufficient funds" });
+        }
+        patient.Wallet -= price;
+        await patient.save();
+
+        res.status(200).json({ message: "Payment Succeeded" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = {payWithWalletPackage, payWithWallet, getPackage, getAvailablePackages, updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage, viewPatients };

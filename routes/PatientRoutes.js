@@ -69,6 +69,7 @@ router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
 router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
 router.patch('/payWithWallet', patientController.payWithWallet);
+router.patch('/payWithWalletPackage', patientController.payWithWalletPackage);
 router.patch('/familyMembers', addFamilyMember);
 router.delete('/familyMembers', removeFamilyMember);
 router.delete('/familyMembersNoAccount', removeFamilyMemberNoAccount);

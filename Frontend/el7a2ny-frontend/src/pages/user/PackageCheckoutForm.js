@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { set } from "lodash";
 
-export default function PackageCheckoutForm({ packageName, packagePrice}) {
+export default function PackageCheckoutForm({ packageName, packagePrice }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -22,27 +22,27 @@ export default function PackageCheckoutForm({ packageName, packagePrice}) {
   const [isDone, setIsDone] = useState(false);
   const [isPosted, setIsPosted] = useState(false);
 
-  
+
   useEffect(() => {
     if (isDone) {
-        axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
-            method: 'POST',
-            data: {membership: packageName},
-            withCredentials: true
+      axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
+        method: 'POST',
+        data: { membership: packageName },
+        withCredentials: true
+      })
+        .then((res) => {
+
         })
-            .then((res) => {
-                
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        setIsPosted(true);
+        .catch((err) => {
+          console.log(err);
+        });
+      setIsPosted(true);
     }
   }, [isDone]);
 
   useEffect(() => {
     if (isPosted) {
-        router.push('/user/packages');
+      router.push('/user/packages');
     }
   }, [isPosted]);
 
@@ -60,7 +60,7 @@ export default function PackageCheckoutForm({ packageName, packagePrice}) {
     }
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      console.log(paymentIntent.status);
+      console.log("STATUS: ", paymentIntent.status);
       switch (paymentIntent.status) {
         case "succeeded":
           {
@@ -112,50 +112,29 @@ export default function PackageCheckoutForm({ packageName, packagePrice}) {
 
     setIsLoading(false);
   };
-    const [isPatched, setIsPatched] = useState(false);
-    const handlePayUsingWallet = async (e) => {
-        e.preventDefault();
-        axios.get(`http://localhost:8000/patient/getMe`, { withCredentials: true }).then((res) => {
-            // console.log("here in the handle", res.data.patient);
-            console.log(res.data.Wallet, temp);
-            if (res.data.Wallet >= temp) {
-                axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
-                    method: 'POST',
-                    data: {membership: packageName},
-                    withCredentials: true
-                })
-                    .then((res) => {
-                        setMessage("Payment succeeded!");
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-                    axios(`http://localhost:8000/patient/updateMe`, {
-                        method: 'PATCH', 
-                        data: {Wallet: res.data.Wallet - temp } , 
-                        withCredentials: true }).then((res) => {
-                        console.log(res.data);
-                        setIsPatched(true);
-                    }
-                    ).catch((err) => {
-                        console.log(err);
-                        setIsPatched(true);
-                    });
-            } else {
-                setMessage("You don't have enough money in your wallet");
-            }
-        })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
+  const [isPatched, setIsPatched] = useState(false);
+  const handlePayUsingWallet = async (e) => {
+    e.preventDefault();
+    axios('http://localhost:8000/patient/payWithWalletPackage', {
+      method: 'PATCH',
+      data: { membership: packageName },
+      withCredentials: true
+    })
+      .then((res) => {
+        console.log(res.data);
+        setIsPatched(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
-    useEffect(() => {
-        if (isPatched) {
-            router.push('/user/packages');
-        }
+  useEffect(() => {
+    if (isPatched) {
+      router.push('/user/packages');
     }
-        , [isPatched]);
+  }
+    , [isPatched]);
   const paymentElementOptions = {
     layout: "tabs",
   };
@@ -209,14 +188,14 @@ export default function PackageCheckoutForm({ packageName, packagePrice}) {
             cursor: "pointer",
             marginTop: "20px", // Adjust marginTop as needed
             transition: "background-color 0.3s",
-        }}
+          }}
 
-        onClick={handlePayUsingWallet}
-        >
-          Pay using my Wallet
-        </Button>
+            onClick={handlePayUsingWallet}
+          >
+            Pay using my Wallet
+          </Button>
         )}
-        {message && <div id="payment-message">{message}</div>}  
+        {message && <div id="payment-message">{message}</div>}
       </form>
     </div>
   );
