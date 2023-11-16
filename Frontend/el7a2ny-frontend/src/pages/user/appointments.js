@@ -54,6 +54,7 @@ const Page = () => {
       .then((data) => {
 
         const appointments = data.appointments;
+        console.log("DATA:", appointments);
 
         appointments.sort((a, b) => {
           if(new Date(a.date) < new Date(b.date))
