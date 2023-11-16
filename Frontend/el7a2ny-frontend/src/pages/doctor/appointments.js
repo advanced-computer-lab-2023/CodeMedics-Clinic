@@ -80,7 +80,8 @@ const Page = () => {
       method: 'POST',
       withCredentials: true,
       data: {startHour: startHour, endHour, endHour, date, date}
-    })
+    });
+    window.location.reload();
   }
 
   const handleSearch = (str) => {

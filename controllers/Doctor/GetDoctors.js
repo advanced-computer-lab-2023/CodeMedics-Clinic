@@ -32,6 +32,7 @@ exports.getDoctorsAndAppointments = async (req, res) => {
       let price = doctors[i].HourlyRate + 0.1 * doctors[i].HourlyRate;
       if (package != null) {
         price -= price * (package.SessionDiscount / 100);
+        
         doctors[i]['Price'] = price;
       }
       let appointments = [];

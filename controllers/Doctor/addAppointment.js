@@ -10,7 +10,6 @@ exports.addAppointments = async (req, res) => {
         console.log("INSIDE ADD APPOINTMENTS BACKEND");
         startHour = startHour.substring(0, 2);
         endHour = endHour.substring(0, 2);
-        console.log(startHour, endHour, date);
     
         const Username = await getUsername(req, res);
         const doctor = await Doctor.findOne({Username});
@@ -25,8 +24,6 @@ exports.addAppointments = async (req, res) => {
             status: "unreserved"
         });
         await appointment.save();
-        console.log(appointment._id);
-        console.log(doctor.Appointments);
         doctor.Appointments.push(appointment._id);
         await doctor.save();
         res.status(200).json({ message: "Appointment added successfully" });

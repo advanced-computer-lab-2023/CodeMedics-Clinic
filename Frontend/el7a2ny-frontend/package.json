@@ -24,6 +24,7 @@
     "@mui/material": "5.11.10",
     "@mui/system": "5.11.9",
     "@mui/x-date-pickers": "5.0.19",
+    "@stripe/react-stripe-js": "^2.3.2",
     "apexcharts": "3.37.0",
     "axios": "^1.6.1",
     "date-fns": "2.29.3",
