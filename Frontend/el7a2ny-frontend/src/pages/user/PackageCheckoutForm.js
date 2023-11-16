@@ -10,7 +10,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 
-export default function CheckoutForm({ appointmentId, patientUsername}) {
+export default function PackageCheckoutForm({ packageName, packagePrice}) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -19,22 +19,31 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
   const [isLoading, setIsLoading] = useState(false);
   const username = Cookies.get("username");
   const [isDone, setIsDone] = useState(false);
-  const [isPatched, setIsPatched] = useState(false);
+  const [isPosted, setIsPosted] = useState(false);
 
+  
   useEffect(() => {
     if (isDone) {
-      axios.patch(
-        `http://localhost:8000/patient/bookAppointment?appointmentId=${appointmentId}&patientUsername=${patientUsername}`
-      );
-      setIsPatched(true);
+        axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
+            method: 'POST',
+            data: {membership: packageName},
+            withCredentials: true
+        })
+            .then((res) => {
+                
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        setIsPosted(true);
     }
   }, [isDone]);
 
   useEffect(() => {
-    if (isPatched) {
-      router.push(`/user/doctors`);
+    if (isPosted) {
+        router.push('/user/packages');
     }
-  }, [isPatched]);
+  }, [isPosted]);
 
   useEffect(() => {
     if (!stripe) {
@@ -114,7 +123,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "120vh",
+        height: "100vh",
       }}
     >
       <form
@@ -126,7 +135,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
           margin: "40px", // Increase the margin
         }}
       >
-        <PaymentElement id="payment-element" options={paymentElementOptions} style={{ fontSize: "20px", marginBottom: "20px",  }} />
+        <PaymentElement id="payment-element" options={paymentElementOptions} style={{ fontSize: "20px", marginBottom: "20px" }} />
         <button
           disabled={isLoading || !stripe || !elements}
           id="submit"
@@ -135,7 +144,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
             padding: "10px 15px",
             fontSize: "18px",
             fontWeight: "bold",
-            backgroundColor: "#6666FF",
+            backgroundColor: "#6666FF", // Light Blue color
             color: "white",
             borderRadius: "20px",
             cursor: "pointer",
@@ -145,11 +154,8 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
         >
           {isLoading ? <div className="spinner" id="spinner"></div> : "Pay Order"}
         </button>
-
-        
         {message && <div id="payment-message">{message}</div>}
       </form>
-      
     </div>
   );
 }

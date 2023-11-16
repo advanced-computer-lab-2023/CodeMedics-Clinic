@@ -31,17 +31,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
     }, []);
 
     const subscribeHealthPackage = () => {
-        axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
-            method: 'POST',
-            data: {membership: curPackage.Name},
-            withCredentials: true
-        })
-            .then((res) => {
-                router.push('/user/packages');
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        router.push('/user/PackageMyPay?packageName=' + curPackage.Name + '&packagePrice=' + curPackage.Price);
     }
 
     const unsubscribeHealthPackage = () => {
