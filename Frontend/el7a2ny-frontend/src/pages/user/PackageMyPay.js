@@ -12,10 +12,11 @@ export default function MyPay({activeStep, setStep}) {
 
   const router = useRouter();
   const { packageName, packagePrice} = router.query;
+  const temp = (Number)(packagePrice);
   useEffect(() => {
     console.log('PackgeMyPay.js was here')
     // Create PaymentIntent as soon as the page loads
-     axios.post('http://localhost:8000/package/create-payment-intent?amount='+packagePrice, { })
+     axios.post('http://localhost:8000/package/create-payment-intent?amount='+temp, { })
       .then((data) => setClientSecret(data.data.clientSecret)).catch((error) => {
         console.log(error);
       }

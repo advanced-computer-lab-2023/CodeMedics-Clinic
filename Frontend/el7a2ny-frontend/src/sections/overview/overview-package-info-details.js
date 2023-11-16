@@ -17,7 +17,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
 
     const [me, setMe] = useState({});
     const router = useRouter();
-
+    // console.log("curPackage", curPackage);
     useEffect(() => {
         axios
             .get(`http://localhost:8000/patient/getMe`, { withCredentials: true })

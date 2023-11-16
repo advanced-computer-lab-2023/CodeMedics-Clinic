@@ -203,6 +203,7 @@ const changePassword = async (req, res) => {
 
 const getMe = asyncHandler(async (req, res) => {
     const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+    console.log("patient", patient);
     if (patient) {
         return res.status(200).json(patient);
     } else {
@@ -211,9 +212,12 @@ const getMe = asyncHandler(async (req, res) => {
 });
 
 const updateMe = asyncHandler(async (req, res) => {
-    const patient = await patientModel.findOne({Username: await getUsername(req, res)});
+    const temp = await getUsername(req, res);
+    const patient = await patientModel.findOne({Username: temp});
+    console.log("patient", patient, temp);
+    console.log("the body", req.body);
     if (patient) {
-        const {FirstName, LastName, Email, Number, DateOfBirth, EmergencyContact, Password} = req.body;
+        const {FirstName, LastName, Email, Number, DateOfBirth, EmergencyContact, Password, Wallet} = req.body;
         if(Password){
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(Password, salt);
@@ -225,6 +229,7 @@ const updateMe = asyncHandler(async (req, res) => {
         patient.Number = Number;
         patient.EmergencyContact = EmergencyContact;
         patient.DateOfBirth = DateOfBirth;
+        patient.Wallet = Wallet;
         await patient.save();
         return res.status(200).json({message: "Patient details updated successfully!"});
     } else {

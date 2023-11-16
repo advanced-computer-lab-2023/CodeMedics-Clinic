@@ -9,12 +9,13 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { set } from "lodash";
 
 export default function PackageCheckoutForm({ packageName, packagePrice}) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
-
+  const temp = (Number)(packagePrice);
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const username = Cookies.get("username");
@@ -111,7 +112,50 @@ export default function PackageCheckoutForm({ packageName, packagePrice}) {
 
     setIsLoading(false);
   };
+    const [isPatched, setIsPatched] = useState(false);
+    const handlePayUsingWallet = async (e) => {
+        e.preventDefault();
+        axios.get(`http://localhost:8000/patient/getMe`, { withCredentials: true }).then((res) => {
+            // console.log("here in the handle", res.data.patient);
+            console.log(res.data.Wallet, temp);
+            if (res.data.Wallet >= temp) {
+                axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
+                    method: 'POST',
+                    data: {membership: packageName},
+                    withCredentials: true
+                })
+                    .then((res) => {
+                        setMessage("Payment succeeded!");
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+                    axios(`http://localhost:8000/patient/updateMe`, {
+                        method: 'PATCH', 
+                        data: {Wallet: res.data.Wallet - temp } , 
+                        withCredentials: true }).then((res) => {
+                        console.log(res.data);
+                        setIsPatched(true);
+                    }
+                    ).catch((err) => {
+                        console.log(err);
+                        setIsPatched(true);
+                    });
+            } else {
+                setMessage("You don't have enough money in your wallet");
+            }
+        })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
+    useEffect(() => {
+        if (isPatched) {
+            router.push('/user/packages');
+        }
+    }
+        , [isPatched]);
   const paymentElementOptions = {
     layout: "tabs",
   };
@@ -152,9 +196,27 @@ export default function PackageCheckoutForm({ packageName, packagePrice}) {
             transition: "background-color 0.3s",
           }}
         >
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay Order"}
+          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay using my Card"}
         </button>
-        {message && <div id="payment-message">{message}</div>}
+        {!isLoading && (
+          <Button variant="contained" style={{
+            padding: "10px 15px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            backgroundColor: "#6666FF", // Light Blue color
+            color: "white",
+            borderRadius: "20px",
+            cursor: "pointer",
+            marginTop: "20px", // Adjust marginTop as needed
+            transition: "background-color 0.3s",
+        }}
+
+        onClick={handlePayUsingWallet}
+        >
+          Pay using my Wallet
+        </Button>
+        )}
+        {message && <div id="payment-message">{message}</div>}  
       </form>
     </div>
   );

@@ -30,11 +30,50 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
     }
   }, [isDone]);
 
+  const handlePayUsingWallet = async (e) => {
+    e.preventDefault();
+    axios.get(`http://localhost:8000/patient/getMe`, { withCredentials: true }).then((res) => {
+        // console.log("here in the handle", res.data.patient);
+        console.log(res.data.Wallet, temp);
+        if (res.data.Wallet >= temp) {
+          axios.patch(
+            `http://localhost:8000/patient/bookAppointment?appointmentId=${appointmentId}&patientUsername=${patientUsername}`
+          )
+                .then((res) => {
+                    setMessage("Payment succeeded!");
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+                axios(`http://localhost:8000/patient/updateMe`, {
+                    method: 'PATCH', 
+                    data: {Wallet: res.data.Wallet - temp } , 
+                    withCredentials: true }).then((res) => {
+                    console.log(res.data);
+                    setIsPatched(true);
+                }
+                ).catch((err) => {
+                    console.log(err);
+                    setIsPatched(true);
+                });
+        } else {
+            setMessage("You don't have enough money in your wallet");
+        }
+    })
+        .catch((err) => {
+            console.log(err);
+        });
+}
+
   useEffect(() => {
     if (isPatched) {
       router.push(`/user/doctors`);
     }
   }, [isPatched]);
+
+
+  
+
 
   useEffect(() => {
     if (!stripe) {
@@ -103,6 +142,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
     setIsLoading(false);
   };
 
+  
   const paymentElementOptions = {
     layout: "tabs",
   };
@@ -145,9 +185,25 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
         >
           {isLoading ? <div className="spinner" id="spinner"></div> : "Pay Order"}
         </button>
+        {!isLoading && (
+          <Button variant="contained" style={{
+            padding: "10px 15px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            backgroundColor: "#6666FF", // Light Blue color
+            color: "white",
+            borderRadius: "20px",
+            cursor: "pointer",
+            marginTop: "20px", // Adjust marginTop as needed
+            transition: "background-color 0.3s",
+        }}
 
-        
-        {message && <div id="payment-message">{message}</div>}
+        onClick={handlePayUsingWallet}
+        >
+          Pay using my Wallet
+        </Button>
+        )}
+        {message && <div id="payment-message">{message}</div>} 
       </form>
       
     </div>
