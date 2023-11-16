@@ -7,10 +7,29 @@ const { getUsername } = require('../../config/infoGetter');
 exports.addAppointments = async (req, res) => {
     try {
         var {startHour, endHour, date} = req.body;
+        date = date.split('T')[0];
         console.log("INSIDE ADD APPOINTMENTS BACKEND");
         startHour = startHour.substring(0, 2);
         endHour = endHour.substring(0, 2);
         console.log(startHour, endHour, date);
+
+        const exists = await Appointment.findOne({date, startHour, endHour, doctorUsername: await getUsername(req, res)});
+
+        console.log(exists, date, startHour, endHour, await getUsername(req, res));
+
+        if(exists){
+            return res.status(400).json({ message: "Appointment already exists" });
+        }
+
+        const dateToBeAdded = new Date(date);
+        dateToBeAdded.setHours(startHour);
+        dateToBeAdded.setMinutes(0);
+        dateToBeAdded.setSeconds(0);
+        dateToBeAdded.setMilliseconds(0);
+        
+        if(dateToBeAdded < new Date()){
+            return res.status(400).json({ message: "Appointment date is in the past" });
+        }
     
         const Username = await getUsername(req, res);
         const doctor = await Doctor.findOne({Username});

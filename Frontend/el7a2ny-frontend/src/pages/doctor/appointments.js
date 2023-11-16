@@ -12,6 +12,7 @@ import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import axios from 'axios';
 import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
+import { useRouter } from 'next/navigation';
 
 const now = new Date();
 
@@ -28,6 +29,8 @@ const Page = () => {
   const [endHour, setEndHour] = useState('17:00'); // Initial end hour
   const [searchData, setSearchData] = useState(appointments);
   // const [filteredData , setFilteredData] = useState(appointments);
+
+  const router = useRouter();
   
   useEffect(() => {
     getAppointments();
@@ -64,7 +67,7 @@ const Page = () => {
   );
 
   const handleDateChange = (event) => {
-    setSelectedDate(new Date(event.target.value));
+    setSelectedDate(event.target.value);
   };
 
   const handleStartHourChange = (event) => {
@@ -80,7 +83,12 @@ const Page = () => {
       method: 'POST',
       withCredentials: true,
       data: {startHour: startHour, endHour, endHour, date, date}
-    })
+    }).then((res) => {
+      router.refresh();
+    }).catch((err) => {
+      console.log(err);
+    });
+      
   }
 
   const handleSearch = (str) => {

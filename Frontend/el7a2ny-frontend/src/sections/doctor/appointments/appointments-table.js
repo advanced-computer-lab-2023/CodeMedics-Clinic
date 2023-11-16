@@ -105,7 +105,7 @@ export const AppointmentsTable = (props) => {
                         spacing={2}
                       >
                         <Typography variant="subtitle2">
-                          {appointment.date}
+                          {new Date(appointment.date).toLocaleDateString()}
                         </Typography>
                       </Stack>
                     </TableCell>
