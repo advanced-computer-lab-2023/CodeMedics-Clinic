@@ -10,7 +10,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 
-export default function CheckoutForm({ appointmentId, patientUsername}) {
+export default function CheckoutForm({ appointmentId, patientUsername }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -32,38 +32,21 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
 
   const handlePayUsingWallet = async (e) => {
     e.preventDefault();
-    axios.get(`http://localhost:8000/patient/getMe`, { withCredentials: true }).then((res) => {
-        // console.log("here in the handle", res.data.patient);
-        console.log(res.data.Wallet, temp);
-        if (res.data.Wallet >= temp) {
-          axios.patch(
-            `http://localhost:8000/patient/bookAppointment?appointmentId=${appointmentId}&patientUsername=${patientUsername}`
-          )
-                .then((res) => {
-                    setMessage("Payment succeeded!");
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-                axios(`http://localhost:8000/patient/updateMe`, {
-                    method: 'PATCH', 
-                    data: {Wallet: res.data.Wallet - temp } , 
-                    withCredentials: true }).then((res) => {
-                    console.log(res.data);
-                    setIsPatched(true);
-                }
-                ).catch((err) => {
-                    console.log(err);
-                    setIsPatched(true);
-                });
-        } else {
-            setMessage("You don't have enough money in your wallet");
-        }
+    axios('http://localhost:8000/patient/payWithWallet', {
+      method: 'PATCH',
+      withCredentials: true,
+      data: {
+        AppointmentId: appointmentId,
+      }
+    }).then((res) => {
+      console.log(res);
+      setIsPatched(true);
+      setMessage("Payment succeeded!");
+    }).catch((err) => {
+      console.log(err);
+      setMessage("Your payment was not successful, please try again.");
     })
-        .catch((err) => {
-            console.log(err);
-        });
-}
+  };
 
   useEffect(() => {
     if (isPatched) {
@@ -72,7 +55,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
   }, [isPatched]);
 
 
-  
+
 
 
   useEffect(() => {
@@ -142,7 +125,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
     setIsLoading(false);
   };
 
-  
+
   const paymentElementOptions = {
     layout: "tabs",
   };
@@ -166,7 +149,7 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
           margin: "40px", // Increase the margin
         }}
       >
-        <PaymentElement id="payment-element" options={paymentElementOptions} style={{ fontSize: "20px", marginBottom: "20px",  }} />
+        <PaymentElement id="payment-element" options={paymentElementOptions} style={{ fontSize: "20px", marginBottom: "20px", }} />
         <button
           disabled={isLoading || !stripe || !elements}
           id="submit"
@@ -196,16 +179,16 @@ export default function CheckoutForm({ appointmentId, patientUsername}) {
             cursor: "pointer",
             marginTop: "20px", // Adjust marginTop as needed
             transition: "background-color 0.3s",
-        }}
+          }}
 
-        onClick={handlePayUsingWallet}
-        >
-          Pay using my Wallet
-        </Button>
+            onClick={handlePayUsingWallet}
+          >
+            Pay using my Wallet
+          </Button>
         )}
-        {message && <div id="payment-message">{message}</div>} 
+        {message && <div id="payment-message">{message}</div>}
       </form>
-      
+
     </div>
   );
 }

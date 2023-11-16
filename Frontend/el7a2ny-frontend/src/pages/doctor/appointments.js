@@ -82,7 +82,7 @@ const Page = () => {
     await axios('http://localhost:8000/doctor/addAppointments', {
       method: 'POST',
       withCredentials: true,
-      data: {startHour: startHour, endHour, endHour, date, date}
+      data: {startHour, endHour, endHour, date, date}
     }).then((res) => {
       router.refresh();
     }).catch((err) => {
