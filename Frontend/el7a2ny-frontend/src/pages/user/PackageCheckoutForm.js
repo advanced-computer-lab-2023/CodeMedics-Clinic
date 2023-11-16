@@ -25,6 +25,7 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
 
   useEffect(() => {
     if (isDone) {
+      console.log("ISDONE", isDone);
       axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
         method: 'POST',
         data: { membership: packageName },
@@ -122,7 +123,8 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
     })
       .then((res) => {
         console.log(res.data);
-        setIsPatched(true);
+        setIsDone(true);
+
       })
       .catch((err) => {
         console.log(err);
