@@ -7,32 +7,10 @@ const logger = require('morgan');
 const colors = require('colors');
 const cors = require('cors');
 const corsOptions = {
-    origin: 'http://localhost:3000',
-    credentials: true,
-    optionSuccessStatus: 200
+  origin: 'http://localhost:3000',
+  credentials: true,
+  optionSuccessStatus: 200
 };
-const io = require('socket.io')(app, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
-    }
-});
-
-io.on("connection", (socket) => {
-	socket.emit("me", socket.id)
-
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
-	})
-
-	socket.on("callUser", (data) => {
-		io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
-	})
-
-	socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
-	})
-})
 
 
 const stripe = require("stripe")("sk_test_51OA3YuHNsLfp0dKZBQsyFFPLXepbGkt9p5xZzd2Jzzj6zxLqUTY2DYF244qILCi0cfVjg37szrwdXZzin83e5ijm00X5eXuTnM");
@@ -51,6 +29,31 @@ connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
 const app = express();
 const Port = process.env.PORT || 3000;
 
+const server = require("http").createServer(app);
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
+io.on("connection", (socket) => {
+  socket.emit("me", socket.id)
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("callEnded")
+  })
+
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
+  })
+
+  socket.on("answerCall", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal)
+  })
+})
+
 app.use(express.static("public"));
 app.use(express.json());
 
@@ -65,7 +68,7 @@ app.set('view engine', 'ejs');
 app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.listen(Port);
@@ -90,23 +93,23 @@ app.use('/', genericRoutes);
 
 
 app.post("/package/create-payment-intent", async (req, res) => {
-    // const { items } = req.body;
-    const card = req.body.card;
-    console.log("in the package payment intent");
-    // Create a PaymentIntent with the order amount and currency
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 100,
-      currency: "usd",
-      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-      automatic_payment_methods: {
-        enabled: true,
-      }
-    });
-  
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-    });
+  // const { items } = req.body;
+  const card = req.body.card;
+  console.log("in the package payment intent");
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: 100,
+    currency: "usd",
+    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+    automatic_payment_methods: {
+      enabled: true,
+    }
   });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 
 app.post("/create-payment-intent", async (req, res) => {
   // const { items } = req.body;
