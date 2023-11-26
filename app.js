@@ -29,7 +29,9 @@ connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
 const app = express();
 const Port = process.env.PORT || 3000;
 
-const server = require("http").createServer(app);
+const http = require('http');
+
+const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
   cors: {
@@ -71,7 +73,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.listen(Port);
+server.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
