@@ -1,13 +1,12 @@
 import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 import TextField from "@mui/material/TextField"
-import {AssignmentIcon} from "@mui/material"
-import {PhoneIcon} from "@mui/material"
+import ClipboardDocumentListIcon from "@heroicons/react/24/solid/ClipboardDocumentListIcon"
+import PhoneIcon from "@heroicons/react/24/solid/PhoneIcon"
 import React, { useEffect, useRef, useState } from "react"
 import { CopyToClipboard } from "react-copy-to-clipboard"
 import Peer from "simple-peer"
 import io from "socket.io-client"
-
 
 const socket = io.connect('http://localhost:8000')
 function VideoCall() {
@@ -116,7 +115,7 @@ function VideoCall() {
 					style={{ marginBottom: "20px" }}
 				/>
 				<CopyToClipboard text={me} style={{ marginBottom: "2rem" }}>
-					<Button variant="contained" color="primary" startIcon={<AssignmentIcon fontSize="large" />}>
+					<Button variant="contained" color="primary" startIcon={<ClipboardDocumentListIcon fontSize="large" />}>
 						Copy ID
 					</Button>
 				</CopyToClipboard>
