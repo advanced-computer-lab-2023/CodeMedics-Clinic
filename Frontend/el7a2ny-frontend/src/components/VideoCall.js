@@ -9,7 +9,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard"
 import Peer from "simple-peer"
 import io from "socket.io-client"
 
-const socket = io.connect('http://localhost:5000')
+const socket = io.connect('http://localhost:8000')
 function VideoCall() {
 	const [me, setMe] = useState("")
 	const [stream, setStream] = useState()

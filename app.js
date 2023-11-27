@@ -44,7 +44,7 @@ const io = require('socket.io')(server, {
 });
 
 
-server.listen(5000);
+// server.listen(5000);
 io.on("connection", (socket) => {
   console.log(socket.id);
   console.log("we are here in the connection");
