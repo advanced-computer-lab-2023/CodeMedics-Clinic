@@ -10,6 +10,7 @@ const { viewUpcomingAppointments , viewPastAppointments } = require('../controll
 const { bookAppointment } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
+const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
 
 
@@ -68,6 +69,7 @@ router.post('/unsubscribeHealthPackage', patientController.healthPackageUnsubscr
 router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
 router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
+router.patch('/CancelAppointment', CancelAppointment);
 router.patch('/payWithWallet', patientController.payWithWallet);
 router.patch('/payWithWalletPackage', patientController.payWithWalletPackage);
 router.patch('/familyMembers', addFamilyMember);
