@@ -27,9 +27,12 @@ connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
 
 //Start Express server
 const app = express();
-const Port = process.env.PORT || 3000;
+const Port = process.env.PORT;
 
 const server = require("http").createServer(app);
+
+app.use(cors(corsOptions));
+
 
 const io = require('socket.io')(server, {
   cors: {
@@ -38,7 +41,11 @@ const io = require('socket.io')(server, {
   }
 });
 
+
+server.listen(5000);
 io.on("connection", (socket) => {
+  console.log(socket.id);
+  console.log("we are here in the connection");
   socket.emit("me", socket.id)
 
   socket.on("disconnect", () => {
@@ -65,7 +72,6 @@ app.use(express.json());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

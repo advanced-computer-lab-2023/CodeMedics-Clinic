@@ -9,7 +9,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard"
 import Peer from "simple-peer"
 import io from "socket.io-client"
 
-const socket = io.connect('http://localhost:8000')
+const socket = io.connect('http://localhost:5000')
 function VideoCall() {
 	const [me, setMe] = useState("")
 	const [stream, setStream] = useState()
@@ -25,11 +25,20 @@ function VideoCall() {
 	const connectionRef = useRef()
 
 	useEffect(() => {
-		navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-			setStream(stream)
-			if(myVideo.current)
-				myVideo.current.srcObject = stream
-		})
+		const initializeMediaStream = async () => {
+            try {
+              const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+              setStream(mediaStream);
+      
+              if (myVideo.current) {
+                myVideo.current.srcObject = mediaStream;
+              }
+            } catch (error) {
+              console.error('Error accessing media devices:', error);
+            }
+          };
+      
+          initializeMediaStream();
 
 		socket.on("me", (id) => {
 			setMe(id)
@@ -58,9 +67,7 @@ function VideoCall() {
 			})
 		})
 		peer.on("stream", (stream) => {
-
 			userVideo.current.srcObject = stream
-
 		})
 		socket.on("callAccepted", (signal) => {
 			setCallAccepted(true)

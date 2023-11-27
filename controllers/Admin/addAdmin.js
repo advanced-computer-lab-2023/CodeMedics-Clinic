@@ -8,15 +8,15 @@ const addAdmin = async (req, res) => {
     console.log(Username, Password);
     const admin = await Admin.findOne({Username: Username });
     if(admin){
-        return res.status(400).json({message: 'Admin already exists.'});
+        return res.status(400).json({message: 'this username already exists.'});
     }
     const temp1 = await Doctor.findOne({Username: Username });
     if(temp1){
-        return res.status(400).json({message: 'Doctor already exists.'});
+        return res.status(400).json({message: 'this username already exists.'});
     }
     const temp2 = await Patient.findOne({Username: Username });
     if(temp2){
-        return res.status(400).json({message: 'Patient already exists.'});
+        return res.status(400).json({message: 'this username already exists.'});
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
