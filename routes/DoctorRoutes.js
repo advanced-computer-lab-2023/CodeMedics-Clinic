@@ -22,7 +22,10 @@ const {addAppointments} = require('../controllers/Doctor/addAppointment');
 const {docViewHealthRecords} = require('../controllers/Doctor/docViewHealthRecords');
 const {addHealthRecord, uploadDocument} = require('../controllers/Doctor/addHealthRecord');
 const { CancelAppointment } = require('../controllers/Doctor/CancelAppointment');
-const { addPrescription } = require('../controllers/Patient/PrescriptionList.js');
+//const { addPrescription } = require('../controllers/Patient/PrescriptionList.js');
+const {addPrescription} = require('../controllers/Doctor/addPrescription');
+const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -34,9 +37,6 @@ function verifyToken(req, res, next) {
     }
 }
 
-//const {addPrescription} = require('../controllers/Doctor/addPrescription');
-const {addPrescription} = require('../controllers/Doctor/addPrescription');
-const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
 
 
 router.post('/register', upload.fields([
