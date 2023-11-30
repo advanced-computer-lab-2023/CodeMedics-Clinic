@@ -25,6 +25,7 @@ const { CancelAppointment } = require('../controllers/Doctor/CancelAppointment')
 //const { addPrescription } = require('../controllers/Patient/PrescriptionList.js');
 const {addPrescription} = require('../controllers/Doctor/addPrescription');
 const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
+const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -36,11 +37,6 @@ function verifyToken(req, res, next) {
         res.status(401).json({message: e.message});
     }
 }
-
-
-const {addPrescription} = require('../controllers/Doctor/addPrescription');
-const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
-const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
 
 
 router.post('/register', upload.fields([
