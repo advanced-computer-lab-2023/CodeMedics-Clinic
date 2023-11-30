@@ -25,6 +25,7 @@ import {
   Select,
   MenuItem,
   Typography,
+  Stack
 } from '@mui/material';
 import { get } from 'http';
 
@@ -33,14 +34,11 @@ export const OverviewDoctors = (props) => {
   const { doctors=[], sx } = props;
 
   const username = Cookies.get("username");
-  console.log(username);
   const getSelectedDoctorAppointments = (username) => {
-    console.log(username);
     router.push(`/user/appointments?doctorUsername=${username}`);
   }
 
   const viewDoctorProfile = (username, counter) => {
-    console.log(username);
     router.push(`/user/doctor-info?doctorUsername=${username}&counter=${counter}`);
   }
  
@@ -54,7 +52,7 @@ export const OverviewDoctors = (props) => {
         {doctors.map((doctor, index) => {
           return (
             <Card
-              key={doctor._id}
+              key={doctor.doctor._id}
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -74,7 +72,7 @@ export const OverviewDoctors = (props) => {
                 }}
               >
                 <ListItemAvatar>
-                  {doctor.Picture ? (
+                  {doctor.doctor.Picture ? (
                     <Box
                       component="img"
                       src={doctor.Picture}
@@ -100,32 +98,44 @@ export const OverviewDoctors = (props) => {
                   )}
                 </ListItemAvatar>
                 <ListItemText
-                  primary={doctor.FirstName + ' ' + doctor.LastName}
+                  primary={doctor.doctor.FirstName + ' ' + doctor.doctor.LastName}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
+                <ListItemText
+                  primary= {'Speciality: ' + doctor.doctor.Speciality}
+                  primaryTypographyProps={{ variant: 'subtitle2' }}
+                  // secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  primary= {'Session Price: ' + doctor.price}
+                  primaryTypographyProps={{ variant: 'subtitle2' }}
+                  // secondaryTypographyProps={{ variant: 'body2' }}
+                />
               </ListItem>
-
-              <CardActions>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {getSelectedDoctorAppointments(doctor.Username)}}
-                >
-                  View Appointments
-                </Button>
-              </CardActions>
-              <CardActions>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => {viewDoctorProfile(doctor.Username, index)}}
-                >
-                  View Profile
-                </Button>
-              </CardActions>
+              
+              <Stack direction="row">
+                <CardActions>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => {getSelectedDoctorAppointments(doctor.doctor.Username)}}
+                  >
+                     Appointments
+                  </Button>
+                </CardActions>
+                <CardActions>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    size="small"
+                    onClick={() => {viewDoctorProfile(doctor.doctor.Username, index)}}
+                  >
+                    View Profile
+                  </Button>
+                </CardActions>
+              </Stack>
             </Card>
           );
         })}

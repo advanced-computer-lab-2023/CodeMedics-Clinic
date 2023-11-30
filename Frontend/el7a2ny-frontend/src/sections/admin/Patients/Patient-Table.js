@@ -13,7 +13,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TablePagination,
+  TablePagination,Button,
   TableRow,
   Typography
 } from '@mui/material';
@@ -25,7 +25,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
-
+import axios from 'axios';
 export const PatientTable = (props) => {
   const {
     count = 0,
@@ -63,12 +63,9 @@ export const PatientTable = (props) => {
                 <TableCell>
                   Date of Birth
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Password
-                </TableCell>
-                <TableCell>
-                  Emergency Contact
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   Actions
                 </TableCell>
@@ -77,9 +74,6 @@ export const PatientTable = (props) => {
             <TableBody>
               {items.map((customer) => {
                 //const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
-                const relation = customer.emergencyContact.relation;
-                const fullName = customer.emergencyContact.fullName;
-                const mobileNumber = customer.emergencyContact.mobileNumber;
                 return (
                   <TableRow hover key={customer.id}>
                     <TableCell>
@@ -89,75 +83,49 @@ export const PatientTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
+                          {getInitials(customer.Name)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {customer.Name}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {customer.Email}
                     </TableCell>
                     <TableCell>
-                      {customer.gender}
+                      {customer.Gender}
                     </TableCell>
                     <TableCell>
-                      {customer.mobileNumber}
+                      {customer.Number}
                     </TableCell>
                     <TableCell>
-                      {customer.username}
+                      {customer.Username}
                     </TableCell>
                     <TableCell>
-                      {customer.dob.substring(0, customer.dob.indexOf('T'))}
+                      {customer.DateOfBirth.toString().substring(0, 10)}
                     </TableCell>
+                    {/* <TableCell>
+                      {customer.Password}
+                    </TableCell> */}
                     <TableCell>
-                      {customer.password}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                          setIsOpenEmergencyContact(true);
-                        }}
-                      >
-                        <SvgIcon fontSize="large">
-                          <IdentificationIcon/>
-                        </SvgIcon>
-                      </IconButton>
-                      {customer.emergencyContact.fullName}
-                      <PatientPopup
-                        items={
-                          {
-                            fullName: fullName,
-                            mobileNumber: mobileNumber,
-                            relation: relation
+                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
+                      onClick={() => {
+                          const userName = customer.Username;
+                          axios.post('http://localhost:8000/admin/removePatient', {Username: customer.Username})
+                          .then((res) => {
+                            if (res.status == 200) {
+                              console.log("removed"); 
+                              window.location.reload();
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
                           }
-                        }
-                        width={'25%'} height={'15vh'}
-                        isOpenEmergencyContact={isOpenEmergencyContact}
-                        setIsOpenEmergencyContact={setIsOpenEmergencyContact}></PatientPopup>
-
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <Xmark/>
-                        </SvgIcon>
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
-                        <SvgIcon fontSize="small">
-                          <PencilIcon/>
-                        </SvgIcon>
-                      </IconButton>
+                          )
+                        }}>
+                        Remove
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );

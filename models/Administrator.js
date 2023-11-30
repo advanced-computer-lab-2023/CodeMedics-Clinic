@@ -18,7 +18,11 @@ const adminSchema = new Schema({
         type: String,
         required: false,
     },
-
+    isCreator: {
+        type: Boolean,
+        required: false,
+        default: false
+    }
 }, {timestamps: true});
 
 const Admin = mongoose.model('Admin', adminSchema, 'Admins');

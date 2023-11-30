@@ -17,8 +17,7 @@ export const OverviewDoctorInfoDetails = ({doctor}) => {
   return (
     <Card>
       <CardHeader
-        subheader="The information can be edited"
-        title="Profile"
+        title={doctor.FirstName + "'s Profile"}
       />
       <CardContent sx={{ pt: 0 }}>
         {Object.keys(doctor).length !== 0 && 

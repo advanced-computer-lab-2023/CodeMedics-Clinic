@@ -6,6 +6,7 @@ const infoGetter = require('../../config/infoGetter.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
+const nodemailer = require('nodemailer');
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
@@ -28,8 +29,12 @@ const createAdmin = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
     }
+    const found = await adminModel.findOne({ Username: req.body.Username });
     // If all required variables are present, proceed with creating an admin
     const { Name, Username, Password, Email } = req.body;
+    if(found){
+        return res.status(400).json({ message: "Username already exists" });
+    }
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
@@ -208,6 +213,75 @@ const updatePackage = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+
+    try {
+        // Fetch the doctor's current data from the database using their username
+        const admin = await adminModel.findOne({ Username: username });
+
+        if (!admin) {
+            return res.status(404).json({ error: 'Admin not found' });
+        }
+
+        // Verify if the current password matches the one in the database
+        // const passwordMatch = await bcrypt.compare(currentPassword, admin.Password);
+
+        // if (!passwordMatch) {
+        //     return res.status(400).json({ error: 'Current password is incorrect' });
+        // }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update the admin's password in the database
+        admin.Password = hashedPassword;
+        await admin.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+// In AdminController.js
+
+const acceptRejectDoctorRequest = async (req, res) => {
+    const { username, action } = req.body;
+    console.log("I am here");
+    try {
+        // Find the doctor by username
+        const doctor = await doctorModel.findOne({ Username: username, Status: 'Pending' });
+        console.log(username, action);
+        console.log(doctor);
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor request not found or already processed' });
+        }
+
+        // Update the doctor's status based on the action (Accept or Reject)
+        if (action === 'accept') {
+            doctor.Status = 'Approved';
+            // You may perform additional logic here if needed
+        } else if (action === 'reject') {
+            // If rejected, delete the doctor's record from the database
+            await doctorModel.deleteOne({ Username: username, Status: 'Pending' });
+            // Return success message or any relevant information
+            return res.status(200).json({ message: 'Doctor request rejected and record deleted' });
+        } else {
+            return res.status(400).json({ error: 'Invalid action' });
+        }
+
+        // Save the updated doctor
+        await doctor.save();
+
+        // Return the updated doctor
+        return res.status(200).json(doctor);
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
 
 module.exports = {
     createAdmin,
@@ -218,5 +292,7 @@ module.exports = {
     addPackage,
     removePackage,
     updatePackage,
-    getPackages
+    getPackages,
+    changePassword,
+    acceptRejectDoctorRequest
 };

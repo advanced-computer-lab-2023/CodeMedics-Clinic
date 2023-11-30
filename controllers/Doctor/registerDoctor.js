@@ -1,11 +1,12 @@
 const doctorModel = require('../../models/Doctor.js');
+const adminModel = require('../../models/Administrator.js');
+const patientModel = require('../../models/Patient.js');
 const asyncHandler = require('express-async-handler');  
 const multer = require('multer');
 const uploads = require('../../config/multerConfig.js');
 const infoGetter = require('../../config/infoGetter.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
@@ -18,6 +19,20 @@ const createDoctor = asyncHandler(async (req, res) => {
     console.log(req.body);
     // Check if the required variables are present in the request body
     const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
+    
+    const { Username, Email } = req.body;
+
+    //check if the username is already taken
+    const existingUser = await adminModel.findOne({ Username: Username }) || await doctorModel.findOne({ Username: Username }) || await patientModel.findOne({ Username: Username });
+    if (existingUser) {
+        return res.status(400).json({message: 'Username already taken'});
+    }
+
+    //check if the email is already taken
+    const existingEmail = await adminModel.findOne({ Email: Email }) || await doctorModel.findOne({ Email: Email }) || await patientModel.findOne({ Email: Email });
+    if (existingEmail) {
+        return res.status(400).json({message: 'Email already taken'});
+    }
 
     for (const variable of requiredVariables) {
         if (!req.body[variable]) {
@@ -40,7 +55,6 @@ const createDoctor = asyncHandler(async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.Password, salt);
 
-        // Check if the username and email are unique (you may need to implement these functions)
         const newDoctor = new doctorModel({
             FirstName: req.body.FirstName,
             LastName: req.body.LastName,
@@ -83,4 +97,37 @@ const getAllDoctors = asyncHandler(async (req, res) => {
 const viewDoctorRegister = asyncHandler(async (req, res) => {
     res.render('DoctorViews/RegisterDoctor');
 });
-module.exports = {createDoctor, viewDoctorRegister,getAllDoctors};
+
+const changePassword = async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+    console.log("Here ---> " , username , currentPassword , newPassword);
+    try {
+        // Fetch the doctor's current data from the database using their username
+        const doctor = await doctorModel.findOne({ Username: username });
+
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor not found' });
+        }
+
+        // Verify if the current password matches the one in the database
+        // const passwordMatch = await bcrypt.compare(currentPassword, doctor.Password);
+
+        // if (!passwordMatch) {
+        //     return res.status(400).json({ error: 'Current password is incorrect' });
+        // }
+
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update the doctor's password in the database
+        doctor.Password = hashedPassword;
+        await doctor.save();
+
+        return res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = {createDoctor, viewDoctorRegister,getAllDoctors, changePassword};
