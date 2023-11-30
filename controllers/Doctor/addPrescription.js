@@ -14,7 +14,7 @@ exports.addPrescription = async (req, res) => {
 
     const { drugName, dosage, patientUsername, date, filledStatus } = req.body;
 
-    if (!patientUsername || !drugName || !dosage || !date || filledStatus === undefined) {
+    if (!patientUsername || !drugName  || !date || filledStatus === undefined) {
       return res.status(400).json({ message: 'Incomplete data for prescription' });
     }
 
@@ -25,14 +25,20 @@ exports.addPrescription = async (req, res) => {
     }
 
     const newPrescription = new Prescription({
-      Drug: { drugName, dosage },
+      Drug: { drugName},
       Doctor: doctorUsername,
       Patient: patientUsername,
       Date: date,
       filled: filledStatus
     });
 
-    await newPrescription.save();
+    if (dosage) {
+      newPrescription.Drug.dosage = dosage;
+    }
+
+    const newPrescription2 = new Prescription(newPrescription);
+
+    await newPrescription2.save();
 
     patient.Prescriptions.push(newPrescription);
     await patient.save();
