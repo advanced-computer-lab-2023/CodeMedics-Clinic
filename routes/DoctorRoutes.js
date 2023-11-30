@@ -38,6 +38,10 @@ function verifyToken(req, res, next) {
 }
 
 
+const {addPrescription} = require('../controllers/Doctor/addPrescription');
+const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
+const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
+
 
 router.post('/register', upload.fields([
     { name: 'nationalIdFile', maxCount: 1 },
@@ -111,7 +115,8 @@ router.post('/addPrescription', addPrescription);
 
 router.post('/addMedicineToPrescription', addMedicineToPrescription);
 router.post('/removeMedicineFromPrescription', removeMedicineFromPrescription);
-
+router.post('/addMedicineDosage',addMedicineDosage);
+router.post('/updateMedicineDosage', updateMedicineDosage);
 
 module.exports = router;
 

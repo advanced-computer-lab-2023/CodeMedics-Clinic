@@ -50,8 +50,13 @@ exports.addMedicineToPrescription = async (req, res) => {
       return res.status(404).json({ message: 'Medicine not found in the Pharmacy.' });
     }
 
-    prescription.Drug.push({ drugName: medicineName, dosage });
-    await prescription.save();
+
+    const medicineData = { drugName: medicineName };
+    if (dosage) {
+      medicineData.dosage = dosage;
+    }
+    
+    prescription.Drug.push(medicineData);    await prescription.save();
 
     res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
   } catch (error) {

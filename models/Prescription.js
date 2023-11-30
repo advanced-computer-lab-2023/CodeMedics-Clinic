@@ -9,7 +9,7 @@ const prescriptionSchema = new Schema({
         },
         dosage: {
             type: String,
-            required: [true, 'Please enter a dosage']
+            required: [false, 'Please enter a dosage']
         }
     }],
     Doctor: {
