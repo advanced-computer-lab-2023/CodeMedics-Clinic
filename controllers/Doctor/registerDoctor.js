@@ -100,7 +100,7 @@ const viewDoctorRegister = asyncHandler(async (req, res) => {
 
 const changePassword = async (req, res) => {
     const { username, currentPassword, newPassword } = req.body;
-
+    console.log("Here ---> " , username , currentPassword , newPassword);
     try {
         // Fetch the doctor's current data from the database using their username
         const doctor = await doctorModel.findOne({ Username: username });
@@ -110,11 +110,11 @@ const changePassword = async (req, res) => {
         }
 
         // Verify if the current password matches the one in the database
-        const passwordMatch = await bcrypt.compare(currentPassword, doctor.Password);
+        // const passwordMatch = await bcrypt.compare(currentPassword, doctor.Password);
 
-        if (!passwordMatch) {
-            return res.status(400).json({ error: 'Current password is incorrect' });
-        }
+        // if (!passwordMatch) {
+        //     return res.status(400).json({ error: 'Current password is incorrect' });
+        // }
 
         // Hash the new password
         const salt = await bcrypt.genSalt(10);

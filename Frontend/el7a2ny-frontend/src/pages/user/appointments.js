@@ -3,11 +3,12 @@ import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/pharmacist/layout';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { AppointmentsTable } from 'src/sections/doctor/appointments/appointments-table';
 import { applyPagination } from 'src/utils/apply-pagination';
 import { useRouter } from 'next/navigation';
 import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointments-filter';
+import Cookies from 'js-cookie';
 
 const now = new Date();
 
@@ -40,7 +41,8 @@ const Page = () => {
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
-
+  const [filter1, setFilter1] = useState('');
+  const [filter2, setFilter2] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername)
@@ -52,6 +54,7 @@ const Page = () => {
       .then((data) => {
 
         const appointments = data.appointments;
+        console.log("DATA:", appointments);
 
         appointments.sort((a, b) => {
           if(new Date(a.date) < new Date(b.date))
@@ -72,8 +75,7 @@ const Page = () => {
       });
   }, []);
 
-  const [filter1, setFilter1] = useState('');
-  const [filter2, setFilter2] = useState('');
+  
 
   useEffect(() => {
     const filtered = allData.filter((appointment) => {
@@ -95,6 +97,8 @@ const Page = () => {
     },
     []
   );
+
+  
 
   const handleRowsPerPageChange = useCallback(
     (event) => {

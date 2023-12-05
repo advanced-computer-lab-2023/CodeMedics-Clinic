@@ -1,6 +1,6 @@
 const Doctor = require('../../models/Doctor');
 const Appointment = require('../../models/Appointment');
-
+const {getUsername} = require('../../config/infoGetter');
 exports.viewUpcomingAppointments = async (req, res) => {
     try {
         const { doctorUsername } = req.params;
@@ -46,3 +46,24 @@ exports.viewPastAppointments = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
+exports.getAllDocAppointments = async (req, res) => {
+    try{
+        const doctor = await getUsername(req, res);
+        if(doctor === "") return res.status(401).json({message:"You are not logged in."})
+        const appointments = (await Doctor.findOne({Username: doctor})).Appointments;
+        const data = [];
+        for(let i = 0; i<appointments.length; i++){
+            const appID = appointments[i];
+            const app = await Appointment.findOne({_id: appID});
+            console.log(app);
+            data.push(app);
+        }
+        // console.log("VIEW APPOINTMENTS", data);
+        return res.status(200).json(data);
+    }catch (error){
+        console.log(error);
+        res.status(500).json(error);
+    }
+};
+

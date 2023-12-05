@@ -4,30 +4,30 @@ const jwt = require('jsonwebtoken');
 const patientController = require('../controllers/Patient/PatientController');
 const { searchDoctor } = require('../controllers/patient/SearchDoctor');
 const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
-const {addFamilyMember, viewFamilyMembers} = require('../controllers/Patient/FamilyMembersController');
+const {addFamilyMember, viewFamilyMembers, removeFamilyMember, addFamilyMemberNoAccount, removeFamilyMemberNoAccount} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
 const { bookAppointment } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
+const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
 
 
 const {
     getPrescriptions,
-    getPrescriptionsByDate,
-    getPrescriptionsByDoctor,
-    getPrescriptionsByStatus,
-    filterPrescriptions
+    filterPrescriptions,
+    addPrescription
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
 const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
 
 const {payAppointment} = require('../controllers/Payment/payAppointment');
 const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
-
+const {getAppointmentAmount} = require('../controllers/Patient/getAppointmentAmount');
 const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
 const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
+const Patient = require('../models/Patient.js');
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -42,11 +42,13 @@ function verifyToken(req, res, next) {
 
 router.get('/register', patientController.viewPatientRegister);
 router.get('/getPatients', viewPatients);
+router.get('/getMe', patientController.getMe);
+router.patch('/updateMe', patientController.updateMe);
 router.post('/register', patientController.createPatient);
 router.post('/changePassword', changePassword);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
-
+router.get('/getAppointmentAmount', getAppointmentAmount);
 router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
 
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
@@ -63,23 +65,33 @@ router.post('/unsubscribeHealthPackage', patientController.healthPackageUnsubscr
 
 // app.use(verifyToken);
 
-router.post('/familyMembers', addFamilyMember);
 
 router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
 router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
-
+router.patch('/CancelAppointment', CancelAppointment);
+router.patch('/payWithWallet', patientController.payWithWallet);
+router.patch('/payWithWalletPackage', patientController.payWithWalletPackage);
+router.patch('/familyMembers', addFamilyMember);
+router.delete('/familyMembers', removeFamilyMember);
+router.delete('/familyMembersNoAccount', removeFamilyMemberNoAccount);
 router.get('/familyMembers', viewFamilyMembers);
-router.get('/prescriptions/filter', filterPrescriptions);
-router.get('/prescriptions', getPrescriptions);
+router.get('/getAvailablePackages', patientController.getAvailablePackages);
+router.get('/getPackage', patientController.getPackage);
+router.post('/familyMembersNoAccount', addFamilyMemberNoAccount);
 router.get('/viewappointments', filterAppointmentsPatient);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/doctorSearch', (req, res) => {
     res.render('SearchDoctor');
 });
+
+router.get('/prescriptions/filter', filterPrescriptions);
+router.get('/prescriptions', getPrescriptions);
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
+router.post('/addPrescription', addPrescription);
+
 router.get('/:username/health-records', viewHealthRecords);
 
 module.exports = router;

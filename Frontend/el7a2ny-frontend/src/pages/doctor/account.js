@@ -1,14 +1,32 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
-import { AccountProfile } from 'src/sections/account/account-profile';
-import { AccountProfileDetails } from 'src/sections/account/account-profile-details';
+import { AccountProfile } from 'src/sections/doctor/account/account-profile';
+import { AccountProfileDetails } from 'src/sections/doctor/account/account-profile-details';
 
-const Page = () => (
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+
+const Page = () => {
+  
+  const [values, setValues] = useState({});
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/getMe', {withCredentials: true})
+      .then((req) => {
+        setValues(req.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  return(
   <>
     <Head>
       <title>
-        Account | Devias Kit
+        My Account
       </title>
     </Head>
     <Box
@@ -35,14 +53,14 @@ const Page = () => (
                 md={6}
                 lg={4}
               >
-                <AccountProfile />
+              {Object.keys(values).length !==0 && <AccountProfile user={values}/>}
               </Grid>
               <Grid
                 xs={12}
                 md={6}
                 lg={8}
               >
-                <AccountProfileDetails />
+              {Object.keys(values).length !==0 && <AccountProfileDetails values={values} setValues={setValues} />}
               </Grid>
             </Grid>
           </div>
@@ -50,7 +68,7 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+);}
 
 Page.getLayout = (page) => (
   <DashboardLayout>

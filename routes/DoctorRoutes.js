@@ -5,22 +5,28 @@ const upload = require('../config/multerConfig');
 const jwt = require('jsonwebtoken');
 const { updateDoctor } = require('../controllers/Doctor/UpdateDoctor');
 const { filterAppointments , getAllApointments } = require('../controllers/Doctor/filterAppointments');
-const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Doctor/viewAppointments');
+const { viewUpcomingAppointments , viewPastAppointments, getAllDocAppointments } = require('../controllers/Doctor/viewAppointments');
 const { searchPatient } = require('../controllers/Doctor/searchForPatient');
-const { viewPatients } = require('../controllers/Doctor/viewPatients');
+const { viewPatients, getPatientByUsername } = require('../controllers/Doctor/viewPatients');
 const{addTimeSlot}=require('../controllers/Doctor/AvailableTImeSlots.js');
 const { filterPatients } = require('../controllers/Doctor/filterPatients');
 const fs = require('fs');
 const {createDoctor, viewDoctorRegister} = require('../controllers/Doctor/registerDoctor');
-const {getDoctors, getDoctorsAndSpecialties} = require('../controllers/Doctor/GetDoctors');
+const {getDoctors, getDoctorsAndAppointments} = require('../controllers/Doctor/GetDoctors');
 const {getAllDoctors} = require('../controllers/Doctor/registerDoctor');
 const { scheduleFollowUp } = require('../controllers/Doctor/ScheduleFollowup')
 const app = require('../app.js');
 const { requireAuth } = require('../Middleware/authMiddleware');
 const { changePassword } = require('../controllers/Doctor/registerDoctor');
 const {addAppointments} = require('../controllers/Doctor/addAppointment');
-const docViewHealthRecords = require('../controllers/Doctor/docViewHealthRecords');
-const {addHealthRecord, uploadDocument} = require('../controllers/Doctor/addHealthRecord')
+const {docViewHealthRecords} = require('../controllers/Doctor/docViewHealthRecords');
+const {addHealthRecord, uploadDocument} = require('../controllers/Doctor/addHealthRecord');
+const { CancelAppointment } = require('../controllers/Doctor/CancelAppointment');
+//const { addPrescription } = require('../controllers/Patient/PrescriptionList.js');
+const {addPrescription} = require('../controllers/Doctor/addPrescription');
+const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
+const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -31,6 +37,7 @@ function verifyToken(req, res, next) {
         res.status(401).json({message: e.message});
     }
 }
+
 
 router.post('/register', upload.fields([
     { name: 'nationalIdFile', maxCount: 1 },
@@ -48,19 +55,23 @@ router.post('/add-time-slot/:username', addTimeSlot);
 
 
 router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
-router.post('/changePassword', requireAuth, changePassword);
+router.post('/changePassword', changePassword);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:doctorUsername/past-appointments', viewPastAppointments);
 
 
 router.patch('/', updateDoctor);
+router.patch('/CancelAppointment', CancelAppointment);
 router.get('/viewAppointments', filterAppointments);
 router.get('/getAllAppointments', getAllApointments);
 router.get('/searchPatient', searchPatient);
 router.get('/viewPatients', viewPatients);
 router.get('/getDoctors', getDoctors);
 router.get('/filterPatients', filterPatients);
-router.get('/getDoctorsAndSpecialties', getDoctorsAndSpecialties);
+router.get('/getDoctorsAndAppointments', getDoctorsAndAppointments);
+router.get("/getAllDocAppointments", getAllDocAppointments);
+router.get('/getPatientByUsername', getPatientByUsername);
+
 router.get('/viewPatientDetails:Username', (req, res) => {
     const Username = req.params.Username;
     console.log(Username);
@@ -95,7 +106,13 @@ router.get('/', (req, res) => {
     });
 });
 router.post('/:doctorUsername/addHealthRecord',uploadDocument, addHealthRecord);
-//router.get('/:doctorUsername/health-records',docViewHealthRecords);
+router.get('/:doctorUsername/health-records',docViewHealthRecords);
+router.post('/addPrescription', addPrescription);
+
+router.post('/addMedicineToPrescription', addMedicineToPrescription);
+router.post('/removeMedicineFromPrescription', removeMedicineFromPrescription);
+router.post('/addMedicineDosage',addMedicineDosage);
+router.post('/updateMedicineDosage', updateMedicineDosage);
 
 module.exports = router;
 

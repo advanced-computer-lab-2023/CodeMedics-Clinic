@@ -3,6 +3,8 @@ import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
+import CalendarDaysIcon from '@heroicons/react/24/solid/CalendarDaysIcon';
+import ClipboardDocumentListIcon from '@heroicons/react/24/solid/ClipboardDocumentListIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
@@ -19,11 +21,47 @@ export const items = [
     )
   },
   {
-    title: 'My Orders',
-    path: '/user/orders',
+    title: 'My Appointments',
+    path: '/user/my-appointments',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CalendarDaysIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Family Members',
+    path: '/user/family-members',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Health Packages',
+    path: '/user/packages',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ClipboardDocumentListIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Prescriptions',
+    path: '/user/prescriptions',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ClipboardDocumentListIcon   />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Medical History',
+    path: '/user/medical-history',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ClipboardDocumentListIcon   />
       </SvgIcon>
     )
   },
@@ -39,6 +77,15 @@ export const items = [
   {
     title: 'Settings',
     path: '/user/settings',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CogIcon />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Start a Video Call',
+    path: '/user/videoCall',
     icon: (
       <SvgIcon fontSize="small">
         <CogIcon />

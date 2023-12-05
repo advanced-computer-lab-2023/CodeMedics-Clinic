@@ -3,6 +3,10 @@ import { format } from 'date-fns';
 import IdentificationIcon from '@heroicons/react/24/solid/IdentificationIcon';
 import Xmark from '@heroicons/react/24/solid/XMarkIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
+import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
+import ArrowDownTrayIcon from '@heroicons/react/24/solid/ArrowDownTrayIcon';
+import file from '../../../file.png'
 import {
   Avatar,
   Box,
@@ -14,18 +18,21 @@ import {
   TableCell,
   TableHead,
   TablePagination,
-  TableRow,
-  Typography
+  TableRow, Button,
+  Typography,
+  Tooltip,
+  Link
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
-
+import axios from 'axios';
+import FileSaver from 'file-saver';
 export const RequestTable = (props) => {
   const {
     count = 0,
@@ -44,6 +51,11 @@ export const RequestTable = (props) => {
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
+
+  useEffect(() => {
+    console.log(items.length);
+  }, [items]);
+
   return (
     <Card>
       <Scrollbar>
@@ -60,23 +72,26 @@ export const RequestTable = (props) => {
                 <TableCell>
                   Email
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Password
-                </TableCell>
-                <TableCell>
+                </TableCell> */}
+                {/* <TableCell>
                   Gender
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   HourlyRate
                 </TableCell>
                 <TableCell>
                   affiliation
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Date of Birth
+                </TableCell> */}
+                <TableCell>
+                  edu 
                 </TableCell>
                 <TableCell>
-                  educationalBackground
+                  Documents
                 </TableCell>
                 <TableCell>
                   Actions
@@ -103,53 +118,122 @@ export const RequestTable = (props) => {
                           {getInitials(customer.Name)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {customer.FirstName + " " + customer.LastName}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.username}
+                      {customer.Username}
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {customer.Email}
                     </TableCell>
+                    {/* <TableCell>
+                      {customer.Password}
+                    </TableCell> */}
                     <TableCell>
-                      {customer.password}
-                    </TableCell>
-                    <TableCell>
-                      {customer.gender}
-                    </TableCell>
-                    <TableCell>
-                      {customer.hourlyRate}
+                      {customer.HourlyRate}
                     </TableCell>
                     <TableCell>
                       {customer.affiliation}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {customer.dob.substring(0, customer.dob.indexOf('T'))}
+                    </TableCell> */}
+                    <TableCell>
+                      {customer.Degree}
                     </TableCell>
                     <TableCell>
-                      {customer.educationalBackground}
+                    <Tooltip title="National ID">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {FileSaver.saveAs(`/uploads/${customer.IDDocument}`, `${customer.IDDocument}`);}}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    <Tooltip title="Medical License">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {FileSaver.saveAs(`/uploads/${customer.MedicalLicense}`, `${customer.MedicalLicense}`);}}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    <Tooltip title="Medical Degree">
+                    <IconButton 
+                      children ={(
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      )}
+                      color="primary"
+                      onClick={() => {FileSaver.saveAs(`/uploads/${customer.MedicalDegree}`, `${customer.MedicalDegree}`);}}
+                    >
+                    </IconButton >
+                    </Tooltip>
                     </TableCell>
                     <TableCell>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
+                    <Tooltip title="Accept Doctor">
+                    <IconButton 
+                      children ={(
                         <SvgIcon fontSize="small">
-                          <Xmark/>
+                          <CheckIcon />
                         </SvgIcon>
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        onClick={() => {
-                        }}
-                      >
+                      )}
+                      color="primary"
+                      onClick={() => {
+                        const userName = customer.Username;
+                        axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "accept"})
+                        .then((res) => {
+                          if (res.status == 200) {
+                            console.log("accepted");
+                            window.location.reload();
+                          }
+                        })
+                        .catch((err) => {
+                          console.log(err);
+                        }
+                        )
+                      }}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    <Tooltip title="Reject Doctor">
+                    <IconButton 
+                      children ={(
                         <SvgIcon fontSize="small">
-                          <PencilIcon/>
+                          <XMarkIcon />
                         </SvgIcon>
-                      </IconButton>
+                      )}
+                      color="primary"
+                      onClick={() => {
+                        const userName = customer.Username;
+                          axios.post('http://localhost:8000/admin/acceptRejectDoctorRequest', {username: customer.Username, action: "reject"})
+                          .then((res) => {
+                            console.log("should be rejected");
+                            if (res.status == 200) {
+                              console.log("rejected");
+                              window.location.reload();
+                            }
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          }
+                          );
+                      }}
+                    >
+                    </IconButton >
+                    </Tooltip>
+                    
                     </TableCell>
                   </TableRow>
                 );

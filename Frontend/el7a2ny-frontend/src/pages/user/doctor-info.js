@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { OverviewDoctorInfoProfile } from 'src/sections/overview/overview-doctor-info-profile';
@@ -30,7 +30,7 @@ const Page = () => {
   <>
     <Head>
       <title>
-        Account | Devias Kit
+        {doctor.FirstName}
       </title>
     </Head>
     <Box
@@ -44,7 +44,7 @@ const Page = () => {
         <Stack spacing={3}>
           <div>
             <Typography variant="h4">
-              Account
+              Dr. {doctor.FirstName}'s Profile
             </Typography>
           </div>
           <div>

@@ -22,7 +22,8 @@ import {
   TableRow,
   IconButton,
   Tooltip,
-  Typography
+  Typography,
+  TextField
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
@@ -50,6 +51,18 @@ export const AppointmentsTable = (props) => {
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+  const [amount, setAmount] = useState(null);
+
+  const calcAmount = (appointmentId) =>{
+    axios.get('http://localhost:8000/patient/getAppointmentAmount').then((res) =>{
+      return res['data']
+    }).then((data) =>{
+      setAmount(data.amount);
+    }).catch((err) => {
+      console.log(err.message);
+    })
+  }
+
   return (
     <Card>
       <Scrollbar>
@@ -70,6 +83,7 @@ export const AppointmentsTable = (props) => {
                   To
                 </TableCell>
                 <TableCell>
+                  Book
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -91,7 +105,7 @@ export const AppointmentsTable = (props) => {
                         spacing={2}
                       >
                         <Typography variant="subtitle2">
-                          {appointment.date}
+                          {new Date(appointment.date).toLocaleDateString()}
                         </Typography>
                       </Stack>
                     </TableCell>
@@ -104,22 +118,23 @@ export const AppointmentsTable = (props) => {
                     <TableCell>
                       {appointment.endHour}
                     </TableCell>
-                    <TableCell>
-                    <Tooltip title="Book Appointment">
-                      <IconButton 
-                        children ={(
-                          <SvgIcon fontSize="small">
-                            <CheckIcon />
-                          </SvgIcon>
-                        )}
-                        color="primary"
-                        onClick={() => {
-                          axios.patch(`http://localhost:8000/patient/bookAppointment?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`)
-                          router.push(`/user/doctors`);
-                        }}
-                      >
-                      </IconButton >
+                    <TableCell padding="checkbox">
+                      <Stack direction="row">
+                      <Tooltip title="Book Appointment" sx={{mt:1 , mr:5}}>
+                        <IconButton
+                          children={(
+                            <SvgIcon fontSize="small">
+                              <CheckIcon />
+                            </SvgIcon>
+                          )}
+                          color="primary"
+                          onClick={() => {
+                              router.push(`/user/MyPay?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`);
+                          }}
+                        >
+                        </IconButton >
                       </Tooltip>
+                      </Stack>
                     </TableCell>
                   </TableRow>
                 );

@@ -1,5 +1,6 @@
 const Doctor = require('../../models/Doctor');
 const Patient = require('../../models/Patient');
+const Appointment = require('../../models/Appointment');
 const upload = require('../../config/multerConfig');
 
 
@@ -10,29 +11,37 @@ exports.addHealthRecord = async (req, res) => {
         const { filename, originalname } = req.file;
         const { doctorUsername } = req.params;
         const { patientUsername } = req.body;
-
+        console.log(req.body);
         // Check if the doctor exists
         const doctor = await Doctor.findOne({ Username: doctorUsername });
+        console.log(doctor);
         if (!doctor) {
             return res.status(404).json({ error: 'Doctor not found' });
         }
 
         // Check if the patient exists
         const patient = await Patient.findOne({ Username: patientUsername });
+        console.log(patient);
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
-        // Check if the doctor has appointments with the patient
-        const hasAppointment = doctor.Appointments.includes(patientUsername);
-        if (!hasAppointment) {
-            return res.status(403).json({ error: 'Doctor does not have appointments with the patient' });
+      // Fetch all appointments with IDs present in the doctor's Appointments array
+      const appointments = await Appointment.find({ _id: { $in: doctor.Appointments } });
+
+      // Check if any appointment includes the patientUsername
+      const hadAppointment =appointments.some(
+        (appointment) => appointment.patient === patientUsername && appointment.status === 'completed'
+    );
+
+        if (!hadAppointment) {
+            return res.status(403).json({ error: 'Doctor never had appointments with this patient yet' });
         }
 
         // Assuming healthRecords is an array in the Patient model
         patient.HealthRecords.push({ filename, originalname, uploadedBy:'Doctor'+''+doctorUsername });
         await patient.save();
-
+console.log( patient.HealthRecords);
         res.status(201).json({ message: 'Document uploaded successfully' });
     } catch (error) {
         console.error(error);

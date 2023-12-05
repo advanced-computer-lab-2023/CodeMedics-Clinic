@@ -1,46 +1,52 @@
-import { format } from 'date-fns';
 import PropTypes from 'prop-types';
-import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
+import { useEffect, useState } from 'react';
+import { SeverityPill } from 'src/components/severity-pill';
+import { getInitials } from 'src/utils/get-initials';
+import { Scrollbar } from 'src/components/scrollbar';
+import axios from 'axios';
 import {
+  Avatar,
   Box,
-  Button,
   Card,
-  CardActions,
-  CardHeader,
-  Divider,
-  SvgIcon,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TablePagination,
+  TableRow,
+  Typography
 } from '@mui/material';
-import { Scrollbar } from 'src/components/scrollbar';
-import { SeverityPill } from 'src/components/severity-pill';
 
 const statusMap = {
-  Unfilled: 'warning',
-  filled: 'success'
+  filled: 'success',
+  unfilled: 'warning',
 };
 
-export const OverviewLatestPrescriptions = (props) => {
-  const { orders = [], sx } = props;
+export const PatientPrescriptionsTable = (props) => {
+  const {
+    count = 0,
+    items = [],
+    onPageChange = () => {},
+    onRowsPerPageChange,
+    page = 0,
+    rowsPerPage = 0,
+  } = props;
 
   return (
-    <Card sx={sx}>
-      <CardHeader title="Latest Prescriptions" />
-      <Scrollbar sx={{ flexGrow: 1 }}>
+    <Card>
+      <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>
-                  Prescription
+                  Drug
                 </TableCell>
                 <TableCell>
                   Doctor
                 </TableCell>
-                <TableCell sortDirection="desc">
+                <TableCell>
                   Date
                 </TableCell>
                 <TableCell>
@@ -49,26 +55,26 @@ export const OverviewLatestPrescriptions = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => {
-                const createdAt = format(order.createdAt, 'dd/MM/yyyy');
-
+              {items.map((prescription) => {  
+                const status = prescription.filled?'filled':'unfilled';
                 return (
-                  <TableRow
-                    hover
-                    key={order.id}
-                  >
+                  <TableRow hover key={prescription._id}>
                     <TableCell>
-                      {order.ref}
+                      {prescription.Drug}
                     </TableCell>
                     <TableCell>
-                      {order.customer.name}
+                      <Stack alignItems="center" direction="row" spacing={2}>
+                        <Typography variant="subtitle2">
+                          {prescription.Doctor}
+                        </Typography>
+                      </Stack>
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      {prescription.Date}
                     </TableCell>
                     <TableCell>
-                      <SeverityPill color={statusMap[order.status]}>
-                        {order.status}
+                      <SeverityPill color={statusMap[status]}>
+                        {status}
                       </SeverityPill>
                     </TableCell>
                   </TableRow>
@@ -78,26 +84,24 @@ export const OverviewLatestPrescriptions = (props) => {
           </Table>
         </Box>
       </Scrollbar>
-      <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={(
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          )}
-          size="small"
-          variant="text"
-        >
-          View all
-        </Button>
-      </CardActions>
+      <TablePagination
+        component="div"
+        count={count}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[5, 10, 25]}
+      />
     </Card>
   );
 };
 
-OverviewLatestPrescriptions.prototype = {
-  orders: PropTypes.array,
-  sx: PropTypes.object
+PatientPrescriptionsTable.propTypes = {
+  count: PropTypes.number,
+  items: PropTypes.array,
+  onPageChange: PropTypes.func,
+  onRowsPerPageChange: PropTypes.func,
+  page: PropTypes.number,
+  rowsPerPage: PropTypes.number,
 };

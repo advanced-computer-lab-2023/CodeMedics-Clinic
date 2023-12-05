@@ -14,6 +14,11 @@ exports.bookAppointment = async (req, res) => {
         const patient = await Patient.findOne({Username: patientUsername});
         patient.Appointments.push(appointmentId);
         await patient.save();
+        const doctor = await Doctor.findOne({Username: appointment.doctorUsername});
+        if(!doctor.Patients.includes(patient._id)){
+            doctor.Patients.push(patient._id);
+        }
+        await doctor.save();
         res.status(200).json({ message: "Appointment booked successfully" });
     } catch (error) {
         res.status(400).json({ message: error.message });

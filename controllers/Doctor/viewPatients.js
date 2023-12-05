@@ -7,16 +7,28 @@ const {getUsername} = require('../../config/infoGetter');
 exports.viewPatients = async (req, res) =>{
     const username = await getUsername(req, res);
     console.log("in view patients");
-    console.log(username);
+    if(!username)return res.status(401).json({message:"You are not logged in."})
     const doctor = await Doctor.find({Username: username});
     console.log(doctor);
-    console.log(doctor[0].FirstName);
-    console.log(doctor[0].Patients);
     const patients = [];
     for(var i = 0; i < doctor[0].Patients.length; i++){
         const cur = await Patient.findOne({_id: doctor[0].Patients[i]});
-        patients.push(cur);
+        if(cur){
+            patients.push(cur);
+        }
     }
     console.log(patients);
-    res.render('doctor/viewPatients', {patients: patients});
+    return res.status(200).json(patients);
+};
+
+exports.getPatientByUsername = async (req, res) => {
+    const username = req.query.username;
+    console.log(username);
+    try{
+        const patient = await Patient.findOne({Username: username});
+        console.log("TESTING GetPatientByUsername", patient);
+        return res.status(200).json(patient);
+    }catch(error){
+        console.log(error);
+    }
 };

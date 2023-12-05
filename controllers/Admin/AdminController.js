@@ -29,8 +29,12 @@ const createAdmin = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
     }
+    const found = await adminModel.findOne({ Username: req.body.Username });
     // If all required variables are present, proceed with creating an admin
     const { Name, Username, Password, Email } = req.body;
+    if(found){
+        return res.status(400).json({ message: "Username already exists" });
+    }
     // Hash the password using bcrypt
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
@@ -221,11 +225,11 @@ const changePassword = async (req, res) => {
         }
 
         // Verify if the current password matches the one in the database
-        const passwordMatch = await bcrypt.compare(currentPassword, admin.Password);
+        // const passwordMatch = await bcrypt.compare(currentPassword, admin.Password);
 
-        if (!passwordMatch) {
-            return res.status(400).json({ error: 'Current password is incorrect' });
-        }
+        // if (!passwordMatch) {
+        //     return res.status(400).json({ error: 'Current password is incorrect' });
+        // }
 
         // Hash the new password
         const salt = await bcrypt.genSalt(10);
@@ -245,11 +249,12 @@ const changePassword = async (req, res) => {
 
 const acceptRejectDoctorRequest = async (req, res) => {
     const { username, action } = req.body;
-
+    console.log("I am here");
     try {
         // Find the doctor by username
         const doctor = await doctorModel.findOne({ Username: username, Status: 'Pending' });
-
+        console.log(username, action);
+        console.log(doctor);
         if (!doctor) {
             return res.status(404).json({ error: 'Doctor request not found or already processed' });
         }

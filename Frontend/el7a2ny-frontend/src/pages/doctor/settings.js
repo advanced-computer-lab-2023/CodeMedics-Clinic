@@ -1,14 +1,14 @@
 import Head from 'next/head';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { SettingsNotifications } from 'src/sections/settings/settings-notifications';
-import { SettingsPassword } from 'src/sections/settings/settings-password';
+import { SettingsPassword } from 'src/sections/doctor/settings/settings-password';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
 
 const Page = () => (
   <>
     <Head>
       <title>
-        Settings | Devias Kit
+        Settings
       </title>
     </Head>
     <Box

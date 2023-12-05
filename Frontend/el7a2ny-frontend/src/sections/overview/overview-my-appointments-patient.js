@@ -109,7 +109,7 @@ export const PatientAppointmentsTable = (props) => {
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {appointment.date}
+                      {new Date(appointment.date).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       {days[new Date(appointment.date).getDay()]}
