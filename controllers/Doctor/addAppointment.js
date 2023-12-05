@@ -33,7 +33,11 @@ exports.addAppointments = async (req, res) => {
     
         const Username = await getUsername(req, res);
         const doctor = await Doctor.findOne({Username});
+        if (!doctor) {
+            return res.status(400).json({ message: 'Doctor not found' });
+        }
         const doctorName = doctor.FirstName + " " + doctor.LastName;
+        console.log(doctor.FirstName)
         const appointment = new Appointment({  
             doctor: doctorName,
             doctorUsername: Username,
@@ -52,6 +56,3 @@ exports.addAppointments = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
-
-
