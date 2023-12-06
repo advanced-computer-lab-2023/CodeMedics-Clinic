@@ -39,6 +39,6 @@
   "devDependencies": {
     "@types/debug": "^4.1.9",
     "@types/ejs": "^2.6.1",
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.2"
   }
 }

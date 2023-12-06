@@ -95,38 +95,43 @@ exports.addPrescription = async (req, res) => {
 exports.createAndDownloadPDF = (prescription) => {
   return new Promise((resolve, reject) => {
     try {
-      const PDFDocument = require('pdfkit'); // Include pdfkit
+      const PDFDocument = require('pdfkit');
       const doc = new PDFDocument();
 
-      // Customize the content based on prescription details
-      doc.fontSize(16).text(`Doctor: ${prescription.Doctor}`);
-      doc.fontSize(16).text(`Patient: ${prescription.Patient}`);
-      doc.fontSize(16).text(`Date: ${prescription.Date}`);
-      doc.fontSize(16).text(`Status: ${prescription.filled ? 'filled' : 'unfilled'}`);
+      // Add title and spacing
+      doc.fontSize(24).text('Prescription Details', { align: 'center' }).moveDown(1.0);
 
-      // Iterate over the Drug array and add drug details to the document
+      // Add prescription details
+      doc.fontSize(18).text(`Doctor: ${prescription.Doctor}`).moveDown(0.5);
+      doc.fontSize(18).text(`Patient: ${prescription.Patient}`).moveDown(0.5);
+      doc.fontSize(18).text(`Date: ${prescription.Date}`).moveDown(0.5);
+      doc.fontSize(18).text(`Status: ${prescription.filled ? 'filled' : 'unfilled'}`);
+      doc.moveDown(1);
+
+      // Add drug details
+      doc.fontSize(20).text('Drug Details', { align: 'center', underline: false }).moveDown(0.75);
+      
       prescription.Drug.forEach((drug, index) => {
-        doc.fontSize(16).text(`Drug ${index + 1}:`);
-        doc.fontSize(14).text(`Name: ${drug.drugName}`);
-        doc.fontSize(14).text(`Dosage: ${drug.dosage}`);
-        doc.moveDown();
+        doc.fontSize(18).text(`Drug ${index + 1}:`, { underline: true }).moveDown(0.5);
+        doc.fontSize(16).fillColor('black').text(`Name:`, { continued: true }).fillColor('#5D3FD3').text(` ${drug.drugName}`).moveDown(0.25);
+        doc.fontSize(16).fillColor('black').text(`Dosage:`, { continued: true }).fillColor('#5D3FD3').text(` ${drug.dosage}`).moveDown(0.25);
+        doc.moveDown(1);
       });
 
-      // Buffer to store the PDF content
       const chunks = [];
       doc.on('data', (chunk) => chunks.push(chunk));
       doc.on('end', () => {
         const pdfBuffer = Buffer.concat(chunks);
-        resolve(pdfBuffer); // Resolve the PDF content
+        resolve(pdfBuffer);
       });
 
-      // End the document
       doc.end();
     } catch (error) {
-      reject(error); // Reject if there's an error in generating the PDF
+      reject(error);
     }
   });
 };
+
 
 
 // exports.getPrescriptionsByDate = async (req, res) => {
