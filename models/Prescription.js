@@ -2,16 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const prescriptionSchema = new Schema({
-    Drug: [{
-        drugName: {
-            type: String,
-            required: [true, 'Please enter a drug name']
-        },
-        dosage: {
-            type: String,
-            required: [false, 'Please enter a dosage']
-        }
-    }],
+        Drug: [{
+            drugName: {
+                type: String,
+                required: [true, 'Please enter a drug name']
+            },
+            dosage: {
+                type: String,
+                required: [false, 'Please enter a dosage']
+            }
+        }],
     Doctor: {
         type: String,
         required: [true, 'Please enter a doctor']

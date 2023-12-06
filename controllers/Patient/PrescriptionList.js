@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Prescription = require('../../models/Prescription');
 const { getUsername } = require('../../config/infoGetter');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
 
 exports.filterPrescriptions = async (req, res) => {
@@ -88,8 +90,43 @@ exports.addPrescription = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
-};""
+};
 
+exports.createAndDownloadPDF = (prescription) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const PDFDocument = require('pdfkit'); // Include pdfkit
+      const doc = new PDFDocument();
+
+      // Customize the content based on prescription details
+      doc.fontSize(16).text(`Doctor: ${prescription.Doctor}`);
+      doc.fontSize(16).text(`Patient: ${prescription.Patient}`);
+      doc.fontSize(16).text(`Date: ${prescription.Date}`);
+      doc.fontSize(16).text(`Status: ${prescription.filled ? 'filled' : 'unfilled'}`);
+
+      // Iterate over the Drug array and add drug details to the document
+      prescription.Drug.forEach((drug, index) => {
+        doc.fontSize(16).text(`Drug ${index + 1}:`);
+        doc.fontSize(14).text(`Name: ${drug.drugName}`);
+        doc.fontSize(14).text(`Dosage: ${drug.dosage}`);
+        doc.moveDown();
+      });
+
+      // Buffer to store the PDF content
+      const chunks = [];
+      doc.on('data', (chunk) => chunks.push(chunk));
+      doc.on('end', () => {
+        const pdfBuffer = Buffer.concat(chunks);
+        resolve(pdfBuffer); // Resolve the PDF content
+      });
+
+      // End the document
+      doc.end();
+    } catch (error) {
+      reject(error); // Reject if there's an error in generating the PDF
+    }
+  });
+};
 
 
 // exports.getPrescriptionsByDate = async (req, res) => {
