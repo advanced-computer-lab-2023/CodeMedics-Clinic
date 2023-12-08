@@ -4,6 +4,7 @@ import { SettingsNotifications } from 'src/sections/settings/settings-notificati
 import { SettingsPassword } from 'src/sections/settings/settings-password';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import VideoCall from 'src/components/VideoCall';
+import {VideoCallContext} from 'src/components/VideoCallContext';
 const Page = () => (
   <>
     <Head>
@@ -19,7 +20,9 @@ const Page = () => (
       }}
     >
       <Container maxWidth="lg">
-        <VideoCall/>
+        <VideoCallContext>
+          <VideoCall/>
+        </VideoCallContext>
       </Container>
     </Box>
   </>

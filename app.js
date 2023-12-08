@@ -33,7 +33,6 @@ const http = require('http');
 
 const server = http.createServer(app);
 
-app.use(cors(corsOptions));
 
 
 const io = require('socket.io')(server, {
@@ -43,25 +42,30 @@ const io = require('socket.io')(server, {
   }
 });
 
+app.use(cors(corsOptions));
 
 // server.listen(5000);
 io.on("connection", (socket) => {
-  console.log(socket.id);
-  console.log("we are here in the connection");
-  socket.emit("me", socket.id)
+
+  console.log("Socket id:", socket.id);
+
+  socket.on("iAmReady", () => {
+    socket.emit("me", socket.id);
+  });
 
   socket.on("disconnect", () => {
     socket.broadcast.emit("callEnded")
-  })
+  });
 
-  socket.on("callUser", (data) => {
-    io.to(data.userToCall).emit("callUser", { signal: data.signalData, from: data.from, name: data.name })
-  })
+  socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+    io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+  });
 
   socket.on("answerCall", (data) => {
+    console.log("call answered, " + data.to + " is the caller");
     io.to(data.to).emit("callAccepted", data.signal)
-  })
-})
+  });
+});
 
 app.use(express.static("public"));
 app.use(express.json());
