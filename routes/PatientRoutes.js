@@ -12,12 +12,16 @@ const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
 const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const Prescription = require('../models/Prescription'); 
 
 
 const {
     getPrescriptions,
     filterPrescriptions,
-    addPrescription
+    addPrescription,
+    createAndDownloadPDF
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
 const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
@@ -92,6 +96,29 @@ router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
 router.post('/addPrescription', addPrescription);
+
+// Backend route to handle PDF generation
+// Modify the function to generate PDF content and send it in the response
+router.post('/download-prescription-pdf', async (req, res) => {
+    try {
+      const prescription = req.body.prescription;
+  
+      // Generate the PDF content
+      const pdfBuffer = await createAndDownloadPDF(prescription);
+  
+      // Set response headers for PDF download
+      res.setHeader('Content-Disposition', 'attachment; filename=Prescription.pdf');
+      res.setHeader('Content-Type', 'application/pdf');
+  
+      // Send the PDF content as the response
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating PDF');
+    }
+  });
+
+  
 
 router.get('/:username/health-records', viewHealthRecords);
 

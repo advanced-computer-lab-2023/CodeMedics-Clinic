@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Prescription = require('../../models/Prescription');
 const { getUsername } = require('../../config/infoGetter');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
 
 exports.filterPrescriptions = async (req, res) => {
@@ -88,7 +90,47 @@ exports.addPrescription = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
-};""
+};
+
+exports.createAndDownloadPDF = (prescription) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const PDFDocument = require('pdfkit');
+      const doc = new PDFDocument();
+
+      // Add title and spacing
+      doc.fontSize(24).text('Prescription Details', { align: 'center' }).moveDown(1.0);
+
+      // Add prescription details
+      doc.fontSize(18).text(`Doctor: ${prescription.Doctor}`).moveDown(0.5);
+      doc.fontSize(18).text(`Patient: ${prescription.Patient}`).moveDown(0.5);
+      doc.fontSize(18).text(`Date: ${prescription.Date}`).moveDown(0.5);
+      doc.fontSize(18).text(`Status: ${prescription.filled ? 'filled' : 'unfilled'}`);
+      doc.moveDown(1);
+
+      // Add drug details
+      doc.fontSize(20).text('Drug Details', { align: 'center', underline: false }).moveDown(0.75);
+      
+      prescription.Drug.forEach((drug, index) => {
+        doc.fontSize(18).text(`Drug ${index + 1}:`, { underline: true }).moveDown(0.5);
+        doc.fontSize(16).fillColor('black').text(`Name:`, { continued: true }).fillColor('#5D3FD3').text(` ${drug.drugName}`).moveDown(0.25);
+        doc.fontSize(16).fillColor('black').text(`Dosage:`, { continued: true }).fillColor('#5D3FD3').text(` ${drug.dosage}`).moveDown(0.25);
+        doc.moveDown(1);
+      });
+
+      const chunks = [];
+      doc.on('data', (chunk) => chunks.push(chunk));
+      doc.on('end', () => {
+        const pdfBuffer = Buffer.concat(chunks);
+        resolve(pdfBuffer);
+      });
+
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 
 
