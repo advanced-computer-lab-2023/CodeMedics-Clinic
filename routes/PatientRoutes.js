@@ -102,15 +102,11 @@ router.post('/addPrescription', addPrescription);
 router.post('/download-prescription-pdf', async (req, res) => {
     try {
       const prescription = req.body.prescription;
-  
-      // Generate the PDF content
       const pdfBuffer = await createAndDownloadPDF(prescription);
   
-      // Set response headers for PDF download
-      res.setHeader('Content-Disposition', 'attachment; filename=Prescription.pdf');
+      // Send the PDF buffer as a response
       res.setHeader('Content-Type', 'application/pdf');
-  
-      // Send the PDF content as the response
+      res.setHeader('Content-Disposition', `attachment; filename="Prescription_${prescription._id}.pdf"`);
       res.send(pdfBuffer);
     } catch (error) {
       console.error('Error generating PDF:', error);

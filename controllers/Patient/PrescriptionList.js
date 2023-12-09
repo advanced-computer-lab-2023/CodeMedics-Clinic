@@ -98,25 +98,40 @@ exports.createAndDownloadPDF = (prescription) => {
       const PDFDocument = require('pdfkit');
       const doc = new PDFDocument();
 
-      // Add title and spacing
-      doc.fontSize(24).text('Prescription Details', { align: 'center' }).moveDown(1.0);
+       // Start with defining a rectangle for the background color
+       doc.rect(0, 0, doc.page.width, doc.page.height)
+       .fillColor('#D9D9D9') // Set the background color here, in this case, yellow
+       .fill();
+
+      doc.fontSize(30).fillColor('black').text(`Dr. ${prescription.Doctor}`).moveDown(1.0);
+
+      doc.fontSize(16).fillColor('black').text(`Tessen Street, New Cairo,                                      Clinic Hours:`).moveDown(0.5);
+      doc.fontSize(16).fillColor('black').text(`Cairo, 11835                                                           8:00 - 15:00`).moveDown(1.0);
+
+      // Draw a horizontal line
+      doc.moveTo(50, doc.y) // Starting point of the line
+         .lineTo(doc.page.width - 50, doc.y) // Ending point of the line
+         .stroke(); // Draw the line
+      
+      //add logo
+      const logoPath = 'C:/Users/omaro/Desktop/Github/CodeMedics-Clinic/Frontend/el7a2ny-frontend/public/assets/Clinic.png';
+      doc.image(logoPath, 475, 0, { width: 120 }); // Adjust x, y position and width as needed
+
 
       // Add prescription details
-      doc.fontSize(18).text(`Doctor: ${prescription.Doctor}`).moveDown(0.5);
-      doc.fontSize(18).text(`Patient: ${prescription.Patient}`).moveDown(0.5);
-      doc.fontSize(18).text(`Date: ${prescription.Date}`).moveDown(0.5);
-      doc.fontSize(18).text(`Status: ${prescription.filled ? 'filled' : 'unfilled'}`);
+      doc.fontSize(16).fillColor('black').text().moveDown(1.0);
+      doc.fontSize(16).fillColor('black').text(`Patient: ${prescription.Patient}`).moveDown(0.75);
+      doc.fontSize(16).fillColor('black').text(`Status: ${prescription.filled ? 'filled' : 'unfilled'}`);
       doc.moveDown(1);
-
-      // Add drug details
-      doc.fontSize(20).text('Drug Details', { align: 'center', underline: false }).moveDown(0.75);
       
       prescription.Drug.forEach((drug, index) => {
-        doc.fontSize(18).text(`Drug ${index + 1}:`, { underline: true }).moveDown(0.5);
-        doc.fontSize(16).fillColor('black').text(`Name:`, { continued: true }).fillColor('#5D3FD3').text(` ${drug.drugName}`).moveDown(0.25);
-        doc.fontSize(16).fillColor('black').text(`Dosage:`, { continued: true }).fillColor('#5D3FD3').text(` ${drug.dosage}`).moveDown(0.25);
+        doc.fontSize(16).text(`Drug ${index + 1}:`, { underline: true }).moveDown(0.5);
+        doc.fontSize(16).fillColor('black').text(`Name:`, { continued: true }).fillColor('#5D3FD3').fontSize(18).text(` ${drug.drugName}`).moveDown(0.25);
+        doc.fontSize(16).fillColor('black').text(`Dosage:`, { continued: true }).fillColor('#5D3FD3').fontSize(18).text(` ${drug.dosage}`).moveDown(0.25);
         doc.moveDown(1);
       });
+
+      doc.fontSize(16).fillColor('black').text(`Date: ${prescription.Date}`, 410, 225).moveDown(0.5);
 
       const chunks = [];
       doc.on('data', (chunk) => chunks.push(chunk));
