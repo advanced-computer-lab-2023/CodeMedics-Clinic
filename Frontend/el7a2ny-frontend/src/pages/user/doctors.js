@@ -22,11 +22,6 @@ const Page = () => {
   const [doctors , setDoctors] = useState([]);
 
   useEffect(() => {
-    socket.on('me', (id) => { 
-      Cookies.set('socketID', id);
-    });
-    socket.emit('iAmReady', Cookies.get('username'), false);
-
     axios.get('http://localhost:8000/doctor/getDoctorsAndAppointments' , {withCredentials: true})
     .then((response) => {
       return response.data.data;

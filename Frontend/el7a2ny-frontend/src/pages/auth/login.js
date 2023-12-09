@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Cookies from 'js-cookie';
+import socket from 'src/components/socket';
 import {
   Alert,
   Box,
@@ -35,7 +36,7 @@ const Page = () => {
     validationSchema: Yup.object({
       email: Yup
         .string()
-        .email('Must be a valid email')  
+        .email('Must be a valid email')
         .max(255)
         .required('Email is required'),
       password: Yup
@@ -45,31 +46,37 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-          const body = {"email": values.email, "password": values.password};
-          await axios('http://localhost:8000/login' , {
-            method: 'POST',
-            data: body,
-            withCredentials: true,
+        const body = { "email": values.email, "password": values.password };
+        await axios('http://localhost:8000/login', {
+          method: 'POST',
+          data: body,
+          withCredentials: true,
+        })
+          .then((res) => {
+            console.log(res);
+            return res['data'];
           })
-            .then((res) => { 
-              console.log(res);
-              return res['data'];
-            })
-            .then((data) => {
-              console.log('Here ----> ');
-              if (data['Type'] === 'Patient') {
-                Cookies.set('username', data['patient']['username']);
-                router.push(`/user/doctors`);
-              } else if (data['Type'] === 'Doctor') {
-                Cookies.set('username', data['doctor']['username']);
-                console.log(Cookies.get('token'));
-                console.log(Cookies.get('jwt'));
-                router.push(`/doctor/patients`);
-              } else if (data['Type'] === 'Admin') {
-                Cookies.set('username', data['admin']['username']);
-                router.push(`/admin/admins`);
-              }
-            });
+          .then((data) => {
+            console.log('Here ----> ');
+            if (data['Type'] === 'Patient') {
+              Cookies.set('username', data['patient']['username']);
+              socket.on('me', (id) => {
+                Cookies.set('socketID', id);
+              });
+              socket.emit('iAmReady', Cookies.get('username'));
+              router.push(`/user/doctors`);
+            } else if (data['Type'] === 'Doctor') {
+              Cookies.set('username', data['doctor']['username']);
+              socket.on('me', (id) => {
+                Cookies.set('socketID', id);
+              });
+              socket.emit('iAmReady', Cookies.get('username'));
+              router.push(`/doctor/patients`);
+            } else if (data['Type'] === 'Admin') {
+              Cookies.set('username', data['admin']['username']);
+              router.push(`/admin/admins`);
+            }
+          });
       } catch (err) {
         console.log(err);
         helpers.setStatus({ success: false });
@@ -97,40 +104,48 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        const body = {"username": values.username, "password": values.password};
-          await axios('http://localhost:8000/login' , {
-            method: 'POST',
-            data: body,
-            withCredentials: true,
+        const body = { "username": values.username, "password": values.password };
+        await axios('http://localhost:8000/login', {
+          method: 'POST',
+          data: body,
+          withCredentials: true,
+        })
+          .then((res) => {
+            if (res.status != 200) {
+              console.log(res.status);
+              throw new Error(res.data.message);
+            }
+            return res['data'];
           })
-            .then((res) => { 
-              if(res.status != 200){
-                console.log(res.status);
-                throw new Error(res.data.message);
+          .then((data) => {
+            console.log('Here ----> ');
+            if (data['Type'] === 'Patient') {
+              Cookies.set('username', data['patient']['Username']);
+              socket.on('me', (id) => {
+                Cookies.set('socketID', id);
+              });
+              socket.emit('iAmReady', Cookies.get('username'));
+              router.push(`/user/doctors`);
+            } else if (data['Type'] === 'Doctor') {
+              console.log(data);
+              if (data.doctor.Status == 'Pending') {
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: 'Your request is still pending' });
+                helpers.setSubmitting(false);
               }
-              return res['data'];
-            })
-            .then((data) => {    
-              console.log('Here ----> ');    
-              if (data['Type'] === 'Patient') {
-                Cookies.set('username', data['patient']['Username']);
-                router.push(`/user/doctors`);
-              } else if (data['Type'] === 'Doctor') {
-                console.log(data);
-                if(data.doctor.Status == 'Pending'){
-                  helpers.setStatus({ success: false });
-                  helpers.setErrors({ submit: 'Your request is still pending' });
-                  helpers.setSubmitting(false);
-                }
-                else{
+              else {
                 Cookies.set('username', data['doctor']['Username']);
+                socket.on('me', (id) => {
+                  Cookies.set('socketID', id);
+                });
+                socket.emit('iAmReady', Cookies.get('username'));
                 router.push(`/doctor/patients`);
-                }
-              } else if (data['Type'] === 'Admin') {
-                Cookies.set('username', data['admin']['Username']);
-                router.push(`/admin/admins`);
               }
-            });
+            } else if (data['Type'] === 'Admin') {
+              Cookies.set('username', data['admin']['Username']);
+              router.push(`/admin/admins`);
+            }
+          });
       } catch (err) {
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.response.data.message });
@@ -276,7 +291,7 @@ const Page = () => {
                   fullWidth
                   size="large"
                   sx={{ mt: 3 }}
-                  // onClick={handleSkip}
+                // onClick={handleSkip}
                 >
                   Forgot Password?
                 </Button>
@@ -342,7 +357,7 @@ const Page = () => {
                   fullWidth
                   size="large"
                   sx={{ mt: 3 }}
-                  onClick={() => {router.push('/auth/forgotPassword');}}
+                  onClick={() => { router.push('/auth/forgotPassword'); }}
                 >
                   Forgot Password?
                 </Button>

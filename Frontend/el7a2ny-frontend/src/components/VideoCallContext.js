@@ -20,7 +20,7 @@ const VideoCallContext = ({ children }) => {
 
   useEffect(() => {
 
-
+    
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);

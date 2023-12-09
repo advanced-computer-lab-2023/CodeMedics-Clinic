@@ -52,8 +52,8 @@ io.on("connection", (socket) => {
 
   console.log("Socket id:", socket.id);
 
-  socket.on("iAmReady", (username, isDoctor) => {
-    putSocket(username, isDoctor, socket.id);
+  socket.on("iAmReady", (username) => {
+    putSocket(username, socket.id);
     socket.emit("me", socket.id);
   });
 

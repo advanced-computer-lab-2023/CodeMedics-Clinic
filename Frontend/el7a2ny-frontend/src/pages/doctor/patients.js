@@ -22,10 +22,6 @@ const Page = () => {
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
-    socket.on('me', (id) => { 
-      Cookies.set('socketID', id);
-    });
-    socket.emit('iAmReady', Cookies.get('username'), true);
     getPatients();
   }, []);
 
