@@ -58,6 +58,7 @@ export const OverviewDoctors = (props) => {
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 height: '100%',
+                width: '100%',
                 textAlign: 'center',
                 alignItems: 'center',
               }}

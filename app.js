@@ -21,6 +21,7 @@ const DeleteModelRecords = require('./config/DeleteAllRecords');
 const doctorRoutes = require('./routes/DoctorRoutes');
 const patientRoutes = require('./routes/PatientRoutes');
 const genericRoutes = require('./routes/GenericRoutes');
+const chatRoutes = require('./routes/ChatsRoutes');
 
 // Connect to MongoDB
 connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
@@ -53,6 +54,7 @@ io.on("connection", (socket) => {
   console.log("Socket id:", socket.id);
 
   socket.on("iAmReady", (username) => {
+    console.log("iAmReady: " + username);
     putSocket(username, socket.id);
     socket.emit("me", socket.id);
   });
@@ -68,6 +70,11 @@ io.on("connection", (socket) => {
   socket.on("answerCall", (data) => {
     console.log("call answered, " + data.to + " is the caller");
     io.to(data.to).emit("callAccepted", data.signal)
+  });
+  
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
   });
 });
 
@@ -106,6 +113,7 @@ app.use('/admin', adminRoutes);
 app.use('/doctor', doctorRoutes);
 app.use('/patient', patientRoutes);
 app.use('/', genericRoutes);
+app.use('/chat', chatRoutes);
 
 
 app.post("/package/create-payment-intent", async (req, res) => {
