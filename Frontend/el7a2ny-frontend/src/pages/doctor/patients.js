@@ -13,6 +13,7 @@ import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
+import socket from 'src/components/socket';
 const now = new Date();
 
 
@@ -21,6 +22,10 @@ const Page = () => {
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
+    socket.on('me', (id) => { 
+      Cookies.set('socketID', id);
+    });
+    socket.emit('iAmReady', Cookies.get('username'), true);
     getPatients();
   }, []);
 

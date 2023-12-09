@@ -5,6 +5,9 @@ import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
 import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState , useEffect } from 'react';
+import socket from 'src/components/socket';
+import Cookies from 'js-cookie';
+
 
 const now = new Date();
 
@@ -19,6 +22,11 @@ const Page = () => {
   const [doctors , setDoctors] = useState([]);
 
   useEffect(() => {
+    socket.on('me', (id) => { 
+      Cookies.set('socketID', id);
+    });
+    socket.emit('iAmReady', Cookies.get('username'), false);
+
     axios.get('http://localhost:8000/doctor/getDoctorsAndAppointments' , {withCredentials: true})
     .then((response) => {
       return response.data.data;

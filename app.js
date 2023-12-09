@@ -44,12 +44,16 @@ const io = require('socket.io')(server, {
 
 app.use(cors(corsOptions));
 
+const {putSocket} = require('./config/socket');
+
+
 // server.listen(5000);
 io.on("connection", (socket) => {
 
   console.log("Socket id:", socket.id);
 
-  socket.on("iAmReady", () => {
+  socket.on("iAmReady", (username, isDoctor) => {
+    putSocket(username, isDoctor, socket.id);
     socket.emit("me", socket.id);
   });
 
