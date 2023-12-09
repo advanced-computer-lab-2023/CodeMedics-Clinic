@@ -99,16 +99,16 @@ export const OverviewDoctors = (props) => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={doctor.doctor.FirstName + ' ' + doctor.doctor.LastName}
-                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  primaryTypographyProps={{ variant: 'h6' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary= {'Speciality: ' + doctor.doctor.Speciality}
+                  primary= {doctor.doctor.Speciality}
                   primaryTypographyProps={{ variant: 'subtitle2' }}
                   // secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary= {'Session Price: ' + doctor.price}
+                  primary= {doctor.price + ' EGP'}
                   primaryTypographyProps={{ variant: 'subtitle2' }}
                   // secondaryTypographyProps={{ variant: 'body2' }}
                 />
