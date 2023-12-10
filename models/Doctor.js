@@ -70,6 +70,15 @@ const doctorSchema = new Schema({
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
     }],
+    Messages: {
+        type: [{
+            sender: String,
+            content: String,
+            timestamp: { type: Date, default: Date.now },
+        }],
+        default: [],
+        required: false,
+    },
 }, {timestamps: true});
 
 const Doctor = mongoose.model('Doctor', doctorSchema, 'Doctors');

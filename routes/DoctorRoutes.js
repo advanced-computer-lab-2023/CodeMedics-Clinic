@@ -26,6 +26,7 @@ const { CancelAppointment } = require('../controllers/Doctor/CancelAppointment')
 const {addPrescription} = require('../controllers/Doctor/addPrescription');
 const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
 const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
+const {getDoctorMessages} = require('../controllers/Doctor/getDoctorMessages')
 
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
@@ -58,6 +59,7 @@ router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 router.post('/changePassword', changePassword);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:doctorUsername/past-appointments', viewPastAppointments);
+router.get('/getDoctorMessages', getDoctorMessages);
 
 
 router.patch('/', updateDoctor);
