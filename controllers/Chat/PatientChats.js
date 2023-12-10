@@ -37,11 +37,11 @@ exports.getPatientChats = async (req, res) => {
                     users: [user.Username, doctors[i].Username],
                 });
                 await newChat.save();
-                chats.push({doctor: doctors[i] , chat: newChat , latestMessage: null});
+                chats.push({doctor: doctors[i] , chat: newChat , latestMessage: null , user});
             }
             else{
                 const latestMessage = await Message.findOne({chat: chat._id}).sort({createdAt: -1});
-                chats.push({doctor: doctors[i] , chat , latestMessage});
+                chats.push({doctor: doctors[i] , chat , latestMessage , user});
             }
         }
         res.status(200).json({ chats });
