@@ -11,6 +11,8 @@ import { CustomersTable } from 'src/sections/customer/patient-table';
 import { CustomersSearch } from 'src/sections/customer/customers-search';
 import { applyPagination } from 'src/utils/apply-pagination';
 import axios from 'axios';
+import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
+import { useRouter } from 'next/navigation';
 
 const now = new Date();
 
@@ -25,6 +27,10 @@ const Page = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startHour, setStartHour] = useState('09:00'); // Initial start hour
   const [endHour, setEndHour] = useState('17:00'); // Initial end hour
+  const [searchData, setSearchData] = useState(appointments);
+  // const [filteredData , setFilteredData] = useState(appointments);
+
+  const router = useRouter();
   
   useEffect(() => {
     getAppointments();
@@ -39,6 +45,7 @@ const Page = () => {
     .then((response => {
       console.log("APPOINTMENTS___", response.data);
       setAppointments(response.data);
+      setSearchData(response.data);
     }))
     .catch(error => {
       console.log(error);
@@ -60,7 +67,7 @@ const Page = () => {
   );
 
   const handleDateChange = (event) => {
-    setSelectedDate(new Date(event.target.value));
+    setSelectedDate(event.target.value);
   };
 
   const handleStartHourChange = (event) => {
@@ -75,9 +82,37 @@ const Page = () => {
     await axios('http://localhost:8000/doctor/addAppointments', {
       method: 'POST',
       withCredentials: true,
-      data: {startHour: startHour, endHour, endHour, date, date}
-    })
+      data: {startHour, endHour, endHour, date, date}
+    }).then((res) => {
+      router.refresh();
+    }).catch((err) => {
+      console.log(err);
+    });
+      
   }
+
+  const handleSearch = (str) => {
+    if(str === ""){
+      setSearchData(appointments);
+    }
+    else{
+      console.log(appointments);
+      setSearchData(appointments.filter((appointment) => appointment.patient && appointment.patient.toLowerCase().includes(str.toLowerCase())));
+    }
+  }
+
+  const handleFilter  = (str)  => {
+    if(str === "None"){
+      setSearchData(appointments);
+    }
+    else{
+      console.log(searchData)
+  
+      setSearchData(appointments.filter((appointment) => appointment.status === (str)));
+    }
+  }
+
+  console.log(searchData);
 
 
   return (
@@ -114,8 +149,8 @@ const Page = () => {
                     {/* Date selector */}
                     <TextField
                       type="date"
-                      label=""
-                      id='appDate'
+                      label="Date"
+                      id='appDate'  
                       value={selectedDate.toISOString().split('T')[0]}
                       onChange={handleDateChange}
                     />
@@ -152,10 +187,10 @@ const Page = () => {
                 </Button>
               </div>
             </Stack>
-            <CustomersSearch />
+            <DoctorSearch data={searchData} handleSearch={handleSearch} handleFilter={handleFilter}/>
             <CustomersTable
-              count={appointments.length}
-              items={appointments}
+              count={searchData.length}
+              items={searchData}
               // onDeselectAll={customersSelection.handleDeselectAll}
               // onDeselectOne={customersSelection.handleDeselectOne}
               // onPageChange={handlePageChange}

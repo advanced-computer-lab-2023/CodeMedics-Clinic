@@ -61,9 +61,7 @@ export const CustomersTable = (props) => {
                 <TableCell>
                   Date
                 </TableCell>
-                <TableCell>
-                  Day
-                </TableCell>
+                    
                 <TableCell>
                   From
                 </TableCell>
@@ -105,18 +103,19 @@ export const CustomersTable = (props) => {
                         spacing={2}
                       >
                         <Typography variant="subtitle2">
-                          {customer.patient}
+                          {!customer.patient ? '-----' : customer.patient}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {new Date(customer.date).toDateString()}
+                    </TableCell>
+
+                    <TableCell>
+                      {customer.startHour}
                     </TableCell>
                     <TableCell>
-                      {/* {customer.address.city}, {customer.address.state}, {customer.address.country} */}
-                    </TableCell>
-                    <TableCell>
-                      {customer.phone}
+                      {customer.endHour}
                     </TableCell>
                     <TableCell>
                       {customer.status}

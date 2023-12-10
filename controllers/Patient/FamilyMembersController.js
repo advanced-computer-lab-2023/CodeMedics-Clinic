@@ -10,7 +10,7 @@ exports.addFamilyMember = async (req, res) => {
       if(patient == null){
          return res.status(404).json({message: 'Patient does not exist'});
       }
-      const exists = await Patient.findOne({Email: familyMemberEmail});
+      const exists = await Patient.findOne({Email: familyMemberEmail}) || await Patient.findOne({Number: familyMemberEmail});
       if(exists == null){  
          return res.status(400).json({message: 'Family member does not exist'});
       }

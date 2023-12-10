@@ -51,6 +51,18 @@ export const AppointmentsTable = (props) => {
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+  const [amount, setAmount] = useState(null);
+
+  const calcAmount = (appointmentId) =>{
+    axios.get('http://localhost:8000/patient/getAppointmentAmount').then((res) =>{
+      return res['data']
+    }).then((data) =>{
+      setAmount(data.amount);
+    }).catch((err) => {
+      console.log(err.message);
+    })
+  }
+
   return (
     <Card>
       <Scrollbar>
@@ -93,7 +105,7 @@ export const AppointmentsTable = (props) => {
                         spacing={2}
                       >
                         <Typography variant="subtitle2">
-                          {appointment.date}
+                          {new Date(appointment.date).toLocaleDateString()}
                         </Typography>
                       </Stack>
                     </TableCell>
@@ -117,8 +129,7 @@ export const AppointmentsTable = (props) => {
                           )}
                           color="primary"
                           onClick={() => {
-                            axios.patch(`http://localhost:8000/patient/bookAppointment?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`)
-                            router.push(`/user/doctors`);
+                              router.push(`/user/MyPay?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`);
                           }}
                         >
                         </IconButton >

@@ -21,7 +21,13 @@ const { changePassword } = require('../controllers/Doctor/registerDoctor');
 const {addAppointments} = require('../controllers/Doctor/addAppointment');
 const {docViewHealthRecords} = require('../controllers/Doctor/docViewHealthRecords');
 const {addHealthRecord, uploadDocument} = require('../controllers/Doctor/addHealthRecord');
-const { addPrescription } = require('../controllers/Patient/PrescriptionList.js');
+const { CancelAppointment } = require('../controllers/Doctor/CancelAppointment');
+//const { addPrescription } = require('../controllers/Patient/PrescriptionList.js');
+const {addPrescription} = require('../controllers/Doctor/addPrescription');
+const {addMedicineToPrescription , removeMedicineFromPrescription} = require('../controllers/Doctor/updatePrescriptionMed');
+const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
+const {getDoctorMessages} = require('../controllers/Doctor/getDoctorMessages')
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -32,6 +38,7 @@ function verifyToken(req, res, next) {
         res.status(401).json({message: e.message});
     }
 }
+
 
 router.post('/register', upload.fields([
     { name: 'nationalIdFile', maxCount: 1 },
@@ -52,9 +59,11 @@ router.post('/:doctorUsername/schedule-followup', scheduleFollowUp);
 router.post('/changePassword', changePassword);
 router.get('/:doctorUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:doctorUsername/past-appointments', viewPastAppointments);
+router.get('/getDoctorMessages', getDoctorMessages);
 
 
 router.patch('/', updateDoctor);
+router.patch('/CancelAppointment', CancelAppointment);
 router.get('/viewAppointments', filterAppointments);
 router.get('/getAllAppointments', getAllApointments);
 router.get('/searchPatient', searchPatient);
@@ -100,6 +109,12 @@ router.get('/', (req, res) => {
 });
 router.post('/:doctorUsername/addHealthRecord',uploadDocument, addHealthRecord);
 router.get('/:doctorUsername/health-records',docViewHealthRecords);
+router.post('/addPrescription', addPrescription);
+
+router.post('/addMedicineToPrescription', addMedicineToPrescription);
+router.post('/removeMedicineFromPrescription', removeMedicineFromPrescription);
+router.post('/addMedicineDosage',addMedicineDosage);
+router.post('/updateMedicineDosage', updateMedicineDosage);
 
 module.exports = router;
 

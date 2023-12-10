@@ -2,11 +2,6 @@ const jwt = require('jsonwebtoken');
 
 const getUsername = async (req, res) => {
     const token = req.cookies.jwt || req.cookies.token;
-    // console.log("IN INFOGETTER");
-    // console.log(req.cookies.jwt);
-    // console.log(req.cookies.token);
-    // console.log(req.cookies);
-
     let username = "";
   if(token){
     jwt.verify(token, 'supersecret', (err, decodedToken) => {

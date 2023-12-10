@@ -3,7 +3,10 @@ import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 import { getInitials } from 'src/utils/get-initials';
 import { Scrollbar } from 'src/components/scrollbar';
+import { Button } from '@mui/material';
+import FileSaver from 'file-saver';
 import axios from 'axios';
+
 import {
   Avatar,
   Box,
@@ -33,6 +36,24 @@ export const PatientPrescriptionsTable = (props) => {
     rowsPerPage = 0,
   } = props;
 
+  const downloadPDF = async (prescription) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/patient/download-prescription-pdf`,
+        { prescription },
+        { responseType: 'blob' } // Ensure responseType is set to 'blob' to handle binary data
+      );
+  
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const fileName = `Prescription_${prescription._id}.pdf`;
+  
+      // Use FileSaver to trigger the download
+      FileSaver.saveAs(blob, fileName);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+    }
+  };
+
   return (
     <Card>
       <Scrollbar>
@@ -52,6 +73,8 @@ export const PatientPrescriptionsTable = (props) => {
                 <TableCell>
                   Status
                 </TableCell>
+                <TableCell>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -59,9 +82,19 @@ export const PatientPrescriptionsTable = (props) => {
                 const status = prescription.filled?'filled':'unfilled';
                 return (
                   <TableRow hover key={prescription._id}>
-                    <TableCell>
-                      {prescription.Drug}
-                    </TableCell>
+                  <TableCell>
+                    {/* Map over the Drug array and display drug details */}
+                    {prescription.Drug.map((drug, index) => (
+                      <div key={index}>
+                        <Typography variant="body1">
+                          {drug.drugName}
+                        </Typography>
+                        <Typography variant="body2">
+                          Dosage: {drug.dosage}
+                        </Typography>
+                      </div>
+                    ))}
+                  </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
                         <Typography variant="subtitle2">
@@ -77,6 +110,11 @@ export const PatientPrescriptionsTable = (props) => {
                         {status}
                       </SeverityPill>
                     </TableCell>
+                    <TableCell>
+                    <Button onClick={() => downloadPDF(prescription)}>
+                      Download PDF
+                    </Button>
+                  </TableCell>
                   </TableRow>
                 );
               })}

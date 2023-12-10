@@ -8,7 +8,7 @@ import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/materia
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
 import { DoctorsTable } from 'src/sections/admin/Doctors/DoctorsTable';
-import { DoctorsSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
+import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
 import { applyPagination } from 'src/utils/apply-pagination';
 
 const axios = require('axios');
@@ -124,7 +124,7 @@ return (
               </Stack>
             </Stack>
           </Stack>
-          <DoctorsSearch/>
+          <DoctorSearch />
           <DoctorsTable
             count={data.length}
             items={customers}

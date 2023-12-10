@@ -7,6 +7,7 @@ import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
+import FileSaver from 'file-saver';
 
 import {
     Button,

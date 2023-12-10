@@ -63,9 +63,9 @@ export const PatientTable = (props) => {
                 <TableCell>
                   Date of Birth
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   Password
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   Actions
                 </TableCell>
@@ -105,9 +105,9 @@ export const PatientTable = (props) => {
                     <TableCell>
                       {customer.DateOfBirth.toString().substring(0, 10)}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       {customer.Password}
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                       <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
                       onClick={() => {

@@ -60,6 +60,7 @@ const Page = () => {
                     );
 
                     console.log('File uploaded successfully:', response);
+                    router.refresh();
                     // Update the medical records state or perform any other necessary actions
                     // For example, you can fetch the updated records after successful upload
                     // and update the state accordingly.

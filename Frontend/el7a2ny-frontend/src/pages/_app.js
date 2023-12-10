@@ -8,6 +8,9 @@ import { AuthConsumer, AuthProvider } from 'src/contexts/auth-context';
 import { useNProgress } from 'src/hooks/use-nprogress';
 import { createTheme } from 'src/theme';
 import { createEmotionCache } from 'src/utils/create-emotion-cache';
+import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import socket from 'src/components/socket';
 import 'simplebar-react/dist/simplebar.min.css';
 
 const clientSideEmotionCache = createEmotionCache();
@@ -22,6 +25,15 @@ const App = (props) => {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   const theme = createTheme();
+
+  useEffect(() => {
+    if(Cookies.get('username') !== undefined){
+      socket.on('me', (id) => {
+        Cookies.set('socketID', id);
+      });
+      socket.emit('iAmReady', Cookies.get('username'));
+    }
+  }, []);
 
   return (
     <CacheProvider value={emotionCache}>

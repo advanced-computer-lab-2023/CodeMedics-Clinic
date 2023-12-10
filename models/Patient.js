@@ -41,7 +41,7 @@ const patientSchema = new Schema({
     },
     EmergencyContact: {
         type: {
-            Name: String, 
+            Name: String,
             Number: String,
             Relation: String
         },
@@ -53,14 +53,14 @@ const patientSchema = new Schema({
         required: false
     },
     FamilyMembers: {
-        type: [{relation: String, id: Schema.Types.ObjectId}],
+        type: [{ relation: String, id: Schema.Types.ObjectId }],
         ref: 'Patient',
     },
     FamilyMembersNoAccount: {
         type: [Schema.Types.ObjectId],
         ref: 'FamilyMember'
     },
-    Appointments:{
+    Appointments: {
         type: [String],
         required: false
     },
@@ -69,7 +69,7 @@ const patientSchema = new Schema({
         required: false,
         ref: 'Patient'
     },
-    HealthPackage:{
+    HealthPackage: {
         type: {
             membership: String, // Free, Silver, Gold, Platinum
             date: Date,
@@ -88,7 +88,7 @@ const patientSchema = new Schema({
         },
         required: false
     },
-    Wallet:{
+    Wallet: {
         type: Number,
         default: 0,
         required: false
@@ -98,7 +98,19 @@ const patientSchema = new Schema({
         originalname: String,
         uploadedBy: String,
     }],
-}, {timestamps: true});
+    Messages: {
+        type: [{
+            sender: String,
+            content: String,
+            timestamp: { type: Date, default: Date.now },
+        }],
+        default: [],
+        required: false,
+    },
+    SocketID: { type: String, required: false },
+
+}, { timestamps: true });
+
 
 const Patient = mongoose.model('Patient', patientSchema, 'Patients');
 module.exports = Patient;

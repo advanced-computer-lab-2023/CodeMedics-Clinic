@@ -10,7 +10,12 @@ exports.filterDoctorFreeSlots = async (req, res) => {
         const appointments = [];
         for (let i = 0; i < doctor[0].Appointments.length; i++) {
             const appointment = await Appointment.findOne({ _id: doctor[0].Appointments[i] });
-            if(appointment.status == "unreserved" && new Date(appointment.date) >= Date.now()){
+            const curAppointmentDate = new Date(appointment.date);
+            curAppointmentDate.setHours(appointment.startHour);
+            curAppointmentDate.setMinutes(0);
+            curAppointmentDate.setSeconds(0);
+            curAppointmentDate.setMilliseconds(0);
+            if(appointment.status == "unreserved" && curAppointmentDate >= Date.now()){
                 appointments.push(appointment);
             }
         }

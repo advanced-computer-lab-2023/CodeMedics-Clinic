@@ -3,6 +3,7 @@ import BellIcon from '@heroicons/react/24/solid/BellIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import Bars3Icon from '@heroicons/react/24/solid/Bars3Icon';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
+import Link from 'next/link';
 import {
   Avatar,
   Badge,
@@ -84,8 +85,9 @@ export const TopNav = (props) => {
                   <UsersIcon />
                 </SvgIcon>
               </IconButton>
-            </Tooltip>
+              </Tooltip>
             <Tooltip title="Notifications">
+            <Link href="/doctor/notifications">
               <IconButton>
                 <Badge
                   badgeContent={4}
@@ -97,6 +99,7 @@ export const TopNav = (props) => {
                   </SvgIcon>
                 </Badge>
               </IconButton>
+              </Link>
             </Tooltip>
             <Avatar
               onClick={accountPopover.handleOpen}

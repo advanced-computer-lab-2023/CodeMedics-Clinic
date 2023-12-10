@@ -7,23 +7,31 @@ const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers, removeFamilyMember, addFamilyMemberNoAccount, removeFamilyMemberNoAccount} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
-const { bookAppointment } = require('../controllers/Patient/BookAppointment');
+const { bookAppointment,  sendEmail } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
+const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
+const{getPatientMessages} =require('../controllers/Patient/getPatientMessages');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const Prescription = require('../models/Prescription'); 
 
 
 const {
     getPrescriptions,
     filterPrescriptions,
-    addPrescription
+    addPrescription,
+    deletePrescriptionsByUsername,
+    getPrescriptions1,  
+    createAndDownloadPDF
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
 const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
 
 const {payAppointment} = require('../controllers/Payment/payAppointment');
 const {payHealthPackage} = require('../controllers/Payment/payHealthPackage');
-
+const {getAppointmentAmount} = require('../controllers/Patient/getAppointmentAmount');
 const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
 const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
 const Patient = require('../models/Patient.js');
@@ -47,13 +55,15 @@ router.post('/register', patientController.createPatient);
 router.post('/changePassword', changePassword);
 router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
-
+router.get('/getAppointmentAmount', getAppointmentAmount);
 router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
 
+router.get('/getPatientMessages' , getPatientMessages );
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
 router.patch('/bookAppointment', bookAppointment);
+
 
 router.post('/payAppointment', payAppointment);
 router.post('/payHealthPackage', payHealthPackage);
@@ -68,7 +78,9 @@ router.post('/unsubscribeHealthPackage', patientController.healthPackageUnsubscr
 router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
 router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
-
+router.patch('/CancelAppointment', CancelAppointment);
+router.patch('/payWithWallet', patientController.payWithWallet);
+router.patch('/payWithWalletPackage', patientController.payWithWalletPackage);
 router.patch('/familyMembers', addFamilyMember);
 router.delete('/familyMembers', removeFamilyMember);
 router.delete('/familyMembersNoAccount', removeFamilyMemberNoAccount);
@@ -84,10 +96,32 @@ router.get('/doctorSearch', (req, res) => {
 
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/prescriptions', getPrescriptions);
+router.get('/prescriptions1', getPrescriptions1);
+
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
 router.post('/addPrescription', addPrescription);
+router.delete('/deletePrescription', deletePrescriptionsByUsername);
+
+// Backend route to handle PDF generation
+// Modify the function to generate PDF content and send it in the response
+router.post('/download-prescription-pdf', async (req, res) => {
+    try {
+      const prescription = req.body.prescription;
+      const pdfBuffer = await createAndDownloadPDF(prescription);
+  
+      // Send the PDF buffer as a response
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="Prescription_${prescription._id}.pdf"`);
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating PDF');
+    }
+  });
+
+  
 
 router.get('/:username/health-records', viewHealthRecords);
 

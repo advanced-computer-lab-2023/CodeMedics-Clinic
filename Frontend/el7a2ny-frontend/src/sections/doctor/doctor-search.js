@@ -26,7 +26,6 @@ export const DoctorsSearch = ({handleDateFilter , handleDoctorSearch , handleSpe
       defaultValue=""
       onChange={(str) => {
         handleSpecialitySearch(str.target.value);
-        console.log('Here ----> ');
       }}
       placeholder="Search Speciality"
       startAdornment={(

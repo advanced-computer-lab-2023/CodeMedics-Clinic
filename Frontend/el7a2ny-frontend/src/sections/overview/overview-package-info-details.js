@@ -17,7 +17,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
 
     const [me, setMe] = useState({});
     const router = useRouter();
-
+    // console.log("curPackage", curPackage);
     useEffect(() => {
         axios
             .get(`http://localhost:8000/patient/getMe`, { withCredentials: true })
@@ -31,17 +31,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
     }, []);
 
     const subscribeHealthPackage = () => {
-        axios(`http://localhost:8000/patient/subscribeHealthPackage`, {
-            method: 'POST',
-            data: {membership: curPackage.Name},
-            withCredentials: true
-        })
-            .then((res) => {
-                router.push('/user/packages');
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        router.push('/user/PackageMyPay?packageName=' + curPackage.Name + '&packagePrice=' + curPackage.Price);
     }
 
     const unsubscribeHealthPackage = () => {
@@ -118,7 +108,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
             </CardContent>
             <Divider />
             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                {Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' ?
+            {(Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' || Object.keys(me).length !== 0 && me.HealthPackage.membership !== curPackage.Name && me.HealthPackage.membership !== "Free") ?
                     <Button variant="contained" disabled>
                         Subscribe
                     </Button>
