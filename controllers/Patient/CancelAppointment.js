@@ -65,10 +65,29 @@ exports.CancelAppointment = async (req, res) => {
 
         // Notify both doctor and patient
         sendEmail(doctor.Email, 'Appointment Update', `Your appointment on ${appointment.date} has been canceled or rescheduled.`);
-        console.log("123456");
+        // Generate success message
+const doctorMessage = `Your appointment on ${appointment.date} has been canceled or rescheduled.`;
+
+// Add the success message to the doctor's messages list
+doctor.Messages.push({
+    sender: 'System',
+    content: doctorMessage,
+    timestamp: new Date(),
+});
+await doctor.save();
 
         sendEmail(patient.Email, 'Appointment Update', `Your appointment on ${appointment.date} has been canceled or rescheduled.`);
+  // Generate success message
+  const successMessage = `Your appointment on ${appointment.date} has been canceled or rescheduled.`;
 
+  // Add the success message to the patient's messages list
+  patient.Messages.push({
+      sender: 'System',
+      content: successMessage,
+      timestamp: new Date(),
+  });
+  await patient.save();
+  
         res.status(200).json({ success: true, message: 'Appointment Canceled Successfully' });}
     } catch (error) {
         console.error('Error canceling appointment:', error);
