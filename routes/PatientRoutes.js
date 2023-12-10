@@ -21,6 +21,7 @@ const {
     getPrescriptions,
     filterPrescriptions,
     addPrescription,
+    deletePrescriptionsByUsername,
     createAndDownloadPDF
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
@@ -96,6 +97,7 @@ router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
 router.post('/addPrescription', addPrescription);
+router.delete('/deletePrescription', deletePrescriptionsByUsername);
 
 // Backend route to handle PDF generation
 // Modify the function to generate PDF content and send it in the response
