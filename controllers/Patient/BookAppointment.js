@@ -43,10 +43,30 @@ exports.bookAppointment = async (req, res) => {
         await doctor.save();
 
         // Send email notification to patient
-        sendEmail(patient.Email, 'Appointment Confirmation', 'Your appointment has been booked successfully.');
+        sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
+// Generate success message
+const successMessage = `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`;
 
+// Add the success message to the patient's messages list
+patient.Messages.push({
+    sender: 'System',
+    content: successMessage,
+    timestamp: new Date(),
+});
+await patient.save();
         // Send email notification to doctor
         sendEmail(doctor.Email, 'New Appointment Booking', `Patient ${patient.FirstName} ${patient.LastName} has booked an appointment with you on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
+
+        // Generate success message
+const doctorMessage = `Patient ${patient.FirstName} ${patient.LastName} has booked an appointment with you on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`;
+
+// Add the success message to the doctor's messages list
+doctor.Messages.push({
+    sender: 'System',
+    content: doctorMessage,
+    timestamp: new Date(),
+});
+await doctor.save();
 
         // Response to the patient with appointment details
         res.status(200).json({

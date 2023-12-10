@@ -12,6 +12,7 @@ const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
 const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
+const{getPatientMessages} =require('../controllers/Patient/getPatientMessages');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const Prescription = require('../models/Prescription'); 
@@ -57,6 +58,7 @@ router.get('/:patientUsername/past-appointments', viewPastAppointments);
 router.get('/getAppointmentAmount', getAppointmentAmount);
 router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
 
+router.get('/getPatientMessages' , getPatientMessages );
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);

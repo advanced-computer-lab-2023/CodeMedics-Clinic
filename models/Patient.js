@@ -98,8 +98,19 @@ const patientSchema = new Schema({
         originalname: String,
         uploadedBy: String,
     }],
+    Messages: {
+        type: [{
+            sender: String,
+            content: String,
+            timestamp: { type: Date, default: Date.now },
+        }],
+        default: [],
+        required: false,
+    },
+},
     SocketID: { type: String, required: false },
 }, { timestamps: true });
+
 
 const Patient = mongoose.model('Patient', patientSchema, 'Patients');
 module.exports = Patient;
