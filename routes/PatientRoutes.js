@@ -22,6 +22,7 @@ const {
     filterPrescriptions,
     addPrescription,
     deletePrescriptionsByUsername,
+    getPrescriptions1,  
     createAndDownloadPDF
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
@@ -93,6 +94,8 @@ router.get('/doctorSearch', (req, res) => {
 
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/prescriptions', getPrescriptions);
+router.get('/prescriptions1', getPrescriptions1);
+
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });

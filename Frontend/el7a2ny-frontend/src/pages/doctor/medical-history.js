@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
 import { OverviewMedicalRecords } from 'src/sections/doctor/medicalHistory/overview-medical-records';
 import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';

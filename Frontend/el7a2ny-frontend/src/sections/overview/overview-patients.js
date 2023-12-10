@@ -30,7 +30,7 @@ export const OverviewLatestProducts = (props) => {
         {products.map((product, index) => {
 
             const handleViewPatient = (productID) =>{
-                router.push(`/doctor/patient-info?patientUsername=${product.Username}`);
+                router.push(`/doctor/patient-info?patientUsername=ee`);
             }
 
 
