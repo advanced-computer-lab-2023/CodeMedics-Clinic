@@ -26,7 +26,8 @@ const prescriptionSchema = new Schema({
     },
     filled: {   
         type: Boolean,
-        required: [true, 'Please enter a filled status']
+        default: false,
+        required: [false, 'Please enter a filled status']
     }
 }, { timestamps: true });
 

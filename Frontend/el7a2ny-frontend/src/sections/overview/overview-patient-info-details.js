@@ -131,6 +131,18 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                   variant="contained"
                   color="primary"
                   onClick={() => {
+                    router.push(`/doctor/addPrescriptionFront?username=${patient.Username}`)
+                  }}
+                >
+                  Add Prescription
+                </Button>
+              </Grid>
+            <Grid item xs={12} md={6}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
                     router.push(`/doctor/prescriptions?username=${patient.Username}`)
                   }}
                 >
