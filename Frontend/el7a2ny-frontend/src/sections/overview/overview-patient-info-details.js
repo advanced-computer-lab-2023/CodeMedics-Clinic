@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
-export const OverviewPatientInfoDetails = ({patient}) => {
+export const OverviewPatientInfoDetails = ({ patient, onPrescriptionUpload }) => {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const handleFileChange = (event) => {
@@ -112,6 +112,20 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                 </Button>
               </Grid>
 
+              {/* Upload Prescription button */}
+              <Grid item xs={12} md={6}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    router.push(`/doctor/prescriptions?username=${patient.Username}`)
+                  }}
+                >
+                  Add Prescription
+                </Button>
+              </Grid>
+
               {/* View Health Records button */}
               <Grid item xs={12} md={6}>
                 <Button
@@ -134,6 +148,16 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                     ref={fileInputRef}
                 />
             </Grid>
+            {/* File input for prescription */}
+            <Grid item xs={12} md={12}>
+                <input
+                  type="file"
+                  accept=".pdf, .doc, .docx" // Specify the allowed file types
+                  style={{ display: 'none' }}
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                />
+              </Grid>
           </Grid>
         </Box>}
       </CardContent>

@@ -12,9 +12,9 @@ exports.addPrescription = async (req, res) => {
       return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
     }
 
-    const { drugName, dosage, patientUsername, date, filledStatus } = req.body;
+    const { drugs, patientUsername, date, filledStatus } = req.body;
 
-    if (!patientUsername || !drugName  || !date || filledStatus === undefined) {
+    if (!patientUsername || !drugs || !date) {
       return res.status(400).json({ message: 'Incomplete data for prescription' });
     }
 
@@ -25,20 +25,14 @@ exports.addPrescription = async (req, res) => {
     }
 
     const newPrescription = new Prescription({
-      Drug: { drugName},
+      Drug: drugs,
       Doctor: doctorUsername,
       Patient: patientUsername,
       Date: date,
-      filled: filledStatus
+      filled: filledStatus || false,
     });
 
-    if (dosage) {
-      newPrescription.Drug.dosage = dosage;
-    }
-
-    const newPrescription2 = new Prescription(newPrescription);
-
-    await newPrescription2.save();
+    await newPrescription.save();
 
     patient.Prescriptions.push(newPrescription);
     await patient.save();
