@@ -10,17 +10,18 @@ const Page = () => {
   const fetchNotifications = async () => {
     try {
       const response = await axios.get('http://localhost:8000/doctor/getDoctorMessages', { withCredentials: true });
-      setNotifications(response.data.messages);
+      setNotifications(response.data.messages.reverse());
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   useEffect(() => {
     // Fetch notifications initially
     fetchNotifications();
 
-    // Set up interval to fetch notifications every 1 minute (adjust as needed)
+    // Set up interval to fetch notifications every 1 minutes (adjust as needed)
     const intervalId = setInterval(fetchNotifications, 1 * 60 * 1000);
 
     // Clean up interval when the component is unmounted
@@ -43,45 +44,30 @@ const Page = () => {
           <Typography variant="h3" gutterBottom>
             Notifications
           </Typography>
-          {notifications.length > 0 ? (
-            notifications.map((notification, index) => (
-              <Box
-                key={index}
-                sx={{
-                  border: '1px solid #ccc',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  marginBottom: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {/* Notification Message */}
-                <Typography variant="body1" gutterBottom>
-                  {notification.content}
-                </Typography>
-
-                {/* Date and Time */}
-                <Typography variant="caption" color="textSecondary" sx={{ marginTop: '8px' }}>
-                  {new Date(notification.timestamp).toLocaleDateString()}{' '}
-                  {new Date(notification.timestamp).toLocaleTimeString()}
-                </Typography>
-              </Box>
-            ))
-          ) : (
+          {notifications.map((notification, index) => (
             <Box
+              key={index}
               sx={{
                 border: '1px solid #ccc',
                 borderRadius: '8px',
                 padding: '16px',
                 marginBottom: '16px',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
-              <Typography variant="body1">
-                There are no notifications yet.
+              {/* Notification Message */}
+              <Typography variant="body1" gutterBottom>
+                {notification.content}
+              </Typography>
+
+              {/* Date and Time */}
+              <Typography variant="caption" color="textSecondary" sx={{ marginTop: '8px' }}>
+                {new Date(notification.timestamp).toLocaleDateString()}{' '}
+                {new Date(notification.timestamp).toLocaleTimeString()}
               </Typography>
             </Box>
-          )}
+          ))}
         </Container>
       </Box>
     </>

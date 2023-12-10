@@ -10,12 +10,11 @@ const Page = () => {
   const fetchNotifications = async () => {
     try {
       const response = await axios.get('http://localhost:8000/patient/getPatientMessages', { withCredentials: true });
-      setNotifications(response.data.messages);
+      setNotifications(response.data.messages.reverse());
     } catch (error) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     // Fetch notifications initially
     fetchNotifications();
