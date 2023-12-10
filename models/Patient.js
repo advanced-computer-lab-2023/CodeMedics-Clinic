@@ -107,8 +107,8 @@ const patientSchema = new Schema({
         default: [],
         required: false,
     },
-},
     SocketID: { type: String, required: false },
+
 }, { timestamps: true });
 
 
