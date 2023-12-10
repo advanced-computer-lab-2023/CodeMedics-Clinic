@@ -22,6 +22,8 @@ const {
     getPrescriptions,
     filterPrescriptions,
     addPrescription,
+    deletePrescriptionsByUsername,
+    getPrescriptions1,  
     createAndDownloadPDF
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
@@ -94,25 +96,24 @@ router.get('/doctorSearch', (req, res) => {
 
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/prescriptions', getPrescriptions);
+router.get('/prescriptions1', getPrescriptions1);
+
 router.get('/prescriptionList', (req, res) => {
     res.render('prescriptionsList');
 });
 router.post('/addPrescription', addPrescription);
+router.delete('/deletePrescription', deletePrescriptionsByUsername);
 
 // Backend route to handle PDF generation
 // Modify the function to generate PDF content and send it in the response
 router.post('/download-prescription-pdf', async (req, res) => {
     try {
       const prescription = req.body.prescription;
-  
-      // Generate the PDF content
       const pdfBuffer = await createAndDownloadPDF(prescription);
   
-      // Set response headers for PDF download
-      res.setHeader('Content-Disposition', 'attachment; filename=Prescription.pdf');
+      // Send the PDF buffer as a response
       res.setHeader('Content-Type', 'application/pdf');
-  
-      // Send the PDF content as the response
+      res.setHeader('Content-Disposition', `attachment; filename="Prescription_${prescription._id}.pdf"`);
       res.send(pdfBuffer);
     } catch (error) {
       console.error('Error generating PDF:', error);

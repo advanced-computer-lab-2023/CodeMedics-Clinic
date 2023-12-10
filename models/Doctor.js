@@ -49,27 +49,29 @@ const doctorSchema = new Schema({
         type: String,
         required: [true, 'Please enter a specialty']
     },
-    Patients:{
+    Patients: {
         type: [String],
         required: false
     },
-    Appointments:{
+    Appointments: {
         type: [String],
         required: false
     },
-    Wallet:{
+    Wallet: {
         type: Number,
         default: 0,
         required: false
     },
-    IDDocument: { type: String }, 
-    MedicalDegree: { type: String }, 
+    SocketID: { type: String, required: false },
+    IDDocument: { type: String },
+    MedicalDegree: { type: String },
     MedicalLicense: { type: String },
     AvailableTimeSlots: [{
         day: { type: String, required: true },
         startTime: { type: String, required: true },
         endTime: { type: String, required: true },
     }],
+
     Messages: {
         type: [{
             sender: String,

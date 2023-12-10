@@ -5,6 +5,7 @@ import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import CalendarDaysIcon from '@heroicons/react/24/solid/CalendarDaysIcon';
 import ClipboardDocumentListIcon from '@heroicons/react/24/solid/ClipboardDocumentListIcon';
+import ChatBubbleLeftRightIcon from '@heroicons/react/24/solid/ChatBubbleLeftRightIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
@@ -62,6 +63,15 @@ export const items = [
     icon: (
       <SvgIcon fontSize="small">
         <ClipboardDocumentListIcon   />
+      </SvgIcon>
+    )
+  },
+  {
+    title: 'Chat',
+    path: '/user/chat',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ChatBubbleLeftRightIcon   />
       </SvgIcon>
     )
   },
