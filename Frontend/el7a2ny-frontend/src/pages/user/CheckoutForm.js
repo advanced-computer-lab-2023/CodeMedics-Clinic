@@ -25,7 +25,9 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
     if (isDone) {
       axios.patch(
         `http://localhost:8000/patient/bookAppointment?appointmentId=${appointmentId}&patientUsername=${patientUsername}`
-      );
+      ).catch((err) => {
+        console.log(err);
+      })
       setIsPatched(true);
     }
   }, [isDone]);
