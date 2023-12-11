@@ -28,7 +28,7 @@ const appointmentSchema = new Schema({
     },
     isFollowUp: {
         type: Boolean,
-        required: true
+        required: false
     },
     status: {
         type: String,
