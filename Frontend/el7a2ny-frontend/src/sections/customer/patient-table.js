@@ -12,10 +12,13 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
+  Button
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import axios from 'axios';
+import { useState } from 'react';
 
 export const CustomersTable = (props) => {
   const {
@@ -34,6 +37,17 @@ export const CustomersTable = (props) => {
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
+  const [cancelAppointment, setCancelAppointment] = useState(items);
+  const CancelAppointment = async (appointmentID) => {
+    await axios.patch(`http://localhost:8000/doctor/CancelAppointment?appointmentID=${appointmentID}`);
+    for(let i = 0; i<items.length; i++){
+      if(items[i]._id === appointmentID){
+        items[i].status = 'cancelled';
+        break;
+      }
+    }
+    setCancelAppointment(items);
+}
 
   return (
     <Card>
@@ -74,14 +88,17 @@ export const CustomersTable = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((customer) => {
-                const isSelected = selected.includes(customer.id);
-                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+              {items.map((appointment) => {
+                const isSelected = selected.includes(appointment.id);
+                // const createdAt = format(appointment.createdAt, 'dd/MM/yyyy');
+
+                
+
 
                 return (
                   <TableRow
                     hover
-                    key={customer.id}
+                    key={appointment.id}
                     selected={isSelected}
                   >
                     <TableCell padding="checkbox">
@@ -89,9 +106,9 @@ export const CustomersTable = (props) => {
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(customer.id);
+                            onSelectOne?.(appointment.id);
                           } else {
-                            onDeselectOne?.(customer.id);
+                            onDeselectOne?.(appointment.id);
                           }
                         }}
                       />
@@ -103,22 +120,34 @@ export const CustomersTable = (props) => {
                         spacing={2}
                       >
                         <Typography variant="subtitle2">
-                          {!customer.patient ? '-----' : customer.patient}
+                          {!appointment.patient ? '-----' : appointment.patient}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {new Date(customer.date).toDateString()}
+                      {new Date(appointment.date).toDateString()}
                     </TableCell>
 
                     <TableCell>
-                      {customer.startHour}
+                      {appointment.startHour}
                     </TableCell>
                     <TableCell>
-                      {customer.endHour}
+                      {appointment.endHour}
                     </TableCell>
                     <TableCell>
-                      {customer.status}
+                      {appointment.status}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.status === 'upcoming' && (
+                        <Button
+                          color="error"
+                          variant="contained"
+                          size="small"
+                          onClick={() => {CancelAppointment(appointment._id);}}
+                        >
+                          Cancel
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
