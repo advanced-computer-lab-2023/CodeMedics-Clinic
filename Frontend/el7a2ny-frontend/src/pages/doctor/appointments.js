@@ -67,6 +67,7 @@ const Page = () => {
   );
 
   const handleDateChange = (event) => {
+    console.log(event.target.value);
     setSelectedDate(event.target.value);
   };
 
@@ -148,10 +149,10 @@ const Page = () => {
                   <Box sx={{ ml: 'auto' }}>
                     {/* Date selector */}
                     <TextField
-                      type="date"
+                      type="Date"
                       label="Date"
                       id='appDate'  
-                      value={selectedDate.toISOString().split('T')[0]}
+                      value={selectedDate}
                       onChange={handleDateChange}
                     />
                   </Box>

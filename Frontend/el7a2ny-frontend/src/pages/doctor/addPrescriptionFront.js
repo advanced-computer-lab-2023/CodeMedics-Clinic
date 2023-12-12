@@ -9,13 +9,14 @@ import Cookies from 'js-cookie';
 
 const PrescriptionPage = () => {
     const router = useRouter();
+    const username = new URLSearchParams(window.location.search).get('username');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
   
     // State for the prescription data
     const [prescriptionData, setPrescriptionData] = useState({
       doctorUsername: '',
-      patientUsername: '',
+      patientUsername: username,
       date: '',
       drugs: [
         {
@@ -67,14 +68,7 @@ const PrescriptionPage = () => {
         return newData;
       });
     };
-    const handleChange2 = (field) => (event) => {
-        setPrescriptionData((prevData) => {
-          const newData = { ...prevData, [field]: event.target.value };
-          console.log('Prescription Data:', newData);
-          return newData;
-        });
-      };
-  
+    
     const handleAddDrug = () => {
       setPrescriptionData((prevData) => {
         const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
@@ -88,117 +82,120 @@ const PrescriptionPage = () => {
       try {
         setLoading(true);
         console.log('Prescription Data:', prescriptionData);
-        const response = await axios.post(
-          'http://localhost:8000/doctor/addPrescription',
-          prescriptionData,
-          {
-            withCredentials: true,
-          }
-        );
-  
+        const response = await axios.post('http://localhost:8000/doctor/addPrescription', prescriptionData, {
+          withCredentials: true,
+        });
+    
         console.log('Prescription added successfully', response.data);
         setSuccessMessage('Prescription uploaded successfully!');
+        // Clear the error state
+        setError(null);
         //router.refresh();
       } catch (error) {
         console.error('Error adding prescription:', error);
+    
+        if (error.response) {
+          console.error('Server responded with:', error.response.data);
+          console.error('Status code:', error.response.status);
+        } else if (error.request) {
+          console.error('No response received from the server');
+        } else {
+          console.error('Error during request setup:', error.message);
+        }
+    
         setError('Error adding prescription. Please try again.');
       } finally {
         setLoading(false);
       }
     };
+    
   
     const handleDialogClose = () => {
       setSuccessMessage('');
     };
   
-  return (
-    <>
-      <Head>
-        <title>El7a2ny Clinic</title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
-        }}
-      >
-        <Container maxWidth="xl">
-          <Typography variant="h3" gutterBottom sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            Prescription Form
-          </Typography>
-          <form>
-          {prescriptionData.drugs.map((drug, index) => (
-          <div key={index}>
-            <TextField
-              label={`Drug Name ${index + 1}`}
-              value={drug.drugName}
-              onChange={handleChange('drugName', index)}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              label={`Dosage ${index + 1}`}
-              value={drug.dosage}
-              onChange={handleChange('dosage', index)}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-          </div>
-        ))}
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          onClick={handleAddDrug}
+    return (
+      <>
+        <Head>
+          <title>El7a2ny Clinic</title>
+        </Head>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            py: 8,
+          }}
         >
-          Add Drug
-        </Button>
-            <TextField
-              label="Patient Username"
-              value={prescriptionData.patientUsername}
-              onChange={handleChange2('patientUsername')}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              label="Date"
-              type="date"
-              name="date"
-              value={prescriptionData.date}
-              onChange={handleDateChange}
-            />
-       
-            <Button
-              type="button"
-              variant="contained"
-              color="primary"
-              onClick={handlePrescriptionSubmit}
-              disabled={loading}
-            >
-              Submit Prescription
+          <Container maxWidth="xl">
+            <Typography variant="h3" gutterBottom>
+              Prescription Form
+            </Typography>
+            <form>
+              {prescriptionData.drugs.map((drug, index) => (
+                <div key={index} style={{ marginBottom: '16px' }}>
+                  <TextField
+                    label={`Drug Name ${index + 1}`}
+                    value={drug.drugName}
+                    onChange={handleChange('drugName', index)}
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                  />
+                  <TextField
+                    label={`Dosage ${index + 1}`}
+                    value={drug.dosage}
+                    onChange={handleChange('dosage', index)}
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    style={{ marginTop: '8px' }}
+                  />
+                </div>
+              ))}
+              <Button type="button" variant="contained" color="primary" onClick={handleAddDrug}>
+                Add Drug
+              </Button>
+              <TextField
+                label="Date"
+                type="date"
+                name="date"
+                value={prescriptionData.date}
+                onChange={handleDateChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                style={{ marginTop: '16px' }}
+              />
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={handlePrescriptionSubmit}
+                disabled={loading}
+                style={{ marginTop: '16px' }}
+              >
+                Submit Prescription
+              </Button>
+            </form>
+            {loading && <p>Loading...</p>}
+            {error && <p style={{ color: 'red', marginTop: '16px' }}>{error}</p>}
+          </Container>
+        </Box>
+        <Dialog open={!!successMessage} onClose={handleDialogClose}>
+          <DialogTitle>Success</DialogTitle>
+          <DialogContent>
+            <DialogContentText>{successMessage}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              OK
             </Button>
-          </form>
-          {loading && <p>Loading...</p>}
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-        </Container>
-      </Box>
-     <Dialog open={!!successMessage} onClose={handleDialogClose}>
-        <DialogTitle>Success</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{successMessage}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+    
+
 };
 
 PrescriptionPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;

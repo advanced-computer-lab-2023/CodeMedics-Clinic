@@ -5,9 +5,9 @@ const nodemailer = require('nodemailer');
 
 exports.bookAppointment = async (req, res) => {
     try {
-        const { appointmentId, patientUsername } = req.body;
-        const appointment = await Appointment.findOne({ _id: appointmentId }).populate('doctor');
-
+        const { appointmentId, patientUsername } = req.query;
+        const appointment = await Appointment.findOne({ _id: appointmentId });
+        console.log(appointmentId, appointment);
         if (!appointment) {
             return res.status(400).json({ message: 'Appointment not found' });
         }
