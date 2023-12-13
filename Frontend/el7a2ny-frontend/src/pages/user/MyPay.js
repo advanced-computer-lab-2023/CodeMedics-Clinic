@@ -9,7 +9,7 @@ const stripePromise = loadStripe('pk_test_51OA3YuHNsLfp0dKZSCi30qg6xY63jh2SiffqC
 
 export default function MyPay({activeStep, setStep}) {
   const [clientSecret, setClientSecret] = useState('');
-
+  
   const router = useRouter();
   const { appointmentId, patientUsername} = router.query;
   useEffect(() => {

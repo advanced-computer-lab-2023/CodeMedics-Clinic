@@ -56,6 +56,17 @@ export const PatientAppointmentsTable = (props) => {
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const router = useRouter();
+  const [cancelAppointment, setCancelAppointment] = useState(items);
+
+  const CancelAppointment = async (appointmentID) => {
+    await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`);
+    for(let i = 0; i<items.length; i++){
+      if(items[i]._id === appointmentID){
+        items[i].status = 'cancelled';
+      }
+      setCancelAppointment(items);
+    }
+  };
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -83,6 +94,8 @@ export const PatientAppointmentsTable = (props) => {
                 </TableCell>
                 <TableCell>
                   Status
+                </TableCell>
+                <TableCell>
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -124,6 +137,18 @@ export const PatientAppointmentsTable = (props) => {
                     <SeverityPill color={statusMap[appointment.status]}>
                         {appointment.status}
                     </SeverityPill>
+                    </TableCell>
+                    <TableCell>
+                      {appointment.status === 'upcoming' && (
+                        <Button
+                          color="error"
+                          variant="contained"
+                          size="small"
+                          onClick={() => {CancelAppointment(appointment._id);}}
+                        >
+                          Cancel
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 );

@@ -18,20 +18,25 @@ const appointmentSchema = new Schema({
         type: String,
         required: true
     },
-    startHour:{
+    startHour: {
         type: Number,
         required: true
     },
-    endHour:{
+    endHour: {
         type: Number,
         required: true
     },
-    status:{
+    isFollowUp: {
+        type: Boolean,
+        required: false
+    },
+    status: {
         type: String,
         enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled'],
-        default: 'unreserved', 
-        required: true }
-} , {timestamps: true});
+        default: 'unreserved',
+        required: true
+    }
+}, {timestamps: true});
 
 const Appointment = mongoose.model('Appointment', appointmentSchema, 'Appointments');
 module.exports = Appointment;

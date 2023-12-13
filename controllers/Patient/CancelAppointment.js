@@ -26,13 +26,13 @@ async function sendEmail(recipient, subject, message) {
 
 exports.CancelAppointment = async (req, res) => {
     try {
-        const { appointmentId } = req.body;
+        const { appointmentID } = req.query;
 
-        if (!appointmentId) {
+        if (!appointmentID) {
             return res.status(400).json({ success: false, message: 'Appointment ID is required' });
         }
 
-        const appointment = await Appointment.findOne({ _id: appointmentId });
+        const appointment = await Appointment.findOne({ _id: appointmentID });
 
         if (!appointment) {
             return res.status(404).json({ success: false, message: 'Appointment not found' });
@@ -53,10 +53,9 @@ exports.CancelAppointment = async (req, res) => {
                 return res.status(404).json({ success: false, message: 'Doctor or patient not found' });
             }
 
-            const appointmentPrice = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
+            const appointmentPrice = (Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour))) * doctor.HourlyRate;
             doctor.Wallet -= appointmentPrice;
             patient.Wallet += appointmentPrice;
-
             await doctor.save();
             await patient.save();
             appointment.status = 'unreserved';
@@ -102,4 +101,7 @@ const transporter = nodemailer.createTransport({
         user: 'mirnahaitham2@gmail.com',
         pass: 'dygc irfq totb kuzy',
     },
+    tls: {
+        rejectUnauthorized: false
+    }
 });

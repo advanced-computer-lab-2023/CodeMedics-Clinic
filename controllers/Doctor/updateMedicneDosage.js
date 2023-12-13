@@ -67,36 +67,11 @@ exports.updateMedicineDosage = async (req, res) => {
 exports.addMedicineDosage = async (req, res) => {
     try {
       const doctorUsername = await getUsername(req, res);
-      const { patientUsername, medicineName, dosage } = req.body;
+      const { prescriptionID, medicineName, dosage } = req.body;
   
-      if (!doctorUsername) {
-        return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
-      }
+     
   
-      const doctor = await Doctor.findOne({ Username: doctorUsername });
-  
-      if (!doctor) {
-        return res.status(404).json({ message: 'Doctor not found.' });
-      }
-  
-      const patient = await Patient.findOne({ Username: patientUsername });
-  
-      if (!patient) {
-        return res.status(404).json({ message: 'Patient not found.' });
-      }
-  
-      const appointmentIds = doctor.Appointments;
-      const hasCompletedAppointment = await Appointment.exists({
-        _id: { $in: appointmentIds },
-        patient: patientUsername,
-        status: 'completed',
-      });
-  
-      if (!hasCompletedAppointment) {
-        return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
-      }
-  
-      const prescription = await Prescription.findOne({ Doctor: doctor.Username, Patient: patient.Username });
+      const prescription = await Prescription.findOne({ _id:prescriptionID });
   
       if (!prescription) {
         return res.status(404).json({ message: 'Prescription not found or doctor does not have access.' });
