@@ -5,41 +5,29 @@ const Doctor = require('../../models/Doctor');
 const Patient = require('../../models/Patient');
 const Appointment = require('../../models/Appointment');
 
-// Add medicine to a patient's prescription
+
 exports.addMedicineToPrescription = async (req, res) => {
   try {
     const doctorUsername = await getUsername(req, res);
-    const { patientUsername, medicineName, dosage } = req.body;
+    const { prescriptionID, medicineName, dosage } = req.body;
 
     if (!doctorUsername) {
       return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
     }
 
-    const doctor = await Doctor.findOne({ Username: doctorUsername });
+    // const appointmentIds = doctor.Appointments;
+    // const hasCompletedAppointment = await Appointment.exists({
+    //     _id: { $in: appointmentIds },
+    //     patient: patientUsername,
+    //     status: 'completed',
+    // });
 
-    if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found.' });
-    }
+    // if (!hasCompletedAppointment) {
+    //     return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
+    // }
 
-    const patient = await Patient.findOne({ Username: patientUsername });
-
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found.' });
-    }
-
-    const appointmentIds = doctor.Appointments;
-    const hasCompletedAppointment = await Appointment.exists({
-        _id: { $in: appointmentIds },
-        patient: patientUsername,
-        status: 'completed',
-    });
-
-    if (!hasCompletedAppointment) {
-        return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
-    }
-
-    const prescription = await Prescription.findOne({ Doctor: doctor.Username, Patient: patient.Username });
-
+    const prescription = await Prescription.findOne({ _id:prescriptionID });
+  
     if (!prescription) {
       return res.status(404).json({ message: 'Prescription not found or doctor does not have access.' });
     }
@@ -56,7 +44,8 @@ exports.addMedicineToPrescription = async (req, res) => {
       medicineData.dosage = dosage;
     }
     
-    prescription.Drug.push(medicineData);    await prescription.save();
+    prescription.Drug.push(medicineData);    
+    await prescription.save();
 
     res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
   } catch (error) {
@@ -64,11 +53,11 @@ exports.addMedicineToPrescription = async (req, res) => {
   }
 };
 
-// Remove medicine from a patient's prescription
+
 exports.removeMedicineFromPrescription = async (req, res) => {
   try {
     const doctorUsername = await getUsername(req, res);
-    const { patientUsername, medicineName } = req.body;
+    const { prescriptionID, medicineName } = req.body;
 
     if (!doctorUsername) {
       return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
@@ -80,24 +69,19 @@ exports.removeMedicineFromPrescription = async (req, res) => {
       return res.status(404).json({ message: 'Doctor not found.' });
     }
 
-    const patient = await Patient.findOne({ Username: patientUsername });
 
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found.' });
-    }
+    // const appointmentIds = doctor.Appointments;
+    // const hasCompletedAppointment = await Appointment.exists({
+    //     _id: { $in: appointmentIds },
+    //     patient: patientUsername,
+    //     status: 'completed',
+    // });
 
-    const appointmentIds = doctor.Appointments;
-    const hasCompletedAppointment = await Appointment.exists({
-        _id: { $in: appointmentIds },
-        patient: patientUsername,
-        status: 'completed',
-    });
+    // if (!hasCompletedAppointment) {
+    //     return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
+    // }
 
-    if (!hasCompletedAppointment) {
-        return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
-    }
-
-    const prescription = await Prescription.findOne({ Doctor: doctor.Username, Patient: patient.Username });
+    const prescription = await Prescription.findOne({ _id:prescriptionID });
 
     if (!prescription) {
       return res.status(404).json({ message: 'Prescription not found or doctor does not have access.' });
