@@ -28,6 +28,16 @@ export const items = [
     )
   },
   {
+    title: 'Prescriptions',
+    path: '/doctor/AllPrescriptions',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ChartBarIcon />
+      </SvgIcon>
+    )
+  },
+
+  {
     title: 'Account',
     path: '/doctor/account',
     icon: (
