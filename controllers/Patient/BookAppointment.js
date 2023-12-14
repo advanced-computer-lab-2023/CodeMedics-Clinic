@@ -125,7 +125,9 @@ exports.payWithWallet = async (req, res) => {
         appointment.patient = Username;
         appointment.status = "upcoming";
         await appointment.save();
-        doctor.Appointments.push(appointment._id);
+        if(!doctor.Appointments.includes(appointment._id)){
+            doctor.Appointments.push(appointment._id);
+        }
         if(!doctor.Patients.includes(patient._id)){
             doctor.Patients.push(patient._id);
         }
