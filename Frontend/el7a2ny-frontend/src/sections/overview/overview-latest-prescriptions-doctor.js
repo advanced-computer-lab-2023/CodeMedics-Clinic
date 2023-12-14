@@ -252,7 +252,7 @@ const handleAddMedicine = (prescriptionId) => {
                           </Button>
                         </div>
                       ) : null}
-                      {!isAddingMedicine && (
+                      {!isAddingMedicine && !prescription.filled && (
                         <Button
                           onClick={() => {
                             setIsAddingMedicine(true);

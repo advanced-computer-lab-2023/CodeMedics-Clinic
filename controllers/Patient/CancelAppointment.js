@@ -56,6 +56,16 @@ exports.CancelAppointment = async (req, res) => {
             const appointmentPrice = (Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour))) * doctor.HourlyRate;
             doctor.Wallet -= appointmentPrice;
             patient.Wallet += appointmentPrice;
+            let idx = -1;
+            for(let i = 0; i<patient.Appointments.length; i++){
+                if(patient.Appointments[i] === appointmentID){
+                    idx = i;
+                    break;
+                }
+            }
+            if(idx != -1){
+                patient.Appointments.splice(idx, idx);
+            }
             await doctor.save();
             await patient.save();
             appointment.status = 'unreserved';
