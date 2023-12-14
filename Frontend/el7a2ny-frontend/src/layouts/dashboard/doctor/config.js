@@ -7,6 +7,8 @@ import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
+import ChatBubbleLeftRightIcon from '@heroicons/react/24/solid/ChatBubbleLeftRightIcon';
+
 
 export const items = [
   {
@@ -36,7 +38,15 @@ export const items = [
       </SvgIcon>
     )
   },
-
+  {
+    title: 'Chat',
+    path: '/doctor/chat',
+    icon: (
+      <SvgIcon fontSize="small">
+        <ChatBubbleLeftRightIcon   />
+      </SvgIcon>
+    )
+  },
   {
     title: 'Account',
     path: '/doctor/account',
