@@ -17,6 +17,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const Prescription = require('../models/Prescription'); 
 
+const { RescheduleAppointment } = require('../controllers/Patient/RescheduleAppointment');
 
 const {
     getPrescriptions,
@@ -64,6 +65,7 @@ router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
 // router.patch('/bookAppointment', bookAppointment);
 
+router.patch('/RescheduleAppointment', RescheduleAppointment);
 
 router.post('/payAppointment', payAppointment);
 router.post('/payHealthPackage', payHealthPackage);

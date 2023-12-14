@@ -5,8 +5,14 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 
-
-
+import { List, ListItemButton, ListItem, ListItemText} from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Menu,
+} from '@mui/material';
 const statusMap = {
     upcoming: 'warning',
     cancelled: 'error',
@@ -30,14 +36,16 @@ import {
   SvgIcon,
   TableRow,
   IconButton,
-  Tooltip,
+  Tooltip, 
+  DialogContentText,
   Typography
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-
+import { set } from 'lodash';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 export const PatientAppointmentsTable = (props) => {
   const {
     count = 0,
@@ -52,6 +60,8 @@ export const PatientAppointmentsTable = (props) => {
     rowsPerPage = 0,
     selected = []
   } = props;
+
+  
 
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
@@ -68,8 +78,75 @@ export const PatientAppointmentsTable = (props) => {
     }
   };
 
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const [unreservedAppointments, setUnreservedAppointments] = useState([]);
+  const [rescheduling, setRescheduling] = useState(false);
+  const getUnreservedAppointments = async (doctorUsername) => {
+    await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername).then((res) => {
+      setUnreservedAppointments(res.data.appointments);
+    }).catch((err) => {
+      console.log(err);
+    });
+  };
+    
 
+  const [appointmentMenu, setAppointmentMenu] = useState({});
+  const [toBeRescheduled, setToBeRescheduled] = useState(null);
+  const handleButtonClick = (event, appointment) => {
+    setAppointmentMenu({
+      ...appointmentMenu,
+      [appointment._id]: {
+        anchorEl: event.currentTarget,
+        selectedItem: appointmentMenu[appointment._id]?.selectedItem || '',
+      },
+    });
+    console.log("button clicked");
+  };
+
+  const handleMenuClose = (appointmentID) => {
+    setAppointmentMenu({
+      ...appointmentMenu,
+      [appointmentID]: {
+        anchorEl: null,
+        selectedItem: appointmentMenu[appointmentID]?.selectedItem || '',
+      },
+    });
+  };
+
+
+  const handleMenuItemClick = (item, appointment) => {
+    setAppointmentMenu({
+      ...appointmentMenu,
+      [appointment._id]: {
+        anchorEl: null,
+        selectedItem: item,
+      },
+    });
+    if(item === "Cancel"){
+      CancelAppointment(appointment._id);
+    }
+    else if(item === "Reschedule"){
+      getUnreservedAppointments(appointment.doctorUsername);
+      setToBeRescheduled(appointment);
+      setRescheduling(true);
+    }
+    else if(item === "Request a Follow-up"){
+
+    }
+  };
+
+  const rescheduleAppointment = async (appointmentID, oldAppointment) => {
+    await axios.patch(`http://localhost:8000/patient/RescheduleAppointment?appointmentID=${appointmentID}&oldAppointmentID=${oldAppointment}&username=${Cookies.get('username')}`).then
+    ((res) => {
+      console.log(res);
+    }
+    ).catch((err) => {
+      console.log(err);
+    });
+    
+  };
+
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const buttons = ["Cancel", "Request a Follow-up", "Reschedule"];
   return (
     <Card>
       <Scrollbar>
@@ -139,16 +216,28 @@ export const PatientAppointmentsTable = (props) => {
                     </SeverityPill>
                     </TableCell>
                     <TableCell>
-                      {appointment.status === 'upcoming' && (
-                        <Button
-                          color="error"
-                          variant="contained"
-                          size="small"
-                          onClick={() => {CancelAppointment(appointment._id);}}
-                        >
-                          Cancel
+                    <div>
+                        <Button onClick={(event) => handleButtonClick(event, appointment)}>
+                          {appointmentMenu[appointment._id]?.selectedItem || 'Actions'}
                         </Button>
-                      )}
+                        <Menu
+                          anchorEl={appointmentMenu[appointment._id]?.anchorEl}
+                          open={Boolean(appointmentMenu[appointment._id]?.anchorEl)}
+                          onClose={() => {
+                            handleMenuClose(appointment._id);
+                            
+                          }}
+                          anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
+                          transformOrigin={{ vertical: 'center', horizontal: 'right' }}
+                        >
+                          {buttons.map((item, index) => (
+                            <MenuItem key={index} onClick={() => {handleMenuItemClick(item, appointment)
+                            }}>
+                              {item}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -156,6 +245,127 @@ export const PatientAppointmentsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
+          {rescheduling && toBeRescheduled.status !== 'upcoming' && (<div>
+            <Dialog open={rescheduling} onClose={() => {{
+                  setRescheduling(false);
+                  setToBeRescheduled(null);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeRescheduled._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}}>
+              <DialogTitle>Invalid Action</DialogTitle>
+              <DialogContent>
+                <DialogContentText>Appointment should be upcoming to be rescheduled</DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setRescheduling(false);
+                  setToBeRescheduled(null);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeRescheduled._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  
+                  }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)
+          }
+          {rescheduling && toBeRescheduled.status === 'upcoming' && (<div>
+            <Dialog open={rescheduling} onClose={() => {{
+                  setRescheduling(false);
+                  setToBeRescheduled(null);
+                  setUnreservedAppointments([]);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeRescheduled._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                }}}>
+              <DialogTitle>Reschedule</DialogTitle>
+              <DialogContent>
+                
+                  {unreservedAppointments.length === 0 && (<div>
+                    <DialogContentText>No Available Slots</DialogContentText>
+                  </div>)}
+                {unreservedAppointments.length > 0 && (
+                  <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  Date
+                </TableCell>
+                <TableCell>
+                  Day
+                </TableCell>
+                <TableCell>
+                  From
+                </TableCell>
+                <TableCell>
+                  To
+                </TableCell>
+                <TableCell>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {unreservedAppointments.map((appointment) => {
+                const isSelected = selected.includes(appointment.id);
+                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+
+                return (
+                  <TableRow
+                    hover
+                    key={appointment._id}
+                    selected={isSelected}
+                  >
+                    <TableCell>
+                      {new Date(appointment.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {days[new Date(appointment.date).getDay()]}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.startHour}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.endHour}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={() => {rescheduleAppointment(appointment._id, toBeRescheduled._id)}}>Reschedule</Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setRescheduling(false);
+                  setToBeRescheduled(null);
+                  setUnreservedAppointments([]);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeRescheduled._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
       </Scrollbar>
       <TablePagination
         component="div"
