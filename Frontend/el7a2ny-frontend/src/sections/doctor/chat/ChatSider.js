@@ -27,7 +27,8 @@ export const ChatSider = (props) => {
             />
             <Box>
                 {chats && chats.map((chat, index) => {
-                    const doctor = chat.doctor;
+                    const patient = chat.patient;
+                    // const subtitle = chat.latestMessage ? chat.latestMessage.sender == username ? "You: " : chat.latestMessage.sender + ": " + chat.latestMessage.content : "";
                     return (
                         <Stack
                         key={index}
@@ -40,18 +41,18 @@ export const ChatSider = (props) => {
                             '&:hover': {
                                 backgroundColor: 'action.hover'
                             },
-                            ...(selectedChat && selectedChat.doctor.Username === doctor.Username && {
+                            ...(selectedChat && selectedChat.patient.Username === patient.Username && {
                                 backgroundColor: 'action.hover'
                             })
                         }} onClick={() => { setSelectedChat(chat); getMessages(chat.chat._id); }}>
                             <Stack direction="row" >
-                                <Avatar alt={doctor.FirstName + " " + doctor.LastName} src={doctor.Picture == null ? `/assets/avatars/${index % 16}.png` : doctor.Picture} />
+                                <Avatar alt={patient.FirstName + " " + patient.LastName} src={patient.Picture == null ? `/assets/avatars/${index % 16}.png` : patient.Picture} />
                                 <Stack sx={{ ml: 2, }}>
                                     <Typography variant='body1' >
-                                        {doctor.FirstName + " " + doctor.LastName}
+                                        {patient.FirstName + " " + patient.LastName}
                                     </Typography>
                                     {chat.latestMessage && <Typography variant="caption" color="textSecondary">
-                                        {chat.latestMessage.sender == username ? "You: " : ""} {chat.latestMessage.content}
+                                        {chat.latestMessage.sender == username ? "Me: " : ""} {chat.latestMessage.content}
                                     </Typography>}
                                 </Stack>
                             </Stack>
