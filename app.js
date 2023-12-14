@@ -51,8 +51,6 @@ const {putSocket, getSocket} = require('./config/socket');
 // server.listen(5000);
 io.on("connection", (socket) => {
 
-  console.log("Socket id:", socket.id);
-
   socket.on("iAmReady", (username) => {
     console.log("iAmReady: " + username);
     putSocket(username, socket.id);

@@ -28,23 +28,26 @@ const Page = () => {
             });
     }, []);
 
-    socket.on('newMessage', (message) => {
-        
-        const tmp = chats;
-        for(let i = 0; i < tmp.length; i++) {
-            if(tmp[i].chat._id == message.chat) {
+    const changeChatAndMessages = (message) => {
+        const tmp = [];
+        for(let i = 0; i < chats.length; i++) {
+            if(chats[i].chat._id == message.chat) {
+                tmp.push(chats[i]);
                 tmp[i].chat.latestMessage = message;
                 tmp[i].latestMessage = message;
-                break;
+            }
+            else{
+                tmp.push(chats[i]);
             }
         }
         setChats(tmp);
-
-        console.log(chats);
         if(selectedChat && selectedChat.chat._id == message.chat) {
             setMessages([...messages, message]);
         }
+    };
 
+    socket.on('newMessage', (message) => {
+        changeChatAndMessages(message);
     });
 
      const getMessages = (chatId) => {
@@ -65,7 +68,7 @@ const Page = () => {
         };
         axios.post("http://localhost:8000/chat/sendMessage", body , { withCredentials: true })
             .then((response) => {
-                setMessages([...messages, response.data.newMessage]);
+                changeChatAndMessages(response.data.newMessage);
                 socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.patient.Username});
             }).catch((error) => {
                 console.log(error);

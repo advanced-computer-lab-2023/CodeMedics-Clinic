@@ -30,7 +30,9 @@ export const ChatSider = (props) => {
                     const patient = chat.patient;
                     // const subtitle = chat.latestMessage ? chat.latestMessage.sender == username ? "You: " : chat.latestMessage.sender + ": " + chat.latestMessage.content : "";
                     return (
-                        <Stack sx={{
+                        <Stack
+                        key={index}
+                        sx={{
                             borderRadius: 2.5,
                             cursor: 'pointer',
                             px: 3,

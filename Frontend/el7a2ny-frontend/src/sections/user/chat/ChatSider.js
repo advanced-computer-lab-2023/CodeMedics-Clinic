@@ -28,9 +28,11 @@ export const ChatSider = (props) => {
             <Box>
                 {chats && chats.map((chat, index) => {
                     const doctor = chat.doctor;
-                    const subtitle = chat.latestMessage ? chat.latestMessage.sender == username ? "You: " : chat.latestMessage.sender + ": " + chat.latestMessage.content : "";
+                    console.log('chat sider here ======>');
                     return (
-                        <Stack sx={{
+                        <Stack
+                        key={index}
+                        sx={{
                             borderRadius: 2.5,
                             cursor: 'pointer',
                             px: 3,
