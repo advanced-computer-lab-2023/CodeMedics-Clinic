@@ -6,7 +6,7 @@ const { getMessages , sendMessage } = require('../controllers/Chat/Messages');
 
 router.get('/getPatientChats', getPatientChats);
 router.get('/getDoctorChats', getDoctorChats);
-router.get('/getMessages/:chatId', getMessages);
+router.get('/getMessages', getMessages);
 router.post('/sendMessage', sendMessage);
 
 module.exports = router;

@@ -6,7 +6,6 @@ import { useAuth } from 'src/hooks/use-auth';
 import Cookies from 'js-cookie';
 
 const username = Cookies.get("username");
-//console.log(Cookies.attributes);
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;

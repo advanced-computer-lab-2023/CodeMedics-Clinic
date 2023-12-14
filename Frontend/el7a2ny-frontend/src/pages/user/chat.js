@@ -1,9 +1,6 @@
 import Head from 'next/head';
 import { Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Card, OutlinedInput, InputAdornment, SvgIcon, IconButton, Tooltip } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
-import CameraIcon from '@heroicons/react/24/solid/CameraIcon';
-import PaperAirplaneIcon from '@heroicons/react/24/solid/PaperAirplaneIcon';
 import { ChatSider } from 'src/sections/user/chat/ChatSider';
 import { ChatBox } from 'src/sections/user/chat/ChatBox';
 
@@ -18,7 +15,7 @@ const Page = () => {
 
     const username = Cookies.get('username');
     const [chats, setChats] = useState([]);
-    const [messages, setMessages] = useState(["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"]);
+    const [messages, setMessages] = useState([]);
     const [selectedChat, setSelectedChat] = useState(null);
     useEffect(() => {
         axios.get('http://localhost:8000/chat/getPatientChats', { withCredentials: true })
@@ -30,6 +27,30 @@ const Page = () => {
             });
     }, []);
 
+     const getMessages = (chatId) => {
+        if(selectedChat && chatId == selectedChat.chat._id) return;
+        axios.get(`http://localhost:8000/chat/getMessages?chatId=${chatId}`, { withCredentials: true })
+            .then((response) => {
+                setMessages(response.data.messages);
+            }).catch((error) => {
+                console.log(error);
+            });
+     };
+
+     const sendMessage = (message) => {
+        const body = {
+            sender: username,
+            content: message,
+            chatId: selectedChat.chat._id,
+        };
+        axios.post("http://localhost:8000/chat/sendMessage", body , { withCredentials: true })
+            .then((response) => {
+                setMessages([...messages, response.data.newMessage]);
+            }).catch((error) => {
+                console.log(error);
+            });
+     };
+
     return (
         <>
             <Head>
@@ -38,7 +59,7 @@ const Page = () => {
             <Box>
                 <Divider />
                 <Stack direction="row" >
-                    <ChatSider chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username}/>
+                    <ChatSider chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages}/>
                     <Divider orientation="vertical" flexItem />
                     {selectedChat == null ?
                         <Stack>
@@ -47,7 +68,7 @@ const Page = () => {
                             Start meaningful conversations!
                             </Typography>
                         </Stack> :
-                        <ChatBox selectedChat={selectedChat} messages={messages} />
+                        <ChatBox selectedChat={selectedChat} messages={messages} username={username} sendMessage={sendMessage}/>
                     }
                 </Stack>
             </Box>

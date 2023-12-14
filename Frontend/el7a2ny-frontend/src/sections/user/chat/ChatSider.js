@@ -2,7 +2,7 @@ import { Avatar, Box, InputAdornment, OutlinedInput, Stack, SvgIcon, Typography,
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 
 export const ChatSider = (props) => {
-    const { chats, selectedChat, setSelectedChat, username } = props;
+    const { chats, selectedChat, setSelectedChat, username , getMessages } = props;
 
     return (
         <Stack sx={{ m: 2, height: 550, width: 300 }}>
@@ -28,6 +28,7 @@ export const ChatSider = (props) => {
             <Box>
                 {chats && chats.map((chat, index) => {
                     const doctor = chat.doctor;
+                    const subtitle = chat.latestMessage ? chat.latestMessage.sender == username ? "You: " : chat.latestMessage.sender + ": " + chat.latestMessage.content : "";
                     return (
                         <Stack sx={{
                             borderRadius: 2.5,
@@ -41,7 +42,7 @@ export const ChatSider = (props) => {
                             ...(selectedChat && selectedChat.doctor.Username === doctor.Username && {
                                 backgroundColor: 'action.hover'
                             })
-                        }} onClick={() => { setSelectedChat(chat); }}>
+                        }} onClick={() => { setSelectedChat(chat); getMessages(chat.chat._id); }}>
                             <Stack direction="row" >
                                 <Avatar alt={doctor.FirstName + " " + doctor.LastName} src={doctor.Picture == null ? `/assets/avatars/${index % 16}.png` : doctor.Picture} />
                                 <Stack sx={{ ml: 2, }}>
@@ -49,7 +50,7 @@ export const ChatSider = (props) => {
                                         {doctor.FirstName + " " + doctor.LastName}
                                     </Typography>
                                     {chat.latestMessage && <Typography variant="caption" color="textSecondary">
-                                        {chat.latestMessage.sender == username ? "You: " : chat.latestMessage.sender + ": " + chat.latestMessage.content}
+                                        {chat.latestMessage.sender == username ? "You: " : ""} {chat.latestMessage.content}
                                     </Typography>}
                                 </Stack>
                             </Stack>
