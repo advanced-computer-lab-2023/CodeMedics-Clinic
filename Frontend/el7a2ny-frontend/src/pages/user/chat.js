@@ -4,6 +4,8 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import CameraIcon from '@heroicons/react/24/solid/CameraIcon';
 import PaperAirplaneIcon from '@heroicons/react/24/solid/PaperAirplaneIcon';
+import { ChatSider } from 'src/sections/user/chat/ChatSider';
+import { ChatBox } from 'src/sections/user/chat/ChatBox';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -16,9 +18,8 @@ const Page = () => {
 
     const username = Cookies.get('username');
     const [chats, setChats] = useState([]);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(["a","a","a","a","a","a","a","a","a","a","a","a","a","a","a"]);
     const [selectedChat, setSelectedChat] = useState(null);
-
     useEffect(() => {
         axios.get('http://localhost:8000/chat/getPatientChats', { withCredentials: true })
             .then((response) => {
@@ -37,47 +38,7 @@ const Page = () => {
             <Box>
                 <Divider />
                 <Stack direction="row" >
-                    <Stack sx={{ m: 2, height: 550, width: 300 }}>
-                        <Typography variant='h4' sx={{ mb: 4, fontSize: 21 }}>
-                            Chats
-                        </Typography>
-                        <OutlinedInput
-                            defaultValue=""
-                            onChange={(str) => {
-                            }}
-                            placeholder="Search Doctor"
-                            startAdornment={(
-                                <InputAdornment position="start">
-                                    <SvgIcon
-                                        color="action"
-                                        fontSize="small"
-                                    >
-                                        <MagnifyingGlassIcon />
-                                    </SvgIcon>
-                                </InputAdornment>
-                            )}
-                        />
-                        <Box>
-                            {chats && chats.map((chat, index) => {
-                                const doctor = chat.doctor;
-                                return (
-                                    <Card sx={{ m: 2, p: 2 }} onClick={() => {setSelectedChat(chat);}}>
-                                        <Stack direction="row" >
-                                            <Avatar alt={doctor.FirstName + " " + doctor.LastName} src={doctor.Picture == null ? `/assets/avatars/${index % 16}.png` : doctor.Picture} />
-                                            <Stack sx={{ ml: 2, }}>
-                                                <Typography variant='body1' >
-                                                    {doctor.FirstName + " " + doctor.LastName}
-                                                </Typography>
-                                                {chat.latestMessage && <Typography variant="caption" color="textSecondary">
-                                                    {chat.latestMessage.sender == username ? "You: " : chat.latestMessage.sender + ": "+ chat.latestMessage.content}
-                                                </Typography>}
-                                            </Stack>
-                                        </Stack>
-                                    </Card>
-                                )
-                            })}
-                        </Box>
-                    </Stack>
+                    <ChatSider chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username}/>
                     <Divider orientation="vertical" flexItem />
                     {selectedChat == null ?
                         <Stack>
@@ -86,54 +47,7 @@ const Page = () => {
                             Start meaningful conversations!
                             </Typography>
                         </Stack> :
-                        <Stack>
-                            <Stack sx={{m: 2}} direction="row">
-                                <Avatar alt={selectedChat.doctor.FirstName + " " + selectedChat.doctor.LastName} src={selectedChat.doctor.Picture == null ? `/assets/avatars/0.png` : selectedChat.doctor.Picture} />
-                                <Stack sx={{ ml: 2, mt:0.5, width:650}}>
-                                    <Typography variant='body1' >
-                                        {selectedChat.doctor.FirstName + " " + selectedChat.doctor.LastName}
-                                    </Typography>
-                                    <Typography variant='caption' color="textSecondary">
-                                        {selectedChat.doctor.Speciality}
-                                    </Typography>
-                                </Stack>
-                                <Tooltip title="Video Call">
-                                    <IconButton >
-                                        <SvgIcon
-                                            color="action"
-                                            fontSize="small"
-                                        >
-                                            <CameraIcon />
-                                        </SvgIcon>
-                                    </IconButton>
-                                </Tooltip>
-                            </Stack>
-                            <Divider sx={{width: 785}}/>
-                            <Box sx={{height: 435, width: 785, overflow: 'auto'}}>
-                            </Box>
-                            <Divider sx={{width: 785}}/>
-                            <Stack sx={{ml: 2 , mt:2 }} direction="row">
-                            <Avatar alt={selectedChat.user.FirstName + " " + selectedChat.user.LastName} src={selectedChat.user.Picture == null ? `/assets/avatars/2.png` : selectedChat.user.Picture} />
-                                <OutlinedInput
-                                    defaultValue=""
-                                    sx = {{ml:2 , height:40 , width: 580 , mr: 5}}
-                                    
-                                    onChange={(str) => {
-                                    }}
-                                    placeholder="Leave a message"
-                                />
-                                <Tooltip title="Send">
-                                    <IconButton >
-                                        <SvgIcon
-                                            color="action"
-                                            fontSize="small"
-                                        >
-                                            <PaperAirplaneIcon />
-                                        </SvgIcon>
-                                    </IconButton>
-                                </Tooltip>
-                                </Stack>
-                        </Stack>
+                        <ChatBox selectedChat={selectedChat} messages={messages} />
                     }
                 </Stack>
             </Box>

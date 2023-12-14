@@ -7,7 +7,7 @@ const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers, removeFamilyMember, addFamilyMemberNoAccount, removeFamilyMemberNoAccount} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
-const { bookAppointment,  sendEmail } = require('../controllers/Patient/BookAppointment');
+const {  sendEmail , payWithWallet } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
 const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
@@ -62,7 +62,7 @@ router.get('/getPatientMessages' , getPatientMessages );
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
-router.patch('/bookAppointment', bookAppointment);
+// router.patch('/bookAppointment', bookAppointment);
 
 
 router.post('/payAppointment', payAppointment);
@@ -79,7 +79,7 @@ router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
 router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
 router.patch('/CancelAppointment', CancelAppointment);
-router.patch('/payWithWallet', patientController.payWithWallet);
+router.patch('/payWithWallet', payWithWallet);
 router.patch('/payWithWalletPackage', patientController.payWithWalletPackage);
 router.patch('/familyMembers', addFamilyMember);
 router.delete('/familyMembers', removeFamilyMember);
