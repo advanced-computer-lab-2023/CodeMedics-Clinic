@@ -28,6 +28,7 @@ const {addMedicineToPrescription , removeMedicineFromPrescription} = require('..
 const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
 const {getDoctorMessages} = require('../controllers/Doctor/getDoctorMessages')
 const {getPrescriptions}= require('../controllers/Doctor/viewAllPrescriptions')
+const{checkMedicine}=require('../controllers/Doctor/checkMedicine')
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -39,6 +40,7 @@ function verifyToken(req, res, next) {
     }
 }
 
+router.post('/checkMedicine',checkMedicine);
 
 router.post('/register', upload.fields([
     { name: 'nationalIdFile', maxCount: 1 },
