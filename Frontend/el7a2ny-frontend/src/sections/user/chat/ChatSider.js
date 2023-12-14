@@ -28,7 +28,6 @@ export const ChatSider = (props) => {
             <Box>
                 {chats && chats.map((chat, index) => {
                     const doctor = chat.doctor;
-                    console.log('chat sider here ======>');
                     return (
                         <Stack
                         key={index}

@@ -57,7 +57,7 @@ const VideoCallContext = ({ children }) => {
     connectionRef.current = peer;
   };
 
-  const callUser = (id) => {
+  const callUser = (username) => {
     const peer = new Peer({ initiator: true, trickle: false, stream });
 
     socket.on('callAccepted', (signal) => {
@@ -68,7 +68,7 @@ const VideoCallContext = ({ children }) => {
 
     peer.on('signal', (data) => {
       setTimeout(() => {
-        socket.emit('callUser', { userToCall: id, signalData: data, from: me, name });
+        socket.emit('callUser', { userToCall: username, signalData: data, from: me, name });
       }, 1000);
     });
 

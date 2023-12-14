@@ -26,7 +26,7 @@ exports.getSocket = async (username) => {
         const user1 = await Patient.findOne({ Username: username });
         const user2 = await Doctor.findOne({ Username: username });
         if (!user1 && !user2) {
-            console.log("User not found"); 
+            console.log("User not found", username); 
             // return res.status(404).json({ message: "User not found" });
             return;
         }
