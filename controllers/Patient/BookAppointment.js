@@ -1,7 +1,9 @@
 const Doctor = require('../../models/Doctor');
 const Appointment = require('../../models/Appointment');
 const Patient = require('../../models/Patient');
+const packageModel = require('../../models/Package');
 const nodemailer = require('nodemailer');
+const {getUsername} = require('../../config/infoGetter');
 
 exports.bookAppointment = async (req, res) => {
     try {
@@ -94,15 +96,15 @@ exports.payWithWallet = async (req, res) => {
         if (!AppointmentId) {
             return res.status(400).json({ message: "Appointment ID not found" });
         }
-        const appointment = await appointmentModel.findOne({ _id: AppointmentId });
+        const appointment = await Appointment.findOne({ _id: AppointmentId });
         if (!appointment) {
             return res.status(404).json({ message: "Appointment not found" });
         }
-        const doctor = await doctorModel.findOne({ Username: appointment.doctorUsername });
+        const doctor = await Doctor.findOne({ Username: appointment.doctorUsername });
         if (!doctor) {
             return res.status(404).json({ message: "Doctor not found" });
         }
-        const patient = await patientModel.findOne({ Username });
+        const patient = await Patient.findOne({ Username });
         if (!patient) {
             return res.status(404).json({ message: "Patient not found" });
         }
@@ -116,13 +118,17 @@ exports.payWithWallet = async (req, res) => {
             return res.status(400).json({ message: "Insufficient funds" });
         }
         patient.Wallet -= price;
-        patient.Appointments.push(appointment._id);
+        if(!patient.Appointments.includes(appointment._id)){
+            patient.Appointments.push(appointment._id);
+        }
         await patient.save();
         appointment.patient = Username;
         appointment.status = "upcoming";
         await appointment.save();
         doctor.Appointments.push(appointment._id);
-        doctor.Patients.push(patient._id);
+        if(!doctor.Patients.includes(patient._id)){
+            doctor.Patients.push(patient._id);
+        }
         await doctor.save();
 
         // Send email notification to patient
@@ -165,6 +171,7 @@ exports.payWithWallet = async (req, res) => {
             },
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -176,6 +183,9 @@ const transporter = nodemailer.createTransport({
         user: 'mirnahaitham2@gmail.com',
         pass: 'dygc irfq totb kuzy',
     },
+    tls: {
+        rejectUnauthorized: false
+    }
 });
 
 async function sendEmail(recipient, subject, message) {
