@@ -64,7 +64,7 @@ exports.CancelAppointment = async (req, res) => {
                 }
             }
             if(idx != -1){
-                patient.Appointments.splice(idx, idx);
+                patient.Appointments.splice(idx);
             }
             await doctor.save();
             await patient.save();
