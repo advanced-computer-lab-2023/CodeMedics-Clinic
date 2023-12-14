@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Stack } from '@mui/system';
 import Cookies from 'js-cookie';
+import socket from 'src/components/socket';
 
 const now = new Date();
 
@@ -26,6 +27,25 @@ const Page = () => {
                 console.log(error);
             });
     }, []);
+
+    socket.on('newMessage', (message) => {
+        
+        const tmp = chats;
+        for(let i = 0; i < tmp.length; i++) {
+            if(tmp[i].chat._id == message.chat) {
+                tmp[i].chat.latestMessage = message;
+                tmp[i].latestMessage = message;
+                break;
+            }
+        }
+        setChats(tmp);
+
+        console.log(chats);
+        if(selectedChat && selectedChat.chat._id == message.chat) {
+            setMessages([...messages, message]);
+        }
+
+    });
 
      const getMessages = (chatId) => {
         if(selectedChat && chatId == selectedChat.chat._id) return;
@@ -46,6 +66,7 @@ const Page = () => {
         axios.post("http://localhost:8000/chat/sendMessage", body , { withCredentials: true })
             .then((response) => {
                 setMessages([...messages, response.data.newMessage]);
+                socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.patient.Username});
             }).catch((error) => {
                 console.log(error);
             });

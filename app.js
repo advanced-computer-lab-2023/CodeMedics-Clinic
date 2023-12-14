@@ -45,7 +45,7 @@ const io = require('socket.io')(server, {
 
 app.use(cors(corsOptions));
 
-const {putSocket} = require('./config/socket');
+const {putSocket, getSocket} = require('./config/socket');
 
 
 // server.listen(5000);
@@ -75,6 +75,12 @@ io.on("connection", (socket) => {
   socket.on("join chat", (room) => {
     socket.join(room);
     console.log("User Joined Room: " + room);
+  });
+
+  socket.on("newMessage", async({message, receiver}) => {
+    const socketID = await getSocket(receiver);
+    console.log("newMessage: " + message.content + " to " + receiver + " with socketID: " + socketID);
+    io.to(socketID).emit("newMessage", message);
   });
 });
 

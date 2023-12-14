@@ -20,3 +20,19 @@ exports.putSocket = async (username, socketID) => {
         console.log(error);
     }
  };
+
+exports.getSocket = async (username) => {
+    try{
+        const user1 = await Patient.findOne({ Username: username });
+        const user2 = await Doctor.findOne({ Username: username });
+        if (!user1 && !user2) {
+            console.log("User not found"); 
+            // return res.status(404).json({ message: "User not found" });
+            return;
+        }
+        const user = user1 ? user1 : user2;
+        return user.SocketID;
+    }catch(error){
+        console.log(error);
+    }
+};

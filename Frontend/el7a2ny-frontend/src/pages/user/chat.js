@@ -3,6 +3,7 @@ import { Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Ca
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { ChatSider } from 'src/sections/user/chat/ChatSider';
 import { ChatBox } from 'src/sections/user/chat/ChatBox';
+import socket from 'src/components/socket';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -27,6 +28,24 @@ const Page = () => {
             });
     }, []);
 
+    socket.on('newMessage', (message) => {
+
+        const tmp = chats;
+        for(let i = 0; i < tmp.length; i++) {
+            if(tmp[i].chat._id == message.chat) {
+                tmp[i].chat.latestMessage = message;
+                tmp[i].latestMessage = message;
+                break;
+            }
+        }
+        setChats(tmp);
+
+        if(selectedChat && selectedChat.chat._id == message.chat) {
+            setMessages([...messages, message]);
+        }
+
+    });
+
      const getMessages = (chatId) => {
         if(selectedChat && chatId == selectedChat.chat._id) return;
         axios.get(`http://localhost:8000/chat/getMessages?chatId=${chatId}`, { withCredentials: true })
@@ -46,9 +65,11 @@ const Page = () => {
         axios.post("http://localhost:8000/chat/sendMessage", body , { withCredentials: true })
             .then((response) => {
                 setMessages([...messages, response.data.newMessage]);
+                socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.doctor.Username});
             }).catch((error) => {
                 console.log(error);
             });
+
      };
 
     return (
