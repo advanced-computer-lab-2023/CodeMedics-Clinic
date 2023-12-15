@@ -7,7 +7,7 @@ const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers, removeFamilyMember, addFamilyMemberNoAccount, removeFamilyMemberNoAccount} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
-const {  sendEmail , payWithWallet } = require('../controllers/Patient/BookAppointment');
+const {  bookAppointment , payWithWallet } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
 const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
@@ -63,7 +63,7 @@ router.get('/getPatientMessages' , getPatientMessages );
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
-// router.patch('/bookAppointment', bookAppointment);
+router.patch('/bookAppointment', bookAppointment);
 
 router.patch('/RescheduleAppointment', RescheduleAppointment);
 

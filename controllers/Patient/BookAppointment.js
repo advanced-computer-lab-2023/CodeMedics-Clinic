@@ -9,6 +9,8 @@ exports.bookAppointment = async (req, res) => {
     try {
         const { appointmentId, patientUsername } = req.query;
         const appointment = await Appointment.findOne({ _id: appointmentId });
+        console.log("in the book appointment");
+        console.log(appointmentId, patientUsername);
         console.log(appointmentId, appointment);
         if (!appointment) {
             return res.status(400).json({ message: 'Appointment not found' });
@@ -22,7 +24,8 @@ exports.bookAppointment = async (req, res) => {
         if (!patient) {
             return res.status(400).json({ message: 'Patient not found' });
         }
-
+        console.log(patient);
+        console.log(appointment);
         // Update appointment details
         appointment.patient = patientUsername;
         appointment.status = 'upcoming';
@@ -84,6 +87,7 @@ await doctor.save();
             },
         });
     } catch (error) {
+        console.log("in the book appointment error");
         res.status(400).json({ message: error.message });
     }
 };

@@ -138,6 +138,7 @@ export const PatientAppointmentsTable = (props) => {
     await axios.patch(`http://localhost:8000/patient/RescheduleAppointment?appointmentID=${appointmentID}&oldAppointmentID=${oldAppointment}&username=${Cookies.get('username')}`).then
     ((res) => {
       console.log(res);
+      window.location.reload();
     }
     ).catch((err) => {
       console.log(err);
