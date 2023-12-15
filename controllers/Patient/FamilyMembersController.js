@@ -23,6 +23,13 @@ exports.addFamilyMember = async (req, res) => {
       if(patient.FamilyMembers.some(el => el.id.toString() == exists._id.toString())){
          return res.status(400).json({message: 'Family member already added'});
       }
+      let me;
+      do{
+         me = await Patient.findOne({Username: exists.Username});
+      }while(me.Linked != undefined && me.Linked != patient._id.toString());
+      if(me.Linked == patient._id.toString()){
+         return res.status(400).json({message: 'You cannot make cyclic relationships'});
+      }
       patient.FamilyMembers.push({id:exists._id, relation:relation});
       exists.Linked = patient._id;
       await patient.save();
