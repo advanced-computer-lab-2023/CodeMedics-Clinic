@@ -67,7 +67,11 @@ export const PatientAppointmentsTable = (props) => {
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const router = useRouter();
   const [cancelAppointment, setCancelAppointment] = useState(items);
-
+  const [invalidCancel, setInvalidCancel] = useState(false);
+  const [unreservedAppointments, setUnreservedAppointments] = useState([]);
+  const [rescheduling, setRescheduling] = useState(false);
+  const [requesting, setRequesting] = useState(false);
+  const [invalidRequest, setInvalidRequest] = useState(false);
   const CancelAppointment = async (appointmentID) => {
     await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`).then(res =>{
       console.log(res);
@@ -77,8 +81,7 @@ export const PatientAppointmentsTable = (props) => {
     });
   };
 
-  const [unreservedAppointments, setUnreservedAppointments] = useState([]);
-  const [rescheduling, setRescheduling] = useState(false);
+  
   const getUnreservedAppointments = async (doctorUsername) => {
     await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername).then((res) => {
       setUnreservedAppointments(res.data.appointments);
@@ -112,7 +115,6 @@ export const PatientAppointmentsTable = (props) => {
     });
   };
 
-  const [invalidCancel, setInvalidCancel] = useState(false);
 
   const handleMenuItemClick = (item, appointment) => {
     setAppointmentMenu({
@@ -138,7 +140,14 @@ export const PatientAppointmentsTable = (props) => {
       setRescheduling(true);
     }
     else if(item === "Request a Follow-up"){
-
+      if(appointment.status !== 'completed'){
+        setInvalidRequest(true);
+        settoBeUpdated(appointment);
+      }
+      else{
+        setRequesting(true);
+        settoBeUpdated(appointment);
+      }
     }
   };
 
@@ -151,7 +160,17 @@ export const PatientAppointmentsTable = (props) => {
     ).catch((err) => {
       console.log(err);
     });
-    
+  };
+
+  const requestFollowUp = async (appointmentID) => {
+    await axios.patch(`http://localhost:8000/patient/RequestFollowUp?appointmentID=${appointmentID}`).then
+    ((res) => {
+      console.log(res);
+      window.location.reload();
+    }
+    ).catch((err) => {
+      console.log(err);
+    });
   };
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -440,6 +459,72 @@ export const PatientAppointmentsTable = (props) => {
                   });
                   }}>Cancel</Button>
                 <Button onClick={() => {CancelAppointment(toBeUpdated._id)}}>Confirm</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
+          {invalidRequest && (<div>
+            <Dialog open={invalidRequest} onClose={() => {{
+                  setInvalidRequest(false);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}}>
+              <DialogTitle>Invalid Action</DialogTitle>
+              <DialogContent>
+              <DialogContentText sx={{ color: 'error.main' }}>
+                You can request a follow-up for only completed appointments
+              </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setInvalidRequest(false);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
+          {requesting && toBeUpdated.status === 'completed' && (<div>
+            
+            <Dialog open={requesting} onClose={() => {{
+                  setRequesting(false);
+                  settoBeUpdated(null);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}}>
+              <DialogTitle>Request a Follow-up</DialogTitle>
+              <DialogContent>
+              <DialogContentText>
+                  Are you sure you want to request a follow-up?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setRequesting(false);
+                  settoBeUpdated(null);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}>Cancel</Button>
+                <Button onClick={() => {requestFollowUp(toBeUpdated._id)}}>Confirm</Button>
               </DialogActions>
             </Dialog>
           </div>)}

@@ -13,6 +13,7 @@ const { changePassword } = require('../controllers/Patient/PatientController');
 const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
 const{getPatientMessages} =require('../controllers/Patient/getPatientMessages');
+const {RequestFollowUp} = require('../controllers/Patient/RequestFollowUp');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const Prescription = require('../models/Prescription'); 
@@ -64,6 +65,8 @@ router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);
 router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
 router.patch('/bookAppointment', bookAppointment);
+
+router.patch('/RequestFollowUp', RequestFollowUp);
 
 router.patch('/RescheduleAppointment', RescheduleAppointment);
 
