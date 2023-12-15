@@ -4,7 +4,10 @@ const Prescription = require('../../models/Prescription');
 const patientSchema = require('../../models/Patient'); // Adjust the path according to your project structure
 const { getUsername } = require('../../config/infoGetter');
 const PDFDocument = require('pdfkit');
+const Patient = require('../../models/Patient');
+const Medicine = require('../../models/Medicine');
 const fs = require('fs');
+const Cart = require('../../models/Cart');
 
 
 exports.filterPrescriptions = async (req, res) => {
@@ -208,6 +211,46 @@ exports.createAndDownloadPDF = (prescription) => {
       reject(error);
     }
   });
+};
+
+exports.fillPrescription = async (req, res) => {
+  try{
+    const {Username, prescriptionID} = req.body;
+    const patient = await Patient.findOne({Username: Username});
+    var cart = patient.Cart;
+    if(!cart){
+      cart = new Cart();
+      cart.PatientId = patient._id;
+      cart.items = [];
+      patient.Cart = cart;
+      await patient.save();
+    }
+    const items = patient.Cart.items;
+    if(!items){
+      items = [];
+    }
+    const prescription = await Prescription.findOne({_id: prescriptionID});
+    const meds = prescription.Drug;
+    for(let i = 0; i<meds.length; i++){
+      const drug = meds[i].drugName;
+      var dosage = meds[i].dosage;
+      const fetchDrug = await Medicine.findOne({name: drug});
+      dosage = Math.min(dosage, fetchDrug.availableQuantity);
+      if(dosage > 0){
+        const price = dosage * fetchDrug.price;
+        items.push({MedicineId: fetchDrug._id, Quantity: dosage, Price: price});
+      }
+    }
+    prescription.filled = true;
+    patient.Cart.items = items;
+    await prescription.save();
+    await patient.save();
+    return res.status(200).json({message: "Prescription Filled Successfully"});
+
+  }catch(error){
+    console.log(error);
+    return res.status(500).json({message: "Problem Occured While Filling Prescription"});
+  }
 };
 
 

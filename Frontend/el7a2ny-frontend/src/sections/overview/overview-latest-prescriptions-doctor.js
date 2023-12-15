@@ -223,7 +223,7 @@ const handleAddMedicine = (prescriptionId) => {
                               ) : null}
                             </div>
                           </div>
-                          {editablePrescriptionId !== prescription._id && editableMedicineIndex !== medicineIndex && (
+                          {editablePrescriptionId !== prescription._id && editableMedicineIndex !== medicineIndex && !prescription.filled && (
                             <Button onClick={() => handleEditClick(prescription._id, medicineIndex, drug.drugName)} size="small">
                               Edit
                             </Button>

@@ -20,6 +20,7 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import Cookies from 'js-cookie';
 
 const statusMap = {
   filled: 'success',
@@ -53,6 +54,28 @@ export const PatientPrescriptionsTable = (props) => {
       console.error('Error downloading PDF:', error);
     }
   };
+  const [prescriptionStatus, setPrescriptionStatus] = useState(items);
+  const username = Cookies.get('username');
+  const fillPrescription = async (prescriptionID) => {
+    try {
+        await axios.patch(`http://localhost:8000/patient/fillPrescription`, 
+          {
+              Username: username,
+              prescriptionID: prescriptionID
+          }
+        );
+        for(let i = 0; i<items.length; i++){
+          const current = items[i];
+          if(current._id === prescriptionID){
+            current.filled = true;
+            break;
+          }
+        }
+        setPrescriptionStatus(items);
+    } catch (error) {
+      console.error('Error filling prescription:', error);
+    }
+  };
 
   return (
     <Card>
@@ -72,6 +95,8 @@ export const PatientPrescriptionsTable = (props) => {
                 </TableCell>
                 <TableCell>
                   Status
+                </TableCell>
+                <TableCell>
                 </TableCell>
                 <TableCell>
                 </TableCell>
@@ -114,6 +139,18 @@ export const PatientPrescriptionsTable = (props) => {
                     <Button onClick={() => downloadPDF(prescription)}>
                       Download PDF
                     </Button>
+                    
+                  </TableCell>
+                  <TableCell>
+                  {!prescription.filled && (
+                          <Button
+                            variant="text"
+                            color="primary"
+                            onClick={() => {fillPrescription(prescription._id);}}
+                          >
+                            Fill Prescription
+                          </Button>
+                        )}
                   </TableCell>
                   </TableRow>
                 );
