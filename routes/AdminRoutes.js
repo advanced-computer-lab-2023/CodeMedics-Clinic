@@ -16,6 +16,8 @@ const removeDoctor = require('../controllers/Admin/removeDoctor');
 const viewAdmins = require('../controllers/Admin/viewAdmins');
 const removeAdmin = require('../controllers/Admin/removeAdmin');
 const addAdmin = require('../controllers/Admin/addAdmin');
+const { createAndDownloadContract } = require('../controllers/Admin/acceptDoctor');
+const Doctor = require('../models/Doctor');
 //const JWTAuth = require('../config/JWTAuth.js');
 
 //const isAuth = JWTAuth.isAuth;
@@ -67,6 +69,25 @@ router.get('/getDoctorsReg', adminGetter.viewDoctorRegister);
 
 router.post('/acceptRejectDoctorRequest', acceptRejectDoctorRequest);
 
+router.post('/download-contract', async (req, res) => {
+    try {
+      const doctorUsername = req.body.doctor;
+      // Fetch the doctor object based on the username (doctorUsername) from your data source
+      const doctor = await Doctor.findOne({ Username: doctorUsername });
+  
+      // Create and download the contract based on the doctor object
+      const pdfBuffer = await createAndDownloadContract(doctor);
+  
+      // Send the PDF buffer as a response
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="Contract.pdf"`);
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      res.status(500).send('Error generating PDF');
+    }
+  });
+  
 //packages
 
 router.post('/addPackage', (req, res) => {

@@ -133,6 +133,10 @@ const Page = () => {
                 helpers.setErrors({ submit: 'Your request is still pending' });
                 helpers.setSubmitting(false);
               }
+              else if(data.doctor.Status == 'Contract'){
+                Cookies.set('doctor', data['doctor']['Username']);
+                router.push(`/doctor/contract`);
+              }
               else {
                 Cookies.set('username', data['doctor']['Username']);
                 socket.on('me', (id) => {
