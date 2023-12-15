@@ -93,13 +93,4 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'Start a Video Call',
-    path: '/user/videoCall',
-    icon: (
-      <SvgIcon fontSize="small">
-        <CogIcon />
-      </SvgIcon>
-    )
-  }
 ];
