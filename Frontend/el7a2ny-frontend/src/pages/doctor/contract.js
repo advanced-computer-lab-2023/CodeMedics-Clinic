@@ -1,72 +1,102 @@
-import { Box, Button, Typography, Grid } from '@mui/material';
-import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
 import React from 'react';
 import axios from 'axios';
 import FileSaver from 'file-saver';
 import { useAuth } from 'src/hooks/use-auth';
-import { Layout } from 'src/layouts/auth/layout';
+import { useCallback, useState } from 'react';
+import Head from 'next/head';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import {
+  Alert,
+  Box,
+  Button,
+  FormHelperText,
+  Link,
+  Stack,
+  Tab,
+  Tabs,
+  TextField,
+  Typography
+} from '@mui/material';
+import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 
-const ContractPage = () => {
-  const router = useRouter();
-  const auth = useAuth();
-    const body = {
-        username: Cookies.get('doctor'),
-        action: 'agree'
+const Page = () => {
+    const router = useRouter();
+    const auth = useAuth();
+      const body = {
+          username: Cookies.get('doctor'),
+          action: 'agree'
+      };
+  
+    const handleAcceptContract = () => {
+      //Cookies.set('accepted_contract', 'true');
+      axios('http://localhost:8000/admin/acceptRejectDoctorRequest', {
+            method: 'POST',
+            data: body,
+            withCredentials: true,
+          })
+          .then((res) => {
+              if (res.status == 200) {
+              console.log("accepted");
+              window.location.reload();
+              }
+          })
+          .catch((err) => {
+              console.log(err);
+          }
+          )
+  
+      router.push('/doctor/patients'); // Redirect to the doctor's dashboard
+    };
+  
+    const handleRejectContract = () => {
+      auth.signOut();
+      router.push('/auth/login'); // Redirect to the login page
+    };
+  
+    const handleDownloadContract = async () => {
+      try {
+        const doctorUsername = Cookies.get('doctor');
+        const response = await axios.post(
+          `http://localhost:8000/admin/download-contract`,
+          { doctor: doctorUsername },
+          { responseType: 'blob' }
+        );
+    
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const fileName = `Contract.pdf`;
+        FileSaver.saveAs(blob, fileName);
+      } catch (error) {
+        console.error('Error downloading PDF:', error);
+      }
     };
 
-  const handleAcceptContract = () => {
-    //Cookies.set('accepted_contract', 'true');
-    axios('http://localhost:8000/admin/acceptRejectDoctorRequest', {
-          method: 'POST',
-          data: body,
-          withCredentials: true,
-        })
-        .then((res) => {
-            if (res.status == 200) {
-            console.log("accepted");
-            window.location.reload();
-            }
-        })
-        .catch((err) => {
-            console.log(err);
-        }
-        )
-
-    router.push('/doctor/patients'); // Redirect to the doctor's dashboard
-  };
-
-  const handleRejectContract = () => {
-    auth.signOut();
-    router.push('/auth/login'); // Redirect to the login page
-  };
-
-  const handleDownloadContract = async () => {
-    try {
-      const doctorUsername = Cookies.get('doctor');
-      const response = await axios.post(
-        `http://localhost:8000/admin/download-contract`,
-        { doctor: doctorUsername },
-        { responseType: 'blob' }
-      );
-  
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const fileName = `Contract.pdf`;
-      FileSaver.saveAs(blob, fileName);
-    } catch (error) {
-      console.error('Error downloading PDF:', error);
-    }
-  };
-
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      style={{ minHeight: '100vh' }}
-    >
-      <Box textAlign="center">
+    <>
+      <Head>
+        <title>
+          Login
+        </title>
+      </Head>
+      <Box
+        sx={{
+          backgroundColor: 'background.paper',
+          flex: '1 1 auto',
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: 550,
+            px: 3,
+            py: '100px',
+            width: '100%'
+          }}
+        >
+        <Box sx = {{ml: 4}}>
         <Typography variant="h4" gutterBottom>
           Contract Agreement
         </Typography>
@@ -101,8 +131,18 @@ const ContractPage = () => {
           Sign Out
         </Button>
       </Box>
-    </Grid>
+        </Box>
+
+      </Box>
+    </>
   );
 };
 
-export default ContractPage;
+Page.getLayout = (page) => (
+  <AuthLayout>
+    {page}
+  </AuthLayout>
+);
+
+
+export default Page;
