@@ -25,11 +25,13 @@ const VideoCallContext = ({ children }) => {
       .then((currentStream) => {
         setStream(currentStream);
         setTimeout(() => {
-          myVideo.current.srcObject = currentStream;
+          if(myVideo.current)
+            myVideo.current.srcObject = currentStream;
         }, 1000);
       });
 
     socket.on('callUser', ({ from, name: callerName, signal }) => {
+      console.log("callReceived: " + from + " " + callerName + " " + signal);
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
   }, []);
@@ -48,7 +50,8 @@ const VideoCallContext = ({ children }) => {
 
     peer.on('stream', (currentStream) => {
       setTimeout(() => {
-        userVideo.current.srcObject = currentStream;
+        if(userVideo.current)
+          userVideo.current.srcObject = currentStream;
       }, 1000);
     });
 
@@ -74,7 +77,8 @@ const VideoCallContext = ({ children }) => {
 
     peer.on('stream', (currentStream) => {
       setTimeout(() => {
-        userVideo.current.srcObject = currentStream;
+        if(userVideo.current)
+          userVideo.current.srcObject = currentStream;
       }, 1000);
     });
 

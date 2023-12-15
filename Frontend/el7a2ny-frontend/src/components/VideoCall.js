@@ -11,7 +11,7 @@ const VideoCall = () => {
   return (
     <div>
       <Typography variant="h2" align="center">Video Chat</Typography>
-      <VideoPlayer />
+      <VideoPlayer username={username}/>
       <Sidebar username={username}>
         <Notifications />
       </Sidebar>
