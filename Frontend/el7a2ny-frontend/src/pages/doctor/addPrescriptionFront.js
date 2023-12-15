@@ -79,22 +79,37 @@ const PrescriptionPage = () => {
           setError(null);
         } else {
           console.error('Error: Drug does not exist in the Pharmacy.');
-          setError('Error adding medicine. Medicine not found in the Pharmacy.');
+          setError('Error adding medicine. Medicine not available in the Pharmacy.');
         }
       } catch (error) {
         console.error('Error checking medicine:', error);
-        setError('Error adding medicine. Medicine not found in the Pharmacy.');
+        setError('Error adding medicine. Medicine not available in the Pharmacy.');
       }
     };
     
     
-    const handleAddNewDrugFields = () => {
-      setPrescriptionData((prevData) => {
-        const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
-        const newData = { ...prevData, drugs: newDrugs };
-        return newData;
-      });
+    const handleAddNewDrugFields = async () => {
+      const lastDrugIndex = prescriptionData.drugs.length - 1;
+      const lastDrug = prescriptionData.drugs[lastDrugIndex];
+    
+      try {
+        await handleAddDrug(lastDrug.drugName, lastDrug.dosage);
+    
+        // If handleAddDrug is successful, add new input fields
+        setPrescriptionData((prevData) => {
+          const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
+          const newData = { ...prevData, drugs: newDrugs };
+          return newData;
+        });
+      } catch (error) {
+        // Handle the error (e.g., show an error message)
+        console.error('Error adding drug:', error);
+        setError('Error adding medicine. Medicine not available in the Pharmacy.');
+      }
     };
+    
+    
+    
   
     
   
