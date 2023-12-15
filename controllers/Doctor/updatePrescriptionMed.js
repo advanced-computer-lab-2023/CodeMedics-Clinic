@@ -34,8 +34,8 @@ exports.addMedicineToPrescription = async (req, res) => {
 
     const medicine = await Medicine.findOne({ name: medicineName });
 
-    if (!medicine) {
-      return res.status(404).json({ message: 'Medicine not found in the Pharmacy.' });
+    if (!medicine || medicine.availableQuantity == 0 ) {
+      return res.status(404).json({ message: 'Medicine not available in the Pharmacy.' });
     }
 
 
