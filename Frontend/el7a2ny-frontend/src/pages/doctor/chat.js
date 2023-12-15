@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Card, OutlinedInput, InputAdornment, SvgIcon, IconButton, Tooltip } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
-import { ChatSider } from 'src/sections/doctor/chat/ChatSider';
+import { ChatSidebar } from 'src/sections/doctor/chat/ChatSidebar';
 import { ChatBox } from 'src/sections/doctor/chat/ChatBox';
 
 import axios from 'axios';
@@ -83,7 +83,7 @@ const Page = () => {
             <Box>
                 <Divider />
                 <Stack direction="row" >
-                    <ChatSider chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages}/>
+                    <ChatSidebar chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages}/>
                     <Divider orientation="vertical" flexItem />
                     {selectedChat == null ?
                         <Stack>

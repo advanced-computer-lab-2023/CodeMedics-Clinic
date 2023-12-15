@@ -1,4 +1,4 @@
-import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
+
 import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
@@ -6,10 +6,16 @@ import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import CalendarDaysIcon from '@heroicons/react/24/solid/CalendarDaysIcon';
 import ClipboardDocumentListIcon from '@heroicons/react/24/solid/ClipboardDocumentListIcon';
 import ChatBubbleLeftRightIcon from '@heroicons/react/24/solid/ChatBubbleLeftRightIcon';
+import MessageChatSquareIcon from '../../../icons/untitled-ui/duocolor/message-chat-square';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
+import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
+import Certificate02Icon from '@untitled-ui/icons-react/build/esm/Certificate02';
+import File02Icon from '@untitled-ui/icons-react/build/esm/File02';
+import Settings04Icon from '@untitled-ui/icons-react/build/esm/Settings04';
+import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
 
 export const items = [
   {
@@ -17,16 +23,7 @@ export const items = [
     path: '/user/doctors',
     icon: (
       <SvgIcon fontSize="small">
-        <ChartBarIcon />
-      </SvgIcon>
-    )
-  },
-  {
-    title: 'My Appointments',
-    path: '/user/my-appointments',
-    icon: (
-      <SvgIcon fontSize="small">
-        <CalendarDaysIcon />
+        <UserIcon />
       </SvgIcon>
     )
   },
@@ -40,11 +37,20 @@ export const items = [
     )
   },
   {
+    title: 'My Appointments',
+    path: '/user/my-appointments',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CalendarDaysIcon />
+      </SvgIcon>
+    )
+  },
+  {
     title: 'Health Packages',
     path: '/user/packages',
     icon: (
       <SvgIcon fontSize="small">
-        <ClipboardDocumentListIcon />
+        <CreditCard01Icon />
       </SvgIcon>
     )
   },
@@ -53,7 +59,7 @@ export const items = [
     path: '/user/prescriptions',
     icon: (
       <SvgIcon fontSize="small">
-        <ClipboardDocumentListIcon   />
+        <Certificate02Icon   />
       </SvgIcon>
     )
   },
@@ -62,7 +68,7 @@ export const items = [
     path: '/user/medical-history',
     icon: (
       <SvgIcon fontSize="small">
-        <ClipboardDocumentListIcon   />
+        <File02Icon   />
       </SvgIcon>
     )
   },
@@ -71,7 +77,7 @@ export const items = [
     path: '/user/chat',
     icon: (
       <SvgIcon fontSize="small">
-        <ChatBubbleLeftRightIcon   />
+        <MessageChatSquareIcon   />
       </SvgIcon>
     )
   },
@@ -80,7 +86,7 @@ export const items = [
     path: '/user/account',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <HomeSmileIcon />
       </SvgIcon>
     )
   },
@@ -89,7 +95,7 @@ export const items = [
     path: '/user/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon />
+        <Settings04Icon />
       </SvgIcon>
     )
   },
