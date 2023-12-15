@@ -98,14 +98,17 @@ exports.removeFamilyMember = async (req, res) => {
    }
    try{
       const {familyMemberId} = req.body;
+      const familyMember = await Patient.findOne({_id: familyMemberId});
       if(!patient.FamilyMembers.some(el => el.id.toString() == familyMemberId)){
          return res.status(400).json({message: 'Family member does not exist'});
       }
-
+      if(familyMember == null){
+         return res.status(400).json({message: 'Family member does not exist'});
+      }
       patient.FamilyMembers = patient.FamilyMembers.filter(member => member.id.toString() != familyMemberId);
-
+      familyMember.Linked = undefined;
+      await familyMember.save();
       await patient.save();
-
       res.status(200).json({message: 'Family members fetched successfully'});
    }
    catch(e){

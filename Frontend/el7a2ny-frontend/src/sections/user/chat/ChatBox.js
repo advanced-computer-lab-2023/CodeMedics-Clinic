@@ -1,4 +1,3 @@
-
 import PaperAirplaneIcon from '@heroicons/react/24/solid/PaperAirplaneIcon';
 import { Stack, Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Card, OutlinedInput, InputAdornment, SvgIcon, IconButton, Tooltip } from '@mui/material';
 import { Message } from './Message';
