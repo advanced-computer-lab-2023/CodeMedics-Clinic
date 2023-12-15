@@ -7,16 +7,18 @@ const { getDoctorByUsername } = require('../controllers/patient/SearchDoctor');
 const {addFamilyMember, viewFamilyMembers, removeFamilyMember, addFamilyMemberNoAccount, removeFamilyMemberNoAccount} = require('../controllers/Patient/FamilyMembersController');
 const { uploadDocument, addDocument, removeDocument } = require('../controllers/Patient/MedicalHistory');
 const { viewUpcomingAppointments , viewPastAppointments } = require('../controllers/Patient/viewAppointments');
-const { bookAppointment,  sendEmail } = require('../controllers/Patient/BookAppointment');
+const {  bookAppointment , payWithWallet } = require('../controllers/Patient/BookAppointment');
 const {viewPatients} = require('../controllers/Patient/PatientController');
 const { changePassword } = require('../controllers/Patient/PatientController');
 const  { CancelAppointment } = require('../controllers/Patient/CancelAppointment');
 const{getAvailableAppointments} =require('../controllers/Patient/viewAvailableAppointments');
 const{getPatientMessages} =require('../controllers/Patient/getPatientMessages');
+const {RequestFollowUp} = require('../controllers/Patient/RequestFollowUp');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const Prescription = require('../models/Prescription'); 
 
+const { RescheduleAppointment } = require('../controllers/Patient/RescheduleAppointment');
 
 const {
     getPrescriptions,
@@ -64,6 +66,9 @@ router.get('/SearchDoctor', searchDoctor);
 router.get('/getDoctorByUsername', getDoctorByUsername);
 router.patch('/bookAppointment', bookAppointment);
 
+router.patch('/RequestFollowUp', RequestFollowUp);
+
+router.patch('/RescheduleAppointment', RescheduleAppointment);
 
 router.post('/payAppointment', payAppointment);
 router.post('/payHealthPackage', payHealthPackage);
@@ -79,7 +84,7 @@ router.post('/:username/MedicalHistoryUpload', uploadDocument, addDocument);
 router.delete('/:username/MedicalHistory/:documentId', removeDocument);
 
 router.patch('/CancelAppointment', CancelAppointment);
-router.patch('/payWithWallet', patientController.payWithWallet);
+router.patch('/payWithWallet', payWithWallet);
 router.patch('/payWithWalletPackage', patientController.payWithWalletPackage);
 router.patch('/familyMembers', addFamilyMember);
 router.delete('/familyMembers', removeFamilyMember);

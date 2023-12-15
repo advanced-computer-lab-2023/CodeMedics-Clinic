@@ -28,6 +28,13 @@ const {addMedicineToPrescription , removeMedicineFromPrescription} = require('..
 const {updateMedicineDosage,addMedicineDosage} = require('../controllers/Doctor/updateMedicneDosage')
 const {getDoctorMessages} = require('../controllers/Doctor/getDoctorMessages')
 const {getPrescriptions}= require('../controllers/Doctor/viewAllPrescriptions')
+const{checkMedicine}=require('../controllers/Doctor/checkMedicine')
+const {rescheduleAppointment} = require('../controllers/Doctor/rescheduleAppointment');
+const {viewPatientAppointment} = require('../controllers/Doctor/viewPatientAppointment.js');
+
+
+
+
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -39,6 +46,7 @@ function verifyToken(req, res, next) {
     }
 }
 
+router.post('/checkMedicine',checkMedicine);
 
 router.post('/register', upload.fields([
     { name: 'nationalIdFile', maxCount: 1 },
@@ -64,6 +72,8 @@ router.get('/getAllPrescriptions',getPrescriptions);
 
 router.patch('/', updateDoctor);
 router.patch('/CancelAppointment', CancelAppointment);
+router.get('/viewPatientAppointment/:patientUsername', viewPatientAppointment);
+router.patch('/rescheduleAppointments/:patientUsername', rescheduleAppointment);
 router.get('/viewAppointments', filterAppointments);
 router.get('/getAllAppointments', getAllApointments);
 router.get('/searchPatient', searchPatient);

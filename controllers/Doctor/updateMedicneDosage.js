@@ -68,7 +68,15 @@ exports.addMedicineDosage = async (req, res) => {
     try {
       const doctorUsername = await getUsername(req, res);
       const { prescriptionID, medicineName, dosage } = req.body;
+      if (!doctorUsername) {
+        return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
+      }
   
+      const doctor = await Doctor.findOne({ Username: doctorUsername });
+  
+      if (!doctor) {
+        return res.status(404).json({ message: 'Doctor not found.' });
+      }
      
   
       const prescription = await Prescription.findOne({ _id:prescriptionID });

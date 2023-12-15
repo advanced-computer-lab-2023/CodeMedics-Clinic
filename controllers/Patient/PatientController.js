@@ -269,45 +269,7 @@ const getPackage = asyncHandler(async (req, res) => {
     }
 });
 
-const payWithWallet = async (req, res) => {
-    try {
-        const Username = await getUsername(req, res);
-        const { AppointmentId } = req.body;
-        if (!AppointmentId) {
-            return res.status(400).json({ message: "Appointment ID not found" });
-        }
-        const appointment = await appointmentModel.findOne({ _id: AppointmentId });
-        if (!appointment) {
-            return res.status(404).json({ message: "Appointment not found" });
-        }
-        const doctor = await doctorModel.findOne({ Username: appointment.doctorUsername });
-        if (!doctor) {
-            return res.status(404).json({ message: "Doctor not found" });
-        }
-        const patient = await patientModel.findOne({ Username });
-        if (!patient) {
-            return res.status(404).json({ message: "Patient not found" });
-        }
-        const package = await packageModel.findOne({ Name: patient.HealthPackage.membership });
-        let price = doctor.HourlyRate + 0.1 * doctor.HourlyRate;
-        price *= (appointment.endHour - appointment.startHour);
-        if (package != null) {
-            price -= price * (package.SessionDiscount / 100);
-        }
-        if (patient.Wallet < price) {
-            return res.status(400).json({ message: "Insufficient funds" });
-        }
-        patient.Wallet -= price;
-        patient.Appointments.push(appointment._id);
-        await patient.save();
-        appointment.patient = Username;
-        appointment.status = "upcoming";
-        await appointment.save();
-        res.status(200).json({ message: "Payment Succeeded" });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+
 
 const payWithWalletPackage = async (req, res) => {
     try {
@@ -330,4 +292,4 @@ const payWithWalletPackage = async (req, res) => {
     }
 };
 
-module.exports = {payWithWalletPackage, payWithWallet, getPackage, getAvailablePackages, updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage, viewPatients };
+module.exports = {payWithWalletPackage, getPackage, getAvailablePackages, updateMe, getMe, changePassword, createPatient, viewPatientRegister, healthPackageSubscription, healthPackageUnsubscription, viewHealthPackage, viewPatients };

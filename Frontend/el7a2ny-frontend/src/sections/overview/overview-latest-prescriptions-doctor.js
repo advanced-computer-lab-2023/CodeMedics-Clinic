@@ -7,6 +7,9 @@ import { Button } from '@mui/material';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import {Avatar,Box,Card,Stack,Table,TableBody,TableCell,TableHead,TablePagination,
+  TableRow,Typography,Dialog, DialogTitle, DialogContent, DialogContentText, 
+  DialogActions} from '@mui/material';
 
 let doctorUsername = '';
 const doctorUsernameCookie = Cookies.get('jwt');
@@ -21,19 +24,6 @@ if (doctorUsernameCookie) {
 } else {
   console.warn('JWT cookie not found');
 }
-import {
-  Avatar,
-  Box,
-  Card,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography
-} from '@mui/material';
 
 const statusMap = {
   filled: 'success',
@@ -57,6 +47,21 @@ export const DoctorPrescriptionsTable = (props) => {
     medicineName: '',
     dosage: ''
   });
+  const [DeleteMedData, setDeleteData] = useState({
+    prescriptionID:'',
+    medicineName: '',
+  });
+  const [isAddingMedicine, setIsAddingMedicine] = useState(false);
+  const [selectedPrescriptionId, setSelectedPrescriptionId] = useState(null);
+  const [AddMedData, setAddData] = useState({
+    prescriptionID:'',
+    medicineName: '',
+    dosage: ''
+  });
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  
+
 
   const downloadPDF = async (prescription) => {
     try {
@@ -80,26 +85,49 @@ export const DoctorPrescriptionsTable = (props) => {
   const handleEditClick = (prescriptionId, medicineIndex, medName) => {
     setEditablePrescriptionId(prescriptionId);
     setEditableMedicineIndex(medicineIndex);
-
-    // Set the patientUsername and initial values in the newprescriptionData state
     setPrescriptionData((prevData) => ({
       ...prevData,prescriptionID:prescriptionId,
       medicineName:medName
     }));
   };
 
+  const handleDeleteMedicine = (prescriptionId,  medName) => {
+    setDeleteData((prevData) => ({
+      ...prevData,prescriptionID:prescriptionId,
+      medicineName:medName
+    }));
+    axios.post(`http://localhost:8000/doctor/removeMedicineFromPrescription`, 
+    DeleteMedData, { withCredentials: true })
+    .then((req) => {
+      console.log(req.data);
+      window.location.reload();
+    })
+    .catch((error) => {
+      console.error('Error updating prescription:', error);
+    });
+};
+
+
+const handleAddMedicine = (prescriptionId) => {
+  setIsAddingMedicine(null);
+  axios.post(`http://localhost:8000/doctor/addMedicineToPrescription`, AddMedData, { withCredentials: true })
+    .then((req) => {
+      console.log(req.data);
+      window.location.reload();
+    })
+    .catch((error) => {
+      setErrorMessage('An error occurred while adding this medicine. It is not available at CodeMedics Pharmacy');
+      setOpenDialog(true);
+    });
+};
+
+
   const handleSaveClick = async (prescriptionId) => {
-    // Implement the logic to save the edited drug name and dosage
-    // You can use axios.post to update the backend
     setEditablePrescriptionId(null);
     setEditableMedicineIndex(null);
     setPrescriptionData({});
-    console.warn('hi');
-    console.warn(newprescriptionData);
-
-    // Add logic here to update the specific medicine in the prescription
-    axios
-      .post(`http://localhost:8000/doctor/addMedicineDosage`, newprescriptionData, { withCredentials: true })
+    axios.post(`http://localhost:8000/doctor/addMedicineDosage`, 
+    newprescriptionData, { withCredentials: true })
       .then((req) => {
         console.log(req.data);
         window.location.reload();
@@ -112,6 +140,14 @@ export const DoctorPrescriptionsTable = (props) => {
   const handleInputChange = (field, value) => {
     setPrescriptionData((prevData) => ({
       ...prevData,
+      [field]: value,
+    }));
+  };
+
+  const handleInputChange2 = (field, value, prescriptionId) => {
+    setAddData((prevData) => ({
+      ...prevData,
+      prescriptionID: prescriptionId,
       [field]: value,
     }));
   };
@@ -145,59 +181,112 @@ export const DoctorPrescriptionsTable = (props) => {
             <TableBody>
               {items.map((prescription, prescriptionIndex) => {
                 const status = prescription.filled ? 'filled' : 'unfilled';
+                const isSelectedPrescription = selectedPrescriptionId === prescription._id;
+  
                 return (
                   <TableRow hover key={prescription._id}>
                     <TableCell>
                       {prescription.Drug.map((drug, medicineIndex) => (
-                        <div key={medicineIndex}>
-                          <Typography variant="body1">
-                            {drug.drugName}
-                          </Typography>
-                          <Typography variant="body2">
-                            Dosage: {drug.dosage}
-                          </Typography>
-                          {editablePrescriptionId === prescription._id && editableMedicineIndex === medicineIndex && (
-                            <div>
-                              <input
-                                type="text"
-                                value={newprescriptionData.dosage}
-                                onChange={(e) => handleInputChange('dosage', e.target.value)}
-                              />
-                              <Button onClick={() => handleSaveClick(prescription._id)}>
-                                Save
-                              </Button>
-                              <Button onClick={handleCancelClick}>
-                                Cancel
-                              </Button>
+                        <div key={medicineIndex} style={{ display: 'flex', alignItems: 'center' }}>
+                          <Button
+                            onClick={() => handleDeleteMedicine(prescription._id, drug.drugName)}
+                            color="error"
+                            size="small"
+                          >
+                            Remove
+                          </Button>
+                          <div style={{ marginLeft: '8px', display: 'flex', flexDirection: 'column' }}>
+                            <Typography variant="body1">{drug.drugName}</Typography>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography variant="body2" style={{ marginRight: '8px' }}>
+                                Dosage:
+                              </Typography>
+                              {editablePrescriptionId === prescription._id && editableMedicineIndex === medicineIndex && (
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <Typography variant="body2" style={{ marginRight: '4px' }}>
+                                    <input
+                                      type="text"
+                                      value={newprescriptionData.dosage}
+                                      onChange={(e) => handleInputChange('dosage', e.target.value)}
+                                    />
+                                  </Typography>
+                                  <Button onClick={() => handleSaveClick(prescription._id)} size="small">
+                                    Save
+                                  </Button>
+                                  <Button onClick={handleCancelClick} size="small">
+                                    Cancel
+                                  </Button>
+                                </div>
+                              )}
+                              {editablePrescriptionId !== prescription._id || editableMedicineIndex !== medicineIndex ? (
+                                <Typography variant="body2">{drug.dosage}</Typography>
+                              ) : null}
                             </div>
-                          )}
+                          </div>
                           {editablePrescriptionId !== prescription._id && editableMedicineIndex !== medicineIndex && (
-                            <Button onClick={() => handleEditClick(prescription._id, medicineIndex,drug.drugName)}>
+                            <Button onClick={() => handleEditClick(prescription._id, medicineIndex, drug.drugName)} size="small">
                               Edit
                             </Button>
                           )}
                         </div>
                       ))}
+                      {isSelectedPrescription && isAddingMedicine ? (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <input
+                            type="text"
+                            placeholder="Medicine Name"
+                            value={AddMedData.medicineName}
+                            onChange={(e) => handleInputChange2('medicineName', e.target.value, prescription._id)}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Dosage"
+                            value={AddMedData.dosage}
+                            onChange={(e) => handleInputChange2('dosage', e.target.value, prescription._id)}
+                          />
+                          <Button onClick={() => setIsAddingMedicine(false)} size="small">
+                            Cancel
+                          </Button>
+                          <Button onClick={() => handleAddMedicine(prescription._id)} size="small">
+                            Save
+                          </Button>
+                        </div>
+                      ) : null}
+                      {!isAddingMedicine && !prescription.filled && (
+                        <Button
+                          onClick={() => {
+                            setIsAddingMedicine(true);
+                            setSelectedPrescriptionId(prescription._id);
+                            setErrorMessage(null); 
+                          }}
+                          size="small"
+                        >
+                          Add Medicine
+                        </Button>
+                      )}
+                      {errorMessage && (
+                         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                         <DialogTitle>Error</DialogTitle>
+                         <DialogContent>
+                           <DialogContentText>{errorMessage}</DialogContentText>
+                         </DialogContent>
+                         <DialogActions>
+                           <Button onClick={() => setOpenDialog(false)}>OK</Button>
+                         </DialogActions>
+                       </Dialog>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
-                        <Typography variant="subtitle2">
-                          {prescription.Patient}
-                        </Typography>
+                        <Typography variant="subtitle2">{prescription.Patient}</Typography>
                       </Stack>
                     </TableCell>
+                    <TableCell>{prescription.Date}</TableCell>
                     <TableCell>
-                      {prescription.Date}
+                      <SeverityPill color={statusMap[status]}>{status}</SeverityPill>
                     </TableCell>
                     <TableCell>
-                      <SeverityPill color={statusMap[status]}>
-                        {status}
-                      </SeverityPill>
-                    </TableCell>
-                    <TableCell>
-                      <Button onClick={() => downloadPDF(prescription)}>
-                        Download PDF
-                      </Button>
+                      <Button onClick={() => downloadPDF(prescription)}>Download PDF</Button>
                     </TableCell>
                   </TableRow>
                 );

@@ -1,14 +1,14 @@
 import Head from 'next/head';
 import { Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Card, OutlinedInput, InputAdornment, SvgIcon, IconButton, Tooltip } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import { ChatSider } from 'src/sections/user/chat/ChatSider';
-import { ChatBox } from 'src/sections/user/chat/ChatBox';
-import socket from 'src/components/socket';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
+import { ChatSider } from 'src/sections/doctor/chat/ChatSider';
+import { ChatBox } from 'src/sections/doctor/chat/ChatBox';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Stack } from '@mui/system';
 import Cookies from 'js-cookie';
+import socket from 'src/components/socket';
 
 const now = new Date();
 
@@ -19,7 +19,7 @@ const Page = () => {
     const [messages, setMessages] = useState([]);
     const [selectedChat, setSelectedChat] = useState(null);
     useEffect(() => {
-        axios.get('http://localhost:8000/chat/getPatientChats', { withCredentials: true })
+        axios.get('http://localhost:8000/chat/getDoctorChats', { withCredentials: true })
             .then((response) => {
                 console.log(response.data.chats);
                 setChats(response.data.chats);
@@ -69,11 +69,10 @@ const Page = () => {
         axios.post("http://localhost:8000/chat/sendMessage", body , { withCredentials: true })
             .then((response) => {
                 changeChatAndMessages(response.data.newMessage);
-                socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.doctor.Username});
+                socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.patient.Username});
             }).catch((error) => {
                 console.log(error);
             });
-
      };
 
     return (

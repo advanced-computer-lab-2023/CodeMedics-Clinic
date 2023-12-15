@@ -69,7 +69,7 @@ const login = async (req, res) => {
 
 
 const logout = async (req, res) => {
-    res.cookie('jwt', '', { maxAge: 1 });
+    res.clearCookie('jwt');
     res.status(200).json({ message: "User logged out" });
 }
 
