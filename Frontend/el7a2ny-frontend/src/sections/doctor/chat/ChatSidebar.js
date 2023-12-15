@@ -23,8 +23,12 @@ export const ChatSidebar = (props) => {
                 </Typography>
             </Stack>
             <ChatSidebarSearch />
-            <Box>
-                <Scrollbar>
+            <Box sx={{
+                    flexGrow: 1,
+                    overflow: 'hidden',
+                    height: 485
+                }}>
+                <Scrollbar sx={{ maxHeight: '100%' }}>
                     <Stack
                         component="ul"
                         spacing={0.5}
