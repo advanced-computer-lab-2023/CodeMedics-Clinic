@@ -6,11 +6,13 @@ import Notifications from './Notifications';
 
 const VideoCall = () => {
 
+  const username = new URLSearchParams(window.location.search).get('username');
+
   return (
     <div>
       <Typography variant="h2" align="center">Video Chat</Typography>
-      <VideoPlayer />
-      <Sidebar>
+      <VideoPlayer username={username}/>
+      <Sidebar username={username}>
         <Notifications />
       </Sidebar>
     </div>

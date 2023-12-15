@@ -23,6 +23,13 @@ exports.addFamilyMember = async (req, res) => {
       if(patient.FamilyMembers.some(el => el.id.toString() == exists._id.toString())){
          return res.status(400).json({message: 'Family member already added'});
       }
+      let me;
+      do{
+         me = await Patient.findOne({Username: exists.Username});
+      }while(me.Linked != undefined && me.Linked != patient._id.toString());
+      if(me.Linked == patient._id.toString()){
+         return res.status(400).json({message: 'You cannot make cyclic relationships'});
+      }
       patient.FamilyMembers.push({id:exists._id, relation:relation});
       exists.Linked = patient._id;
       await patient.save();
@@ -98,14 +105,17 @@ exports.removeFamilyMember = async (req, res) => {
    }
    try{
       const {familyMemberId} = req.body;
+      const familyMember = await Patient.findOne({_id: familyMemberId});
       if(!patient.FamilyMembers.some(el => el.id.toString() == familyMemberId)){
          return res.status(400).json({message: 'Family member does not exist'});
       }
-
+      if(familyMember == null){
+         return res.status(400).json({message: 'Family member does not exist'});
+      }
       patient.FamilyMembers = patient.FamilyMembers.filter(member => member.id.toString() != familyMemberId);
-
+      familyMember.Linked = undefined;
+      await familyMember.save();
       await patient.save();
-
       res.status(200).json({message: 'Family members fetched successfully'});
    }
    catch(e){

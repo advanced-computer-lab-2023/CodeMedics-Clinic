@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Prescription = require('./Prescription');
+const Cart = require('./Cart');
 const Schema = mongoose.Schema;
 
 const patientSchema = new Schema({
@@ -68,6 +69,10 @@ const patientSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: false,
         ref: 'Patient'
+    },
+    Cart :{
+        type: Cart.schema,
+        required: false
     },
     HealthPackage: {
         type: {

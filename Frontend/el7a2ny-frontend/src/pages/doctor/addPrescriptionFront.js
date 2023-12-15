@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Grid } from '@mui/material';
 import Cookies from 'js-cookie';
 
 const PrescriptionPage = () => {
@@ -12,8 +13,6 @@ const PrescriptionPage = () => {
     const username = new URLSearchParams(window.location.search).get('username');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-  
-    // State for the prescription data
     const [prescriptionData, setPrescriptionData] = useState({
       doctorUsername: '',
       patientUsername: username,
@@ -25,8 +24,7 @@ const PrescriptionPage = () => {
         },
       ],
     });
-  
-    // State for success message
+    
     const [successMessage, setSuccessMessage] = useState('');
   
     useEffect(() => {
@@ -69,14 +67,51 @@ const PrescriptionPage = () => {
       });
     };
     
-    const handleAddDrug = () => {
-      setPrescriptionData((prevData) => {
-        const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
-        const newData = { ...prevData, drugs: newDrugs };
-        console.log('Prescription Data:', newData);
-        return newData;
-      });
+    const handleAddDrug = async (drugName, dosage) => {
+      try {
+        const response = await axios.post('http://localhost:8000/doctor/checkMedicine', {
+          medicineName: drugName,
+        });
+    
+        if (response.data.exists) {
+          console.log('Medicine exists:', drugName);
+          setSuccessMessage(`Drug "${drugName}" added successfully!`);
+          setError(null);
+        } else {
+          console.error('Error: Drug does not exist in the Pharmacy.');
+          setError('Error adding medicine. Medicine not available in the Pharmacy.');
+        }
+      } catch (error) {
+        console.error('Error checking medicine:', error);
+        setError('Error adding medicine. Medicine not available in the Pharmacy.');
+      }
     };
+    
+    
+    const handleAddNewDrugFields = async () => {
+      const lastDrugIndex = prescriptionData.drugs.length - 1;
+      const lastDrug = prescriptionData.drugs[lastDrugIndex];
+    
+      try {
+        await handleAddDrug(lastDrug.drugName, lastDrug.dosage);
+    
+        // If handleAddDrug is successful, add new input fields
+        setPrescriptionData((prevData) => {
+          const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
+          const newData = { ...prevData, drugs: newDrugs };
+          return newData;
+        });
+      } catch (error) {
+        // Handle the error (e.g., show an error message)
+        console.error('Error adding drug:', error);
+        setError('Error adding medicine. Medicine not available in the Pharmacy.');
+      }
+    };
+    
+    
+    
+  
+    
   
     const handlePrescriptionSubmit = async () => {
       try {
@@ -88,7 +123,6 @@ const PrescriptionPage = () => {
     
         console.log('Prescription added successfully', response.data);
         setSuccessMessage('Prescription uploaded successfully!');
-        // Clear the error state
         setError(null);
         //router.refresh();
       } catch (error) {
@@ -114,25 +148,29 @@ const PrescriptionPage = () => {
       setSuccessMessage('');
     };
   
-    return (
-      <>
-        <Head>
-          <title>El7a2ny Clinic</title>
-        </Head>
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            py: 8,
-          }}
-        >
-          <Container maxWidth="xl">
-            <Typography variant="h3" gutterBottom>
-              Prescription Form
-            </Typography>
-            <form>
-              {prescriptionData.drugs.map((drug, index) => (
-                <div key={index} style={{ marginBottom: '16px' }}>
+ 
+
+return (
+  <>
+    <Head>
+      <title>El7a2ny Clinic</title>
+    </Head>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        py: 8,
+      }}
+    >
+      <Container maxWidth="xl">
+        <Typography variant="h3" gutterBottom>
+          Prescription Form
+        </Typography>
+        <form>
+          {prescriptionData.drugs.map((drug, index) => (
+            <div key={index} style={{ marginBottom: '16px' }}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={5}>
                   <TextField
                     label={`Drug Name ${index + 1}`}
                     value={drug.drugName}
@@ -141,6 +179,8 @@ const PrescriptionPage = () => {
                     margin="normal"
                     variant="outlined"
                   />
+                </Grid>
+                <Grid item xs={5}>
                   <TextField
                     label={`Dosage ${index + 1}`}
                     value={drug.dosage}
@@ -148,53 +188,78 @@ const PrescriptionPage = () => {
                     fullWidth
                     margin="normal"
                     variant="outlined"
-                    style={{ marginTop: '8px' }}
                   />
-                </div>
-              ))}
-              <Button type="button" variant="contained" color="primary" onClick={handleAddDrug}>
-                Add Drug
-              </Button>
+                </Grid>
+                <Grid item xs={2}>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleAddDrug(drug.drugName, drug.dosage)}
+                  >
+                    Add Drug
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={handleAddNewDrugFields}
+            style={{ marginTop: '16px' }}
+          >
+            +
+          </Button>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={6}>
               <TextField
                 label="Date"
                 type="date"
                 name="date"
+                placeholder=" "
                 value={prescriptionData.date}
                 onChange={handleDateChange}
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                style={{ marginTop: '16px' }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
-              <Button
-                type="button"
-                variant="contained"
-                color="primary"
-                onClick={handlePrescriptionSubmit}
-                disabled={loading}
-                style={{ marginTop: '16px' }}
-              >
-                Submit Prescription
-              </Button>
-            </form>
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red', marginTop: '16px' }}>{error}</p>}
-          </Container>
-        </Box>
-        <Dialog open={!!successMessage} onClose={handleDialogClose}>
-          <DialogTitle>Success</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{successMessage}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose} color="primary">
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </>
-    );
-    
+            </Grid>
+          </Grid>
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={handlePrescriptionSubmit}
+            disabled={loading}
+            style={{ marginTop: '16px' }}
+          >
+            Submit Prescription
+          </Button>
+        </form>
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red', marginTop: '16px' }}>{error}</p>}
+      </Container>
+    </Box>
+    <Dialog open={!!successMessage} onClose={handleDialogClose}>
+      <DialogTitle>Success</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{successMessage}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDialogClose} color="primary">
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>
+);
+
+     
 
 };
 

@@ -149,6 +149,18 @@ export const OverviewPatientInfoDetails = ({patient}) => {
                   View Prescriptions
                 </Button>
             </Grid>
+            <Grid item xs={12} md={6}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    router.push(`/doctor/viewAppointments?username=${patient.Username}`)
+                  }}
+                >
+                  View Appointments
+                </Button>
+            </Grid>
             <Grid  item xs={12} md={12}>
                 <input
                     type="file"

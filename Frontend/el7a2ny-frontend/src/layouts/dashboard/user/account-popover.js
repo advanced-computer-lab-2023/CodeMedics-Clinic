@@ -5,9 +5,6 @@ import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/mate
 import { useAuth } from 'src/hooks/use-auth';
 import Cookies from 'js-cookie';
 
-const username = Cookies.get("username");
-//console.log(Cookies.attributes);
-
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
@@ -46,7 +43,7 @@ export const AccountPopover = (props) => {
           color="text.secondary"
           variant="body2"
         >
-          {username}
+          {Cookies.get("username")}
         </Typography>
       </Box>
       <Divider />

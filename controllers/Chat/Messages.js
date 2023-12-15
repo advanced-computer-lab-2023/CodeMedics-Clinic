@@ -3,7 +3,8 @@ const Message = require('../../models/Message');
 
 exports.getMessages = async (req, res) => {
     try {
-        const { chatId } = req.params;
+        const { chatId } = req.query;
+        console.log('hola ------------------> ' , chatId);
         const messages = await Message.find({ chat: chatId }).sort({ createdAt: 1 });
         res.status(200).json({ messages });
     } catch (error) {
@@ -26,7 +27,7 @@ exports.sendMessage = async (req, res) => {
         await newMessage.save();
         chat.latestMessage = newMessage._id;
         await chat.save();
-        res.status(200).json({ message: 'Message sent successfully' });
+        res.status(200).json({ message: 'Message sent successfully' , newMessage});
     }catch(error){
         res.status(500).json({ message: error.message });
     }

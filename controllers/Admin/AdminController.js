@@ -252,7 +252,7 @@ const acceptRejectDoctorRequest = async (req, res) => {
     console.log("I am here");
     try {
         // Find the doctor by username
-        const doctor = await doctorModel.findOne({ Username: username, Status: 'Pending' });
+        const doctor = await doctorModel.findOne({ Username: username });
         console.log(username, action);
         console.log(doctor);
         if (!doctor) {
@@ -261,9 +261,13 @@ const acceptRejectDoctorRequest = async (req, res) => {
 
         // Update the doctor's status based on the action (Accept or Reject)
         if (action === 'accept') {
-            doctor.Status = 'Approved';
-            // You may perform additional logic here if needed
-        } else if (action === 'reject') {
+            doctor.Status = 'Contract';
+            
+        }
+        else if (action === 'agree') {
+            doctor.Status = 'Approved';   
+        } 
+        else if (action === 'reject') {
             // If rejected, delete the doctor's record from the database
             await doctorModel.deleteOne({ Username: username, Status: 'Pending' });
             // Return success message or any relevant information

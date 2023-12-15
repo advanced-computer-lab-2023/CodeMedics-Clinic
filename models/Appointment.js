@@ -32,7 +32,7 @@ const appointmentSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled'],
+        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled', 'follow-up Requested', 'follow-up Accepted', 'follow-up Revoked'],
         default: 'unreserved',
         required: true
     }
