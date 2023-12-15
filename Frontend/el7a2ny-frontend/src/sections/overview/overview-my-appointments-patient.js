@@ -69,13 +69,12 @@ export const PatientAppointmentsTable = (props) => {
   const [cancelAppointment, setCancelAppointment] = useState(items);
 
   const CancelAppointment = async (appointmentID) => {
-    await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`);
-    for(let i = 0; i<items.length; i++){
-      if(items[i]._id === appointmentID){
-        items[i].status = 'cancelled';
-      }
-      setCancelAppointment(items);
-    }
+    await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`).then(res =>{
+      console.log(res);
+      window.location.reload();
+    }).catch((err) => {
+      console.log(err);
+    });
   };
 
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
@@ -90,7 +89,8 @@ export const PatientAppointmentsTable = (props) => {
     
 
   const [appointmentMenu, setAppointmentMenu] = useState({});
-  const [toBeRescheduled, setToBeRescheduled] = useState(null);
+  const [toBeUpdated, settoBeUpdated] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
   const handleButtonClick = (event, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -112,6 +112,7 @@ export const PatientAppointmentsTable = (props) => {
     });
   };
 
+  const [invalidCancel, setInvalidCancel] = useState(false);
 
   const handleMenuItemClick = (item, appointment) => {
     setAppointmentMenu({
@@ -122,11 +123,18 @@ export const PatientAppointmentsTable = (props) => {
       },
     });
     if(item === "Cancel"){
-      CancelAppointment(appointment._id);
+      if(appointment.status !== 'upcoming'){
+          setInvalidCancel(true);
+          settoBeUpdated(appointment);
+      }
+      else{
+        setCancelling(true);
+        settoBeUpdated(appointment);
+      }
     }
     else if(item === "Reschedule"){
       getUnreservedAppointments(appointment.doctorUsername);
-      setToBeRescheduled(appointment);
+      settoBeUpdated(appointment);
       setRescheduling(true);
     }
     else if(item === "Request a Follow-up"){
@@ -246,13 +254,13 @@ export const PatientAppointmentsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
-          {rescheduling && toBeRescheduled.status !== 'upcoming' && (<div>
+          {rescheduling && toBeUpdated.status !== 'upcoming' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
-                  setToBeRescheduled(null);
+                  settoBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
-                    [toBeRescheduled._id]: {
+                    [toBeUpdated._id]: {
                       anchorEl: null,
                       selectedItem: null,
                     },
@@ -260,15 +268,17 @@ export const PatientAppointmentsTable = (props) => {
                   }}}>
               <DialogTitle>Invalid Action</DialogTitle>
               <DialogContent>
-                <DialogContentText>Appointment should be upcoming to be rescheduled</DialogContentText>
+              <DialogContentText sx={{ color: 'error.main' }}>
+                  Appointment should be upcoming to be rescheduled
+                </DialogContentText>
               </DialogContent>
               <DialogActions>
                 <Button onClick={() => {
                   setRescheduling(false);
-                  setToBeRescheduled(null);
+                  settoBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
-                    [toBeRescheduled._id]: {
+                    [toBeUpdated._id]: {
                       anchorEl: null,
                       selectedItem: null,
                     },
@@ -279,14 +289,14 @@ export const PatientAppointmentsTable = (props) => {
             </Dialog>
           </div>)
           }
-          {rescheduling && toBeRescheduled.status === 'upcoming' && (<div>
+          {rescheduling && toBeUpdated.status === 'upcoming' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
-                  setToBeRescheduled(null);
+                  settoBeUpdated(null);
                   setUnreservedAppointments([]);
                   setAppointmentMenu({
                     ...appointmentMenu,
-                    [toBeRescheduled._id]: {
+                    [toBeUpdated._id]: {
                       anchorEl: null,
                       selectedItem: null,
                     },
@@ -342,7 +352,7 @@ export const PatientAppointmentsTable = (props) => {
                       {appointment.endHour}
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => {rescheduleAppointment(appointment._id, toBeRescheduled._id)}}>Reschedule</Button>
+                      <Button onClick={() => {rescheduleAppointment(appointment._id, toBeUpdated._id)}}>Reschedule</Button>
                     </TableCell>
                   </TableRow>
                 );
@@ -354,16 +364,82 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRescheduling(false);
-                  setToBeRescheduled(null);
+                  settoBeUpdated(null);
                   setUnreservedAppointments([]);
                   setAppointmentMenu({
                     ...appointmentMenu,
-                    [toBeRescheduled._id]: {
+                    [toBeUpdated._id]: {
                       anchorEl: null,
                       selectedItem: null,
                     },
                   });
                 }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
+          {invalidCancel && (<div>
+            <Dialog open={invalidCancel} onClose={() => {{
+                  setInvalidCancel(false);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}}>
+              <DialogTitle>Invalid Action</DialogTitle>
+              <DialogContent>
+              <DialogContentText sx={{ color: 'error.main' }}>
+                Appointment should be upcoming to be rescheduled
+              </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setInvalidCancel(false);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
+          {cancelling && toBeUpdated.status === 'upcoming' && (<div>
+            
+            <Dialog open={cancelling} onClose={() => {{
+                  setCancelling(false);
+                  settoBeUpdated(null);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}}>
+              <DialogTitle>Cancel Appointment</DialogTitle>
+              <DialogContent>
+              <DialogContentText>
+                  Are you sure you want to cancel this appointment?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setCancelling(false);
+                  settoBeUpdated(null);
+                  setAppointmentMenu({
+                    ...appointmentMenu,
+                    [toBeUpdated._id]: {
+                      anchorEl: null,
+                      selectedItem: null,
+                    },
+                  });
+                  }}>Cancel</Button>
+                <Button onClick={() => {CancelAppointment(toBeUpdated._id)}}>Confirm</Button>
               </DialogActions>
             </Dialog>
           </div>)}
