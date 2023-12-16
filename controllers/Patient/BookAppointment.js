@@ -7,7 +7,7 @@ const {getUsername} = require('../../config/infoGetter');
 
 exports.bookAppointment = async (req, res) => {
     try {
-        const { appointmentId, patientUsername } = req.query;
+        const { appointmentId, patientUsername, isRequested } = req.query;
         const appointment = await Appointment.findOne({ _id: appointmentId });
         console.log("in the book appointment");
         console.log(appointmentId, patientUsername);
@@ -29,6 +29,9 @@ exports.bookAppointment = async (req, res) => {
         // Update appointment details
         appointment.patient = patientUsername;
         appointment.status = 'upcoming';
+        if(isRequested == 'true'){
+            appointment.isFollowUp = true;
+        }
         await appointment.save();
 
         // Update patient's appointments
@@ -48,9 +51,13 @@ exports.bookAppointment = async (req, res) => {
         await doctor.save();
 
         // Send email notification to patient
-        sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
+        if(isRequested == 'true'){
+            sendEmail(patient.Email, 'Follow-up Request Confirmation', `Your Follow-up Request has been accepted to be on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
+        }
+        else
+            sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
 // Generate success message
-const successMessage = `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`;
+const successMessage = isRequested == 'true' ? `Your Follow-up Request has been accepted to be on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.` : `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`;
 
 // Add the success message to the patient's messages list
 patient.Messages.push({
@@ -60,6 +67,10 @@ patient.Messages.push({
 });
 await patient.save();
         // Send email notification to doctor
+        if(isRequested == 'true'){
+            res.status(200).json({ message: 'Follow-up Request accepted successfully' });
+            return;
+        }
         sendEmail(doctor.Email, 'New Appointment Booking', `Patient ${patient.FirstName} ${patient.LastName} has booked an appointment with you on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
 
         // Generate success message

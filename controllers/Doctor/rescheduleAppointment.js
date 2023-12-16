@@ -19,7 +19,7 @@ exports.rescheduleAppointment = async (req, res) => {
             _id: appointmentId,
             doctorUsername,
             //patient: patientUsername,
-            status: { $in: ['upcoming', 'rescheduled'] }
+            status: { $in: ['upcoming'] }
         });
 
         if (!existingAppointment) {
@@ -30,7 +30,7 @@ exports.rescheduleAppointment = async (req, res) => {
         existingAppointment.date = date.split('T')[0];
         existingAppointment.startHour = startHour.substring(0, 2);
         existingAppointment.endHour = endHour.substring(0, 2);
-        existingAppointment.status = 'rescheduled';
+        existingAppointment.status = 'upcoming';
 
         await existingAppointment.save();
         const patient = await Patient.findOne({ Username: patientUsername });

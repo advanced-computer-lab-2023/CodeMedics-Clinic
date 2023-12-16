@@ -67,5 +67,14 @@ export const items = [
         <CogIcon  />
       </SvgIcon>
     )
+  },
+  {
+    title: 'Follow-Up Requests',
+    path: '/doctor/follow-up-requests',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CogIcon />
+      </SvgIcon>
+    )
   }
 ];
