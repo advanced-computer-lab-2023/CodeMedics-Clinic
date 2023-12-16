@@ -38,14 +38,14 @@ const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(cors(corsOptions));
 
-const {putSocket, getSocket} = require('./config/socket');
+const {putSocket, getSocket, joinSocket} = require('./config/socket');
 
 
 // server.listen(5000);
@@ -55,6 +55,11 @@ io.on("connection", (socket) => {
     console.log("iAmReady: " + username);
     putSocket(username, socket.id);
     socket.emit("me", socket.id);
+  });
+
+  socket.on("iWantToJoin", async () => {
+    console.log("iWantToJoin");
+    await joinSocket(socket);
   });
 
   socket.on("disconnect", () => {
@@ -81,6 +86,17 @@ io.on("connection", (socket) => {
     const socketID = await getSocket(receiver);
     console.log("newMessage: " + message.content + " to " + receiver + " with socketID: " + socketID);
     io.to(socketID).emit("newMessage", message);
+  });
+
+  socket.on("newMessagePharmacy", async({message, receiver, sendingToPharmacy}) => {
+    const socketID = await getSocket(receiver);
+    console.log("newMessagePharmacy: " + message.content + " to " + receiver + " with socketID: " + socketID + " sendingToPharmacy: " + sendingToPharmacy);
+    const room = receiver + " room";
+    if(sendingToPharmacy){
+      io.to(room).emit("newMessagePharmacy", message);
+    }else{
+      io.to(socketID).to(room).emit("newMessagePharmacy", message);
+    }
   });
 });
 

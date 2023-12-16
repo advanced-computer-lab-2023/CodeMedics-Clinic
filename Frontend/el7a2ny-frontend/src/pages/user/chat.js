@@ -40,6 +40,11 @@ const Page = () => {
                 tmp.push(chats[i]);
             }
         }
+        tmp.sort((a, b) => {
+            if(a.chat.updatedAt > b.chat.updatedAt) return -1;
+            if(a.chat.updatedAt < b.chat.updatedAt) return 1;
+            return 0;
+        });
         setChats(tmp);
         if(selectedChat && selectedChat.chat._id == message.chat) {
             setMessages([...messages, message]);
@@ -47,6 +52,10 @@ const Page = () => {
     };
 
     socket.on('newMessage', (message) => {
+        changeChatAndMessages(message);
+    });
+
+    socket.on('newMessagePharmacy', (message) => {
         changeChatAndMessages(message);
     });
 
@@ -69,7 +78,11 @@ const Page = () => {
         axios.post("http://localhost:8000/chat/sendMessage", body , { withCredentials: true })
             .then((response) => {
                 changeChatAndMessages(response.data.newMessage);
-                socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.doctor.Username});
+                if(selectedChat.pharmacy){
+                    socket.emit('newMessagePharmacy', {message: response.data.newMessage, receiver: Cookies.get('username'), sendingToPharmacy: true});
+                }else{
+                    socket.emit('newMessage', {message: response.data.newMessage, receiver: selectedChat.doctor.Username});
+                }
             }).catch((error) => {
                 console.log(error);
             });

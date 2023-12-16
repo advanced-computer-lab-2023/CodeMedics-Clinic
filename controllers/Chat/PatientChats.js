@@ -56,6 +56,11 @@ exports.getPatientChats = async (req, res) => {
                 chats.push({doctor: doctors[i] , chat , latestMessage , user});
             }
         }
+        chats.sort((a, b) => {
+            if(a.chat.updatedAt > b.chat.updatedAt) return -1;
+            if(a.chat.updatedAt < b.chat.updatedAt) return 1;
+            return 0;
+        });
         res.status(200).json({ chats });
     } catch (error) {
         res.status(500).json({ message: error.message });
