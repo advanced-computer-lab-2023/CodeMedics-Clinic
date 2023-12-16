@@ -5,21 +5,29 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import VideoCall from 'src/components/VideoCall';
+import { SocketContext } from './VideoCallContext';
+import { useContext } from 'react';
 
-const PopUp = ({ open, onClose, onAccept, onDecline }) => {
+const PopUp = () => {
+  const { callAccepted, name, setName, callEnded, leaveCall, callUser, call, answerCall, declineCall, myVideo } = useContext(SocketContext);
+
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Incoming Call</DialogTitle>
+    <Dialog open={call.isReceivingCall && !callEnded} onClose={leaveCall}>
+      <DialogTitle>Incoming Call From {call.name}</DialogTitle>
       <DialogContent>
         <DialogContentText>Do you want to accept or decline the call?</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onDecline} color="secondary">
+        <VideoCall />
+      </DialogActions>
+      <DialogActions>
+        {call.isReceivingCall && !callAccepted && <Button onClick={declineCall} color="secondary">
           Decline
-        </Button>
-        <Button onClick={onAccept} color="primary">
+        </Button>}
+        {call.isReceivingCall && !callAccepted && <Button onClick={answerCall} color="primary">
           Accept
-        </Button>
+        </Button>}
       </DialogActions>
     </Dialog>
   );

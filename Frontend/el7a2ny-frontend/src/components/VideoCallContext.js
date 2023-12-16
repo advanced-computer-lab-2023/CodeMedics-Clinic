@@ -19,8 +19,8 @@ const VideoCallContext = ({ children }) => {
   const connectionRef = useRef();
 
   useEffect(() => {
-
     
+
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
@@ -30,11 +30,10 @@ const VideoCallContext = ({ children }) => {
         }, 1000);
       });
 
-    socket.on('callUser', ({ from, name: callerName, signal }) => {
-      console.log("callReceived: " + from + " " + callerName + " " + signal);
-      setCall({ isReceivingCall: true, from, name: callerName, signal });
+    socket.on('callUser', ({ from, name, signal }) => {
+      setCall({ isReceivingCall: true, from, name, signal });
     });
-  }, []);
+  }, [call]);
 
 
 
@@ -71,7 +70,7 @@ const VideoCallContext = ({ children }) => {
 
     peer.on('signal', (data) => {
       setTimeout(() => {
-        socket.emit('callUser', { userToCall: username, signalData: data, from: me, name });
+        socket.emit('callUser', { userToCall: username, signalData: data, from: me, name: Cookies.get('username') });
       }, 1000);
     });
 
@@ -93,6 +92,12 @@ const VideoCallContext = ({ children }) => {
     window.location.reload();
   };
 
+  const declineCall = () => {
+    setCallEnded(true);
+
+    window.location.reload();
+  }
+
   return (
     <SocketContext.Provider value={{
       call,
@@ -107,6 +112,7 @@ const VideoCallContext = ({ children }) => {
       callUser,
       leaveCall,
       answerCall,
+      declineCall,
     }}
     >
       {children}

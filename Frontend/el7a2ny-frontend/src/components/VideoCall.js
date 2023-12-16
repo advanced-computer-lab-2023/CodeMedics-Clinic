@@ -12,9 +12,7 @@ const VideoCall = () => {
     <div>
       <Typography variant="h2" align="center">Video Chat</Typography>
       <VideoPlayer username={username}/>
-      <Sidebar username={username}>
-        <Notifications />
-      </Sidebar>
+      <Sidebar username={username}/>
     </div>
   );
 };
