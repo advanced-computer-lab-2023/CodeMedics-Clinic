@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
 async function sendEmail(recipient, subject, message) {
     try {
         const mailOptions = {
-            from: 'mirnahaitham2@gmail.com', // Replace with your Gmail email
+            from: 'codemedics2@gmail.com', // Replace with your Gmail email
             to: recipient,
             subject: subject,
             text: message,
@@ -108,8 +108,8 @@ await doctor.save();
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'mirnahaitham2@gmail.com',
-        pass: 'dygc irfq totb kuzy',
+        user: 'codemedics2@gmail.com',
+        pass: 'wwtv oszi mcju tilf',
     },
     tls: {
         rejectUnauthorized: false
