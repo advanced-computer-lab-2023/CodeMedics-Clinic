@@ -130,7 +130,7 @@ const PrescriptionPage = () => {
           console.error('Error during request setup:', error.message);
         }
     
-        setError('Error adding prescription. Please try again.');
+        setError(`Error adding prescription. ${error.response?.data?.message || ''} Please try again.`);
       } finally {
         setLoading(false);
       }
@@ -145,118 +145,118 @@ const PrescriptionPage = () => {
   
  
 
-    return (
-      <>
-        <Head>
-          <title>El7a2ny Clinic</title>
-        </Head>
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            py: 8,
-          }}
-        >
-          <Container maxWidth="xl">
-            <Typography variant="h3" gutterBottom>
-              Prescription Form
-            </Typography>
-            <form>
-              {prescriptionData.drugs.map((drug, index) => (
-                <div key={index} style={{ marginBottom: '16px' }}>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={1}>
-                      <Button
-                        type="button"
-                        color="secondary"
-                        onClick={() => handleRemoveDrugField(index)}
-                        style={{
-                          color: 'red',
-                          marginLeft: '-8px', // Adjust this value as needed
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    </Grid>
-                    <Grid item xs={3}>
-                      <TextField
-                        label={`Drug Name ${index + 1}`}
-                        value={drug.drugName}
-                        onChange={handleChange('drugName', index)}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <TextField
-                        label={`Dosage ${index + 1}`}
-                        value={drug.dosage}
-                        onChange={handleChange('dosage', index)}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                      />
-                    </Grid>
-                  </Grid>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="contained"
-                color="primary"
-                onClick={handleAddNewDrugFields}
-                style={{ marginTop: '16px' }}
-              >
-                +
-              </Button>
+return (
+  <>
+    <Head>
+      <title>El7a2ny Clinic</title>
+    </Head>
+    <Box
+      component="main"
+      sx={{
+        flexGrow: 1,
+        py: 8,
+      }}
+    >
+      <Container maxWidth="xl">
+        <Typography variant="h3" gutterBottom>
+          Prescription Form
+        </Typography>
+        <form>
+          {prescriptionData.drugs.map((drug, index) => (
+            <div key={index} style={{ marginBottom: '16px' }}>
               <Grid container spacing={2} alignItems="center">
-                <Grid item xs={6}>
+                <Grid item xs={1}>
+                  <Button
+                    type="button"
+                    color="secondary"
+                    onClick={() => handleRemoveDrugField(index)}
+                    style={{
+                      color: 'red',
+                      marginLeft: '-8px', // Adjust this value as needed
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+                <Grid item xs={3}>
                   <TextField
-                    label="Date"
-                    type="date"
-                    name="date"
-                    placeholder=" "
-                    value={prescriptionData.date}
-                    onChange={handleDateChange}
+                    label={`Drug Name ${index + 1}`}
+                    value={drug.drugName}
+                    onChange={handleChange('drugName', index)}
                     fullWidth
                     margin="normal"
                     variant="outlined"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    label={`Dosage ${index + 1}`}
+                    value={drug.dosage}
+                    onChange={handleChange('dosage', index)}
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
                   />
                 </Grid>
               </Grid>
-              <Button
-                type="button"
-                variant="contained"
-                color="primary"
-                onClick={handlePrescriptionSubmit}
-                disabled={loading}
-                style={{ marginTop: '16px' }}
-              >
-                Submit Prescription
-              </Button>
-            </form>
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red', marginTop: '16px' }}>{error}</p>}
-          </Container>
-        </Box>
-        <Dialog open={!!successMessage} onClose={handleDialogClose}>
-          <DialogTitle>Success</DialogTitle>
-          <DialogContent>
-            <DialogContentText>{successMessage}</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose} color="primary">
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </>
-    );
-    
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={handleAddNewDrugFields}
+            style={{ marginTop: '16px' }}
+          >
+            +
+          </Button>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={6}>
+              <TextField
+                label="Date"
+                type="date"
+                name="date"
+                placeholder=" "
+                value={prescriptionData.date}
+                onChange={handleDateChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="button"
+            variant="contained"
+            color="primary"
+            onClick={handlePrescriptionSubmit}
+            disabled={loading}
+            style={{ marginTop: '16px' }}
+          >
+            Submit Prescription
+          </Button>
+        </form>
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red', marginTop: '16px' }}>{error}</p>}
+      </Container>
+    </Box>
+    <Dialog open={!!successMessage} onClose={handleDialogClose}>
+      <DialogTitle>Success</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{successMessage}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDialogClose} color="primary">
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </>
+);
+
     
   };
 
