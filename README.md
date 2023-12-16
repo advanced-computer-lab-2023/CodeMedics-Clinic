@@ -122,7 +122,6 @@ We extend our appreciation to the developers, educators, and contributors whose 
 
 ### El7a2ny Virtual Clinic and Pharmacy
 
-The source code of El7a2ny Virtual Clinic and Pharmacy is licensed under the [MIT License](LICENSE).
 
 ### Third-Party Licenses
 
