@@ -7,12 +7,14 @@ import { Chat } from '@mui/icons-material';
 import{ ChatMessages } from './ChatMessages';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ChatMessageAdd } from './ChatMessageAdd';
+import { ChatBoxPharmacyTop } from './ChatBoxPharmacy-top';
 
 export const ChatBox = (props) => {
     const { selectedChat, messages, username ,  sendMessage} = props;
     return (
         <Stack sx={{ flexGrow: 1 }}>
-            <ChatBoxTop selectedChat={selectedChat} />
+           {!selectedChat.pharmacy && <ChatBoxTop selectedChat={selectedChat} />}
+            {selectedChat.pharmacy && <ChatBoxPharmacyTop selectedChat={selectedChat} />}
             <Divider />
             <Box
                 sx={{

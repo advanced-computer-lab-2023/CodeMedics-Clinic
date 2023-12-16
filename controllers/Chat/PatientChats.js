@@ -9,6 +9,7 @@ const {getUsername} = require('../../config/infoGetter');
 exports.getPatientChats = async (req, res) => {
     try {
         const Username = await getUsername(req , res);
+        
         console.log('here ----> ', Username);
         const user = await Patient.findOne({ Username });
         if (!user) {
@@ -29,8 +30,19 @@ exports.getPatientChats = async (req, res) => {
             }
         }
         const chats = [];
+        const pharmacyChat = await Chat.findOne({users: [Username , 'admin']});
+        if(!pharmacyChat){
+            const newChat = new Chat({
+                users: [Username , 'admin'],
+            });
+            await newChat.save();
+            chats.push({pharmacy: true , chat: newChat , latestMessage: null});
+        }
+        else{
+            const latestMessage = await Message.findOne({chat: pharmacyChat._id}).sort({createdAt: -1});
+            chats.push({pharmacy: true , chat: pharmacyChat , latestMessage});
+        }
         for(let i=0; i<doctors.length; i++){
-           
             const chat = await Chat.findOne({users: [user.Username, doctors[i].Username]});
             if(!chat){
                 const newChat = new Chat({

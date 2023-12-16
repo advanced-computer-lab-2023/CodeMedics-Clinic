@@ -3,6 +3,7 @@ import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { ChatSidebarSearch } from './ChatSidebarSearch';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ChatItem } from './ChatItem';
+import { ChatItemPhamracy } from './ChatItemPharmacy';
 
 export const ChatSidebar = (props) => {
     const { chats, selectedChat, setSelectedChat, username, getMessages } = props;
@@ -39,11 +40,16 @@ export const ChatSidebar = (props) => {
                         }}
                     >
                         {chats && chats.map((chat, index) => {
+                            if(!chat.pharmacy){
                             const doctor = chat.doctor;
-                            console.log(index);
                             return (
                                 <ChatItem key={index} index={index} chat={chat} doctor = {doctor} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages} />
                             )
+                            }else{
+                                return (
+                                    <ChatItemPhamracy key={index} index={index} chat={chat} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages} />
+                                )
+                            }
                         })}
                     </Stack>
                 </Scrollbar>

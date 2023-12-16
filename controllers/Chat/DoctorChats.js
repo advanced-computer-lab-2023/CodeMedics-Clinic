@@ -26,6 +26,18 @@ exports.getDoctorChats = async (req, res) => {
             }
         }
         const chats = [];
+        const pharmacyChat = await Chat.findOne({users: [Username , 'admin']});
+        if(!pharmacyChat){
+            const newChat = new Chat({
+                users: [Username , 'admin'],
+            });
+            await newChat.save();
+            chats.push({pharmacy: true , chat: newChat , latestMessage: null});
+        }
+        else{
+            const latestMessage = await Message.findOne({chat: pharmacyChat._id}).sort({createdAt: -1});
+            chats.push({pharmacy: true , chat: pharmacyChat , latestMessage});
+        }
         for(let i=0; i<patients.length; i++){
             const chat = await Chat.findOne({users: [patients[i].Username , user.Username]});
             if(!chat){

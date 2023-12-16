@@ -16,7 +16,7 @@ const createToken = (username) => {
 };
 
 const createDoctor = asyncHandler(async (req, res) => {
-    console.log(req.body);
+    console.log('here tst3 ----> ', req.body);
     // Check if the required variables are present in the request body
     const requiredVariables = ['FirstName', 'LastName', 'Username', 'Password', 'Email', 'DateOfBirth', 'affiliation', 'HourlyRate', 'Degree', 'Speciality'];
     
@@ -39,7 +39,7 @@ const createDoctor = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: `Missing ${variable} in the request body` });
         }
     }
-
+    console.log('here tst2 ----> ' ,req.files);
     // Check for uploaded files
     if (!req.files || Object.keys(req.files).length !== 3) {
         return res.status(400).json({ message: 'Please upload ID Document, Medical Degree, and Medical License' });
