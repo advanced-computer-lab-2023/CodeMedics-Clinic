@@ -66,57 +66,50 @@ const PrescriptionPage = () => {
         return newData;
       });
     };
-    
-    const handleAddDrug = async (drugName, dosage) => {
-      try {
-        const response = await axios.post('http://localhost:8000/doctor/checkMedicine', {
-          medicineName: drugName,
-        });
-    
-        if (response.data.exists) {
-          console.log('Medicine exists:', drugName);
-          setSuccessMessage(`Drug "${drugName}" added successfully!`);
-          setError(null);
-        } else {
-          console.error('Error: Drug does not exist in the Pharmacy.');
-          setError('Error adding medicine. Medicine not available in the Pharmacy.');
-        }
-      } catch (error) {
-        console.error('Error checking medicine:', error);
-        setError('Error adding medicine. Medicine not available in the Pharmacy.');
-      }
+  
+    const handleAddNewDrugFields = () => {
+      setPrescriptionData((prevData) => {
+        const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
+        const newData = { ...prevData, drugs: newDrugs };
+        return newData;
+      });
     };
     
-    
-    const handleAddNewDrugFields = async () => {
-      const lastDrugIndex = prescriptionData.drugs.length - 1;
-      const lastDrug = prescriptionData.drugs[lastDrugIndex];
-    
-      try {
-        await handleAddDrug(lastDrug.drugName, lastDrug.dosage);
-    
-        // If handleAddDrug is successful, add new input fields
-        setPrescriptionData((prevData) => {
-          const newDrugs = [...prevData.drugs, { drugName: '', dosage: '' }];
-          const newData = { ...prevData, drugs: newDrugs };
-          return newData;
-        });
-      } catch (error) {
-        // Handle the error (e.g., show an error message)
-        console.error('Error adding drug:', error);
-        setError('Error adding medicine. Medicine not available in the Pharmacy.');
-      }
+    const handleRemoveDrugField = (index) => {
+      setPrescriptionData((prevData) => {
+        const newDrugs = [...prevData.drugs];
+        newDrugs.splice(index, 1);
+        return { ...prevData, drugs: newDrugs };
+      });
     };
-    
-    
-    
-  
-    
-  
+
     const handlePrescriptionSubmit = async () => {
       try {
+        console.log(prescriptionData);
         setLoading(true);
-        console.log('Prescription Data:', prescriptionData);
+        let problematicDrug = null;
+    
+        // Iterate over each drug in prescriptionData and check medicine
+        for (const drug of prescriptionData.drugs) {
+          const response = await axios.post('http://localhost:8000/doctor/checkMedicine', {
+            medicineName: drug.drugName,
+          });
+    
+          if (!response.data.exists) {
+            console.error(`Error: Drug ${drug.drugName} does not exist in the Pharmacy.`);
+            problematicDrug = drug;
+            break; // Stop the loop if a drug is not found
+          }
+        }
+    
+        // If a problematic drug is found, display an error and return
+        if (problematicDrug) {
+          console.error(`Error adding prescription. Drug ${problematicDrug.drugName} is not available.`);
+          setError(`Error adding prescription. Drug ${problematicDrug.drugName} is not available.`);
+          return;
+        }
+    
+        // All drugs passed the check, proceed to submit prescription
         const response = await axios.post('http://localhost:8000/doctor/addPrescription', prescriptionData, {
           withCredentials: true,
         });
@@ -137,11 +130,13 @@ const PrescriptionPage = () => {
           console.error('Error during request setup:', error.message);
         }
     
-        setError('Error adding prescription. Please try again.');
+        setError(`Error adding prescription. ${error.response?.data?.message || ''} Please try again.`);
       } finally {
         setLoading(false);
       }
     };
+    
+    
     
   
     const handleDialogClose = () => {
@@ -170,7 +165,20 @@ return (
           {prescriptionData.drugs.map((drug, index) => (
             <div key={index} style={{ marginBottom: '16px' }}>
               <Grid container spacing={2} alignItems="center">
-                <Grid item xs={5}>
+                <Grid item xs={1}>
+                  <Button
+                    type="button"
+                    color="secondary"
+                    onClick={() => handleRemoveDrugField(index)}
+                    style={{
+                      color: 'red',
+                      marginLeft: '-8px', // Adjust this value as needed
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </Grid>
+                <Grid item xs={3}>
                   <TextField
                     label={`Drug Name ${index + 1}`}
                     value={drug.drugName}
@@ -180,7 +188,7 @@ return (
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item xs={5}>
+                <Grid item xs={3}>
                   <TextField
                     label={`Dosage ${index + 1}`}
                     value={drug.dosage}
@@ -189,16 +197,6 @@ return (
                     margin="normal"
                     variant="outlined"
                   />
-                </Grid>
-                <Grid item xs={2}>
-                  <Button
-                    type="button"
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleAddDrug(drug.drugName, drug.dosage)}
-                  >
-                    Add Drug
-                  </Button>
                 </Grid>
               </Grid>
             </div>
@@ -259,9 +257,8 @@ return (
   </>
 );
 
-     
-
-};
+    
+  };
 
 PrescriptionPage.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 

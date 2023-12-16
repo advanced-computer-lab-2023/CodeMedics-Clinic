@@ -96,7 +96,9 @@ const Page = () => {
         formData.append('nationalIdFile', values.nationalIdFile);
         formData.append('medicalDegreeFile', values.medicalDegreeFile);
         formData.append('medicalLicenseFile', values.medicalLicenseFile);
-    
+
+        
+
         const response = await axios.post('http://localhost:8000/Doctor/register', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',

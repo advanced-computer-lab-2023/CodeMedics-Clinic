@@ -457,7 +457,7 @@ export const PatientAppointmentsTable = (props) => {
                       selectedItem: null,
                     },
                   });
-                  }}>Cancel</Button>
+                  }}>Close</Button>
                 <Button onClick={() => {CancelAppointment(toBeUpdated._id)}}>Confirm</Button>
               </DialogActions>
             </Dialog>

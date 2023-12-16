@@ -1,8 +1,8 @@
 import { Avatar, Box, InputAdornment, OutlinedInput, Stack, SvgIcon, Typography, Divider } from '@mui/material';
 
-export const ChatItem = (props) => {
+export const ChatItemPhamracy = (props) => {
 
-    const { chat, patient, index, selectedChat, setSelectedChat, username, getMessages } = props;
+    const { chat, index, selectedChat, setSelectedChat, username, getMessages } = props;
     return (
         <Stack
             component="li"
@@ -17,21 +17,21 @@ export const ChatItem = (props) => {
                 '&:hover': {
                     backgroundColor: 'action.hover'
                 },
-                ...(selectedChat && selectedChat.patient && selectedChat.patient.Username === patient.Username && {
+                ...(selectedChat && selectedChat.pharmacy && selectedChat.chat._id === chat._id && {
                     backgroundColor: 'action.hover'
                 })
             }}
         >
             <div>
-            <Avatar alt={patient.FirstName + " " + patient.LastName} src={patient.Picture == null ? `/assets/avatars/${index % 16}.png` : patient.Picture} />
+            <Avatar alt={"Code Medics Pharmacy"} src={`/assets/Pharmacy-Logo.png`}/>
             </div>
             <Box sx={{flexGrow: 1,overflow: 'hidden'}}>
                 <Typography variant='subtitle2' noWrap>
-                    {patient.FirstName + " " + patient.LastName}
+                   Code Medics Pharmacy
                 </Typography>
                 {chat.latestMessage && 
                 <Typography color="text.secondary" noWrap sx={{ flexGrow: 1 }} variant="subtitle2">
-                    {chat.latestMessage.sender == username ? "You: " : ""} {chat.latestMessage.content}
+                    {chat.latestMessage.sender == username ? "Me: " : ""} {chat.latestMessage.content}
                 </Typography>}
             </Box>
 
