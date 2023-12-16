@@ -93,8 +93,12 @@ exports.removeMedicineFromPrescription = async (req, res) => {
     }
 
     prescription.Drug.splice(medicineIndex, 1);
+    if (prescription.Drug.length === 0) {
+      await Prescription.deleteOne({ _id: prescriptionID });
+      return res.status(200).json({ message: 'Prescription deleted successfully' });
+    }
     await prescription.save();
-
+   
     res.status(200).json({ message: 'Medicine removed from prescription successfully', prescription });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error: error.message });
