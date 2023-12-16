@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Card, OutlinedInput, InputAdornment, SvgIcon, IconButton, Tooltip } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import { ChatSider } from 'src/sections/user/chat/ChatSider';
+import { ChatSidebar } from 'src/sections/user/chat/ChatSidebar';
 import { ChatBox } from 'src/sections/user/chat/ChatBox';
 import socket from 'src/components/socket';
 
@@ -84,7 +84,7 @@ const Page = () => {
             <Box>
                 <Divider />
                 <Stack direction="row" >
-                    <ChatSider chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages}/>
+                    <ChatSidebar chats={chats} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages}/>
                     <Divider orientation="vertical" flexItem />
                     {selectedChat == null ?
                         <Stack>

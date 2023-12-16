@@ -16,7 +16,7 @@ export const ChatBoxTop = (props) => {
                     </Stack>
                 </Stack>
                 <Tooltip title="Video Call">
-                <IconButton onClick={() => {router.push(`/user/videoCall?username=${selectedChat.patient.Username}`)}}>
+                <IconButton onClick={() => {router.push(`/doctor/videoCall?username=${selectedChat.patient.Username}`)}}>
                         <SvgIcon
                             color="action"
                             fontSize="small"

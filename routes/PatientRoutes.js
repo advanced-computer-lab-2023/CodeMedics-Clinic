@@ -26,7 +26,8 @@ const {
     addPrescription,
     deletePrescriptionsByUsername,
     getPrescriptions1,  
-    createAndDownloadPDF
+    createAndDownloadPDF,
+    fillPrescription
 } = require('../controllers/Patient/PrescriptionList');
 const app = require('../app.js');
 const {filterAppointmentsPatient} = require('../controllers/Patient/filterAppointmentsPatient');
@@ -59,6 +60,7 @@ router.get('/:patientUsername/upcoming-appointments', viewUpcomingAppointments);
 router.get('/:patientUsername/past-appointments', viewPastAppointments);
 router.get('/getAppointmentAmount', getAppointmentAmount);
 router.get('/available-appointments/:doctorUsername', getAvailableAppointments);
+router.patch('/fillPrescription', fillPrescription);
 
 router.get('/getPatientMessages' , getPatientMessages );
 router.get('/getFreeSlotsOfDoctor', filterDoctorFreeSlots);

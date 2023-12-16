@@ -3,12 +3,15 @@ import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
+import CalendarDaysIcon from '@heroicons/react/24/solid/CalendarDaysIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
 import ChatBubbleLeftRightIcon from '@heroicons/react/24/solid/ChatBubbleLeftRightIcon';
-
+import MessageChatSquareIcon from '../../../icons/untitled-ui/duocolor/message-chat-square';
+import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
+import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
 
 export const items = [
   {
@@ -16,7 +19,7 @@ export const items = [
     path: '/doctor/patients',
     icon: (
       <SvgIcon fontSize="small">
-        <ChartBarIcon />
+        <UsersIcon />
       </SvgIcon>
     )
   },
@@ -25,7 +28,7 @@ export const items = [
     path: '/doctor/appointments',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <CalendarDaysIcon />
       </SvgIcon>
     )
   },
@@ -34,7 +37,7 @@ export const items = [
     path: '/doctor/AllPrescriptions',
     icon: (
       <SvgIcon fontSize="small">
-        <ChartBarIcon />
+        <CreditCard01Icon />
       </SvgIcon>
     )
   },
@@ -43,7 +46,7 @@ export const items = [
     path: '/doctor/chat',
     icon: (
       <SvgIcon fontSize="small">
-        <ChatBubbleLeftRightIcon   />
+        <MessageChatSquareIcon   />
       </SvgIcon>
     )
   },
@@ -52,7 +55,7 @@ export const items = [
     path: '/doctor/account',
     icon: (
       <SvgIcon fontSize="small">
-        <UserIcon />
+        <HomeSmileIcon />
       </SvgIcon>
     )
   },
@@ -61,7 +64,7 @@ export const items = [
     path: '/doctor/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon />
+        <CogIcon  />
       </SvgIcon>
     )
   },

@@ -60,6 +60,7 @@ const Page = () => {
             console.log('Here ----> ');
             if (data['Type'] === 'Patient') {
               Cookies.set('username', data['patient']['username']);
+              Cookies.set('isDoctor', false);
               socket.on('me', (id) => {
                 Cookies.set('socketID', id);
               });
@@ -67,6 +68,7 @@ const Page = () => {
               router.push(`/user/doctors`);
             } else if (data['Type'] === 'Doctor') {
               Cookies.set('username', data['doctor']['username']);
+              Cookies.set('isDoctor', true);
               socket.on('me', (id) => {
                 Cookies.set('socketID', id);
               });
@@ -121,6 +123,7 @@ const Page = () => {
             console.log('Here ----> ');
             if (data['Type'] === 'Patient') {
               Cookies.set('username', data['patient']['Username']);
+              Cookies.set('isDoctor', false);
               socket.on('me', (id) => {
                 Cookies.set('socketID', id);
               });
@@ -133,8 +136,13 @@ const Page = () => {
                 helpers.setErrors({ submit: 'Your request is still pending' });
                 helpers.setSubmitting(false);
               }
+              else if(data.doctor.Status == 'Contract'){
+                Cookies.set('doctor', data['doctor']['Username']);
+                router.push(`/doctor/contract`);
+              }
               else {
                 Cookies.set('username', data['doctor']['Username']);
+                Cookies.set('isDoctor', true);
                 socket.on('me', (id) => {
                   Cookies.set('socketID', id);
                 });

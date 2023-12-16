@@ -63,6 +63,7 @@ io.on("connection", (socket) => {
 
   socket.on("callUser", async ({ userToCall, signalData, from, name }) => {
     const idToCall = await getSocket(userToCall);
+    console.log("callUser: " + userToCall + " with socketID: " + idToCall);
     io.to(idToCall).emit("callUser", { signal: signalData, from, name });
   });
 
