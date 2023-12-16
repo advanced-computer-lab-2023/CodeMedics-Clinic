@@ -10,7 +10,7 @@ const VideoPlayer = (props) => {
     <Grid container>
       {stream && (
           <Grid item xs={12} md={6}>
-            <Typography variant="h5" gutterBottom>{'Calling ' + username + '...'}</Typography>
+            {!call.isReceivingCall && <Typography variant="h5" gutterBottom>{'Calling ' + username + '...'}</Typography>}
             <video playsInline muted ref={myVideo} autoPlay />
           </Grid>
       )}

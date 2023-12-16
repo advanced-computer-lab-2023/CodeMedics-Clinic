@@ -1,4 +1,4 @@
-
+import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
 import CogIcon from '@heroicons/react/24/solid/CogIcon';
 import LockClosedIcon from '@heroicons/react/24/solid/LockClosedIcon';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
@@ -12,9 +12,7 @@ import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
 import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
-import Certificate02Icon from '@untitled-ui/icons-react/build/esm/Certificate02';
-import File02Icon from '@untitled-ui/icons-react/build/esm/File02';
-import Settings04Icon from '@untitled-ui/icons-react/build/esm/Settings04';
+
 import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
 
 export const items = [
@@ -59,7 +57,7 @@ export const items = [
     path: '/user/prescriptions',
     icon: (
       <SvgIcon fontSize="small">
-        <Certificate02Icon   />
+        <ClipboardDocumentListIcon      />
       </SvgIcon>
     )
   },
@@ -68,7 +66,7 @@ export const items = [
     path: '/user/medical-history',
     icon: (
       <SvgIcon fontSize="small">
-        <File02Icon   />
+        <ClipboardDocumentListIcon      />
       </SvgIcon>
     )
   },
@@ -95,7 +93,7 @@ export const items = [
     path: '/user/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <Settings04Icon />
+        <CogIcon  />
       </SvgIcon>
     )
   },

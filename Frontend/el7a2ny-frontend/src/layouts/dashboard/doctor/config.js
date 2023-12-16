@@ -12,7 +12,6 @@ import ChatBubbleLeftRightIcon from '@heroicons/react/24/solid/ChatBubbleLeftRig
 import MessageChatSquareIcon from '../../../icons/untitled-ui/duocolor/message-chat-square';
 import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
 import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
-import Settings04Icon from '@untitled-ui/icons-react/build/esm/Settings04';
 
 export const items = [
   {
@@ -65,7 +64,7 @@ export const items = [
     path: '/doctor/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <Settings04Icon />
+        <CogIcon  />
       </SvgIcon>
     )
   }

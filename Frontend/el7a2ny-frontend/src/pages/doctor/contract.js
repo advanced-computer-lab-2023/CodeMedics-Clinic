@@ -37,17 +37,14 @@ const Page = () => {
             withCredentials: true,
           })
           .then((res) => {
-              if (res.status == 200) {
-              console.log("accepted");
-              window.location.reload();
-              }
+            router.push('/doctor/patients');
           })
           .catch((err) => {
               console.log(err);
           }
           )
   
-      router.push('/doctor/patients'); // Redirect to the doctor's dashboard
+       // Redirect to the doctor's dashboard
     };
   
     const handleRejectContract = () => {
@@ -76,7 +73,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Login
+          Emplyment Contract
         </title>
       </Head>
       <Box

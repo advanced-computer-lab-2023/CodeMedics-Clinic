@@ -12,6 +12,8 @@ import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import socket from 'src/components/socket';
 import 'simplebar-react/dist/simplebar.min.css';
+import PopUp from 'src/components/PopUp';
+import { VideoCallContext } from 'src/components/VideoCallContext';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -46,6 +48,9 @@ const App = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
+      <VideoCallContext>
+        <PopUp/>
+      </VideoCallContext>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <AuthProvider>
           <ThemeProvider theme={theme}>

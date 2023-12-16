@@ -23,15 +23,19 @@ export const ChatSidebar = (props) => {
                 </Typography>
             </Stack>
             <ChatSidebarSearch />
-            <Box>
-                <Scrollbar>
+            <Box sx={{
+                    flexGrow: 1,
+                    overflow: 'hidden',
+                    height: 485
+                }}>
+                <Scrollbar sx={{ maxHeight: '100%' }}>
                     <Stack
                         component="ul"
                         spacing={0.5}
                         sx={{
                             listStyle: 'none',
                             m: 0,
-                            p: 2
+                            p: 2,
                         }}
                     >
                         {chats && chats.map((chat, index) => {
