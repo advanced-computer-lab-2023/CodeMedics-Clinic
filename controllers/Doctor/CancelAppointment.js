@@ -13,7 +13,10 @@ exports.CancelAppointment = async (req, res) => {
         const doctor = await Doctor.findOne({Username: appointment.doctorUsername});
         const patient = await Patient.findOne({Username: appointment.patient});
         const package = await Package.findOne({ Name: patient.HealthPackage.membership });
-        const discount = package.SessionDiscount;
+        var discount = 0;
+        if(package){
+            discount = package.SessionDiscount;
+        }
         const appointmentPrice = ((Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour))) * doctor.HourlyRate) ;
         doctor.Wallet = doctor.Wallet - appointmentPrice; // handle case that the wallet is initially empty ... or maybe it's a feature :)
         patient.Wallet = patient.Wallet + (appointmentPrice * 1.1 - discount); //TODO handle correct calculation
