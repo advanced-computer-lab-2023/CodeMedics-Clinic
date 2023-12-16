@@ -37,7 +37,7 @@ const {getAppointmentAmount} = require('../controllers/Patient/getAppointmentAmo
 const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFreeSlots');
 const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
 const Patient = require('../models/Patient.js');
-
+const {updateAppointmentStatus} = require('../controllers/Patient/updateAppointmentStatus');
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {   
@@ -68,6 +68,7 @@ router.patch('/bookAppointment', bookAppointment);
 
 router.patch('/RequestFollowUp', RequestFollowUp);
 
+router.patch('/updateAppointmentStatus', updateAppointmentStatus);
 router.patch('/RescheduleAppointment', RescheduleAppointment);
 
 router.post('/payAppointment', payAppointment);
