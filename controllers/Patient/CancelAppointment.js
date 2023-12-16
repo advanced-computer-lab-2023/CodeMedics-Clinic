@@ -5,6 +5,7 @@ const Appointment = require('../../models/Appointment');
 const Patient = require('../../models/Patient');
 const Doctor = require('../../models/Doctor');
 const nodemailer = require('nodemailer');
+const ClinicWallet = require('../../models/ClinicWallet');
 
 
 async function sendEmail(recipient, subject, message) {
