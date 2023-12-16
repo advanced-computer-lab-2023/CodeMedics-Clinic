@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import Lightbulb04Icon from '@untitled-ui/icons-react/build/esm/Lightbulb04';
+// import Lightbulb04Icon from '@untitled-ui/icons-react/build/esm/Lightbulb04';
 import { SvgIcon, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
@@ -17,12 +17,12 @@ export const Tip = (props) => {
 
   return (
     <TipRoot>
-      <SvgIcon
+      {/* <SvgIcon
         color="action"
         sx={{ mr: 1 }}
       >
         <Lightbulb04Icon />
-      </SvgIcon>
+      </SvgIcon> */}
       <Typography
         color="text.secondary"
         sx={{

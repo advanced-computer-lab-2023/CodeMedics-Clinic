@@ -3,6 +3,7 @@ import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { ChatSidebarSearch } from './ChatSidebarSearch';
 import { Scrollbar } from 'src/components/scrollbar';
 import { ChatItem } from './ChatItem';
+import { ChatItemPhamracy } from './ChatItemPharmacy';
 
 export const ChatSidebar = (props) => {
     const { chats, selectedChat, setSelectedChat, username, getMessages } = props;
@@ -24,10 +25,10 @@ export const ChatSidebar = (props) => {
             </Stack>
             <ChatSidebarSearch />
             <Box sx={{
-                    flexGrow: 1,
-                    overflow: 'hidden',
-                    height: 485
-                }}>
+                flexGrow: 1,
+                overflow: 'hidden',
+                height: 485
+            }}>
                 <Scrollbar sx={{ maxHeight: '100%' }}>
                     <Stack
                         component="ul"
@@ -39,10 +40,17 @@ export const ChatSidebar = (props) => {
                         }}
                     >
                         {chats && chats.map((chat, index) => {
-                            const patient = chat.patient;
-                            return (
-                                <ChatItem key={index} index={index} chat={chat} patient = {patient} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages} />
-                            )
+                            if (!chat.pharmacy) {
+                                const patient = chat.patient;
+                                return (
+                                    <ChatItem key={index} index={index} chat={chat} patient={patient} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages} />
+                                )
+                            } else {
+                                return (
+                                    <ChatItemPhamracy key={index} index={index} chat={chat} selectedChat={selectedChat} setSelectedChat={setSelectedChat} username={username} getMessages={getMessages} />
+                                )
+                            }
+
                         })}
                     </Stack>
                 </Scrollbar>

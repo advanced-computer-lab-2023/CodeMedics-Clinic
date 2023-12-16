@@ -2,10 +2,11 @@ import React, { createContext, useState, useRef, useEffect } from 'react';
 import Peer from 'simple-peer';
 import socket from './socket';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 const SocketContext = createContext();
 
-const VideoCallContext = ({ children }) => {
+const VideoCallContext = ({ children, caller }) => {
   const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
   const [stream, setStream] = useState();
@@ -18,9 +19,11 @@ const VideoCallContext = ({ children }) => {
   const userVideo = useRef();
   const connectionRef = useRef();
 
-  useEffect(() => {
+  const router = useRouter();
 
+  useEffect(() => {
     
+    if(call.isReceivingCall || caller)
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then((currentStream) => {
         setStream(currentStream);
@@ -30,11 +33,10 @@ const VideoCallContext = ({ children }) => {
         }, 1000);
       });
 
-    socket.on('callUser', ({ from, name: callerName, signal }) => {
-      console.log("callReceived: " + from + " " + callerName + " " + signal);
-      setCall({ isReceivingCall: true, from, name: callerName, signal });
+    socket.on('callUser', ({ from, name, signal }) => {
+      setCall({ isReceivingCall: true, from, name, signal });
     });
-  }, []);
+  }, [call]);
 
 
 
@@ -71,7 +73,7 @@ const VideoCallContext = ({ children }) => {
 
     peer.on('signal', (data) => {
       setTimeout(() => {
-        socket.emit('callUser', { userToCall: username, signalData: data, from: me, name });
+        socket.emit('callUser', { userToCall: username, signalData: data, from: me, name: Cookies.get('username') });
       }, 1000);
     });
 
@@ -85,13 +87,39 @@ const VideoCallContext = ({ children }) => {
     connectionRef.current = peer;
   };
 
-  const leaveCall = () => {
+  const leaveCall = async () => {
     setCallEnded(true);
 
     connectionRef.current.destroy();
 
-    window.location.reload();
+    stream.getTracks().forEach((track) => track.stop());
+
+    if(!caller){
+      window.location.reload();
+    }else{
+      if(Cookies.get('isDoctor')){
+        window.location.assign('/doctor/chat');
+      }else{
+        window.location.assign('/user/chat');
+      }
+    }
   };
+
+  const declineCall = () => {
+    setCallEnded(true);
+
+    stream.getTracks().forEach((track) => track.stop());
+
+    if(!caller){
+      window.location.reload();
+    }else{
+      if(Cookies.get('isDoctor')){
+        window.location.assign('/doctor/chat');
+      }else{
+        window.location.assign('/user/chat');
+      }
+    }
+  }
 
   return (
     <SocketContext.Provider value={{
@@ -107,6 +135,7 @@ const VideoCallContext = ({ children }) => {
       callUser,
       leaveCall,
       answerCall,
+      declineCall,
     }}
     >
       {children}

@@ -8,7 +8,7 @@ import { SocketContext } from './VideoCallContext';
 const Sidebar = (props) => {
   const {username} = props;
   console.log(username);
-  const { me, callAccepted, name, setName, callEnded, leaveCall, callUser } = useContext(SocketContext);
+  const { me, callAccepted, name, setName, callEnded, leaveCall, callUser, call } = useContext(SocketContext);
 
   return me ? (
         <form noValidate autoComplete="off">
@@ -18,7 +18,7 @@ const Sidebar = (props) => {
                 <Button variant="contained" color="secondary" startIcon={<PhoneDisabled fontSize="large" />} fullWidth onClick={leaveCall}>
                   Hang Up
                 </Button>
-              ) : (
+              ) : !call.isReceivingCall && (
                 <Button variant="contained" color="primary" disabled={!me} startIcon={<Phone fontSize="large" />} fullWidth onClick={() => callUser(username)}>
                   Call
                 </Button>

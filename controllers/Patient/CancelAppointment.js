@@ -5,12 +5,13 @@ const Appointment = require('../../models/Appointment');
 const Patient = require('../../models/Patient');
 const Doctor = require('../../models/Doctor');
 const nodemailer = require('nodemailer');
+const ClinicWallet = require('../../models/ClinicWallet');
 
 
 async function sendEmail(recipient, subject, message) {
     try {
         const mailOptions = {
-            from: 'mirnahaitham2@gmail.com', // Replace with your Gmail email
+            from: 'codemedics2@gmail.com', // Replace with your Gmail email
             to: recipient,
             subject: subject,
             text: message,
@@ -56,26 +57,26 @@ exports.CancelAppointment = async (req, res) => {
             const appointmentPrice = (Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour))) * doctor.HourlyRate;
             doctor.Wallet -= appointmentPrice;
             patient.Wallet += appointmentPrice;
-            let idx = -1;
-            for(let i = 0; i<patient.Appointments.length; i++){
-                if(patient.Appointments[i] === appointmentID){
-                    idx = i;
-                    break;
-                }
-            }
-            if(idx != -1){
-                patient.Appointments.splice(idx);
-            }
+            const unreservedAppointment = new Appointment();
+            unreservedAppointment.doctor = doctor.FirstName + doctor.LastName;
+            unreservedAppointment.doctorUsername = doctor.Username;
+            unreservedAppointment.patient = null;
+            unreservedAppointment.date = appointmentDate;
+            unreservedAppointment.startHour = appointment.startHour;
+            unreservedAppointment.endHour = appointment.endHour;
+            unreservedAppointment.status = 'unreserved';
+            await unreservedAppointment.save();
+            doctor.Appointments.push(unreservedAppointment._id);
             await doctor.save();
             await patient.save();
-            appointment.status = 'unreserved';
+            appointment.status = 'cancelled';
             await appointment.save();
         
 
         // Notify both doctor and patient
-        sendEmail(doctor.Email, 'Appointment Update', `Your appointment on ${appointment.date} has been canceled or rescheduled.`);
+        sendEmail(doctor.Email, 'Appointment Cancelled', `Your appointment on ${appointment.date} has been canceled.`);
         // Generate success message
-const doctorMessage = `Your appointment on ${appointment.date} has been canceled or rescheduled.`;
+const doctorMessage = `Your appointment on ${appointment.date} has been canceled.`;
 
 // Add the success message to the doctor's messages list
 doctor.Messages.push({
@@ -85,9 +86,9 @@ doctor.Messages.push({
 });
 await doctor.save();
 
-        sendEmail(patient.Email, 'Appointment Update', `Your appointment on ${appointment.date} has been canceled or rescheduled.`);
+        sendEmail(patient.Email, 'Appointment Cancelled', `Your appointment on ${appointment.date} has been canceled.`);
   // Generate success message
-  const successMessage = `Your appointment on ${appointment.date} has been canceled or rescheduled.`;
+  const successMessage = `Your appointment on ${appointment.date} has been canceled.`;
 
   // Add the success message to the patient's messages list
   patient.Messages.push({
@@ -108,8 +109,8 @@ await doctor.save();
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'mirnahaitham2@gmail.com',
-        pass: 'dygc irfq totb kuzy',
+        user: 'codemedics2@gmail.com',
+        pass: 'wwtv oszi mcju tilf',
     },
     tls: {
         rejectUnauthorized: false

@@ -20,7 +20,7 @@ const Page = () => (
       }}
     >
       <Container maxWidth="lg">
-        <VideoCallContext>
+        <VideoCallContext caller={true}>
           <VideoCall/>
         </VideoCallContext>
       </Container>

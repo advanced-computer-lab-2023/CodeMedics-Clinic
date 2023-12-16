@@ -31,6 +31,7 @@ const {getPrescriptions}= require('../controllers/Doctor/viewAllPrescriptions')
 const{checkMedicine}=require('../controllers/Doctor/checkMedicine')
 const {rescheduleAppointment} = require('../controllers/Doctor/rescheduleAppointment');
 const {viewPatientAppointment} = require('../controllers/Doctor/viewPatientAppointment.js');
+const {getFollowRequests} = require('../controllers/Doctor/getFollowRequests');
 
 
 
@@ -125,6 +126,9 @@ router.post('/addMedicineToPrescription', addMedicineToPrescription);
 router.post('/removeMedicineFromPrescription', removeMedicineFromPrescription);
 router.post('/addMedicineDosage',addMedicineDosage);
 router.post('/updateMedicineDosage', updateMedicineDosage);
+
+router.get('/getFollowRequests', getFollowRequests);
+
 
 module.exports = router;
 

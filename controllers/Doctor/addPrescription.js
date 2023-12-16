@@ -31,7 +31,9 @@ exports.addPrescription = async (req, res) => {
       Date: date,
       filled: filledStatus || false,
     });
-
+    if (newPrescription.Drug.length == 0){
+      return res.status(400).json({ message: 'Incomplete data for prescription' });
+    }
     await newPrescription.save();
 
     patient.Prescriptions.push(newPrescription);

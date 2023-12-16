@@ -22,7 +22,7 @@ export const DoctorSearch = ({handleSearch , handleFilter}) => {
         handleSearch(str.target.value);
       }}
       fullWidth
-      placeholder="Search Appointment"
+      placeholder="Search"
       startAdornment={(
         <InputAdornment position="start">
           <SvgIcon

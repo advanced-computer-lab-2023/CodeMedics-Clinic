@@ -17,7 +17,7 @@ export const ChatItem = (props) => {
                 '&:hover': {
                     backgroundColor: 'action.hover'
                 },
-                ...(selectedChat && selectedChat.doctor.Username === doctor.Username && {
+                ...(selectedChat && !selectedChat.pharmacy && selectedChat.doctor.Username === doctor.Username && {
                     backgroundColor: 'action.hover'
                 })
             }}

@@ -36,3 +36,17 @@ exports.getSocket = async (username) => {
         console.log(error);
     }
 };
+
+exports.joinSocket = async (socket) => {
+    try{
+        const patients = await Patient.find();
+        const doctors = await Doctor.find();
+        for(let patient of patients)
+            socket.join(patient.Username + " room");
+        for(let doctor of doctors)
+            socket.join(doctor.Username + " room");
+
+    }catch(error){
+        console.log(error);
+    }
+};
