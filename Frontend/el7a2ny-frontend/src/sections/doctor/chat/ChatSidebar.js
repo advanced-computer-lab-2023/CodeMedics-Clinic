@@ -14,7 +14,7 @@ export const ChatSidebar = (props) => {
                 alignItems="center"
                 direction="row"
                 spacing={2}
-                sx={{ p: 2 }}
+                sx={{ p: 2 , width: 350}}
             >
                 <Typography
                     variant="h5"
