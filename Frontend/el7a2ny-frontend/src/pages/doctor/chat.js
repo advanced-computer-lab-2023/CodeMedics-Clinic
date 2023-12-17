@@ -52,11 +52,11 @@ const Page = () => {
         }
     };
 
-    socket.on('newMessage', (message) => {
+    socket.off('newMessage').on('newMessage', (message) => {
         changeChatAndMessages(message);
     });
 
-    socket.on('newMessagePharmacy', (message) => {
+    socket.off('newMessagePharmacy').on('newMessagePharmacy', (message) => {
         changeChatAndMessages(message);
     });
 
