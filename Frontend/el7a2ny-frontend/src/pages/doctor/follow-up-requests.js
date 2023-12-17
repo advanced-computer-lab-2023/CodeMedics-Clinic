@@ -101,7 +101,7 @@ const Page = () => {
                 </Typography>
               </Stack>
             </Stack>
-            <DoctorSearch data={searchData} handleSearch={handleSearch} handleFilter={handleFilter}/>
+            <DoctorSearch data={searchData} handleSearch={handleSearch} handleFilter={handleFilter} skipFiltering ={true}/>
             {!loading && (<CustomersTable
               count={searchData.length}
               items={searchData}

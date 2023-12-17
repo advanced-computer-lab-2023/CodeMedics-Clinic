@@ -84,8 +84,10 @@ export const PatientAppointmentsTable = (props) => {
   
   
   const getUnreservedAppointments = async (doctorUsername) => {
+    setLoading(true);
     await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername).then((res) => {
       setUnreservedAppointments(res.data.appointments);
+      setLoading(false);
     }).catch((err) => {
       console.log(err);
     });
@@ -95,6 +97,7 @@ export const PatientAppointmentsTable = (props) => {
   const [appointmentMenu, setAppointmentMenu] = useState({});
   const [toBeUpdated, settoBeUpdated] = useState(null);
   const [cancelling, setCancelling] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleButtonClick = (event, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -136,9 +139,9 @@ export const PatientAppointmentsTable = (props) => {
       }
     }
     else if(item === "Reschedule"){
-      getUnreservedAppointments(appointment.doctorUsername);
       settoBeUpdated(appointment);
       setRescheduling(true);
+      getUnreservedAppointments(appointment.doctorUsername);
     }
     else if(item === "Request a Follow-up"){
       if(appointment.status !== 'completed'){
@@ -324,11 +327,13 @@ export const PatientAppointmentsTable = (props) => {
                 }}}>
               <DialogTitle>Reschedule</DialogTitle>
               <DialogContent>
-                
-                  {unreservedAppointments.length === 0 && (<div>
+                {loading && (<div>
+                  <DialogContentText>Loading...</DialogContentText>
+                </div>)}
+                  {!loading && unreservedAppointments.length === 0 && (<div>
                     <DialogContentText>No Available Slots</DialogContentText>
                   </div>)}
-                {unreservedAppointments.length > 0 && (
+                {!loading && unreservedAppointments.length > 0 && (
                   <Table>
             <TableHead>
               <TableRow>

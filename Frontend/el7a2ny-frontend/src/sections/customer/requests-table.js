@@ -49,17 +49,19 @@ export const CustomersTable = (props) => {
   const [rejecting, setRejecting] = useState(false);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
   const [toBeUpdated, setToBeUpdated] = useState(null);
-  
+  const[loading, setLoading] = useState(false);
   const accept = async (appointment) => {
     console.log("in the accept");
+    getUnreservedAppointments();
     setAccepting(true);
     setToBeUpdated(appointment);
   }
 
-  const getUnreservedAppointments = async (doctorUsername) => {
-    
+  const getUnreservedAppointments = async () => {
+    setLoading(true);
     await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+username).then((res) => {
       setUnreservedAppointments(res.data.appointments);
+      setLoading(false);
       console.log("in the getUnreserved");
     }).catch((err) => {
       console.log(err);
@@ -228,10 +230,13 @@ export const CustomersTable = (props) => {
             <Dialog open={accepting} onClose={() => setAccepting(false)}>
                 <DialogTitle>Accept Follow-up Request</DialogTitle>
                 <DialogContent>
-                {unreservedAppointments.length === 0 && (<div>
+                {loading && (<div>
+                    <DialogContentText>Loading...</DialogContentText>
+                  </div>)}
+                {!loading && unreservedAppointments.length === 0 && (<div>
                     <DialogContentText>No Available Slots</DialogContentText>
                   </div>)}
-                {unreservedAppointments.length > 0 && (
+                {!loading && unreservedAppointments.length > 0 && (
                   <Table>
             <TableHead>
               <TableRow>
