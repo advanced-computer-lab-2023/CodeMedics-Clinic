@@ -35,7 +35,7 @@ export const items = [
     )
   },
   {
-    title: 'My Appointments',
+    title: 'Appointments',
     path: '/user/my-appointments',
     icon: (
       <SvgIcon fontSize="small">

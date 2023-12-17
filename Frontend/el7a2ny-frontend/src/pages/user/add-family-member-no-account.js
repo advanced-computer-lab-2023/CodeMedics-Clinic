@@ -26,7 +26,7 @@ const Page = () => {
                                 container
                                 spacing={3}
                             >
-                                <Grid
+                                {/* <Grid
                                     xs={12}
                                     md={6}
                                     lg={4}
@@ -50,7 +50,7 @@ const Page = () => {
                                             </Box>
                                         </CardContent>
                                     </Card>
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     xs={12}
                                     md={6}
