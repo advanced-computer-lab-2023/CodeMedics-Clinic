@@ -71,7 +71,7 @@ const Page = () => {
     >
       <Button
         onClick={addFamilyMemberRedirect}>
-        Add Family Member
+        Add Existing Family Member
       </Button>
       <Button 
         onClick={addFamilyMemberNoAccountRedirect}>

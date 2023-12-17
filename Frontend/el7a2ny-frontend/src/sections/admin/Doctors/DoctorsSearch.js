@@ -1,7 +1,7 @@
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon,Stack,TextField,MenuItem } from '@mui/material';
 
-export const DoctorSearch = ({handleSearch , handleFilter}) => {
+export const DoctorSearch = ({handleSearch , handleFilter, skipFiltering}) => {
   const appointmentState = [
     {value: "None" , label: "None"} ,
     {value: "unreserved" , label: "unreserved"} ,
@@ -35,21 +35,23 @@ export const DoctorSearch = ({handleSearch , handleFilter}) => {
       )}
       sx={{ maxWidth: 500 }}
     />
-    <TextField
-          sx={{ width: 200 }}
-          id="appointment-status"
-          select
-          label="Appointment Status"
-          defaultValue="None"
-          helperText=""
-          onChange={(str) => {handleFilter(str.target.value)}}
-        >
-        {appointmentState.map((option) => (
-            <MenuItem key={option.value} value={option.value} >
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
+    {!skipFiltering && (
+      <TextField
+      sx={{ width: 200 }}
+      id="appointment-status"
+      select
+      label="Appointment Status"
+      defaultValue="None"
+      helperText=""
+      onChange={(str) => {handleFilter(str.target.value)}}
+    >
+    {appointmentState.map((option) => (
+        <MenuItem key={option.value} value={option.value} >
+          {option.label}
+        </MenuItem>
+      ))}
+    </TextField>
+    )}
     </Stack>
   </Card>
 );}
