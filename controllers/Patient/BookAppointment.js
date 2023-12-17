@@ -106,8 +106,10 @@ await doctor.save();
 
 exports.payWithWallet = async (req, res) => {
     try {
-        const Username = await getUsername(req, res);
+        const temp = req.body.username;
+        const Username = temp ? temp : await getUsername(req, res);
         const { AppointmentId } = req.body;
+        console.log("in the pay with wallet", temp, Username);
         if (!AppointmentId) {
             return res.status(400).json({ message: "Appointment ID not found" });
         }

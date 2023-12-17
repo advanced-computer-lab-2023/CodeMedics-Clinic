@@ -58,7 +58,8 @@ export const PatientAppointmentsTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
+    curUsername, setCurUsername
   } = props;
 
   
@@ -80,7 +81,7 @@ export const PatientAppointmentsTable = (props) => {
       console.log(err);
     });
   };
-
+  
   
   const getUnreservedAppointments = async (doctorUsername) => {
     await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername).then((res) => {
@@ -152,7 +153,7 @@ export const PatientAppointmentsTable = (props) => {
   };
 
   const rescheduleAppointment = async (appointmentID, oldAppointment) => {
-    await axios.patch(`http://localhost:8000/patient/RescheduleAppointment?appointmentID=${appointmentID}&oldAppointmentID=${oldAppointment}&username=${Cookies.get('username')}`).then
+    await axios.patch(`http://localhost:8000/patient/RescheduleAppointment?appointmentID=${appointmentID}&oldAppointmentID=${oldAppointment}&username=${curUsername}`).then
     ((res) => {
       console.log(res);
       window.location.reload();

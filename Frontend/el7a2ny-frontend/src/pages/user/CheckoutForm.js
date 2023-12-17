@@ -38,6 +38,7 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
       method: 'PATCH',
       withCredentials: true,
       data: {
+        username: patientUsername,
         AppointmentId: appointmentId,
       }
     }).then((res) => {

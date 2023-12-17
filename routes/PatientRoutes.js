@@ -39,6 +39,7 @@ const {filterDoctorFreeSlots} = require('../controllers/Patient/filterDoctorFree
 const {viewHealthRecords} = require('../controllers/Patient/viewHealthRecords');
 const Patient = require('../models/Patient.js');
 const {updateAppointmentStatus} = require('../controllers/Patient/updateAppointmentStatus');
+const {getAllFamilyAppointments} = require('../controllers/Patient/getAllFamilyAppointments');
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {   
@@ -101,6 +102,7 @@ router.get('/SearchDoctor', searchDoctor);
 router.get('/doctorSearch', (req, res) => {
     res.render('SearchDoctor');
 });
+router.get('/getAllFamilyAppointments', getAllFamilyAppointments);
 
 router.get('/prescriptions/filter', filterPrescriptions);
 router.get('/prescriptions', getPrescriptions);

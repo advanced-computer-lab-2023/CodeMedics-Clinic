@@ -12,6 +12,7 @@ import {
   Card,
   Button,
   Checkbox,
+  MenuItem,
   Stack,
   Table,
   TableBody,
@@ -21,6 +22,10 @@ import {
   SvgIcon,
   TableRow,
   IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
   Tooltip,
   Typography,
   TextField
@@ -63,6 +68,31 @@ export const AppointmentsTable = (props) => {
     })
   }
 
+  const acceptBooking = () =>{
+    router.push(`/user/MyPay?appointmentId=${toBeBooked._id}&patientUsername=${curUsername}`)
+  } 
+
+  const [familyMembers, setFamilyMembers] = useState([{familyMember: {Username: Cookies.get('username'), FirstName: "me", LastName: ""}, relation: 'me'}]);
+  useEffect(() => {
+    axios.get('http://localhost:8000/patient/familyMembers', {withCredentials: true})
+      .then((req) => {
+        console.log("in family members");
+        console.log(req.data.familyMembers);
+        let temp = [];
+        temp.push({familyMember: {Username: Cookies.get('username'), FirstName: "me", LastName: ""}, relation: 'me'});
+        for(let i=0; i<req.data.familyMembers.length; i++){
+          temp.push(req.data.familyMembers[i]);
+        }
+        setFamilyMembers(temp);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const [toBeBooked, setToBeBooked] = useState(); 
+  const [isBooking, setIsBooking] = useState(false);
+  const [curUsername, setCurUsername] = useState(Cookies.get('username'));
   return (
     <Card>
       <Scrollbar>
@@ -129,7 +159,8 @@ export const AppointmentsTable = (props) => {
                           )}
                           color="primary"
                           onClick={() => {
-                              router.push(`/user/MyPay?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`);
+                              setIsBooking(true);
+                              setToBeBooked(appointment)
                           }}
                         >
                         </IconButton >
@@ -142,6 +173,43 @@ export const AppointmentsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
+        {isBooking && (<div>
+            <Dialog open={isBooking} onClose={() => {{
+                  setIsBooking(false);
+                  setToBeBooked(null);
+                  }}}>
+              <DialogTitle>Choose to Book For</DialogTitle>
+              <DialogContent>
+              {familyMembers && <TextField
+          sx={{width: 200}}
+          id="Patient"
+          select
+          fullWidth
+          label="Patient"
+          defaultValue= {curUsername}
+          helperText=""
+          onChange={(str) => {setCurUsername(str.target.value)}}
+        >
+        {familyMembers && familyMembers.map((option) => (
+            <MenuItem key={option.familyMember.Username} value={option.familyMember.Username} >
+              {option.familyMember.FirstName + " " + option.familyMember.LastName}
+            </MenuItem>
+          ))}
+    </TextField>}
+              </DialogContent>
+              <DialogActions>
+              <Button onClick={() => {
+                  setIsBooking(false);
+                  acceptBooking();
+                  }}>Continue</Button>
+                <Button color='error'  onClick={() => {
+                  setIsBooking(false);
+                  setToBeBooked(null);
+                  }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)
+          }
       </Scrollbar>
       <TablePagination
         component="div"

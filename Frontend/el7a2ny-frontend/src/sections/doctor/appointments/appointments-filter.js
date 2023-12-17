@@ -1,7 +1,10 @@
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon,Stack,TextField,MenuItem } from '@mui/material';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
-export const AppointmentsFilter = ({setState1, setState2 , setState3 , filterStatus}) => {
+export const AppointmentsFilter = ({setState1, setState2 , setState3, setCurUsername , curUsername, filterStatus, usernameFilter, familyMembers}) => {
 
     const status = [
         {value: "None" , label: "None"},
@@ -10,6 +13,7 @@ export const AppointmentsFilter = ({setState1, setState2 , setState3 , filterSta
         {value: "cancelled" , label: "Cancelled"},
         {value: "rescheduled" , label: "Rescheduled"},
     ];
+
 
   return(
   <Card sx={{ p: 2 }}>
@@ -50,6 +54,23 @@ export const AppointmentsFilter = ({setState1, setState2 , setState3 , filterSta
             </MenuItem>
           ))}
     </TextField>}
+    {usernameFilter && <TextField
+          sx={{width: 200}}
+          id="Patient"
+          select
+          fullWidth
+          label="Patient"
+          defaultValue= {curUsername}
+          helperText=""
+          onChange={(str) => {setCurUsername(str.target.value)}}
+        >
+        {familyMembers && familyMembers.map((option) => (
+            <MenuItem key={option.familyMember.Username} value={option.familyMember.Username} >
+              {option.familyMember.FirstName + " " + option.familyMember.LastName}
+            </MenuItem>
+          ))}
+    </TextField>}
+
     </Stack>
   </Card>
 );}
