@@ -72,7 +72,7 @@ export const ChatMessageAdd = (props) => {
         }}
       >
         <Tooltip title="Send">
-          <Box sx={{ m: 1 }}>
+          <Box sx={{ m: 1 ,mr:8}}>
             <IconButton
               color="primary"
               disabled={!body || disabled}
