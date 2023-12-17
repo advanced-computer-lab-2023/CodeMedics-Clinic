@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { Box } from '@mui/system';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, Stack, Card } from '@mui/material';
 import CheckoutForm from './CheckoutForm';
 
 const stripePromise = loadStripe('pk_test_51OA3YuHNsLfp0dKZSCi30qg6xY63jh2SiffqCIa42j0oTXnZ29hNOalf44tjkJZsjT27xldMpzbojdn6vYcEx9CI00kvtRqele');
 
-export default function MyPay({ activeStep, setStep }) {
+const Page = () => {
   const [clientSecret, setClientSecret] = useState('');
   const router = useRouter();
   const { appointmentId, patientUsername } = router.query;
@@ -41,28 +42,29 @@ export default function MyPay({ activeStep, setStep }) {
         component="main"
         backgroundColor="linear-gradient(to bottom, #FFFFFF, #000000)"
         sx={{
-          flexGrow: 1,
-          py: 8,
+          pt: 8,
           textAlign: 'center',
+          display: 'flex',
+          justifyContent: 'center', // Horizontal centering
+          alignItems: 'center',     // Vertical centering
         }}
       >
-        <Container maxWidth="xl">
-          <Typography variant="h3" gutterBottom>
+        <Stack spacing={3}>
+          <Typography variant="h3" >
             Appointment Payment
           </Typography>
-          <Grid container spacing={10} justifyContent="center">
-            <Grid item xs={12} md={8} lg={6}>
-              <div className='MyPay'>
-                {clientSecret && (
-                  <Elements options={options} stripe={stripePromise}>
-                    <CheckoutForm appointmentId={appointmentId} patientUsername={patientUsername} />
-                  </Elements>
-                )}
-              </div>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+          <Card sx={{height: 360 , backgroundColor: "#d9dee4"}}>
+            {clientSecret && (
+              <Elements options={options} stripe={stripePromise}>
+                <CheckoutForm appointmentId={appointmentId} patientUsername={patientUsername} />
+              </Elements>
+            )}
+          </Card>
+        </Stack>
+      </Box >
     </>
   );
 }
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+export default Page;

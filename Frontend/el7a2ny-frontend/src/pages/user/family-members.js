@@ -1,27 +1,29 @@
 import Head from 'next/head';
-import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
+import { Box, Container, Unstable_Grid2 as Grid, Button, Typography , Breadcrumbs , Link ,Stack} from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewFamilyMembers } from 'src/sections/overview/overview-family-members';
 import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
+import { BreadcrumbsSeparator } from 'src/components/breadcrumbs-separator';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 
 const now = new Date();
 
 const Page = () => {
 
   const router = useRouter();
-  
+
   const [familyMembers, setFamilyMembers] = useState([]);
   const [familyMembersNoAccount, setFamilyMembersNoAccount] = useState([]);
 
 
   const handleSearch = (str) => {
-    if(str === ""){
+    if (str === "") {
       setData(familyMembers);
-    }else{
+    } else {
       setData(familyMembers.filter((familyMember) => {
         const fullName = familyMember.FirstName + " " + familyMember.LastName;
         return fullName.toLowerCase().includes(str.toLowerCase());
@@ -35,7 +37,7 @@ const Page = () => {
 
   useEffect(() => {
     axios('http://localhost:8000/patient/familyMembers', {
-      method: 'GET',  
+      method: 'GET',
       withCredentials: true
     }).then(response => {
       console.log(response);
@@ -58,38 +60,65 @@ const Page = () => {
   }
 
   return (
-  <>
-    <Head>
-      <title>El7a2ny Clinic</title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8,
-      }}
-    >
-      <Button
-        onClick={addFamilyMemberRedirect}>
-        Add Existing Family Member
-      </Button>
-      <Button 
-        onClick={addFamilyMemberNoAccountRedirect}>
-        Add Family Member Without Account
-      </Button>
-      <Container maxWidth="xl">
-        <Typography variant="h3" gutterBottom>
-          Family Members
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid xs={20} md={20} lg={15}>
-            <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
+    <>
+      <Head>
+        <title>El7a2ny Clinic</title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Button
+          onClick={addFamilyMemberRedirect}>
+          Add Existing Family Member
+        </Button>
+        <Button
+          onClick={addFamilyMemberNoAccountRedirect}>
+          Add Family Member Without Account
+        </Button>
+        <Container maxWidth="xl">
+          <Stack spacing={1}>
+            <Typography variant="h4">
+              Family Members
+            </Typography>
+            <Breadcrumbs separator={<BreadcrumbsSeparator />}>
+              <Link
+                color="text.primary"
+                component={NextLink}
+                href={'/user/doctors'}
+                variant="subtitle2"
+              >
+                Dashboard
+              </Link>
+              <Link
+                color="text.primary"
+                component={NextLink}
+                href={'/user/family-members'}
+                variant="subtitle2"
+              >
+                Family Members
+              </Link>
+              <Typography
+                color="text.secondary"
+                variant="subtitle2"
+              >
+                List
+              </Typography>
+            </Breadcrumbs>
+          </Stack>
+          <Grid container spacing={3}>
+            <Grid xs={20} md={20} lg={15}>
+              <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </Box>
-  </>
-);}
+        </Container>
+      </Box>
+    </>
+  );
+}
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 

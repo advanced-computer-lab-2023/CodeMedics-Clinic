@@ -140,7 +140,7 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "120vh",
+        // height: "120vh",
       }}
     >
       <form
