@@ -33,7 +33,12 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState, useRef } from 'react';
+import Cookies from 'js-cookie';
+import { set } from 'lodash';
 
+import axios from 'axios';
+
+import {Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@mui/material';
 
 export const Row = (props) => {
   const { row: patient } = props;
@@ -41,7 +46,7 @@ export const Row = (props) => {
   const router = useRouter();
   const anchorRef = useRef(null);
   const [appointmentMenu, setAppointmentMenu] = useState({});
-
+  const username = Cookies.get('username');
   const handleButtonClick = (event, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -62,11 +67,24 @@ export const Row = (props) => {
       },
     });
   };
-
-  const handleMenuItemClick = (item, appointment) => {
+  const [unreservedAppointments, setUnreservedAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const getUnreservedAppointments = async () => {
+    setLoading(true);
+    await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+username).then((res) => {
+      setUnreservedAppointments(res.data.appointments);
+      setLoading(false);
+      console.log("in the getUnreserved");
+    }).catch((err) => {
+      console.log(err);
+    });
+  };
+  const [scheduling, setScheduling] = useState(false);
+  const [toBeUpdated, setToBeUpdated] = useState();
+  const handleMenuItemClick = (item, patient) => {
     setAppointmentMenu({
       ...appointmentMenu,
-      [appointment._id]: {
+      [patient._id]: {
         anchorEl: null,
         selectedItem: item,
       },
@@ -81,10 +99,22 @@ export const Row = (props) => {
       router.push(`/doctor/medical-history?username=${patient.Username}`)
     }
     else if (item === "Schedule a Follow-Up") {
-
+      setScheduling(true);
+      setToBeUpdated(patient);
+      getUnreservedAppointments();
     }
   };
 
+  const acceptRequest = async (appointmentID, patient) => {
+    await axios.patch('http://localhost:8000/patient/bookAppointment?appointmentId='+appointmentID+'&patientUsername='+patient.Username+'&isRequested=true').then((res) => {
+      console.log("appointment booked");
+      setScheduling(false);
+      window.location.reload();
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const buttons = ["View Appointments", "View Prescriptions", "View Health Records", "Schedule a Follow-Up"];
   return (
     <Fragment>
@@ -135,6 +165,76 @@ export const Row = (props) => {
           </div>
         </TableCell>
       </TableRow>
+      {scheduling && (
+        <>
+          <Dialog open={scheduling} onClose={() => setScheduling(false)}>
+                <DialogTitle>Choose a Slot</DialogTitle>
+                <DialogContent>
+                {loading && (<div>
+                    <DialogContentText>Loading...</DialogContentText>
+                  </div>)}
+                {!loading && unreservedAppointments.length === 0 && (<div>
+                    <DialogContentText>No Available Slots</DialogContentText>
+                  </div>)}
+                {!loading && unreservedAppointments.length > 0 && (
+                  <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  Date
+                </TableCell>
+                <TableCell>
+                  Day
+                </TableCell>
+                <TableCell>
+                  From
+                </TableCell>
+                <TableCell>
+                  To
+                </TableCell>
+                <TableCell>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {unreservedAppointments.map((appointment) => {
+                
+                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+
+                return (
+                  <TableRow
+                    hover
+                    key={appointment._id}
+                  >
+                    <TableCell>
+                      {new Date(appointment.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {days[new Date(appointment.date).getDay()]}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.startHour}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.endHour}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={() => {acceptRequest(appointment._id, toBeUpdated)}}>Pick Slot</Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+                )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setScheduling(false)}>Close</Button>
+                </DialogActions>
+            </Dialog>
+        </>
+      )}
     </Fragment>
+    
   );
 };

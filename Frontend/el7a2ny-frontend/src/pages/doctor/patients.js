@@ -12,7 +12,8 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { set } from 'nprogress';
 import { bool } from 'prop-types';
-
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 const now = new Date();
 
 const useMedicines = (data, page, rowsPerPage) => {
@@ -45,8 +46,9 @@ const Page = () => {
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
   const [auth, setAuth] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     axios({
       method: 'GET',
       url: 'http://localhost:8000/doctor/viewPatients',
@@ -58,8 +60,8 @@ const Page = () => {
           setAllData(data.data);
           setSearchData(data.data);
           setFilteredData(data.data);
-          
         }
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -144,15 +146,21 @@ const Page = () => {
               </Stack>
 
             </Stack>
-            <CustomersSearch data={data} handleSearch={handleSearch} handleFilter={handleFilter} />
-            {<PatientsTable
-              count={data.length}
-              items={customers}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              page={page}
-              rowsPerPage={rowsPerPage}
-            />}
+            {loading ? <LoadingSpinner /> : (
+              <>
+              <CustomersSearch data={data} handleSearch={handleSearch} handleFilter={handleFilter} />
+              {data.length == 0 ? <NoRecords message={"No Patients Found"} /> : (
+                <PatientsTable
+                count={data.length}
+                items={customers}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+              />
+              )}
+              </>
+            )}
           </Stack>
         </Container>
       </Box>

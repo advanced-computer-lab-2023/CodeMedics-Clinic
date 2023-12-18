@@ -11,8 +11,8 @@ exports.bookAppointment = async (req, res) => {
         const { appointmentId, patientUsername, isRequested } = req.query;
         const appointment = await Appointment.findOne({ _id: appointmentId });
         console.log("in the book appointment");
-        console.log(appointmentId, patientUsername);
-        console.log(appointmentId, appointment);
+        console.log(appointmentId, patientUsername, isRequested);
+        // console.log(appointmentId, appointment);
         if (!appointment) {
             return res.status(400).json({ message: 'Appointment not found' });
         }
@@ -25,8 +25,8 @@ exports.bookAppointment = async (req, res) => {
         if (!patient) {
             return res.status(400).json({ message: 'Patient not found' });
         }
-        console.log(patient);
-        console.log(appointment);
+        // console.log(patient);
+        // console.log(appointment);
         // Update appointment details
         appointment.patient = patientUsername;
         appointment.status = 'upcoming';
@@ -53,7 +53,7 @@ exports.bookAppointment = async (req, res) => {
 
         // Send email notification to patient
         if(isRequested == 'true'){
-            sendEmail(patient.Email, 'Follow-up Request Confirmation', `Your Follow-up Request has been accepted to be on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
+            sendEmail(patient.Email, 'Follow-up Scheduled', `Doctor ${doctor.FirstName + " " + doctor.LastName} has scheduled a Follow-up to you on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
         }
         else
             sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
