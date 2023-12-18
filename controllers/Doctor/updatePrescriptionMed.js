@@ -11,6 +11,10 @@ exports.addMedicineToPrescription = async (req, res) => {
     const doctorUsername = await getUsername(req, res);
     const { prescriptionID, medicineName, dosage } = req.body;
 
+    if(isNaN(parseInt(dosage))){
+      return res.status(404).json({message: "Dosage Must be a number"});
+    }
+
     if (!doctorUsername) {
       return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
     }

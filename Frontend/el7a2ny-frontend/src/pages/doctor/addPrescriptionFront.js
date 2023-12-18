@@ -93,6 +93,7 @@ const PrescriptionPage = () => {
         for (const drug of prescriptionData.drugs) {
           const response = await axios.post('http://localhost:8000/doctor/checkMedicine', {
             medicineName: drug.drugName,
+            dosage: drug.dosage,
           });
     
           if (!response.data.exists) {
