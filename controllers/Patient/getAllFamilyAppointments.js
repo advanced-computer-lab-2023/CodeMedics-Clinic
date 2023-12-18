@@ -17,6 +17,7 @@ exports.getAllFamilyAppointments = async (req, res) => {
         const appointments = [];
         for(let i=0; i<patient.Appointments.length ;i++){
             const appointment = await Appointment.findOne({ _id: patient.Appointments[i] });
+            if(appointments.some((app) => app._id.toString() === appointment._id.toString())) continue;
             appointments.push(appointment);  
         }
         console.log(patient.FamilyMembers);
@@ -25,6 +26,7 @@ exports.getAllFamilyAppointments = async (req, res) => {
             console.log("temp patient", patient.FamilyMembers[i].id);
             for(let j = 0; j < tempPatient.Appointments.length; j++){
                 const appointment = await Appointment.findOne({ _id: tempPatient.Appointments[j] });
+                if(appointments.some((app) => app._id.toString() === appointment._id.toString())) continue;
                 appointments.push(appointment);
             }
         }
