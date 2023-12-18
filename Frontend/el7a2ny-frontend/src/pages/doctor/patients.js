@@ -55,11 +55,11 @@ const Page = () => {
       withCredentials: true,
     })
       .then((data) => {
-        if (data.data.length > 0) {
-          setData(data.data);
-          setAllData(data.data);
-          setSearchData(data.data);
-          setFilteredData(data.data);
+        if (data.data.patients.length > 0) {
+          setData(data.data.patients);
+          setAllData(data.data.patients);
+          setSearchData(data.data.patients);
+          setFilteredData(data.data.patients);
         }
         setLoading(false);
       })

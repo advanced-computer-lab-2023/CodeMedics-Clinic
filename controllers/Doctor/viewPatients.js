@@ -2,33 +2,38 @@ const mongoose = require('mongoose');
 const Doctor = require('../../models/Doctor');
 const Patient = require('../../models/Patient');
 const express = require('express');
-const {getUsername} = require('../../config/infoGetter');
+const { getUsername } = require('../../config/infoGetter');
 
-exports.viewPatients = async (req, res) =>{
-    const username = await getUsername(req, res);
-    console.log("in view patients");
-    if(!username)return res.status(401).json({message:"You are not logged in."})
-    const doctor = await Doctor.find({Username: username});
-    console.log(doctor);
-    const patients = [];
-    for(var i = 0; i < doctor[0].Patients.length; i++){
-        const cur = await Patient.findOne({_id: doctor[0].Patients[i]});
-        if(cur){
-            patients.push(cur);
+exports.viewPatients = async (req, res) => {
+    try {
+        const username = await getUsername(req, res);
+        
+        if (!username) return res.status(401).json({ message: "You are not logged in." })
+        const doctor = await Doctor.findOne({ Username: username });
+        if (!doctor) return res.status(401).json({ message: "Doctor not found." })
+        const patients = [];
+        if(doctor.Patients == null) return res.status(200).json({patients});
+        for (var i = 0; i < doctor.Patients.length; i++) {
+            const cur = await Patient.findOne({ _id: doctor.Patients[i] });
+            if (cur) {
+                patients.push(cur);
+            }
         }
+        return res.status(200).json({patients});
     }
-    console.log(patients);
-    return res.status(200).json(patients);
+    catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
 };
 
 exports.getPatientByUsername = async (req, res) => {
     const username = req.query.username;
     console.log(username);
-    try{
-        const patient = await Patient.findOne({Username: username});
+    try {
+        const patient = await Patient.findOne({ Username: username });
         console.log("TESTING GetPatientByUsername", patient);
         return res.status(200).json(patient);
-    }catch(error){
+    } catch (error) {
         console.log(error);
     }
 };
