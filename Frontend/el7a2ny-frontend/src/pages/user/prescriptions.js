@@ -11,6 +11,8 @@ import { PatientPrescriptionsTable } from 'src/sections/overview/overview-latest
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {
@@ -41,8 +43,9 @@ const Page = () => {
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
 
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     axios.get('http://localhost:8000/patient/prescriptions', { withCredentials: true })
       .then((req) => {
         console.log(req.data);
@@ -55,6 +58,7 @@ const Page = () => {
         });
   
         setAllData(prescriptions);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -135,7 +139,8 @@ const Page = () => {
               </Stack>
             </Stack>
             <PrescriptionsFilter setFilterStartDate={setFilter1} setFilterEndDate={setFilter2} setFilledStatus={setFilter3} setDoctor={setDoctor} />
-            {<PatientPrescriptionsTable
+            {loading ? <LoadingSpinner /> : (
+              data.length == 0 ? <NoRecords message={"No Prescriptions Found"}/> : <PatientPrescriptionsTable
               count={data.length}
               items={customers}
               onDeselectAll={customersSelection.handleDeselectAll}
@@ -147,7 +152,8 @@ const Page = () => {
               page={page}
               rowsPerPage={rowsPerPage}
               selected={customersSelection.selected}
-            />}
+            />
+            )}
           </Stack>
         </Container>
       </Box>

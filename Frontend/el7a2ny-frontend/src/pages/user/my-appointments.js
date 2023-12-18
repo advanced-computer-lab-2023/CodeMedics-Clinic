@@ -174,7 +174,7 @@ const Page = () => {
               <>
               <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} curUsername={curUsername} setCurUsername={setCurUsername} filterStatus={true} usernameFilter={true} familyMembers={familyMembers}/>
             
-              {data.length == 0 ? <NoRecords/> : <PatientAppointmentsTable
+              {data.length == 0 ? <NoRecords message={"No Appointments Found"}/> : <PatientAppointmentsTable
                 count={data.length}
                 items={customers}
                 onDeselectAll={customersSelection.handleDeselectAll}

@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
-import { patientsSearch } from 'src/sections/doctor/doctor-search';
+import { PatientsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState , useEffect } from 'react';
 import socket from 'src/components/socket';
@@ -116,19 +116,24 @@ const Page = () => {
           Doctors
         </Typography>
         {loading ? <LoadingSpinner /> : (
-          <patientsSearch 
+          <>
+           <PatientsSearch 
           handleSpecialitySearch={handleSpecialitySearch} 
           handleDoctorSearch={handleDoctorSearch} 
           sepcialities={specialities} 
           handleSpecialityFilter={handleSpecialityFilter}
           handleDateFilter={handleDateFilter}
         />
+       {data.length === 0 ? <NoRecords message={"No Doctors Found"} /> : (
+         <Grid container spacing={3}>
+         <Grid xs={20} md={20} lg={15}>
+           <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
+         </Grid>
+       </Grid>
+       )}
+          </>
         )}
-        {!loading &&  data.length == 0 ? <NoRecords/> : <Grid container spacing={3}>
-          <Grid xs={20} md={20} lg={15}>
-            <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
-          </Grid>
-        </Grid>}
+      
       </Container>
     </Box>
   </>

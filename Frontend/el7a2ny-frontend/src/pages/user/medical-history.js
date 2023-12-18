@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewMedicalRecords } from 'src/sections/overview/overview-medical-records';
-import { patientsSearch } from 'src/sections/doctor/doctor-search';
+import { PatientsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -121,7 +121,7 @@ const Page = () => {
         Upload Medical Records
       </Button>
           </Typography>
-          {medicalRecords.length === 0 ? <NoRecords /> : <Grid container spacing={3}>
+          {medicalRecords.length === 0 ? <NoRecords message={"No Medical History Found"} /> : <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
               <OverviewMedicalRecords medicalRecords={medicalRecords} sx={{ height: '100%' }} />
             </Grid>
