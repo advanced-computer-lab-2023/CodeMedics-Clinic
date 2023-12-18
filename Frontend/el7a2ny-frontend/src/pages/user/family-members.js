@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
+import LoadingSpinner from 'src/components/LoadingSpinner';
 const now = new Date();
 
 const Page = () => {
@@ -16,7 +16,7 @@ const Page = () => {
   
   const [familyMembers, setFamilyMembers] = useState([]);
   const [familyMembersNoAccount, setFamilyMembersNoAccount] = useState([]);
-
+  const [loading , setLoading] = useState(false);
 
   const handleSearch = (str) => {
     if(str === ""){
@@ -34,6 +34,7 @@ const Page = () => {
   }
 
   useEffect(() => {
+    setLoading(true);
     axios('http://localhost:8000/patient/familyMembers', {
       method: 'GET',  
       withCredentials: true
@@ -41,6 +42,7 @@ const Page = () => {
       console.log(response);
       setFamilyMembers(response.data.familyMembers);
       setFamilyMembersNoAccount(response.data.familyMembersNoAccount);
+      setLoading(false);
     }).catch(error => {
       console.log(error);
     });
@@ -81,11 +83,12 @@ const Page = () => {
         <Typography variant="h3" gutterBottom>
           Family Members
         </Typography>
-        <Grid container spacing={3}>
+        {loading ? <LoadingSpinner /> : (
+          <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
             <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
           </Grid>
-        </Grid>
+        </Grid>)}
       </Container>
     </Box>
   </>

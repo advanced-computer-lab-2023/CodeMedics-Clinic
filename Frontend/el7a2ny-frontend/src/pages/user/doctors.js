@@ -7,7 +7,8 @@ import axios from 'axios';
 import { useState , useEffect } from 'react';
 import socket from 'src/components/socket';
 import Cookies from 'js-cookie';
-
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 
 const now = new Date();
 
@@ -20,8 +21,9 @@ const Page = () => {
   const [specialities , setSpecialities] = useState([])
   const [filterDate , setFilterDate] = useState([]);
   const [doctors , setDoctors] = useState([]);
-
+  const [loading , setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     axios.get('http://localhost:8000/doctor/getDoctorsAndAppointments' , {withCredentials: true})
     .then((response) => {
       return response.data.data;
@@ -41,6 +43,7 @@ const Page = () => {
       setFilterSpeciality(data);
       setFilterDate(data);
       setData(data);
+      setLoading(false);
     })
     .catch((error) => {
       console.log(error);
@@ -112,18 +115,20 @@ const Page = () => {
         <Typography variant="h3" gutterBottom>
           Doctors
         </Typography>
-        <DoctorsSearch 
+        {loading ? <LoadingSpinner /> : (
+          <DoctorsSearch 
           handleSpecialitySearch={handleSpecialitySearch} 
           handleDoctorSearch={handleDoctorSearch} 
           sepcialities={specialities} 
           handleSpecialityFilter={handleSpecialityFilter}
           handleDateFilter={handleDateFilter}
         />
-        <Grid container spacing={3}>
+        )}
+        {!loading &&  data.length == 0 ? <NoRecords/> : <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
             <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
           </Grid>
-        </Grid>
+        </Grid>}
       </Container>
     </Box>
   </>

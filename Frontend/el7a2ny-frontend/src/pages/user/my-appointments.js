@@ -11,6 +11,8 @@ import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointment
 import { PatientAppointmentsTable } from 'src/sections/overview/overview-my-appointments-patient';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {
@@ -42,9 +44,10 @@ const Page = () => {
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     axios.get('http://localhost:8000/patient/getAllFamilyAppointments', {withCredentials: true})
       .then((req) => {
 
@@ -63,6 +66,7 @@ const Page = () => {
         });
 
         setAllData(appointments);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -166,23 +170,27 @@ const Page = () => {
                 </Stack>
               </Stack>
             </Stack>
-            <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} curUsername={curUsername} setCurUsername={setCurUsername} filterStatus={true} usernameFilter={true} familyMembers={familyMembers}/>
+            {loading ? <LoadingSpinner /> : (
+              <>
+              <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} curUsername={curUsername} setCurUsername={setCurUsername} filterStatus={true} usernameFilter={true} familyMembers={familyMembers}/>
             
-            <PatientAppointmentsTable
-              count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
-              curUsername={curUsername}
-              setCurUsername={setCurUsername}
-            />
+              {data.length == 0 ? <NoRecords/> : <PatientAppointmentsTable
+                count={data.length}
+                items={customers}
+                onDeselectAll={customersSelection.handleDeselectAll}
+                onDeselectOne={customersSelection.handleDeselectOne}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onSelectAll={customersSelection.handleSelectAll}
+                onSelectOne={customersSelection.handleSelectOne}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                selected={customersSelection.selected}
+                curUsername={curUsername}
+                setCurUsername={setCurUsername}
+              />}
+              </>
+            )}
           </Stack>
         </Container>
       </Box>

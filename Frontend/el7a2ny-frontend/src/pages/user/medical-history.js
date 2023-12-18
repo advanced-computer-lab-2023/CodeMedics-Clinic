@@ -11,7 +11,8 @@ import Cookies from 'js-cookie';
 import { SvgIcon } from '@mui/material';
 import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
 import FileSaver from 'file-saver';
-
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 const now = new Date();
 
 const Page = () => {
@@ -19,14 +20,16 @@ const Page = () => {
   const router = useRouter();
   const username = Cookies.get('username');
   const [medicalRecords, setMedicalRecords] = useState([]); 
-
+  const [loading , setLoading] = useState(false);
   useEffect(() => {
+    setLoading(true);
     axios(`http://localhost:8000/patient/${username}/health-records`, {
       method: 'GET',  
       withCredentials: true
     }).then(response => {
       console.log(response);
-        setMedicalRecords(response.data.healthRecords);
+      setMedicalRecords(response.data.healthRecords);
+      setLoading(false);
     }).catch(error => {
       console.log(error);
     });
@@ -92,7 +95,10 @@ const Page = () => {
           py: 8,
         }}
       >
-        <Container maxWidth="xl">
+        {loading ? <LoadingSpinner /> : 
+        (
+          <>
+          <Container maxWidth="xl">
           <Typography variant="h3" gutterBottom sx={{ display: 'flex', justifyContent: 'space-between' }}>
             Medical History
             <Button
@@ -115,12 +121,14 @@ const Page = () => {
         Upload Medical Records
       </Button>
           </Typography>
-          <Grid container spacing={3}>
+          {medicalRecords.length === 0 ? <NoRecords /> : <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
               <OverviewMedicalRecords medicalRecords={medicalRecords} sx={{ height: '100%' }} />
             </Grid>
-          </Grid>
+          </Grid>}
         </Container>
+          </>
+        )}
       </Box>
     </>
   );
