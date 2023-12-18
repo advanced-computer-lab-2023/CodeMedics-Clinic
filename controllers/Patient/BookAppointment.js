@@ -2,6 +2,7 @@ const Doctor = require('../../models/Doctor');
 const Appointment = require('../../models/Appointment');
 const Patient = require('../../models/Patient');
 const packageModel = require('../../models/Package');
+const ClinicWallet = require('../../models/ClinicWallet');
 const nodemailer = require('nodemailer');
 const {getUsername} = require('../../config/infoGetter');
 
@@ -127,7 +128,11 @@ exports.payWithWallet = async (req, res) => {
         }
         const package = await packageModel.findOne({ Name: patient.HealthPackage.membership });
         let price = doctor.HourlyRate + 0.1 * doctor.HourlyRate;
-        price *= (appointment.endHour - appointment.startHour);
+        let clinicWallet = await ClinicWallet.find();
+        clinicWallet = clinicWallet[0];
+        
+        const hours = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
+        price *= hours;
         if (package != null) {
             price -= price * (package.SessionDiscount / 100);
         }
@@ -135,6 +140,8 @@ exports.payWithWallet = async (req, res) => {
             return res.status(400).json({ message: "Insufficient funds" });
         }
         patient.Wallet -= price;
+        doctor.Wallet += hours * doctor.HourlyRate;
+        clinicWallet.Wallet += 0.1 * doctor.HourlyRate;
         if(!patient.Appointments.includes(appointment._id)){
             patient.Appointments.push(appointment._id);
         }
@@ -149,6 +156,7 @@ exports.payWithWallet = async (req, res) => {
             doctor.Patients.push(patient._id);
         }
         await doctor.save();
+        await clinicWallet.save();
 
         // Send email notification to patient
         sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
