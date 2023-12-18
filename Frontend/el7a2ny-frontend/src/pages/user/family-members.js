@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 const now = new Date();
 
 const Page = () => {
@@ -84,11 +85,16 @@ const Page = () => {
           Family Members
         </Typography>
         {loading ? <LoadingSpinner /> : (
-          <Grid container spacing={3}>
+          familyMembers.length === 0 && familyMembersNoAccount.length === 0 ? (
+            <NoRecords message={"No Family Members Found"} />
+          ) : (
+            <Grid container spacing={3}>
           <Grid xs={20} md={20} lg={15}>
             <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
           </Grid>
-        </Grid>)}
+        </Grid>
+          )
+          )}
       </Container>
     </Box>
   </>

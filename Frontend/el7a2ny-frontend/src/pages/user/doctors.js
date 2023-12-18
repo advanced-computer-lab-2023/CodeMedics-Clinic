@@ -115,16 +115,15 @@ const Page = () => {
         <Typography variant="h3" gutterBottom>
           Doctors
         </Typography>
-        <PatientsSearch 
+        {loading ? <LoadingSpinner /> : (
+          <>
+           <PatientsSearch 
           handleSpecialitySearch={handleSpecialitySearch} 
           handleDoctorSearch={handleDoctorSearch} 
           sepcialities={specialities} 
           handleSpecialityFilter={handleSpecialityFilter}
           handleDateFilter={handleDateFilter}
         />
-        {loading ? <LoadingSpinner /> : (
-          <>
-          
        {data.length === 0 ? <NoRecords message={"No Doctors Found"} /> : (
          <Grid container spacing={3}>
          <Grid xs={20} md={20} lg={15}>
