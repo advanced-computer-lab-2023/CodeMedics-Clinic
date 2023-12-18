@@ -127,7 +127,6 @@ export const OverviewMedicalRecords = (props) => {
                     </Card>
                 ))}
             </Box>
-            <Divider />
         </CardContent>
     );
 };

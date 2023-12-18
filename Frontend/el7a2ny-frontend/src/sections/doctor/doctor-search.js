@@ -1,7 +1,7 @@
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon,Stack,TextField,MenuItem } from '@mui/material';
 
-export const DoctorsSearch = ({handleDateFilter , handleDoctorSearch , handleSpecialitySearch , sepcialities , handleSpecialityFilter}) => {
+export const patientsSearch = ({handleDateFilter , handleDoctorSearch , handleSpecialitySearch , sepcialities , handleSpecialityFilter}) => {
   return(
   <Card sx={{ p: 2 }}>
     <Stack direction="row" spacing = {3}>

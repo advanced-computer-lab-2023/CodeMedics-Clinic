@@ -88,6 +88,9 @@ export const PatientAppointmentsTable = (props) => {
                 <TableCell>
                   Status
                 </TableCell>
+                <TableCell>
+                  
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

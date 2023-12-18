@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
-import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
+import { patientsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState , useEffect } from 'react';
 import socket from 'src/components/socket';
@@ -116,7 +116,7 @@ const Page = () => {
           Doctors
         </Typography>
         {loading ? <LoadingSpinner /> : (
-          <DoctorsSearch 
+          <patientsSearch 
           handleSpecialitySearch={handleSpecialitySearch} 
           handleDoctorSearch={handleDoctorSearch} 
           sepcialities={specialities} 

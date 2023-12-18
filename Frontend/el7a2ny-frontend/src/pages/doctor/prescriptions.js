@@ -128,13 +128,20 @@ const Page = () => {
                 <Typography variant="h4">
                   Prescriptions
                 </Typography>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={1}
-                >
-                </Stack>
               </Stack>
+              <div>
+                <Button
+                  startIcon={(
+                    <SvgIcon fontSize="small">
+                      <PlusIcon />
+                    </SvgIcon>
+                  )}
+                  variant="contained"
+                  onClick={() => router.push(`/doctor/addPrescriptionFront?username=${username}`)}
+                >
+                  Add Prescription
+                </Button>
+              </div>
             </Stack>
             <PrescriptionsFilter setFilterStartDate={setFilter1} setFilterEndDate={setFilter2} setFilledStatus={setFilter3} setDoctor={setDoctor} />
             {<PatientPrescriptionsTable

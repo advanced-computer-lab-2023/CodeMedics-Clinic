@@ -1,8 +1,8 @@
 import Head from 'next/head';
-import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
+import { Box, Container, Unstable_Grid2 as Grid, Button, Typography,Stack } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
 import { OverviewMedicalRecords } from 'src/sections/doctor/medicalHistory/overview-medical-records';
-import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
+import { patientsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -19,15 +19,15 @@ const Page = () => {
   const router = useRouter();
   const params = new URLSearchParams(window.location.search);
   const username = params.get('username');
-  const [medicalRecords, setMedicalRecords] = useState([]); 
+  const [medicalRecords, setMedicalRecords] = useState([]);
 
   useEffect(() => {
     axios(`http://localhost:8000/patient/${username}/health-records`, {
-      method: 'GET',  
+      method: 'GET',
       withCredentials: true
     }).then(response => {
       console.log(response);
-        setMedicalRecords(response.data.healthRecords);
+      setMedicalRecords(response.data.healthRecords);
     }).catch(error => {
       console.log(error);
     });
@@ -37,47 +37,47 @@ const Page = () => {
 
   const handleUpload = async () => {
     try {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.pdf, .doc, .docx, .png, .jpg, .jpeg';
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.pdf, .doc, .docx, .png, .jpg, .jpeg';
 
-        fileInput.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
+      fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
 
-            if (file) {
-                const formData = new FormData();
-                formData.append('document', file);
+        if (file) {
+          const formData = new FormData();
+          formData.append('document', file);
 
-                try {
-                    const response = await axios.post(
-                        `http://localhost:8000/patient/${username}/MedicalHistoryUpload`,
-                        formData,
-                        {
-                            withCredentials: true,
-                            headers: {
-                                'Content-Type': 'multipart/form-data',
-                            },
-                        }
-                    );
+          try {
+            const response = await axios.post(
+              `http://localhost:8000/patient/${username}/MedicalHistoryUpload`,
+              formData,
+              {
+                withCredentials: true,
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              }
+            );
 
-                    console.log('File uploaded successfully:', response);
-                    router.refresh();
-                    // Update the medical records state or perform any other necessary actions
-                    // For example, you can fetch the updated records after successful upload
-                    // and update the state accordingly.
-                    // ...
+            console.log('File uploaded successfully:', response);
+            router.refresh();
+            // Update the medical records state or perform any other necessary actions
+            // For example, you can fetch the updated records after successful upload
+            // and update the state accordingly.
+            // ...
 
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                }
-            }
-        });
+          } catch (error) {
+            console.error('Error uploading file:', error);
+          }
+        }
+      });
 
-        fileInput.click();
+      fileInput.click();
     } catch (error) {
-        console.error('Error creating file input:', error);
+      console.error('Error creating file input:', error);
     }
-};
+  };
 
 
 
@@ -94,29 +94,28 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
+          <Stack direction="row"
+              justifyContent="space-between"
+              spacing={4}
+              >
           <Typography variant="h3" gutterBottom sx={{ display: 'flex', justifyContent: 'space-between' }}>
             Medical History
-            <Button
-        component="span"
-        size="medium"
-        sx={{
-          mt: 3,
-          backgroundColor: '#F8F8F8',
-          '&:hover': {
-            backgroundColor: '#F1F1F1',
-          },
-        }}
-        endIcon={(
-          <SvgIcon fontSize="small">
-            <DocumentArrowUpIcon />
-          </SvgIcon>
-        )}
-        onClick={handleUpload} // Link the button to the handleUpload function
-      >
-        Upload Medical Records
-      </Button>
           </Typography>
-          <Grid container spacing={3}>
+          <div>
+                <Button
+                  variant="contained"
+                  endIcon={(
+                    <SvgIcon fontSize="small">
+                      <DocumentArrowUpIcon />
+                    </SvgIcon>
+                  )}
+                  onClick={handleUpload}
+                >
+                  Upload Medical Records
+                </Button>
+              </div>
+            </Stack>
+            <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
               <OverviewMedicalRecords medicalRecords={medicalRecords} sx={{ height: '100%' }} />
             </Grid>

@@ -259,8 +259,8 @@ export const PatientAppointmentsTable = (props) => {
                             handleMenuClose(appointment._id);
                             
                           }}
-                          anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
-                          transformOrigin={{ vertical: 'center', horizontal: 'right' }}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
                         >
                           {buttons.map((item, index) => (
                             <MenuItem key={index} onClick={() => {handleMenuItemClick(item, appointment)
