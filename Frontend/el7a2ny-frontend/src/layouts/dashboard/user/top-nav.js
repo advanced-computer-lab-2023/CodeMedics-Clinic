@@ -4,6 +4,8 @@ import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import Bars3Icon from '@heroicons/react/24/solid/Bars3Icon';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import Link from 'next/link';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { useRouter } from 'next/router';
 import {
   Avatar,
   Badge,
@@ -20,7 +22,7 @@ import { AccountPopover } from './account-popover';
 import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
-
+const router = useRouter();
 export const TopNav = (props) => {
   const { onNavOpen } = props;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
@@ -66,26 +68,18 @@ export const TopNav = (props) => {
                 </SvgIcon>
               </IconButton>
             )}
-            <Tooltip title="Search">
-              <IconButton>
-                <SvgIcon fontSize="small">
-                  <MagnifyingGlassIcon />
-                </SvgIcon>
-              </IconButton>
-            </Tooltip>
+             <IconButton onClick={() => router.back()} size="small" variant="text">
+            <SvgIcon fontSize="medium">
+              <ArrowBackIosNewIcon />
+            </SvgIcon>
+          </IconButton>
           </Stack>
           <Stack
             alignItems="center"
             direction="row"
             spacing={2}
           >
-            <Tooltip title="Contacts">
-              <IconButton>
-                <SvgIcon fontSize="small">
-                  <UsersIcon />
-                </SvgIcon>
-              </IconButton>
-            </Tooltip>
+           
             <Tooltip title="Shopping Cart">
               <IconButton>
                   <SvgIcon fontSize="small">
