@@ -29,6 +29,8 @@ const statusMap = {
 };
 
 export const PatientPrescriptionsTable = (props) => {
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     count = 0,
     items = [],
@@ -84,7 +86,7 @@ export const PatientPrescriptionsTable = (props) => {
 
   return (
     <Card>
-      {/* <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} /> */}
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
