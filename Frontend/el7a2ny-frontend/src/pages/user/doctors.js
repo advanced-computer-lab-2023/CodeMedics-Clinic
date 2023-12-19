@@ -65,7 +65,7 @@ const Page = () => {
     }else{
       setSearchDoctor(doctors.filter((doctor) => {
         const fullName = doctor.doctor.FirstName + " " + doctor.doctor.LastName;
-        return fullName.toLowerCase().includes(str.toLowerCase());
+        return fullName.toLowerCase().includes(str.toLowerCase()) || doctor.doctor.Speciality.toLowerCase().includes(str.toLowerCase());
       }));
     }
   };

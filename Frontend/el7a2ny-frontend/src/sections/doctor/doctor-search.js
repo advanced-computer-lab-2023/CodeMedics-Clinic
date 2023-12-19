@@ -6,28 +6,12 @@ export const PatientsSearch = ({handleDateFilter , handleDoctorSearch , handleSp
   <Card sx={{ p: 2 }}>
     <Stack direction="row" spacing = {3}>
     <OutlinedInput
+      sx={{width: 400}}
       defaultValue=""
       onChange={(str) => {
         handleDoctorSearch(str.target.value);
       }}
       placeholder="Search Doctor"
-      startAdornment={(
-        <InputAdornment position="start">
-          <SvgIcon
-            color="action"
-            fontSize="small"
-          >
-            <MagnifyingGlassIcon />
-          </SvgIcon>
-        </InputAdornment>
-      )}
-    />
-    <OutlinedInput
-      defaultValue=""
-      onChange={(str) => {
-        handleSpecialitySearch(str.target.value);
-      }}
-      placeholder="Search Speciality"
       startAdornment={(
         <InputAdornment position="start">
           <SvgIcon

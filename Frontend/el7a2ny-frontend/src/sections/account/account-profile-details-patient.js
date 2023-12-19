@@ -312,6 +312,7 @@ export const AccountProfileDetailsPatient = ({ values, setValues }) => {
           </CardActions>
         </Card>
       </form>
+      <br />
       <Card>
         <CardHeader
           title="My Health Package"

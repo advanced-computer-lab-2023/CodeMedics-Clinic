@@ -121,20 +121,20 @@ export const Row = (props) => {
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <Typography>
-            {patient.FirstName} {patient.LastName}
+            {patient.patient.FirstName} {patient.patient.LastName}
           </Typography>
         </TableCell>
         <TableCell>
-          {patient.Email}
+          {patient.patient.Email}
         </TableCell>
         <TableCell>
-          {patient.DateOfBirth}
+          {patient.patient.DateOfBirth}
         </TableCell>
         <TableCell align='right'>
           <div>
             <Tooltip title="Menu">
               <IconButton
-                onClick={(event) => handleButtonClick(event, patient)}
+                onClick={(event) => handleButtonClick(event, patient.patient)}
                 children={(
                   <SvgIcon fontSize="small">
                     <EllipsisVerticalIcon />
@@ -145,10 +145,10 @@ export const Row = (props) => {
               </IconButton >
             </Tooltip>
             <Menu
-              anchorEl={appointmentMenu[patient._id]?.anchorEl}
-              open={Boolean(appointmentMenu[patient._id]?.anchorEl)}
+              anchorEl={appointmentMenu[patient.patient._id]?.anchorEl}
+              open={Boolean(appointmentMenu[patient.patient._id]?.anchorEl)}
               onClose={() => {
-                handleMenuClose(patient._id);
+                handleMenuClose(patient.patient._id);
 
               }}
               anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
@@ -156,7 +156,7 @@ export const Row = (props) => {
             >
               {buttons.map((item, index) => (
                 <MenuItem key={index} onClick={() => {
-                  handleMenuItemClick(item, patient)
+                  handleMenuItemClick(item, patient.patient)
                 }}>
                   {item}
                 </MenuItem>

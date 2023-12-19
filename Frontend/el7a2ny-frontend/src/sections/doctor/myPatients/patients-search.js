@@ -2,14 +2,10 @@ import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon,Stack,TextField,MenuItem } from '@mui/material';
 
 export const CustomersSearch = ({handleSearch , handleFilter}) => {
-  const medicalUse = [
+  const withUpcomingAppoinmtents = [
     {value: "None" , label: "None"} ,
-    {value: "Pain relief" , label: "Pain relief"} ,
-    {value: "Fever" , label: "Fever"} ,
-    {value: "Cold and Flu" , label: "Cold and Flu"} ,
-    {value: "Antibiotic" , label: "Antibiotic"} ,
-    {value: "Cough" , label: "Cough"} ,
-    {value: "Pain management" , label: "Pain management"} ,
+    {value: "Yes" , label: "Yes"} ,
+    {value: "No" , label: "No"} ,
   ];
 
   return(
@@ -36,14 +32,14 @@ export const CustomersSearch = ({handleSearch , handleFilter}) => {
     />
     <TextField
           sx={{ width: 200 }}
-          id="medical-use"
+          id="upcoming"
           select
-          label="Medical Use"
+          label="With Upcoming Appointments"
           defaultValue="None"
           helperText=""
           onChange={(str) => {handleFilter(str.target.value)}}
         >
-        {medicalUse.map((option) => (
+        {withUpcomingAppoinmtents.map((option) => (
             <MenuItem key={option.value} value={option.value} >
               {option.label}
             </MenuItem>

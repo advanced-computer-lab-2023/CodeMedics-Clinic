@@ -108,7 +108,12 @@ const Page = () => {
       setFilteredData(allData);
     }
     else {
-      setFilteredData(allData.filter((medicine) => medicine.medicalUse === (str)));
+      if(str == "Yes"){
+        setFilteredData(allData.filter((patient) => patient.upcoming == true));
+      }
+      else{
+        setFilteredData(allData.filter((patient) => patient.upcoming == false));
+      }
     }
   }
 

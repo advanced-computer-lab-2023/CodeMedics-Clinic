@@ -120,7 +120,6 @@ export const OverviewPackages = (props) => {
           );
         })}
       </Box>
-      <Divider />
     </CardContent>
   );
 };
