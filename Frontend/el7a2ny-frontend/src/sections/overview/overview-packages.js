@@ -30,13 +30,27 @@ import {
 import { get } from 'http';
 
 export const OverviewPackages = (props) => {
-  const router = useRouter();
-  const { packages=[], me } = props;
 
-  const viewPackageDetails = (Name, counter) => {
-    router.push(`/user/package-info?packageName=${Name}`);
+  const router = useRouter();
+  const { packages = [], me } = props;
+
+  const subscribeHealthPackage = (curPackage) => {
+    router.push('/user/PackageMyPay?packageName=' + curPackage.Name + '&packagePrice=' + curPackage.Price);
   }
- 
+
+  const unsubscribeHealthPackage = () => {
+    axios(`http://localhost:8000/patient/unsubscribeHealthPackage`, {
+      method: 'POST',
+      withCredentials: true
+    })
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   return (
     <CardContent>
       <Box
@@ -93,33 +107,52 @@ export const OverviewPackages = (props) => {
                   )}
                 </ListItemAvatar>
                 <ListItemText
-                  primary={"Package Name: " + myPackage.Name}
+                  primary={myPackage.Name + " Package"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary= {Object.keys(me).length !== 0 && "Price: " + (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
+                  primary={Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
                   primaryTypographyProps={{ variant: 'subtitle2' }}
-                  // secondaryTypographyProps={{ variant: 'body2' }}
+                // secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  primary={myPackage.SessionDiscount + "% Session Discount"}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  primary={myPackage.MedicineDiscount + "% Medicine Discount"}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  primary={myPackage.FamilyDiscount + "% Family Discount"}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
-              
+
               <Stack direction="row">
-                <CardActions>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    size="small"
-                    onClick={() => {viewPackageDetails(myPackage.Name, index)}}
-                  >
-                    View Package
-                  </Button>
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                  {(Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' || Object.keys(me).length !== 0 && me.HealthPackage.membership !== myPackage.Name && me.HealthPackage.membership !== "Free") ?
+                    <Button variant="contained" disabled>
+                      Subscribe
+                    </Button>
+                    : Object.keys(me).length !== 0 && me.HealthPackage.status === 'Inactive' ?
+                      <Button variant="contained" onClick={() => subscribeHealthPackage(myPackage)}>
+                        Subscribe
+                      </Button> :
+                      <Button variant="contained" onClick={unsubscribeHealthPackage}>
+                        Unsubscribe
+                      </Button>}
                 </CardActions>
               </Stack>
             </Card>
           );
         })}
       </Box>
+      <Divider />
     </CardContent>
   );
 };

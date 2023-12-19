@@ -43,7 +43,7 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
 
   useEffect(() => {
     if (isPosted) {
-      router.push('/user/packages');
+      window.location.href = "http://localhost:3000/user/packages";
     }
   }, [isPosted]);
 
