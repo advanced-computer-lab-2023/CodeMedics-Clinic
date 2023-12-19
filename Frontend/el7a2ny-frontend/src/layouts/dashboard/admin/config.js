@@ -62,13 +62,4 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'New Admin',
-    path: '/admin/addAdmin',
-    icon: (
-      <SvgIcon fontSize="small">
-        <UserPlusIcon />
-      </SvgIcon>
-    )
-  }
 ];
