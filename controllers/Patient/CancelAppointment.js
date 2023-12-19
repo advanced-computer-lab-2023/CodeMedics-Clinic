@@ -65,7 +65,7 @@ exports.CancelAppointment = async (req, res) => {
             const clinicFees = 0.1 * doctor.HourlyRate;
             const appointmentPrice = hours * (doctor.HourlyRate + clinicFees);
             doctor.Wallet -= (hours * doctor.HourlyRate);
-            patient.Wallet += appointmentPrice - discount;
+            patient.Wallet += appointmentPrice - (appointmentPrice * discount / 100);
             clinicWallet.Wallet -= clinicFees;
             const unreservedAppointment = new Appointment();
             unreservedAppointment.doctor = doctor.FirstName + doctor.LastName;

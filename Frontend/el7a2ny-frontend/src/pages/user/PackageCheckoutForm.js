@@ -10,8 +10,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { set } from "lodash";
-
-export default function PackageCheckoutForm({ packageName, packagePrice }) {
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+export default function PackageCheckoutForm({ packageName, packagePrice, setMessage2, setInvalidAction }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -124,10 +124,11 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
       .then((res) => {
         console.log(res.data);
         setIsDone(true);
-
       })
       .catch((err) => {
-        console.log(err);
+        setInvalidAction(true);
+        setMessage2(err.response.data.message);
+        console.log(err.response.data.message);
       });
   }
 
@@ -177,10 +178,10 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
             transition: "background-color 0.3s",
           }}
         >
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay using my Card"}
+          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay using card"}
         </button>
         {!isLoading && (
-          <Button variant="contained" style={{
+          <button variant="contained" style={{
             padding: "10px 15px",
             fontSize: "18px",
             fontWeight: "bold",
@@ -189,16 +190,18 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
             borderRadius: "20px",
             cursor: "pointer",
             marginTop: "20px", // Adjust marginTop as needed
+            marginLeft: "10px",
             transition: "background-color 0.3s",
           }}
 
             onClick={handlePayUsingWallet}
           >
-            Pay using my Wallet
-          </Button>
+            Pay using wallet
+          </button>
         )}
         {message && <div id="payment-message">{message}</div>}
       </form>
     </div>
+    
   );
 }
