@@ -60,7 +60,7 @@ const Page = () => {
   })
     .catch((err) => {
       setShowError(true);
-      setErrorMessage(err.message);
+      setErrorMessage(err.response.data.message);
     });
 }, []);
 const handlePageChange = useCallback(

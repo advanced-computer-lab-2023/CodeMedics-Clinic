@@ -69,7 +69,7 @@ export const AppointmentsTable = (props) => {
     }).catch((err) => {
       console.log(err.message);
       setShowError(true);
-      setErrorMessage(err.message);
+      setErrorMessage(err.response.data.message);
     })
   }
 
@@ -93,7 +93,7 @@ export const AppointmentsTable = (props) => {
       .catch((err) => {
         console.log(err);
         setShowError(true);
-        setErrorMessage(err.message);
+        setErrorMessage(err.response.data.message);
       });
   }, []);
 

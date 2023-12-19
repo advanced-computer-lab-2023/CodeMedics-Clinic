@@ -77,7 +77,7 @@ export const PatientAppointmentsTable = (props) => {
     }).catch((err) => {
       console.log(err);
       setShowError(true);
-      setErrorMessage(err.response.data);
+      setErrorMessage(err.response.data.message);
     });
   }
   const statusMap = {
@@ -95,7 +95,7 @@ export const PatientAppointmentsTable = (props) => {
     }).catch((err) => {
       console.log(err);
       setShowError(true);
-      setErrorMessage(err.response.data);
+      setErrorMessage(err.response.data.message);
     });
   };
   return (

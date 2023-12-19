@@ -126,7 +126,7 @@ export const PatientTable = (props) => {
                           .catch((err) => {
                             console.log(err);
                             setShowError(true);
-                            setErrorMessage(err.response.data);
+                            setErrorMessage(err.response.data.message);
                           }
                           )
                         }}>

@@ -56,7 +56,7 @@ export const PatientPrescriptionsTable = (props) => {
     } catch (error) {
       console.error('Error downloading PDF:', error);
       setShowError(true);
-      setErrorMessage(error.response.data);
+      setErrorMessage(error.response.data.message);
     }
   };
   const [prescriptionStatus, setPrescriptionStatus] = useState(items);
@@ -80,7 +80,7 @@ export const PatientPrescriptionsTable = (props) => {
     } catch (error) {
       console.error('Error filling prescription:', error);
       setShowError(true);
-      setErrorMessage(error.response.data);
+      setErrorMessage(error.response.data.message);
     }
   };
 
