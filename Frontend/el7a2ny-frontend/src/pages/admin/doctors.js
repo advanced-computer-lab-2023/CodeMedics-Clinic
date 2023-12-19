@@ -10,6 +10,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
 import { DoctorsTable } from 'src/sections/admin/Doctors/DoctorsTable';
 import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
 import { applyPagination } from 'src/utils/apply-pagination';
+import Message from 'src/components/Message';
 
 const axios = require('axios');
 
@@ -40,6 +41,8 @@ const Page = () => {
   const customers = useCustomers(data, page, rowsPerPage);
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     fetch('http://localhost:8000/admin/viewDoctors')
@@ -55,7 +58,10 @@ const Page = () => {
         setData(data['doctors']);
         }
   })
-    .catch((err) => {});
+    .catch((err) => {
+      setShowError(true);
+      setErrorMessage(err.message);
+    });
 }, []);
 const handlePageChange = useCallback(
   (event, value) => {
@@ -78,6 +84,7 @@ return (
         Doctors
       </title>
     </Head>
+    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
     <Box
       component="main"
       sx={{

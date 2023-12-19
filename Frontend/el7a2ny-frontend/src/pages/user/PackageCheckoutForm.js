@@ -11,6 +11,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { set } from "lodash";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+
 export default function PackageCheckoutForm({ packageName, packagePrice, setMessage2, setInvalidAction }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -36,6 +37,7 @@ export default function PackageCheckoutForm({ packageName, packagePrice, setMess
         })
         .catch((err) => {
           console.log(err);
+          setMessage(err.response.data.message);
         });
       setIsPosted(true);
     }

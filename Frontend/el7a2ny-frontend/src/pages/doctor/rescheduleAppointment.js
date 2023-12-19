@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import FileSaver from 'file-saver';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
+import Message from 'src/components/Message';
 
 import {
   Button,
@@ -31,6 +32,8 @@ import {
 export const RescheduleAppointment = (props) => {
   const router = useRouter();
   const username = Cookies.get('username');
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const appointmentID = new URLSearchParams(window.location.search).get('appointmentID');
 
@@ -62,6 +65,8 @@ export const RescheduleAppointment = (props) => {
       })
       .catch((error) => {
         console.error(error);
+        setShowError(true);
+        setErrorMessage(error.response.data.message);
       });
   };
 
@@ -72,6 +77,7 @@ export const RescheduleAppointment = (props) => {
         gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
         gap={2}
       >
+        <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
         <TextField
           label="Start Hour"
           name="startHour"

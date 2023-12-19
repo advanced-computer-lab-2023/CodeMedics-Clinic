@@ -6,6 +6,7 @@ import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import Message from 'src/components/Message';
 
 import {
   Button,
@@ -33,6 +34,8 @@ export const OverviewPackages = (props) => {
 
   const router = useRouter();
   const { packages = [], me } = props;
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const subscribeHealthPackage = (curPackage) => {
     router.push('/user/PackageMyPay?packageName=' + curPackage.Name + '&packagePrice=' + curPackage.Price);
@@ -48,11 +51,14 @@ export const OverviewPackages = (props) => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data);
       });
   }
 
   return (
     <CardContent>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         display="grid"
         gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"

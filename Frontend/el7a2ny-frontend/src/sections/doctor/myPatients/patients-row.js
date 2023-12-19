@@ -5,6 +5,7 @@ import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
+import Message from 'src/components/Message';
 
 import { format } from 'date-fns';
 import {
@@ -47,6 +48,8 @@ export const Row = (props) => {
   const anchorRef = useRef(null);
   const [appointmentMenu, setAppointmentMenu] = useState({});
   const username = Cookies.get('username');
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const handleButtonClick = (event, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -77,6 +80,8 @@ export const Row = (props) => {
       console.log("in the getUnreserved");
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.error);
     });
   };
   const [scheduling, setScheduling] = useState(false);
@@ -112,12 +117,15 @@ export const Row = (props) => {
       window.location.reload();
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.error);
     });
   }
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const buttons = ["View Appointments", "View Prescriptions", "View Health Records", "Schedule a Follow-Up"];
   return (
     <Fragment>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <Typography>

@@ -6,11 +6,14 @@ import { AccountProfileDetailsPatient } from 'src/sections/account/account-profi
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Message from 'src/components/Message';
 
 
 const Page = () => {
   
   const [values, setValues] = useState({});
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     axios.get('http://localhost:8000/patient/getMe', {withCredentials: true})
@@ -19,6 +22,8 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
       });
   }, []);
 
@@ -29,6 +34,7 @@ const Page = () => {
         My Account
       </title>
     </Head>
+    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
     <Box
       component="main"
       sx={{

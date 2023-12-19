@@ -3,6 +3,7 @@ import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
+import Message from 'src/components/Message';
 
 
 import Cookies from 'js-cookie';
@@ -57,6 +58,8 @@ export const AppointmentsTable = (props) => {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const [amount, setAmount] = useState(null);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const calcAmount = (appointmentId) =>{
     axios.get('http://localhost:8000/patient/getAppointmentAmount').then((res) =>{
@@ -65,6 +68,8 @@ export const AppointmentsTable = (props) => {
       setAmount(data.amount);
     }).catch((err) => {
       console.log(err.message);
+      setShowError(true);
+      setErrorMessage(err.message);
     })
   }
 
@@ -87,6 +92,8 @@ export const AppointmentsTable = (props) => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.message);
       });
   }, []);
 
@@ -95,6 +102,7 @@ export const AppointmentsTable = (props) => {
   const [curUsername, setCurUsername] = useState(Cookies.get('username'));
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

@@ -78,6 +78,7 @@ export const DoctorPrescriptionsTable = (props) => {
       FileSaver.saveAs(blob, fileName);
     } catch (error) {
       console.error('Error downloading PDF:', error);
+      setErrorMessage('An error occurred while downloading this prescription. Please try again later.');
     }
   };
 
@@ -104,6 +105,7 @@ export const DoctorPrescriptionsTable = (props) => {
     })
     .catch((error) => {
       console.error('Error updating prescription:', error);
+      setErrorMessage('An error occurred while deleting this medicine. Please try again later.');
     });
 };
 
@@ -134,6 +136,7 @@ const handleAddMedicine = (prescriptionId) => {
       })
       .catch((error) => {
         console.error('Error updating prescription:', error);
+        setErrorMessage('An error occurred while updating this prescription. Please try again later.');
       });
   };
 

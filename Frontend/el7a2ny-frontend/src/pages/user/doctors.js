@@ -9,6 +9,7 @@ import socket from 'src/components/socket';
 import Cookies from 'js-cookie';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 
 const now = new Date();
 
@@ -22,6 +23,8 @@ const Page = () => {
   const [filterDate , setFilterDate] = useState([]);
   const [doctors , setDoctors] = useState([]);
   const [loading , setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     setLoading(true);
     axios.get('http://localhost:8000/doctor/getDoctorsAndAppointments' , {withCredentials: true})
@@ -47,6 +50,8 @@ const Page = () => {
     })
     .catch((error) => {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     });
   },[]);
   
@@ -104,6 +109,7 @@ const Page = () => {
     <Head>
       <title>El7a2ny Clinic</title>
     </Head>
+    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
     <Box
       component="main"
       sx={{

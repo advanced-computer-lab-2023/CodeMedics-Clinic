@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { OverviewPackageInfo } from 'src/sections/overview/overview-package-info';
 import { OverviewPackageInfoDetails } from 'src/sections/overview/overview-package-info-details';
+import Message from 'src/components/Message';
 
 const Page = () => {
 
@@ -12,6 +13,8 @@ const Page = () => {
     const packageName = params.get('packageName');
 
     const [myPackage, setPackage] = useState({});
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         axios
@@ -22,6 +25,8 @@ const Page = () => {
             })
             .catch((err) => {
                 console.log(err);
+                setShowError(true);
+                setErrorMessage(err.response.data.message);
             });
     }, []);
 
@@ -32,6 +37,7 @@ const Page = () => {
                     {myPackage.Name}
                 </title>
             </Head>
+            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
             <Box
                 component="main"
                 sx={{

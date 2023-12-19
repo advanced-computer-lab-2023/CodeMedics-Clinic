@@ -14,6 +14,7 @@ import { set } from 'nprogress';
 import { bool } from 'prop-types';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 const now = new Date();
 
 const useMedicines = (data, page, rowsPerPage) => {
@@ -47,6 +48,8 @@ const Page = () => {
   const router = useRouter();
   const [auth, setAuth] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     setLoading(true);
     axios({
@@ -65,6 +68,8 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
       });
   }, []);
 
@@ -124,6 +129,7 @@ const Page = () => {
           Patients
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{

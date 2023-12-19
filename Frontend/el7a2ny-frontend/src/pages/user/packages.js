@@ -4,6 +4,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewPackages } from 'src/sections/overview/overview-packages';
 import axios from 'axios';
 import { useState , useEffect } from 'react';
+import Message from 'src/components/Message';
 
 const now = new Date();
 
@@ -11,6 +12,8 @@ const Page = () => {
 
   const [packages, setPackages] = useState([]);
   const [me, setMe] = useState({});
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     axios.get('http://localhost:8000/patient/getAvailablePackages' , {withCredentials: true})
@@ -22,6 +25,8 @@ const Page = () => {
     })
     .catch((error) => {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     });
   },[]);
 
@@ -36,6 +41,8 @@ const Page = () => {
     })
     .catch((error) => {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     });
   },[]);
 
@@ -44,6 +51,7 @@ const Page = () => {
     <Head>
       <title>El7a2ny Clinic</title>
     </Head>
+    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
     <Box
       component="main"
       sx={{

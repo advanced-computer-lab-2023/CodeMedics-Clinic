@@ -26,13 +26,16 @@ import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
 import axios from 'axios';
+import Message from 'src/components/Message';
 export const DoctorsTable = (props) => {
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     count = 0,
     items = [],
     onDeselectAll,
     onDeselectOne,
-    onPageChange = () => {},
+    onPageChange = () => { },
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
@@ -46,6 +49,7 @@ export const DoctorsTable = (props) => {
   const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -120,20 +124,22 @@ export const DoctorsTable = (props) => {
                       {customer.Degree}
                     </TableCell>
                     <TableCell>
-                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
-                      onClick={() => {
+                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }}
+                        onClick={() => {
                           const userName = customer.Username;
-                          axios.post('http://localhost:8000/admin/removeDoctor', {Username: customer.Username})
-                          .then((res) => {
-                            if (res.status == 200) {
-                              console.log("removed"); 
-                              window.location.reload();
+                          axios.post('http://localhost:8000/admin/removeDoctor', { Username: customer.Username })
+                            .then((res) => {
+                              if (res.status == 200) {
+                                console.log("removed");
+                                window.location.reload();
+                              }
+                            })
+                            .catch((err) => {
+                              console.log(err);
+                              setShowError(true);
+                              setErrorMessage(err.response.data.message);
                             }
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          }
-                          )
+                            )
                         }}>
                         Remove
                       </Button>

@@ -11,6 +11,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 
 let doctorUsername = '';
 const doctorUsernameCookie = Cookies.get('jwt');
@@ -55,6 +56,8 @@ const Page = () => {
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -74,6 +77,8 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
       });
   }, []);
   
@@ -124,6 +129,7 @@ const Page = () => {
           Prescriptions
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{

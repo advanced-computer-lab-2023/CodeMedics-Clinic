@@ -3,9 +3,12 @@ import { Box, Container, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import Message from 'src/components/Message';
 
 const Page = () => {
   const [notifications, setNotifications] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchNotifications = async () => {
     try {
@@ -13,6 +16,8 @@ const Page = () => {
       setNotifications(response.data.messages.reverse());
     } catch (error) {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     }
   };
   
@@ -33,6 +38,7 @@ const Page = () => {
       <Head>
         <title>El7a2ny Clinic</title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{

@@ -9,6 +9,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
+
 const now = new Date();
 
 const Page = () => {
@@ -18,6 +20,8 @@ const Page = () => {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [familyMembersNoAccount, setFamilyMembersNoAccount] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSearch = (str) => {
     if (str === "") {
@@ -46,6 +50,8 @@ const Page = () => {
       setLoading(false);
     }).catch(error => {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     });
   }, []);
 
@@ -65,6 +71,7 @@ const Page = () => {
       <Head>
         <title>El7a2ny Clinic</title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title="Error" message={errorMessage} buttonAction="Close" />
       <Box
         component="main"
         sx={{

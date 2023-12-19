@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Cookies from 'js-cookie';
+import Message from 'src/components/Message';
 import {
     Alert,
     Box,
@@ -25,6 +26,8 @@ const Page = () => {
     const router = useRouter();
     const auth = useAuth();
     const [method, setMethod] = useState('Username');
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const formik = useFormik({
         initialValues: {
@@ -71,6 +74,8 @@ const Page = () => {
                     }
                 } catch (error) {
                     console.error('An error occurred while updating the password', error);
+                    setShowError(true);
+                    setErrorMessage(error.response.data.message);
                 }
             }
         }
@@ -98,6 +103,7 @@ const Page = () => {
                     Reset Password
                 </title>
             </Head>
+            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
             <Box
                 sx={{
                     backgroundColor: 'background.paper',
