@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 import Link from 'next/link';
 
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 
 
 const statusMap = {
@@ -38,6 +39,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import LoadingSpinner from 'src/components/LoadingSpinner';
 
 export const PatientAppointmentsTable = (props) => {
 
@@ -60,9 +62,31 @@ export const PatientAppointmentsTable = (props) => {
   const selectedSome = (selected.length > 0) && (selected.length < items.length);
   const selectedAll = (items.length > 0) && (selected.length === items.length);
   const router = useRouter();
-
+  const [rescheduling, setRescheduling] = useState(false);
+  const [toBeUpdated, setToBeUpdated] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [invalid, setInvalid] = useState(false);
+  const [unreservedAppointments, setUnreservedAppointments] = useState([]);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
+  const rescheduleAppointment = (appointmentID, oldAppointment) => {
+    axios.patch('http://localhost:8000/patient/RescheduleAppointment?appointmentID='+appointmentID+'&oldAppointmentID='+oldAppointment._id+'&username='+oldAppointment.patient)
+    .then((req) => {
+      window.location.reload();
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+  const username = Cookies.get('username');
+  const getUnreservedAppointments = async () => {
+    setLoading(true);
+    await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+username).then((res) => {
+      setUnreservedAppointments(res.data.appointments);
+      setLoading(false);
+    }).catch((err) => {
+      console.log(err);
+    });
+  };
   return (
     <Card>
       <Scrollbar>
@@ -137,7 +161,9 @@ export const PatientAppointmentsTable = (props) => {
                             variant="contained" 
                             color="primary"
                             onClick={() => {
-                                router.push(`/doctor/rescheduleAppointment?username=${patientUsername}&appointmentID=${appointment._id}`)
+                              setRescheduling(true);
+                              setToBeUpdated(appointment);
+                              getUnreservedAppointments();
                               }}>
                             Reschedule
                             </Button>
@@ -148,6 +174,103 @@ export const PatientAppointmentsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
+        {rescheduling && toBeUpdated.status !== 'upcoming' && (<div>
+            <Dialog open={rescheduling} onClose={() => {{
+                  setRescheduling(false);
+                  setToBeUpdated(null);
+                  setUnreservedAppointments([]);
+                }}} >
+              <DialogTitle>Reschedule</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  You can only reschedule upcoming appointments
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setRescheduling(false);
+                  setToBeUpdated(null);
+                  setUnreservedAppointments([]);
+                }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
+        {rescheduling && toBeUpdated.status === 'upcoming' && (<div>
+            <Dialog open={rescheduling} onClose={() => {{
+                  setRescheduling(false);
+                  setToBeUpdated(null);
+                  setUnreservedAppointments([]);
+                }}}>
+              <DialogTitle>Reschedule</DialogTitle>
+              <DialogContent>
+                {loading && (<div>
+                  <DialogContentText>Loading...</DialogContentText>
+                </div>)}
+                  {!loading && unreservedAppointments.length === 0 && (<div>
+                    <DialogContentText>No Available Slots</DialogContentText>
+                  </div>)}
+                {!loading && unreservedAppointments.length > 0 && (
+                  <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  Date
+                </TableCell>
+                <TableCell>
+                  Day
+                </TableCell>
+                <TableCell>
+                  From
+                </TableCell>
+                <TableCell>
+                  To
+                </TableCell>
+                <TableCell>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {unreservedAppointments.map((appointment) => {
+                const isSelected = selected.includes(appointment.id);
+                // const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+
+                return (
+                  <TableRow
+                    hover
+                    key={appointment._id}
+                    selected={isSelected}
+                  >
+                    <TableCell>
+                      {new Date(appointment.date).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {days[new Date(appointment.date).getDay()]}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.startHour}
+                    </TableCell>
+                    <TableCell>
+                      {appointment.endHour}
+                    </TableCell>
+                    <TableCell>
+                      <Button onClick={() => {rescheduleAppointment(appointment._id, toBeUpdated)}}>Reschedule</Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setRescheduling(false);
+                  setToBeUpdated(null);
+                  setUnreservedAppointments([]);
+                }}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          </div>)}
       </Scrollbar>
       <TablePagination
         component="div"

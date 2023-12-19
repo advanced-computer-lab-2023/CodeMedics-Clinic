@@ -10,7 +10,9 @@ import { useRouter } from 'next/navigation';
 import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointments-filter';
 import { PatientAppointmentsTable } from 'src/sections/overview/overview-doctor-appointment';
 import axios from 'axios';
-
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {
@@ -43,9 +45,9 @@ const Page = () => {
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
   const patientUsername = new URLSearchParams(window.location.search).get('username');
-
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     axios.get(`http://localhost:8000/doctor/viewPatientAppointment/${patientUsername}`, {withCredentials: true})
     .then((req) => {
 
@@ -64,6 +66,7 @@ const Page = () => {
         });
 
         setAllData(appointments);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -142,7 +145,9 @@ const Page = () => {
             </Stack>
             <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} filterStatus={true} />
             
-            <PatientAppointmentsTable
+            {loading? <LoadingSpinner /> : (
+              <>
+              {data.length === 0 ? <NoRecords message={"No Appointments Found"}/> : <PatientAppointmentsTable
               count={data.length}
               items={customers}
               onDeselectAll={customersSelection.handleDeselectAll}
@@ -154,7 +159,9 @@ const Page = () => {
               page={page}
               rowsPerPage={rowsPerPage}
               selected={customersSelection.selected}
-            />
+            />}
+              </>
+            )}
           </Stack>
         </Container>
       </Box>
