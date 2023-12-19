@@ -3,10 +3,21 @@ import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 import { getInitials } from 'src/utils/get-initials';
 import { Scrollbar } from 'src/components/scrollbar';
-import { Button } from '@mui/material';
+import { Button, IconButton, SvgIcon } from '@mui/material';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import Message from 'src/components/Message';
+
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+
+
+import ArrowDownTrayIcon from '@heroicons/react/24/solid/ArrowDownTrayIcon';
+import CheckCircleIcon from '@heroicons/react/24/solid/CheckCircleIcon';
+import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
 
 import {
   Avatar,
@@ -38,6 +49,9 @@ export const PatientPrescriptionsTable = (props) => {
     rowsPerPage = 0,
   } = props;
 
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const downloadPDF = async (prescription) => {
     try {
       const response = await axios.post(
@@ -59,29 +73,9 @@ export const PatientPrescriptionsTable = (props) => {
   };
   const [prescriptionStatus, setPrescriptionStatus] = useState(items);
   const username = Cookies.get('username');
-  const fillPrescription = async (prescriptionID) => {
-    try {
-        await axios.patch(`http://localhost:8000/patient/fillPrescription`, 
-          {
-              Username: username,
-              prescriptionID: prescriptionID
-          }
-        );
-        for(let i = 0; i<items.length; i++){
-          const current = items[i];
-          if(current._id === prescriptionID){
-            current.filled = true;
-            break;
-          }
-        }
-        setPrescriptionStatus(items);
-    } catch (error) {
-      console.error('Error filling prescription:', error);
-      setShowError(true);
-      setErrorMessage(error.response.data);
-    }
-  };
 
+  const [viewing, setViewing] = useState(false);
+  const [toBeUpadted, setToBeUpdated] = useState({});
   return (
     <Card>
       {/* <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} /> */}
@@ -90,9 +84,6 @@ export const PatientPrescriptionsTable = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  Drug
-                </TableCell>
                 <TableCell>
                   Doctor
                 </TableCell>
@@ -103,8 +94,7 @@ export const PatientPrescriptionsTable = (props) => {
                   Status
                 </TableCell>
                 <TableCell>
-                </TableCell>
-                <TableCell>
+                  Actions
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -113,19 +103,6 @@ export const PatientPrescriptionsTable = (props) => {
                 const status = prescription.filled?'filled':'unfilled';
                 return (
                   <TableRow hover key={prescription._id}>
-                  <TableCell>
-                    {/* Map over the Drug array and display drug details */}
-                    {prescription.Drug.map((drug, index) => (
-                      <div key={index}>
-                        <Typography variant="body1">
-                          {drug.drugName}
-                        </Typography>
-                        <Typography variant="body2">
-                          Dosage: {drug.dosage}
-                        </Typography>
-                      </div>
-                    ))}
-                  </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
                         <Typography variant="subtitle2">
@@ -142,21 +119,19 @@ export const PatientPrescriptionsTable = (props) => {
                       </SeverityPill>
                     </TableCell>
                     <TableCell>
-                    <Button onClick={() => downloadPDF(prescription)}>
-                      Download PDF
-                    </Button>
-                    
-                  </TableCell>
-                  <TableCell>
-                  {!prescription.filled && (
-                          <Button
-                            variant="text"
-                            color="primary"
-                            onClick={() => {fillPrescription(prescription._id);}}
-                          >
-                            Fill Prescription
-                          </Button>
-                        )}
+                      <IconButton title='View Prescription' onClick={() => {
+                        setViewing(true);
+                        setToBeUpdated(prescription);
+                      }}>
+                        <SvgIcon fontSize="small">
+                          <EyeIcon />
+                        </SvgIcon>
+                      </IconButton>
+                      <IconButton title='Download as PDF' onClick={() => downloadPDF(prescription)}>
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      </IconButton>
                   </TableCell>
                   </TableRow>
                 );
@@ -164,6 +139,49 @@ export const PatientPrescriptionsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
+        {viewing && (
+          <Dialog open={viewing} onClose={() => {
+            setViewing(false);
+          }} sx={{minWidth: 200}} fullWidth>
+          <DialogTitle>Prescription</DialogTitle>
+          <DialogContent>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Drug</TableCell>
+                  <TableCell>Dosage</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+            {toBeUpadted.Drug.map((drug, medicineIndex) => (
+              <TableRow hover key={medicineIndex}>
+                <TableCell>{drug.drugName}</TableCell>
+                <TableCell>
+                <TextField
+                      type="text"
+                      label="Dosage"
+                      value={drug.dosage}
+                      disabled={false}
+                    />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+            </Table>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+            setViewing(false);
+          }}>Close</Button>
+          </DialogActions>
+        </Dialog>
+
+        )}
+
+        {errorMessage && (
+          <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
+        )}
+        
       </Scrollbar>
       <TablePagination
         component="div"

@@ -212,7 +212,7 @@ const handleAddMedicine = (prescriptionId) => {
                       <SeverityPill color={statusMap[status]}>{status}</SeverityPill>
                     </TableCell>
                     <TableCell>
-                    <IconButton title='Add Medicine' onClick={() => {
+                    <IconButton disabled={prescription.filled}  title='Add Medicine' onClick={() => {
                           setIsAddingMedicine(true);
                           setToBeUpadted(prescription);
                         }}>
@@ -339,17 +339,6 @@ const handleAddMedicine = (prescriptionId) => {
                 </TableCell>
               </TableRow>
             ))}
-            {errorMessage && (
-                         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                         <DialogTitle>Error</DialogTitle>
-                         <DialogContent>
-                           <DialogContentText>{errorMessage}</DialogContentText>
-                         </DialogContent>
-                         <DialogActions>
-                           <Button onClick={() => setOpenDialog(false)}>OK</Button>
-                         </DialogActions>
-                       </Dialog>
-                      )}
           </TableBody>
             </Table>
           </DialogContent>
@@ -366,6 +355,17 @@ const handleAddMedicine = (prescriptionId) => {
         )}
 
       </Scrollbar>
+      {errorMessage && (
+                         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                         <DialogTitle>Error</DialogTitle>
+                         <DialogContent>
+                           <DialogContentText>{errorMessage}</DialogContentText>
+                         </DialogContent>
+                         <DialogActions>
+                           <Button onClick={() => setOpenDialog(false)}>OK</Button>
+                         </DialogActions>
+                       </Dialog>
+                      )}
       <TablePagination
         component="div"
         count={count}
