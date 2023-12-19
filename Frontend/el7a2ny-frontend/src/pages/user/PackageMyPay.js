@@ -9,9 +9,9 @@ const stripePromise = loadStripe('pk_test_51OA3YuHNsLfp0dKZSCi30qg6xY63jh2SiffqC
 import Head from 'next/head';
 import { Box } from '@mui/system';
 import { Container, Grid, Typography, Stack, Card } from '@mui/material';
-
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-
+import Message from 'src/components/Message';
 
 const Page = () => {
   const [clientSecret, setClientSecret] = useState('');
@@ -28,9 +28,8 @@ const Page = () => {
       }
       );
   }, []);
-
-
-
+  const [invalidAction, setInvalidAction] = useState(false);
+  const [message2, setMessage2] = useState(null);
 
   const appearance = {
     theme: 'stripe',
@@ -63,12 +62,30 @@ const Page = () => {
       <Card sx={{height: 420 , backgroundColor: "#d9dee4"}}>
         {clientSecret && (
           <Elements options={options} stripe={stripePromise}>
-            <PackageCheckoutForm packageName = {packageName} packagePrice = {packagePrice} />
+            <PackageCheckoutForm packageName = {packageName} packagePrice = {packagePrice} setInvalidAction={setInvalidAction} setMessage2={setMessage2} />
           </Elements>
         )}
         </Card>
       </Stack>
     </Box >
+    {invalidAction && (
+          <Dialog
+          open={invalidAction}
+          onClose={() => { setInvalidAction(false) }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle>Invalid Action</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {message2}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => { setInvalidAction(false) }}>OK</Button>
+            </DialogActions>
+          </Dialog>
+        )}
   </>
   
 

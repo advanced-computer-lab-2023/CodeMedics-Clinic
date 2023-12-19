@@ -10,8 +10,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { set } from "lodash";
-
-export default function PackageCheckoutForm({ packageName, packagePrice }) {
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+export default function PackageCheckoutForm({ packageName, packagePrice, setMessage2, setInvalidAction }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -124,10 +124,11 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
       .then((res) => {
         console.log(res.data);
         setIsDone(true);
-
       })
       .catch((err) => {
-        console.log(err);
+        setInvalidAction(true);
+        setMessage2(err.response.data.message);
+        console.log(err.response.data.message);
       });
   }
 
@@ -201,5 +202,6 @@ export default function PackageCheckoutForm({ packageName, packagePrice }) {
         {message && <div id="payment-message">{message}</div>}
       </form>
     </div>
+    
   );
 }
