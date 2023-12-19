@@ -77,6 +77,12 @@ export const PatientAppointmentsTable = (props) => {
       console.log(err);
     });
   }
+  const statusMap = {
+    upcoming: 'warning',
+    cancelled: 'error',
+    completed: 'success',
+    rescheduled: 'warning'
+  };  
   const username = Cookies.get('username');
   const getUnreservedAppointments = async () => {
     setLoading(true);
@@ -94,9 +100,6 @@ export const PatientAppointmentsTable = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>
-                  Doctor
-                </TableCell>
                 <TableCell>
                   Date
                 </TableCell>
@@ -128,17 +131,6 @@ export const PatientAppointmentsTable = (props) => {
                     key={appointment._id}
                     selected={isSelected}
                   >
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
-                        <Typography variant="subtitle2">
-                          {appointment.doctor}
-                        </Typography>
-                      </Stack>
-                    </TableCell>
                     <TableCell>
                       {new Date(appointment.date).toLocaleDateString()}
                     </TableCell>

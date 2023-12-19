@@ -10,8 +10,7 @@ export const AppointmentsFilter = ({setState1, setState2 , setState3, setCurUser
         {value: "None" , label: "None"},
         {value: "upcoming" , label: "Upcoming"},
         {value: "completed" , label: "Completed"},
-        {value: "cancelled" , label: "Cancelled"},
-        {value: "rescheduled" , label: "Rescheduled"},
+        {value: "cancelled" , label: "Cancelled"}
     ];
 
 

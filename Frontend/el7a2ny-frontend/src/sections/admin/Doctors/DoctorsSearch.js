@@ -7,8 +7,7 @@ export const DoctorSearch = ({handleSearch , handleFilter, skipFiltering}) => {
     {value: "unreserved" , label: "unreserved"} ,
     {value: "upcoming" , label: "upcoming"} ,
     {value: "completed" , label: "completed"} ,
-    {value: "cancelled" , label: "cancelled"} ,
-    {value: "rescheduled" , label: "rescheduled"}
+    {value: "cancelled" , label: "cancelled"}
   ];
 
   //'unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled'

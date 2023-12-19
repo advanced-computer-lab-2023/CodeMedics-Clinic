@@ -15,6 +15,7 @@ import {
   Typography,
   Button, Menu, MenuItem, IconButton, Tooltip, SvgIcon, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField
 } from '@mui/material';
+import { SeverityPill } from 'src/components/severity-pill';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
@@ -89,7 +90,12 @@ export const CustomersTable = (props) => {
     });
   };
 
-
+  const statusMap = {
+    upcoming: 'warning',
+    cancelled: 'error',
+    completed: 'success',
+    rescheduled: 'warning'
+};  
   const handleMenuItemClick = (item, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -222,9 +228,9 @@ export const CustomersTable = (props) => {
                     <TableCell>
                       {appointment.endHour}
                     </TableCell>
-                    <TableCell>
-                      {appointment.status}
-                    </TableCell>
+                    <SeverityPill color={statusMap[appointment.status]}>
+                        {appointment.status}
+                    </SeverityPill>
                     <TableCell>
                     <div>
                       <Tooltip title="Menu">
