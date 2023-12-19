@@ -11,7 +11,7 @@ exports.addDocument = async (req, res) => {
         const patient = await Patient.findOne({ Username: username });
 
         if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
+            return res.status(404).json({ message: 'Patient not found' });
         }
 
         // Handle the Linked field
@@ -23,7 +23,7 @@ exports.addDocument = async (req, res) => {
         res.status(201).json({ message: 'Document uploaded successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -33,12 +33,12 @@ exports.removeDocument = async (req, res) => {
 
         const patient = await Patient.findOne({ Username: username });
         if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
+            return res.status(404).json({ message: 'Patient not found' });
         }
 
         const documentIndex = patient.HealthRecords.findIndex(doc => doc._id.toString() === documentId);
         if (documentIndex === -1) {
-            return res.status(404).json({ error: 'Document not found' });
+            return res.status(404).json({ message: 'Document not found' });
         }
 
         // Remove the document from the array
@@ -48,6 +48,6 @@ exports.removeDocument = async (req, res) => {
         res.status(200).json({ message: 'Document removed successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };

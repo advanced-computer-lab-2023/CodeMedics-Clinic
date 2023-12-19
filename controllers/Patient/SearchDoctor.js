@@ -24,7 +24,7 @@ exports.searchDoctor = async (req, res) => {
     }
     console.log(query);
     if(Object.keys(query).length == 0){
-        res.status(400).json({ error: 'At least one search criterion must be provided.' });
+        res.status(400).json({ message: 'At least one search criterion must be provided.' });
         return;
     }
 
@@ -34,7 +34,7 @@ exports.searchDoctor = async (req, res) => {
         res.status(200).json(doctors);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'An error occurred while searching for doctors.' });
+        res.status(500).json({ message: 'An error occurred while searching for doctors.' });
     }
 };
 
@@ -42,7 +42,7 @@ exports.getDoctorByUsername = async (req, res) => {
     const username = req.query.username;// Assuming the request contains a 'username' property.
     console.log(username);
     if(username.length == 0){
-        res.status(400).json({ error: 'A username must be provided.' });
+        res.status(400).json({ message: 'A username must be provided.' });
         return;
     }
 
@@ -52,6 +52,6 @@ exports.getDoctorByUsername = async (req, res) => {
         res.status(200).json({doctor: doctorByUsername});
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'An error occurred while searching for doctors.' });
+        res.status(500).json({ message: 'An error occurred while searching for doctors.' });
     }
 };

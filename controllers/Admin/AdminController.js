@@ -66,11 +66,11 @@ const updateAdmin = async (req, res) => {
 const removeUser = asyncHandler(async (req, res) => {
     //delete an Admin from the database
     if (Object.keys(req.body).length === 0) {
-        return res.status(400).json("Request body is empty");
+        return res.status(400).json({message: "Request body is empty"});
     }
     // Check if 'Username' is present in the request body
     if (!req.body['Username'] || req.body['Username'].trim() === '') {
-        return res.status(400).json("Missing Username in the request body");
+        return res.status(400).json({message: "Missing Username in the request body"});
     }
     const { Username } = req.body;
    
@@ -91,7 +91,7 @@ const getDoctorsReg = asyncHandler(async (req, res) => {
     const doctors = await doctorModel.find({ Username: Username, Status: "Pending" });
 
     if (doctors.length === 0) {
-        return res.status(404).json("No doctor applications found");
+        return res.status(404).json({message: "No doctor applications found"});
     }
 
     return res.status(200).json(doctors);
@@ -156,7 +156,7 @@ const removePackage = async (req, res) => {
         if (deletedPackage) {
             return res.status(200).json(`${Name} has been deleted`);
         } else {
-            return res.status(404).json("Package not found in the database!");
+            return res.status(404).json({message: "Package not found in the database!"});
         }
     } catch (error) {
         return res.status(500).json({ message: 'Error deleting package' });
@@ -206,7 +206,7 @@ const updatePackage = async (req, res) => {
         if (updatedPackage) {
             return res.status(200).json(Name + " has been updated!");
         } else {
-            return res.status(404).json("Package not found in the database!");
+            return res.status(404).json({message: "Package not found in the database!"});
         }
     } catch (error) {
         return res.status(500).json({ message: 'Error updating package' });
@@ -221,7 +221,7 @@ const changePassword = async (req, res) => {
         const admin = await adminModel.findOne({ Username: username });
 
         if (!admin) {
-            return res.status(404).json({ error: 'Admin not found' });
+            return res.status(404).json({ message: 'Admin not found' });
         }
 
         // Verify if the current password matches the one in the database
@@ -241,7 +241,7 @@ const changePassword = async (req, res) => {
 
         return res.status(200).json({ message: 'Password changed successfully' });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -256,7 +256,7 @@ const acceptRejectDoctorRequest = async (req, res) => {
         console.log(username, action);
         console.log(doctor);
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor request not found or already processed' });
+            return res.status(404).json({ message: 'Doctor request not found or already processed' });
         }
 
         // Update the doctor's status based on the action (Accept or Reject)
@@ -273,7 +273,7 @@ const acceptRejectDoctorRequest = async (req, res) => {
             // Return success message or any relevant information
             return res.status(200).json({ message: 'Doctor request rejected and record deleted' });
         } else {
-            return res.status(400).json({ error: 'Invalid action' });
+            return res.status(400).json({ message: 'Invalid action' });
         }
 
         // Save the updated doctor
@@ -282,7 +282,7 @@ const acceptRejectDoctorRequest = async (req, res) => {
         // Return the updated doctor
         return res.status(200).json(doctor);
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 

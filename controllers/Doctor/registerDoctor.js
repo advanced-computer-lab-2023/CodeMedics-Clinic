@@ -106,7 +106,7 @@ const changePassword = async (req, res) => {
         const doctor = await doctorModel.findOne({ Username: username });
 
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor not found' });
+            return res.status(404).json({ message: 'Doctor not found' });
         }
 
         // Verify if the current password matches the one in the database
@@ -126,7 +126,7 @@ const changePassword = async (req, res) => {
 
         return res.status(200).json({ message: 'Password changed successfully' });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 

@@ -15,7 +15,7 @@ exports.viewUpcomingAppointments = async (req, res) => {
     res.status(200).json({ upcomingAppointments });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -31,6 +31,6 @@ exports.viewPastAppointments = async (req, res) => {
         res.status(200).json({ pastAppointments });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };
