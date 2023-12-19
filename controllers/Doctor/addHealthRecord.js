@@ -16,14 +16,14 @@ exports.addHealthRecord = async (req, res) => {
         const doctor = await Doctor.findOne({ Username: doctorUsername });
         console.log(doctor);
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor not found' });
+            return res.status(404).json({ message: 'Doctor not found' });
         }
 
         // Check if the patient exists
         const patient = await Patient.findOne({ Username: patientUsername });
         console.log(patient);
         if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
+            return res.status(404).json({ message: 'Patient not found' });
         }
 
       // Fetch all appointments with IDs present in the doctor's Appointments array
@@ -35,7 +35,7 @@ exports.addHealthRecord = async (req, res) => {
     );
 
         if (!hadAppointment) {
-            return res.status(403).json({ error: 'Doctor never had appointments with this patient yet' });
+            return res.status(403).json({ message: 'Doctor never had appointments with this patient yet' });
         }
 
         // Assuming healthRecords is an array in the Patient model
@@ -45,6 +45,6 @@ console.log( patient.HealthRecords);
         res.status(201).json({ message: 'Document uploaded successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };

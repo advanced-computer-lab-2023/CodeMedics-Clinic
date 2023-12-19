@@ -7,7 +7,7 @@ exports.viewUpcomingAppointments = async (req, res) => {
         const doctor = await Doctor.findOne({ Username: doctorUsername });
 
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor not found' });
+            return res.status(404).json({ message: 'Doctor not found' });
         }
 
         const currentDate = new Date().toISOString(); // Use UTC format
@@ -21,7 +21,7 @@ exports.viewUpcomingAppointments = async (req, res) => {
         res.status(200).json({ upcomingAppointments });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -31,7 +31,7 @@ exports.viewPastAppointments = async (req, res) => {
         const doctor = await Doctor.findOne({ Username: doctorUsername });
 
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor not found' });
+            return res.status(404).json({ message: 'Doctor not found' });
         }
 
         // Filter appointments with status "completed," "cancelled," or "rescheduled"
@@ -43,7 +43,7 @@ exports.viewPastAppointments = async (req, res) => {
         res.status(200).json({ pastAppointments });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -63,7 +63,7 @@ exports.getAllDocAppointments = async (req, res) => {
         return res.status(200).json(data);
     }catch (error){
         console.log(error);
-        res.status(500).json(error);
+        res.status(500).json({message: "Server error"});
     }
 };
 

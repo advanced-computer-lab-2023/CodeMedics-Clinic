@@ -23,18 +23,43 @@ import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 import { useState } from 'react';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
+import Cookies from 'js-cookie';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const buttons = ["El7a2ny Virtual Clinic", "El7a2ny Virtual Pharmacy"];
+  const type = Cookies.get("type");
   const handleMenuItemClick = (item) => {
     if (item === "El7a2ny Virtual Clinic") {
-      window.location.href = "http://localhost:3000/user/doctors";
+      if (type == 'patient') {
+        window.location.href = "http://localhost:3000/user/doctors";
+      }
+      if(type == 'admin'){
+        window.location.href = "http://localhost:3000/admin/admins";
+      }
+      if(type == 'pharmacist'){
+        window.location.href = "http://localhost:3000/";
+      }
+      if(type == 'doctor'){
+        window.location.href = "http://localhost:3000/doctor/patients";
+      }
     }
     else {
-      window.location.href = "http://localhost:3001/user/medicines";
+      if (type == 'patient') {
+        window.location.href = "http://localhost:3001/user/medicines";
+      }
+      if(type == 'admin'){
+        window.location.href = "http://localhost:3001/admin";
+      }
+      if(type == 'pharmacist'){
+        window.location.href = "http://localhost:3001/pharmacist/performance";
+      }
+      if(type == 'doctor'){
+        window.location.href = "http://localhost:3001/";
+      }
+      
     }
   }
 

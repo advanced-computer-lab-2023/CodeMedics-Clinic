@@ -6,7 +6,6 @@ import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
 import AdjustmentsVerticalIcon from '@heroicons/react/24/solid/AdjustmentsVerticalIcon';
 import { format } from 'date-fns';
-import Message from 'src/components/Message';
 import {
   Avatar,
   Box,
@@ -32,21 +31,22 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import Message from 'src/components/Message';
 const axios = require('axios');
 export const Row = (props) => {
-  const { row: patient } = props;
+  const { row: patient ,index:index} = props;
   const [open, setOpen] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const onRemovePatient = async (username) => {
     try {
-      const removeResponse = await axios.delete('http://localhost:8000/removePatient', {
+      const removeResponse = await axios.delete('http://localhost:8000/admin/removePatient', { // done new Route
         data: { Username: username }
       });
     } catch (error) {
       console.error('Error removing Pharmacist:', error);
       setShowError(true);
-      setErrorMessage(error.response.data);
+      setErrorMessage(error.response.data.message);
     }
   };
   const router = useRouter();
@@ -54,23 +54,22 @@ export const Row = (props) => {
     try {
       await onRemovePatient(patient.Username);
     } catch (error) {
-      // Handle errors appropriately
-      console.error('Error removing patient:', error);
+      console.error('Error removing Pharmacist:', error);
       setShowError(true);
-      setErrorMessage(error.response.data);
+      setErrorMessage(error.response.data.message);
     }
     router.refresh();
   };
 
   return (
     <Fragment>
-      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
+      <Message condition={showError} setCondition={setShowError} message={errorMessage} title="Error" buttonAction="Close" />
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell padding="normal">
           <IconButton
             children={(
               <SvgIcon>
-                {!open ? <ChevronRightIcon /> : <ChevronDownIcon />}
+                {!open ? <ChevronRightIcon/> : <ChevronDownIcon/>}
               </SvgIcon>
             )}
             color="primary"
@@ -124,7 +123,7 @@ export const Row = (props) => {
               </Typography>
               <Stack direction="row" spacing={10} sx={{ mt: 3 }}>
                 <Avatar
-                  src="/assets/avatars/1.png"
+                  src={`/assets/avatars/${index}.png`}
                   sx={{
                     width: 120,
                     height: 120,
@@ -209,7 +208,7 @@ export const Row = (props) => {
                   sx={{ height: 40, backgroundColor: 'success.main', mt: 'auto' }}
                   variant="contained"
                   type="submit"
-                  onClick={() => { setOpen(!open); }}
+                  onClick={() => {setOpen(!open);}}
                 >
                   Done
                 </Button>

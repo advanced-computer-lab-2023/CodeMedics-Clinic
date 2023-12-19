@@ -3,7 +3,6 @@ import { format } from 'date-fns';
 import IdentificationIcon from '@heroicons/react/24/solid/IdentificationIcon';
 import Xmark from '@heroicons/react/24/solid/XMarkIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
-import Message from 'src/components/Message';
 import {
   Avatar,
   Box,
@@ -14,7 +13,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TablePagination,Button,
+  TablePagination,
   TableRow,
   Typography
 } from '@mui/material';
@@ -22,37 +21,34 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import { useState } from 'react';
 import React from 'react';
-import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { indigo } from '../../../theme/colors';
-import { PatientPopup } from '../Popup-generic';
-import axios from 'axios';
+
+import { Row } from './Patient-row';
+
 export const PatientTable = (props) => {
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const {
     count = 0,
     items = [],
     onPageChange = () => {},
     onRowsPerPageChange,
     page = 0,
-    rowsPerPage = 0,
+    rowsPerPage = 0
   } = props;
-
-  const [isOpenEmergencyContact, setIsOpenEmergencyContact] = useState(false);
-  const [isOpenDelete, setOpenDelete] = useState(false);
   return (
     <Card>
-      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
-        <Box sx={{ minWidth: 800 }}>
+        <Box>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell align="center">
+                <TableCell/>
+                <TableCell>
                   Name
                 </TableCell>
-                <TableCell >
+                <TableCell>
+                  Username
+                </TableCell>
+                <TableCell>
                   Email
                 </TableCell>
                 <TableCell>
@@ -61,79 +57,12 @@ export const PatientTable = (props) => {
                 <TableCell>
                   Phone
                 </TableCell>
-                <TableCell>
-                  Username
-                </TableCell>
-                <TableCell>
-                  Date of Birth
-                </TableCell>
-                {/* <TableCell>
-                  Password
-                </TableCell> */}
-                <TableCell>
-                  Actions
-                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((customer) => {
-                //const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+              {items.map((patient, index) => {
                 return (
-                  <TableRow hover key={customer.id}>
-                    <TableCell>
-                      <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={2}
-                      >
-                        <Avatar src={customer.avatar}>
-                          {getInitials(customer.Name)}
-                        </Avatar>
-                        <Typography variant="subtitle2">
-                          {customer.Name}
-                        </Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>
-                      {customer.Email}
-                    </TableCell>
-                    <TableCell>
-                      {customer.Gender}
-                    </TableCell>
-                    <TableCell>
-                      {customer.Number}
-                    </TableCell>
-                    <TableCell>
-                      {customer.Username}
-                    </TableCell>
-                    <TableCell>
-                      {customer.DateOfBirth.toString().substring(0, 10)}
-                    </TableCell>
-                    {/* <TableCell>
-                      {customer.Password}
-                    </TableCell> */}
-                    <TableCell>
-                      <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 
-                      onClick={() => {
-                          const userName = customer.Username;
-                          axios.post('http://localhost:8000/admin/removePatient', {Username: customer.Username})
-                          .then((res) => {
-                            if (res.status == 200) {
-                              console.log("removed"); 
-                              window.location.reload();
-                            }
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                            setShowError(true);
-                            setErrorMessage(err.response.data);
-                          }
-                          )
-                        }}>
-                        Remove
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                  <Row key={patient._id} row={patient} index={index}/>
                 );
               })}
             </TableBody>
@@ -159,5 +88,5 @@ PatientTable.propTypes = {
   onPageChange: PropTypes.func,
   onRowsPerPageChange: PropTypes.func,
   page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
+  rowsPerPage: PropTypes.number
 };

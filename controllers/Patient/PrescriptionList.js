@@ -31,7 +31,7 @@ exports.filterPrescriptions = async (req, res) => {
         startDate = new Date(year, 0, 1);
         endDate = new Date(year + 1, 0, 1);
       } else {
-        res.status(400).json({ error: 'Invalid input. Provide at least a year.' });
+        res.status(400).json({ message: 'Invalid input. Provide at least a year.' });
         return;
       }
 
@@ -56,7 +56,7 @@ exports.filterPrescriptions = async (req, res) => {
 
     res.status(200).json(prescriptions);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -72,7 +72,7 @@ exports.getPrescriptions = async (req, res) => {
 
     res.status(200).json(prescriptions);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -87,7 +87,7 @@ exports.getPrescriptions1 = async (req, res) => {
 
     res.status(200).json(prescriptions);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -118,7 +118,7 @@ exports.addPrescription = async (req, res) => {
     res.status(200).json({ message: 'Prescription added successfully' });
   } catch (error) {
     console.error('Error adding prescription:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -147,7 +147,7 @@ exports.deletePrescriptionsByUsername = async (req, res) => {
 
     return res.status(200).json({ message: 'Prescriptions deleted successfully' });
   } catch (error) {
-    return res.status(500).json({ error: 'Server error' });
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 

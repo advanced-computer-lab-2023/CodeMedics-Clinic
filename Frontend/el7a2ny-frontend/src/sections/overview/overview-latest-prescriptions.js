@@ -40,6 +40,8 @@ const statusMap = {
 };
 
 export const PatientPrescriptionsTable = (props) => {
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     count = 0,
     items = [],
@@ -48,9 +50,6 @@ export const PatientPrescriptionsTable = (props) => {
     page = 0,
     rowsPerPage = 0,
   } = props;
-
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const downloadPDF = async (prescription) => {
     try {
@@ -68,7 +67,7 @@ export const PatientPrescriptionsTable = (props) => {
     } catch (error) {
       console.error('Error downloading PDF:', error);
       setShowError(true);
-      setErrorMessage(error.response.data);
+      setErrorMessage(error.response.data.message);
     }
   };
   const [prescriptionStatus, setPrescriptionStatus] = useState(items);
@@ -78,7 +77,7 @@ export const PatientPrescriptionsTable = (props) => {
   const [toBeUpadted, setToBeUpdated] = useState({});
   return (
     <Card>
-      {/* <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} /> */}
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

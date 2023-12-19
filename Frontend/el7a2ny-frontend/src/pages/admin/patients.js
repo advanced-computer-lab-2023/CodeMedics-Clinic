@@ -42,10 +42,10 @@ const Page = () => {
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:8000/admin/viewPatients')
+    fetch('http://localhost:8000/admin/viewPatients') // done new Route
       .then((res) => {
         if (res.status == 401) {
           throw new Error('Error while fetching data');
@@ -59,8 +59,9 @@ const Page = () => {
         }
   })
     .catch((err) => {
+      console.log(err);
       setShowError(true);
-      setErrorMessage(err.message);
+      setErrorMessage(err.response.data.message);
     });
 }, []);
 const handlePageChange = useCallback(
@@ -84,7 +85,7 @@ return (
         Patients
       </title>
     </Head>
-    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
+    <Message condition={showError} setCondition={setShowError} message={errorMessage} title="Error" buttonAction="Close" />
     <Box
       component="main"
       sx={{
@@ -103,32 +104,6 @@ return (
               <Typography variant="h4">
                 Patients
               </Typography>
-              <Stack
-                alignItems="center"
-                direction="row"
-                spacing={1}
-              >
-                <Button
-                  color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <ArrowUpOnSquareIcon/>
-                    </SvgIcon>
-                  )}
-                >
-                  Import
-                </Button>
-                <Button
-                  color="inherit"
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <ArrowDownOnSquareIcon/>
-                    </SvgIcon>
-                  )}
-                >
-                  Remove
-                </Button>
-              </Stack>
             </Stack>
           </Stack>
           <PatientsSearch/>

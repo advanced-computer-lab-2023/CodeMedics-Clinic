@@ -51,7 +51,7 @@ export const OverviewMedicalRecords = (props) => {
             .catch(error => {
                 console.log(error);
                 setShowError(true);
-                setErrorMessage(error.response.data);
+                setErrorMessage(error.response.data.message);
             });
     };
 
@@ -69,7 +69,7 @@ export const OverviewMedicalRecords = (props) => {
             .catch(error => {
                 console.log(error);
                 setShowError(true);
-                setErrorMessage(error.response.data);
+                setErrorMessage(error.response.data.message);
             });
     };
 

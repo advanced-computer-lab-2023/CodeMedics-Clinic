@@ -14,6 +14,6 @@ exports.viewPatientAppointment = async (req, res) => {
     res.status(200).json({ upcomingAppointments });
   } catch (error) {
     console.error('Error in viewPatientAppointment:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };

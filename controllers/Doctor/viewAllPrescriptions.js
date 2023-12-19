@@ -14,7 +14,7 @@ exports.getPrescriptions = async (req, res) => {
   
       res.status(200).json(prescriptions);
     } catch (error) {
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ message: 'Server error' });
     }
   };
 

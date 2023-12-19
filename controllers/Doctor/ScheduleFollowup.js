@@ -12,7 +12,7 @@ exports.scheduleFollowUp = async (req, res) => {
 
         // Check if the doctor and patient exist
         if (!doctor || !patient) {
-            return res.status(404).json({ error: 'Doctor or patient not found' });
+            return res.status(404).json({ message: 'Doctor or patient not found' });
         }
         /*
         // const utcDate = new Date(date).toISOString();
@@ -41,6 +41,6 @@ exports.scheduleFollowUp = async (req, res) => {
         res.status(201).json({ message: 'Follow-up appointment scheduled successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };

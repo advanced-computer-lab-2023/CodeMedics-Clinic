@@ -8,7 +8,7 @@ exports.addTimeSlot = async (req, res) => {
         const doctor = await Doctor.findOne({ Username: username });
 
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor not found' });
+            return res.status(404).json({ message: 'Doctor not found' });
         }
 
         // Add the new time slot to the AvailableTimeSlots array
@@ -20,6 +20,6 @@ exports.addTimeSlot = async (req, res) => {
         res.status(200).json({ message: 'Time slot added successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };
