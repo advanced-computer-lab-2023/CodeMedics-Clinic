@@ -78,6 +78,7 @@ export const OverviewPackages = (props) => {
                   justifyContent: 'space-between',
                   height: '100%',
                   textAlign: 'center',
+
                 }}
               >
                 <ListItemAvatar>
@@ -102,31 +103,47 @@ export const OverviewPackages = (props) => {
                         backgroundColor: 'neutral.200',
                         height: 120,
                         width: 120,
+                        mb:3
                       }}
                     />
                   )}
                 </ListItemAvatar>
+                <Box sx={{ display: 'flex',mb:1 }}>
+                  <Typography variant="h5">
+                    {Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
+                  </Typography>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      alignSelf: 'flex-end',
+                      ml: 1
+                    }}
+                    variant="subtitle2"
+                  >
+                    /year
+                  </Typography>
+                </Box>
+                
                 <ListItemText
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
                   primary={myPackage.Name + " Package"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary={Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
-                  primaryTypographyProps={{ variant: 'subtitle2' }}
-                // secondaryTypographyProps={{ variant: 'body2' }}
-                />
-                <ListItemText
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
                   primary={myPackage.SessionDiscount + "% Session Discount"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
                   primary={myPackage.MedicineDiscount + "% Medicine Discount"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
                   primary={myPackage.FamilyDiscount + "% Family Discount"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
@@ -152,7 +169,6 @@ export const OverviewPackages = (props) => {
           );
         })}
       </Box>
-      <Divider />
     </CardContent>
   );
 };

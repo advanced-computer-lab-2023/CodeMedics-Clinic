@@ -149,10 +149,9 @@ export const Row = (props) => {
               open={Boolean(appointmentMenu[patient.patient._id]?.anchorEl)}
               onClose={() => {
                 handleMenuClose(patient.patient._id);
-
               }}
-              anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              transformOrigin={{ horizontal: 'center' }}
             >
               {buttons.map((item, index) => (
                 <MenuItem key={index} onClick={() => {
