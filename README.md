@@ -164,11 +164,18 @@ It is essential to review and comply with the licenses associated with the third
 
 ## Code Snippets
 
+Backend of pay with Wallet Method
 
 ![Code Example 1](screenshots/code_example1.png)
 ### ----------------------------------------------
+
+Frontend code of getting appointments
+
 ![Code Example 2](screenshots/code_example2.png)
 ### ----------------------------------------------
+
+Backend of getting all prescriptions
+
 ![Code Example 3](screenshots/code_example3.png)
 
 
@@ -593,9 +600,17 @@ To get started with the El7a2ny Virtual Clinic and Pharmacy, follow the steps be
 ## Tests
 
 ### Postman
+Testing Login
 
 ![postman_test1](screenshots/postman_test1.png)
 
+Fetching family members of logged in user
+
 ![postman_test1](screenshots/postman_test2.png)
 
+Getting all prescriptions prescriped by a certain doctor
+
 ![postman_test1](screenshots/postman_test3.png)
+
+## Contribute
+There may be user experience problems on our website that can be handled; perhaps enhancing the website with more features that are satisfying can help it stand out more.
