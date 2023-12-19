@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import VideoCall from 'src/components/VideoCall';
 import { SocketContext } from './VideoCallContext';
 import { useContext } from 'react';
+import PropTypes from 'prop-types';
 
 const PopUp = () => {
   const { callAccepted, name, setName, callEnded, leaveCall, callUser, call, answerCall, declineCall, myVideo } = useContext(SocketContext);
@@ -39,6 +40,9 @@ const PopUp = () => {
       </DialogActions>
     </Dialog>
   );
+};
+PopUp.propTypes = {
+  open: PropTypes.bool,
 };
 
 export default PopUp;

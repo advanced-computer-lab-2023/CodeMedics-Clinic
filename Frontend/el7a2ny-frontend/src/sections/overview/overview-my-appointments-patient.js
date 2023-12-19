@@ -283,6 +283,7 @@ export const PatientAppointmentsTable = (props) => {
                         </Menu>
                       </div>
                     </TableCell>
+
                   </TableRow>
                 );
               })}
