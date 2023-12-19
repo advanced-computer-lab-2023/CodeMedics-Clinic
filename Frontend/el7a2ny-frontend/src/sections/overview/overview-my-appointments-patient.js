@@ -95,7 +95,7 @@ export const PatientAppointmentsTable = (props) => {
     
 
   const [appointmentMenu, setAppointmentMenu] = useState({});
-  const [toBeUpdated, settoBeUpdated] = useState(null);
+  const [toBeUpdated, setToBeUpdated] = useState(null);
   const [cancelling, setCancelling] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleButtonClick = (event, appointment) => {
@@ -131,26 +131,26 @@ export const PatientAppointmentsTable = (props) => {
     if(item === "Cancel"){
       if(appointment.status !== 'upcoming'){
           setInvalidCancel(true);
-          settoBeUpdated(appointment);
+          setToBeUpdated(appointment);
       }
       else{
         setCancelling(true);
-        settoBeUpdated(appointment);
+        setToBeUpdated(appointment);
       }
     }
     else if(item === "Reschedule"){
-      settoBeUpdated(appointment);
+      setToBeUpdated(appointment);
       setRescheduling(true);
       getUnreservedAppointments(appointment.doctorUsername);
     }
     else if(item === "Request a Follow-up"){
       if(appointment.status !== 'completed'){
         setInvalidRequest(true);
-        settoBeUpdated(appointment);
+        setToBeUpdated(appointment);
       }
       else{
         setRequesting(true);
-        settoBeUpdated(appointment);
+        setToBeUpdated(appointment);
       }
     }
   };
@@ -280,7 +280,7 @@ export const PatientAppointmentsTable = (props) => {
           {rescheduling && toBeUpdated.status !== 'upcoming' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -298,7 +298,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -315,7 +315,7 @@ export const PatientAppointmentsTable = (props) => {
           {rescheduling && toBeUpdated.status === 'upcoming' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setUnreservedAppointments([]);
                   setAppointmentMenu({
                     ...appointmentMenu,
@@ -389,7 +389,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setUnreservedAppointments([]);
                   setAppointmentMenu({
                     ...appointmentMenu,
@@ -437,7 +437,7 @@ export const PatientAppointmentsTable = (props) => {
             
             <Dialog open={cancelling} onClose={() => {{
                   setCancelling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -455,7 +455,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setCancelling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -503,7 +503,7 @@ export const PatientAppointmentsTable = (props) => {
             
             <Dialog open={requesting} onClose={() => {{
                   setRequesting(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -521,7 +521,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRequesting(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
