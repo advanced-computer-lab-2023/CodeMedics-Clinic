@@ -42,7 +42,7 @@ exports.CancelAppointment = async (req, res) => {
         const hours = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
         const appointmentPrice = hours * (doctor.HourlyRate + clinicFees);
         doctor.Wallet = doctor.Wallet - hours * doctor.HourlyRate; // handle case that the wallet is initially empty ... or maybe it's a feature :)
-        patient.Wallet = patient.Wallet + (appointmentPrice - discount); //TODO handle correct calculation
+        patient.Wallet += appointmentPrice - (appointmentPrice * discount / 100); //TODO handle correct calculation
         clinicWallet.Wallet -= clinicFees;
         appointment.status = 'cancelled';
         await clinicWallet.save();
