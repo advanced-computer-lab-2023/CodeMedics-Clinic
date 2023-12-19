@@ -315,7 +315,7 @@ const handleAddMedicine = (prescriptionId) => {
                       type="number"
                       label="Dosage"
                       value={medicineIndex == editableMedicineIndex ? dosage || drug.dosage: drug.dosage}
-                      disabled={false}
+                      disabled={toBeUpadted.filled}
                       onChange={(e) => {
                         setEditableMedicineIndex(medicineIndex);
                         handleEditClick(toBeUpadted._id, medicineIndex, drug.drugName, e.target.value);
