@@ -49,6 +49,7 @@ export const PatientPrescriptionsTable = (props) => {
     onRowsPerPageChange,
     page = 0,
     rowsPerPage = 0,
+    canFill
   } = props;
 
   const downloadPDF = async (prescription) => {
@@ -70,6 +71,31 @@ export const PatientPrescriptionsTable = (props) => {
       setErrorMessage(error.response.data.message);
     }
   };
+
+  const fillPrescription = async (prescriptionID) => {
+    try {
+        await axios.patch(`http://localhost:8000/patient/fillPrescription`, 
+          {
+              Username: username,
+              prescriptionID: prescriptionID
+          }
+        );
+        for(let i = 0; i<items.length; i++){
+          const current = items[i];
+          if(current._id === prescriptionID){
+            current.filled = true;
+            break;
+          }
+        }
+        setPrescriptionStatus(items);
+    } catch (error) {
+      console.error('Error filling prescription:', error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
+    }
+  };
+
+
   const [prescriptionStatus, setPrescriptionStatus] = useState(items);
   const username = Cookies.get('username');
 
@@ -126,6 +152,13 @@ export const PatientPrescriptionsTable = (props) => {
                           <EyeIcon />
                         </SvgIcon>
                       </IconButton>
+                      {canFill && 
+                        <IconButton disabled={prescription.filled} title='Fill Prescription' onClick={() => {fillPrescription(prescription._id)}}>
+                          <SvgIcon fontSize="small">
+                            <CheckCircleIcon />
+                          </SvgIcon>
+                        </IconButton>
+                      }
                       <IconButton title='Download as PDF' onClick={() => downloadPDF(prescription)}>
                         <SvgIcon fontSize="small">
                           <ArrowDownTrayIcon />
