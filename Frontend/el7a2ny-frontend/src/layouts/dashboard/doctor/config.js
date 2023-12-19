@@ -12,6 +12,7 @@ import ChatBubbleLeftRightIcon from '@heroicons/react/24/solid/ChatBubbleLeftRig
 import MessageChatSquareIcon from '../../../icons/untitled-ui/duocolor/message-chat-square';
 import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
 import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 export const items = [
   {
@@ -33,11 +34,20 @@ export const items = [
     )
   },
   {
+    title: 'Follow-Up Requests',
+    path: '/doctor/follow-up-requests',
+    icon: (
+      <SvgIcon fontSize="small">
+        <CalendarDaysIcon />
+      </SvgIcon>
+    )
+  },
+  {
     title: 'Prescriptions',
     path: '/doctor/AllPrescriptions',
     icon: (
       <SvgIcon fontSize="small">
-        <CreditCard01Icon />
+        <AssignmentIcon />
       </SvgIcon>
     )
   },
@@ -68,13 +78,5 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'Follow-Up Requests',
-    path: '/doctor/follow-up-requests',
-    icon: (
-      <SvgIcon fontSize="small">
-        <CogIcon />
-      </SvgIcon>
-    )
-  }
+  
 ];

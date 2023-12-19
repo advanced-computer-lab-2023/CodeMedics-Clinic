@@ -12,8 +12,9 @@ import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
 import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
-
+import SettingsIcon from '@mui/icons-material/Settings';
 import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 export const items = [
   {
@@ -57,7 +58,7 @@ export const items = [
     path: '/user/prescriptions',
     icon: (
       <SvgIcon fontSize="small">
-        <ClipboardDocumentListIcon      />
+        <AssignmentIcon      />
       </SvgIcon>
     )
   },
@@ -84,7 +85,7 @@ export const items = [
     path: '/user/account',
     icon: (
       <SvgIcon fontSize="small">
-        <HomeSmileIcon />
+        <UserIcon />
       </SvgIcon>
     )
   },
@@ -93,7 +94,7 @@ export const items = [
     path: '/user/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon  />
+        <SettingsIcon  />
       </SvgIcon>
     )
   },
