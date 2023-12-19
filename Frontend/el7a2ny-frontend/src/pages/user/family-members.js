@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from '@mui/material';
+import { Box, Container, Unstable_Grid2, Stack as Grid, Button, Typography, Stack } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewFamilyMembers } from 'src/sections/overview/overview-family-members';
 import { PatientsSearch } from 'src/sections/doctor/doctor-search';
@@ -14,15 +14,15 @@ const now = new Date();
 const Page = () => {
 
   const router = useRouter();
-  
+
   const [familyMembers, setFamilyMembers] = useState([]);
   const [familyMembersNoAccount, setFamilyMembersNoAccount] = useState([]);
-  const [loading , setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = (str) => {
-    if(str === ""){
+    if (str === "") {
       setData(familyMembers);
-    }else{
+    } else {
       setData(familyMembers.filter((familyMember) => {
         const fullName = familyMember.FirstName + " " + familyMember.LastName;
         return fullName.toLowerCase().includes(str.toLowerCase());
@@ -37,7 +37,7 @@ const Page = () => {
   useEffect(() => {
     setLoading(true);
     axios('http://localhost:8000/patient/familyMembers', {
-      method: 'GET',  
+      method: 'GET',
       withCredentials: true
     }).then(response => {
       console.log(response);
@@ -61,44 +61,47 @@ const Page = () => {
   }
 
   return (
-  <>
-    <Head>
-      <title>El7a2ny Clinic</title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8,
-      }}
-    >
-      <Button
-        onClick={addFamilyMemberRedirect}>
-        Add Existing Family Member
-      </Button>
-      <Button 
-        onClick={addFamilyMemberNoAccountRedirect}>
-        Add Family Member Without Account
-      </Button>
-      <Container maxWidth="xl">
-        <Typography variant="h3" gutterBottom>
-          Family Members
-        </Typography>
-        {loading ? <LoadingSpinner /> : (
-          familyMembers.length === 0 && familyMembersNoAccount.length === 0 ? (
-            <NoRecords message={"No Family Members Found"} />
-          ) : (
-            <Grid container spacing={3}>
-          <Grid xs={20} md={20} lg={15}>
-            <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
-          </Grid>
-        </Grid>
-          )
+    <>
+      <Head>
+        <title>El7a2ny Clinic</title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Stack direction="row">
+            <Typography variant="h3" gutterBottom>
+              Family Members
+            </Typography>
+            <Button
+              onClick={addFamilyMemberNoAccountRedirect} sx={{marginLeft: 'auto'}}>
+              Add Family Member
+            </Button>
+            <Button
+              onClick={addFamilyMemberRedirect} sx={{marginLeft: '0'}}>
+              Add existing user as Family Member
+            </Button>
+          </Stack>
+          {loading ? <LoadingSpinner /> : (
+            familyMembers.length === 0 && familyMembersNoAccount.length === 0 ? (
+              <NoRecords message={"No Family Members Found"} />
+            ) : (
+              <Grid container spacing={3}>
+                <Grid xs={20} md={20} lg={15}>
+                  <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
+                </Grid>
+              </Grid>
+            )
           )}
-      </Container>
-    </Box>
-  </>
-);}
+        </Container>
+      </Box>
+    </>
+  );
+}
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
