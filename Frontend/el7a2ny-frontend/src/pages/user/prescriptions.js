@@ -158,6 +158,7 @@ const Page = () => {
               page={page}
               rowsPerPage={rowsPerPage}
               selected={customersSelection.selected}
+              canFill={true}
             />
             )}
           </Stack>
