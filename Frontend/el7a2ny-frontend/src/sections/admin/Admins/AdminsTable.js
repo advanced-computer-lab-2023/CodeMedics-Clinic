@@ -71,18 +71,6 @@ export const AdminsTable = (props) => {
                   Email
                 </TableCell>
                 <TableCell>
-                  HourlyRate
-                </TableCell>
-                <TableCell>
-                  affiliation
-                </TableCell>
-                {/* <TableCell>
-                  Date of Birth
-                </TableCell> */}
-                <TableCell>
-                  Degree
-                </TableCell>
-                <TableCell>
                   Actions
                 </TableCell>
               </TableRow>
@@ -116,18 +104,6 @@ export const AdminsTable = (props) => {
                     </TableCell>
                     <TableCell>
                       {customer.Email}
-                    </TableCell>
-                    <TableCell>
-                      {customer.HourlyRate}
-                    </TableCell>
-                    <TableCell>
-                      {customer.affiliation}
-                    </TableCell>
-                    {/* <TableCell>
-                      {customer.DateOfBirth.substring(0, customer.DateOfBirth.indexOf('T'))}
-                    </TableCell> */}
-                    <TableCell>
-                      {customer.Degree}
                     </TableCell>
                     <TableCell>
                       <Button variant="contained" style={{ backgroundColor: '#ffdddd', color: 'black', marginBottom: '10px' }} 

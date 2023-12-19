@@ -101,7 +101,7 @@ export const DoctorsTable = (props) => {
                           {getInitials(customer.Name)}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.Name}
+                          {customer.FirstName + " " + customer.LastName}
                         </Typography>
                       </Stack>
                     </TableCell>
@@ -118,7 +118,7 @@ export const DoctorsTable = (props) => {
                       {customer.affiliation}
                     </TableCell>
                     <TableCell>
-                      {customer.DateOfBirth.substring(0, customer.DateOfBirth.indexOf('T'))}
+                      {customer.DateOfBirth}
                     </TableCell>
                     <TableCell>
                       {customer.Degree}
