@@ -12,11 +12,14 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Message from 'src/components/Message';
 
 export const OverviewPackageInfoDetails = ({ curPackage }) => {
 
     const [me, setMe] = useState({});
     const router = useRouter();
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     // console.log("curPackage", curPackage);
     useEffect(() => {
         axios
@@ -27,6 +30,8 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
             })
             .catch((err) => {
                 console.log(err);
+                setShowError(true);
+                setErrorMessage(err.response.data);
             });
     }, []);
 
@@ -44,11 +49,14 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
             })
             .catch((err) => {
                 console.log(err);
+                setShowError(true);
+                setErrorMessage(err.response.data);
             });
     }
 
     return (
         <Card>
+            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
             <CardHeader
                 title="Package Info"
             />

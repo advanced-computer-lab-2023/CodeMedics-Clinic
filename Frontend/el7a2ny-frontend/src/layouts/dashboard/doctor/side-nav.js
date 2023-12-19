@@ -80,12 +80,12 @@ export const SideNav = (props) => {
                 Virtual Clinic
               </Typography>
             </div>
-            {/* <SvgIcon
+            <SvgIcon
               fontSize="small"
               sx={{ color: 'neutral.500' }}
             >
               <ChevronUpDownIcon />
-            </SvgIcon> */}
+            </SvgIcon>
           </Box>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />

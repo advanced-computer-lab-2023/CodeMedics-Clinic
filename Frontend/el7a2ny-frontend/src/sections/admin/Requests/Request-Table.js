@@ -7,6 +7,7 @@ import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import ArrowDownTrayIcon from '@heroicons/react/24/solid/ArrowDownTrayIcon';
 import file from '../../../file.png'
+import Message from 'src/components/Message';
 import {
   Avatar,
   Box,
@@ -34,6 +35,8 @@ import { PatientPopup } from '../Popup-generic';
 import axios from 'axios';
 import FileSaver from 'file-saver';
 export const RequestTable = (props) => {
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     count = 0,
     items = [],
@@ -201,6 +204,8 @@ export const RequestTable = (props) => {
                         })
                         .catch((err) => {
                           console.log(err);
+                          setShowError(true);
+                          setErrorMessage(err.response.data.message);
                         }
                         )
                       }}
@@ -227,6 +232,8 @@ export const RequestTable = (props) => {
                           })
                           .catch((err) => {
                             console.log(err);
+                            setShowError(true);
+                            setErrorMessage(err.response.data.message);
                           }
                           );
                       }}

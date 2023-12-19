@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 import Link from 'next/link';
+import Message from 'src/components/Message';
 
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 
@@ -65,16 +66,18 @@ export const PatientAppointmentsTable = (props) => {
   const [rescheduling, setRescheduling] = useState(false);
   const [toBeUpdated, setToBeUpdated] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [invalid, setInvalid] = useState(false);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const rescheduleAppointment = (appointmentID, oldAppointment) => {
     axios.patch('http://localhost:8000/patient/RescheduleAppointment?appointmentID='+appointmentID+'&oldAppointmentID='+oldAppointment._id+'&username='+oldAppointment.patient)
     .then((req) => {
       window.location.reload();
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data);
     });
   }
   const statusMap = {
@@ -91,10 +94,13 @@ export const PatientAppointmentsTable = (props) => {
       setLoading(false);
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data);
     });
   };
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

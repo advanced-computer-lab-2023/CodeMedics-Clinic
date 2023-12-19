@@ -46,6 +46,9 @@ const Page = () => {
   const router = useRouter();
   const patientUsername = new URLSearchParams(window.location.search).get('username');
   const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     setLoading(true);
     axios.get(`http://localhost:8000/doctor/viewPatientAppointment/${patientUsername}`, {withCredentials: true})
@@ -70,6 +73,8 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.error);
       });
   }, []);
 
@@ -117,6 +122,7 @@ const Page = () => {
           Appointments
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{

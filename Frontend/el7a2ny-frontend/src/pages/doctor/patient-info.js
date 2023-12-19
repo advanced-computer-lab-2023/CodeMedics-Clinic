@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { OverviewPatientInfoProfile } from 'src/sections/overview/overview-patient-info-profile';
 import { OverviewPatientInfoDetails } from 'src/sections/overview/overview-patient-info-details';
+import Message from 'src/components/Message';
 
 const Page = () => {
     
@@ -12,6 +13,8 @@ const Page = () => {
     const patientUsername = params.get('patientUsername');
 
     const [patient, setPatient] = useState({});
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         axios
@@ -23,6 +26,8 @@ const Page = () => {
           })
           .catch((err) => {
             console.log(err);
+            setShowError(true);
+            setErrorMessage(err.response.data.message);
           });
       }, []);
 
@@ -33,6 +38,7 @@ const Page = () => {
         {patient.FirstName}
       </title>
     </Head>
+    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
     <Box
       component="main"
       sx={{

@@ -20,6 +20,7 @@ import {
   Typography
 } from '@mui/material';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import Message from 'src/components/Message';
 
 const Page = () => {
     const router = useRouter();
@@ -28,6 +29,8 @@ const Page = () => {
           username: Cookies.get('doctor'),
           action: 'agree'
       };
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
   
     const handleAcceptContract = () => {
       //Cookies.set('accepted_contract', 'true');
@@ -41,6 +44,8 @@ const Page = () => {
           })
           .catch((err) => {
               console.log(err);
+              setShowError(true);
+              setErrorMessage(err.response.data.message);
           }
           )
   
@@ -66,6 +71,8 @@ const Page = () => {
         FileSaver.saveAs(blob, fileName);
       } catch (error) {
         console.error('Error downloading PDF:', error);
+        setShowError(true);
+        setErrorMessage(error.response.data.message);
       }
     };
 
@@ -76,6 +83,7 @@ const Page = () => {
           Emplyment Contract
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         sx={{
           backgroundColor: 'background.paper',

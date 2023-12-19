@@ -29,11 +29,11 @@ export const SideNav = (props) => {
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const buttons = ["El7a2ny Virtual Clinic", "El7a2ny Virtual Pharmacy"];
-  const handleMenuItemClick = (item) =>{
-    if(item === "El7a2ny Virtual Clinic"){
-        window.location.href = "http://localhost:3000/user/doctors";
+  const handleMenuItemClick = (item) => {
+    if (item === "El7a2ny Virtual Clinic") {
+      window.location.href = "http://localhost:3000/user/doctors";
     }
-    else{
+    else {
       window.location.href = "http://localhost:3001/user/medicines";
     }
   }
@@ -105,20 +105,21 @@ export const SideNav = (props) => {
                 Virtual Clinic
               </Typography>
             </div>
-            {/* <SvgIcon
-              fontSize="small"
-              sx={{ color: 'neutral.500' }}
-            >
-              <ChevronUpDownIcon />
-            </SvgIcon> */}
+
             {(
               <div>
                 <Tooltip title="Websites">
                   <IconButton
                     onClick={handleIconClick}
                     children={(
-                      <SvgIcon fontSize="small">
-                        <EllipsisVerticalIcon />
+                      // <SvgIcon fontSize="small">
+                      //   <EllipsisVerticalIcon />
+                      // </SvgIcon>
+                      <SvgIcon
+                        fontSize="small"
+                        sx={{ color: 'neutral.500' }}
+                      >
+                        <ChevronUpDownIcon />
                       </SvgIcon>
                     )}
                     color="primary"
@@ -132,12 +133,11 @@ export const SideNav = (props) => {
                     'aria-labelledby': 'basic-button'
                   }}
                   anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
+                    vertical: 'bottom',
+                    horizontal: 'left',
                   }}
                   transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
+                    horizontal: 'center',
                   }}
                   getContentAnchorEl={null}
                 >

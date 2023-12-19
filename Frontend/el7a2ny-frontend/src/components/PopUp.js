@@ -12,8 +12,16 @@ import { useContext } from 'react';
 const PopUp = () => {
   const { callAccepted, name, setName, callEnded, leaveCall, callUser, call, answerCall, declineCall, myVideo } = useContext(SocketContext);
 
+  const choose = () => {
+    if(callAccepted){
+      leaveCall();
+    }else{
+      declineCall();
+    }
+  }
+  
   return (
-    <Dialog open={call.isReceivingCall && !callEnded} onClose={leaveCall}>
+    <Dialog open={call.isReceivingCall && !callEnded} onClose={choose}>
       <DialogTitle>Incoming Call From {call.name}</DialogTitle>
       <DialogContent>
         <DialogContentText>Do you want to accept or decline the call?</DialogContentText>

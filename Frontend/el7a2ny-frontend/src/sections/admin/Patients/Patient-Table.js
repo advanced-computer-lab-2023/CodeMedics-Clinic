@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import IdentificationIcon from '@heroicons/react/24/solid/IdentificationIcon';
 import Xmark from '@heroicons/react/24/solid/XMarkIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
+import Message from 'src/components/Message';
 import {
   Avatar,
   Box,
@@ -27,6 +28,8 @@ import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
 import axios from 'axios';
 export const PatientTable = (props) => {
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const {
     count = 0,
     items = [],
@@ -40,6 +43,7 @@ export const PatientTable = (props) => {
   const [isOpenDelete, setOpenDelete] = useState(false);
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -121,6 +125,8 @@ export const PatientTable = (props) => {
                           })
                           .catch((err) => {
                             console.log(err);
+                            setShowError(true);
+                            setErrorMessage(err.response.data);
                           }
                           )
                         }}>

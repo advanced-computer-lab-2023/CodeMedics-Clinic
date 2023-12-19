@@ -4,6 +4,7 @@ import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
+import Message from 'src/components/Message';
 
 import { List, ListItemButton, ListItem, ListItemText} from '@mui/material';
 import {
@@ -73,12 +74,16 @@ export const PatientAppointmentsTable = (props) => {
   const [rescheduling, setRescheduling] = useState(false);
   const [requesting, setRequesting] = useState(false);
   const [invalidRequest, setInvalidRequest] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const CancelAppointment = async (appointmentID) => {
     await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`).then(res =>{
       console.log(res);
       window.location.reload();
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
   
@@ -90,6 +95,8 @@ export const PatientAppointmentsTable = (props) => {
       setLoading(false);
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
     
@@ -163,6 +170,8 @@ export const PatientAppointmentsTable = (props) => {
     }
     ).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
 
@@ -174,6 +183,8 @@ export const PatientAppointmentsTable = (props) => {
     }
     ).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
 
@@ -181,6 +192,7 @@ export const PatientAppointmentsTable = (props) => {
   const buttons = ["Cancel", "Request a Follow-up", "Reschedule"];
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

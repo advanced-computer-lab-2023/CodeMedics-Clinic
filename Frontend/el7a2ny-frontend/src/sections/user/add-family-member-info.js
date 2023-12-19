@@ -18,10 +18,13 @@ import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Cookies from 'js-cookie';
+import Message from 'src/components/Message';
 
 export const AddFamilyMemberInfo = () => {
 
   const router = useRouter();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -59,16 +62,23 @@ export const AddFamilyMemberInfo = () => {
         helpers.setStatus({ success: false });
         helpers.setErrors({ Submit: err.response.data.message });
         helpers.setSubmitting(false);
-        router.push('/user/family-members');
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
       }
     }
   });
+
+  const handleClose = () => {
+    setShowError(false);
+    router.push('/user/family-members');
+  }
 
   return (
     <form
       noValidate
       onSubmit={formik.handleSubmit}
     >
+      <Message condition={showError} setCondition={handleClose} message={errorMessage} title="Error" buttonAction="Close" />
       <Card>
         <CardHeader
           subheader="Link a family member to your account"

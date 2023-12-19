@@ -15,6 +15,7 @@ import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { set } from 'lodash';
+import Message from 'src/components/Message';
 const now = new Date();
 
 
@@ -27,6 +28,8 @@ const Page = () => {
   // const [filteredData , setFilteredData] = useState(appointments);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
   useEffect(() => {
     getAppointments();
@@ -48,6 +51,8 @@ const Page = () => {
     }))
     .catch(error => {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     })
   };
 
@@ -81,6 +86,7 @@ const Page = () => {
           Follow-up Requests
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{

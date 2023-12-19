@@ -27,6 +27,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { set } from 'lodash';
 import Cookies from 'js-cookie';
+import Message from 'src/components/Message';
 
 export const CustomersTable = (props) => {
   const {
@@ -50,6 +51,8 @@ export const CustomersTable = (props) => {
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
   const [toBeUpdated, setToBeUpdated] = useState(null);
   const[loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const accept = async (appointment) => {
     console.log("in the accept");
     getUnreservedAppointments();
@@ -65,6 +68,8 @@ export const CustomersTable = (props) => {
       console.log("in the getUnreserved");
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
 
@@ -81,13 +86,17 @@ export const CustomersTable = (props) => {
             console.log(res);
         }).catch((err) => {
             console.log(err);
+            setShowError(true);
+            setErrorMessage(err.response.data.message);
         });
 
     await axios.patch('http://localhost:8000/patient/updateAppointmentStatus?oldAppointmentId='+oldAppointmentId).then(res => {
         console.log(res);
         window.location.reload();
-    }).catch(err => {
+    }).catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
     });
     
   }
@@ -101,6 +110,8 @@ export const CustomersTable = (props) => {
         window.location.reload();
     }).catch(err => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
     });
 }
 
@@ -108,6 +119,7 @@ export const CustomersTable = (props) => {
 
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

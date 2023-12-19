@@ -6,6 +6,7 @@ import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import Message from 'src/components/Message';
 
 import {
     Button,
@@ -31,6 +32,8 @@ import {
 export const OverviewFamilyMembers = (props) => {
     const router = useRouter();
     const { familyMembers, familyMembersNoAccount } = props;
+    const {showError, setShowError} = useState(false);
+    const {errorMessage, setErrorMessage} = useState("");
 
 
     const removeFamilyMember = (familyMemberId) => {
@@ -43,6 +46,8 @@ export const OverviewFamilyMembers = (props) => {
             router.refresh();
         }).catch(error => {
             console.log(error);
+            setShowError(true);
+            setErrorMessage(error.response.data.message);
         });
     };
 
@@ -56,6 +61,8 @@ export const OverviewFamilyMembers = (props) => {
             router.refresh();
         }).catch(error => {
             console.log(error);
+            setShowError(true);
+            setErrorMessage(error.response.data.message);
         });
     };
 
@@ -66,6 +73,7 @@ export const OverviewFamilyMembers = (props) => {
                 gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
                 gap={2}
             >
+                <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
                 {familyMembers.map((familyMember, index) => {
                     return (
                         <Card
