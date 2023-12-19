@@ -31,7 +31,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
             .catch((err) => {
                 console.log(err);
                 setShowError(true);
-                setErrorMessage(err.response.data);
+                setErrorMessage(err.response.data.message);
             });
     }, []);
 
@@ -50,7 +50,7 @@ export const OverviewPackageInfoDetails = ({ curPackage }) => {
             .catch((err) => {
                 console.log(err);
                 setShowError(true);
-                setErrorMessage(err.response.data);
+                setErrorMessage(err.response.data.message);
             });
     }
 

@@ -10,10 +10,10 @@ exports.docViewHealthRecords = async (req, res) => {
         // Find the doctor based on the provided username
         const doctor = await Doctor.findOne({ Username: doctorUsername });
         if (!doctor) {
-            return res.status(404).json({ error: 'Doctor not found' });
+            return res.status(404).json({ message: 'Doctor not found' });
         }
         if (!patientUsername) {
-            return res.status(400).json({ error: 'Patient username is required' });
+            return res.status(400).json({ message: 'Patient username is required' });
         }
 
         // Get the list of appointment IDs for the doctor
@@ -27,7 +27,7 @@ exports.docViewHealthRecords = async (req, res) => {
         });
 
         if (!hasCompletedAppointment) {
-            return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
+            return res.status(403).json({ message: 'Doctor never had completed appointments with this patient' });
         }
 
         // Retrieve health records for the specified patient
@@ -35,12 +35,12 @@ exports.docViewHealthRecords = async (req, res) => {
             .select('Username HealthRecords');
 
         if (!healthRecords) {
-            return res.status(404).json({ error: 'Patient not found' });
+            return res.status(404).json({ message: 'Patient not found' });
         }
 
         res.status(200).json({ healthRecords });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };

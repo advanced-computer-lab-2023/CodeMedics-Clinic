@@ -35,7 +35,7 @@ exports.updateMedicineDosage = async (req, res) => {
       });
   
       if (!hasCompletedAppointment) {
-        return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
+        return res.status(403).json({ message: 'Doctor never had completed appointments with this patient' });
       }
   
       const prescription = await Prescription.findOne({ Doctor: doctor.Username, Patient: patient.Username });

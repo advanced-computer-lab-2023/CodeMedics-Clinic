@@ -77,8 +77,8 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
-        // setShowError(true);
-        // setErrorMessage(err.response.error.error);
+        setShowError(true);
+        setErrorMessage(err.response.error.error);
       });
   }, []);
   

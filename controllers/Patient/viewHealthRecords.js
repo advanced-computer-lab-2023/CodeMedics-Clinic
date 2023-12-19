@@ -6,7 +6,7 @@ exports.viewHealthRecords = async (req, res) => {
         const patient = await Patient.findOne({ Username: username });
 
         if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
+            return res.status(404).json({ message: 'Patient not found' });
         }
 
         const healthRecords = patient.HealthRecords;
@@ -14,7 +14,7 @@ exports.viewHealthRecords = async (req, res) => {
         res.status(200).json({ healthRecords });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 

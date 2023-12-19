@@ -11,7 +11,7 @@ exports.getPatientMessages = async (req, res) => {
 
     if (!patient) {
       console.log('Patient not found.');
-      return res.status(404).json({ error: 'Patient not found' });
+      return res.status(404).json({ message: 'Patient not found' });
     }
 
     console.log('Patient found:', patient);
@@ -19,6 +19,6 @@ exports.getPatientMessages = async (req, res) => {
     res.status(200).json({ messages: patient.Messages });
   } catch (error) {
     console.error('Error retrieving patient messages:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

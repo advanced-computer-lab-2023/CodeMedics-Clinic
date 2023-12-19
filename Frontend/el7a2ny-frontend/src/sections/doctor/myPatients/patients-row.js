@@ -81,7 +81,7 @@ export const Row = (props) => {
     }).catch((err) => {
       console.log(err);
       setShowError(true);
-      setErrorMessage(err.response.data.error);
+      setErrorMessage(err.response.data.message);
     });
   };
   const [scheduling, setScheduling] = useState(false);
@@ -118,7 +118,7 @@ export const Row = (props) => {
     }).catch((err) => {
       console.log(err);
       setShowError(true);
-      setErrorMessage(err.response.data.error);
+      setErrorMessage(err.response.data.message);
     });
   }
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

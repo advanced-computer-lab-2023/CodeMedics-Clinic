@@ -10,15 +10,6 @@ import { SvgIcon } from '@mui/material';
 
 export const items = [
   {
-    title: 'Overview',
-    path: '/admin',
-    icon: (
-      <SvgIcon fontSize="small">
-        <ChartBarIcon />
-      </SvgIcon>
-    )
-  },
-  {
     title: 'Patients',
     path: '/admin/patients',
     icon: (
