@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography , TextField} from '@mui/material';
+import { Box, Button, Container, Stack, SvgIcon, Typography , TextField, MenuItem} from '@mui/material';
 import { useSelection } from 'src/hooks/use-selection';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { AppointmentsTable } from 'src/sections/doctor/appointments/appointments-table';
@@ -10,7 +10,10 @@ import { useRouter } from 'next/navigation';
 import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointments-filter';
 import { PatientAppointmentsTable } from 'src/sections/overview/overview-my-appointments-patient';
 import axios from 'axios';
-
+import Cookies from 'js-cookie';
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {
@@ -42,10 +45,13 @@ const Page = () => {
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:8000/patient/viewappointments', {withCredentials: true})
+    setLoading(true);
+    axios.get('http://localhost:8000/patient/getAllFamilyAppointments', {withCredentials: true})
       .then((req) => {
 
         const appointments = req.data.appointments;
@@ -63,16 +69,39 @@ const Page = () => {
         });
 
         setAllData(appointments);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
+      });
+  }, []);
+
+  const [familyMembers, setFamilyMembers] = useState([{familyMember: {Username: Cookies.get('username'), FirstName: "me", LastName: ""}, relation: 'me'}]);
+  useEffect(() => {
+    axios.get('http://localhost:8000/patient/familyMembers', {withCredentials: true})
+      .then((req) => {
+        console.log("in family members");
+        console.log(req.data.familyMembers);
+        let temp = [];
+        temp.push({familyMember: {Username: Cookies.get('username'), FirstName: "me", LastName: ""}, relation: 'me'});
+        for(let i=0; i<req.data.familyMembers.length; i++){
+          temp.push(req.data.familyMembers[i]);
+        }
+        setFamilyMembers(temp);
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
       });
   }, []);
 
   const [filter1, setFilter1] = useState('');
   const [filter2, setFilter2] = useState('');
   const [filter3 , setFilter3] = useState('None');
-
+  const [curUsername, setCurUsername] = useState(Cookies.get('username'));
   useEffect(() => {
     const filtered = allData.filter((appointment) => {
       if(filter1 === '' && filter2 === '')
@@ -89,8 +118,16 @@ const Page = () => {
         return true;
       return appointment.status === filter3;
     });
-    setData(filtered2);
-  }, [filter1, filter2,filter3, allData]);
+
+    const filtered3 = filtered2.filter((appointment) => {
+      if(curUsername === '')
+        return true;
+      return appointment.patient === curUsername;
+    });
+
+    setData(filtered3);
+    
+  }, [filter1, filter2, filter3, curUsername, allData]);
 
   const handlePageChange = useCallback(
     (event, value) => {
@@ -105,6 +142,7 @@ const Page = () => {
     },
     []
   );
+  
 
   return (
     <>
@@ -113,6 +151,7 @@ const Page = () => {
           Appointments
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{
@@ -139,21 +178,27 @@ const Page = () => {
                 </Stack>
               </Stack>
             </Stack>
-            <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} filterStatus={true} />
+            {loading ? <LoadingSpinner /> : (
+              <>
+              <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} setState3={setFilter3} curUsername={curUsername} setCurUsername={setCurUsername} filterStatus={true} usernameFilter={true} familyMembers={familyMembers}/>
             
-            <PatientAppointmentsTable
-              count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
-            />
+              {data.length == 0 ? <NoRecords message={"No Appointments Found"}/> : <PatientAppointmentsTable
+                count={data.length}
+                items={customers}
+                onDeselectAll={customersSelection.handleDeselectAll}
+                onDeselectOne={customersSelection.handleDeselectOne}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onSelectAll={customersSelection.handleSelectAll}
+                onSelectOne={customersSelection.handleSelectOne}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                selected={customersSelection.selected}
+                curUsername={curUsername}
+                setCurUsername={setCurUsername}
+              />}
+              </>
+            )}
           </Stack>
         </Container>
       </Box>

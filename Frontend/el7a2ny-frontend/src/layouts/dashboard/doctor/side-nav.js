@@ -67,17 +67,17 @@ export const SideNav = (props) => {
             }}
           >
             <div>
-              <Typography
+            <Typography
                 color="inherit"
                 variant="subtitle1"
               >
-                El7a2ny Clinic
+                El7a2ny
               </Typography>
               <Typography
                 color="neutral.400"
                 variant="body2"
-
               >
+                Virtual Clinic
               </Typography>
             </div>
             <SvgIcon

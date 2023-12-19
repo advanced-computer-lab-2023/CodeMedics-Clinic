@@ -2,12 +2,14 @@ import Head from 'next/head';
 import { Box, Container, Unstable_Grid2 as Grid, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewDoctors } from 'src/sections/overview/overview-doctors';
-import { DoctorsSearch } from 'src/sections/doctor/doctor-search';
+import { PatientsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState , useEffect } from 'react';
 import socket from 'src/components/socket';
 import Cookies from 'js-cookie';
-
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 
 const now = new Date();
 
@@ -20,8 +22,11 @@ const Page = () => {
   const [specialities , setSpecialities] = useState([])
   const [filterDate , setFilterDate] = useState([]);
   const [doctors , setDoctors] = useState([]);
-
+  const [loading , setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
+    setLoading(true);
     axios.get('http://localhost:8000/doctor/getDoctorsAndAppointments' , {withCredentials: true})
     .then((response) => {
       return response.data.data;
@@ -41,9 +46,12 @@ const Page = () => {
       setFilterSpeciality(data);
       setFilterDate(data);
       setData(data);
+      setLoading(false);
     })
     .catch((error) => {
       console.log(error);
+      setShowError(true);
+      setErrorMessage(error.response.data.message);
     });
   },[]);
   
@@ -62,7 +70,7 @@ const Page = () => {
     }else{
       setSearchDoctor(doctors.filter((doctor) => {
         const fullName = doctor.doctor.FirstName + " " + doctor.doctor.LastName;
-        return fullName.toLowerCase().includes(str.toLowerCase());
+        return fullName.toLowerCase().includes(str.toLowerCase()) || doctor.doctor.Speciality.toLowerCase().includes(str.toLowerCase());
       }));
     }
   };
@@ -101,6 +109,7 @@ const Page = () => {
     <Head>
       <title>El7a2ny Clinic</title>
     </Head>
+    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
     <Box
       component="main"
       sx={{
@@ -112,18 +121,25 @@ const Page = () => {
         <Typography variant="h3" gutterBottom>
           Doctors
         </Typography>
-        <DoctorsSearch 
+        {loading ? <LoadingSpinner /> : (
+          <>
+           <PatientsSearch 
           handleSpecialitySearch={handleSpecialitySearch} 
           handleDoctorSearch={handleDoctorSearch} 
           sepcialities={specialities} 
           handleSpecialityFilter={handleSpecialityFilter}
           handleDateFilter={handleDateFilter}
         />
-        <Grid container spacing={3}>
-          <Grid xs={20} md={20} lg={15}>
-            <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
-          </Grid>
-        </Grid>
+       {data.length === 0 ? <NoRecords message={"No Doctors Found"} /> : (
+         <Grid container spacing={3}>
+         <Grid xs={20} md={20} lg={15}>
+           <OverviewDoctors doctors={data} sx={{ height: '100%' }} />
+         </Grid>
+       </Grid>
+       )}
+          </>
+        )}
+      
       </Container>
     </Box>
   </>

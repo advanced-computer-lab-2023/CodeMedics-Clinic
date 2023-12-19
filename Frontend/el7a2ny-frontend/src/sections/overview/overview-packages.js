@@ -6,6 +6,7 @@ import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import Message from 'src/components/Message';
 
 import {
   Button,
@@ -30,15 +31,34 @@ import {
 import { get } from 'http';
 
 export const OverviewPackages = (props) => {
-  const router = useRouter();
-  const { packages=[], me } = props;
 
-  const viewPackageDetails = (Name, counter) => {
-    router.push(`/user/package-info?packageName=${Name}`);
+  const router = useRouter();
+  const { packages = [], me } = props;
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const subscribeHealthPackage = (curPackage) => {
+    router.push('/user/PackageMyPay?packageName=' + curPackage.Name + '&packagePrice=' + curPackage.Price);
   }
- 
+
+  const unsubscribeHealthPackage = () => {
+    axios(`http://localhost:8000/patient/unsubscribeHealthPackage`, {
+      method: 'POST',
+      withCredentials: true
+    })
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data);
+      });
+  }
+
   return (
     <CardContent>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         display="grid"
         gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
@@ -64,6 +84,7 @@ export const OverviewPackages = (props) => {
                   justifyContent: 'space-between',
                   height: '100%',
                   textAlign: 'center',
+
                 }}
               >
                 <ListItemAvatar>
@@ -88,39 +109,72 @@ export const OverviewPackages = (props) => {
                         backgroundColor: 'neutral.200',
                         height: 120,
                         width: 120,
+                        mb:3
                       }}
                     />
                   )}
                 </ListItemAvatar>
+                <Box sx={{ display: 'flex',mb:1 }}>
+                  <Typography variant="h5">
+                    {Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
+                  </Typography>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      alignSelf: 'flex-end',
+                      ml: 1
+                    }}
+                    variant="subtitle2"
+                  >
+                    /year
+                  </Typography>
+                </Box>
+                
                 <ListItemText
-                  primary={"Package Name: " + myPackage.Name}
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
+                  primary={myPackage.Name + " Package"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
-                  primary= {Object.keys(me).length !== 0 && "Price: " + (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
-                  primaryTypographyProps={{ variant: 'subtitle2' }}
-                  // secondaryTypographyProps={{ variant: 'body2' }}
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
+                  primary={myPackage.SessionDiscount + "% Session Discount"}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
+                  primary={myPackage.MedicineDiscount + "% Medicine Discount"}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
+                />
+                <ListItemText
+                  sx={{ alignSelf: 'flex-start', ml: 4 }}
+                  primary={myPackage.FamilyDiscount + "% Family Discount"}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
+                  secondaryTypographyProps={{ variant: 'body2' }}
                 />
               </ListItem>
-              
+
               <Stack direction="row">
-                <CardActions>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    size="small"
-                    onClick={() => {viewPackageDetails(myPackage.Name, index)}}
-                  >
-                    View Package
-                  </Button>
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                  {(Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' || Object.keys(me).length !== 0 && me.HealthPackage.membership !== myPackage.Name && me.HealthPackage.membership !== "Free") ?
+                    <Button variant="contained" disabled>
+                      Subscribe
+                    </Button>
+                    : Object.keys(me).length !== 0 && me.HealthPackage.status === 'Inactive' ?
+                      <Button variant="contained" onClick={() => subscribeHealthPackage(myPackage)}>
+                        Subscribe
+                      </Button> :
+                      <Button variant="contained" onClick={unsubscribeHealthPackage}>
+                        Unsubscribe
+                      </Button>}
                 </CardActions>
               </Stack>
             </Card>
           );
         })}
       </Box>
-      <Divider />
     </CardContent>
   );
 };

@@ -44,7 +44,7 @@ import {
             color="text.secondary"
             variant="body2"
           >
-            {doctor.affiliation} {doctor.Degree}
+            {doctor.affiliation} / {doctor.Degree}
           </Typography>
         </Box>
       </CardContent>

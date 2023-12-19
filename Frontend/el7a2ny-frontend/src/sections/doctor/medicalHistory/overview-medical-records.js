@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
 import FileSaver from 'file-saver';
+import Message from 'src/components/Message';
 
 import {
     Button,
@@ -35,6 +36,8 @@ export const OverviewMedicalRecords = (props) => {
     const { medicalRecords } = props;
 
     const username = Cookies.get('username');
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const removeMedicalRecord = (documentId) => {
         axios
@@ -47,27 +50,32 @@ export const OverviewMedicalRecords = (props) => {
             })
             .catch(error => {
                 console.log(error);
+                setShowError(true);
+                setErrorMessage(error.response.data);
             });
     };
 
     const addMedicalRecord = (documentId) => {
-    const formData = new FormData();
-    formData.append('document', documentId);
+        const formData = new FormData();
+        formData.append('document', documentId);
 
-    axios.post(`http://localhost:8000/patient/${username}/MedicalHistoryUpload`, formData, {
-        withCredentials: true,
-    })
-    .then(response => {
-        console.log(response);
-        router.refresh();
-    })
-    .catch(error => {
-        console.log(error);
-    });
-};
+        axios.post(`http://localhost:8000/patient/${username}/MedicalHistoryUpload`, formData, {
+            withCredentials: true,
+        })
+            .then(response => {
+                console.log(response);
+                router.refresh();
+            })
+            .catch(error => {
+                console.log(error);
+                setShowError(true);
+                setErrorMessage(error.response.data);
+            });
+    };
 
     return (
         <CardContent>
+            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
             <Box
                 display="grid"
                 gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
@@ -101,7 +109,7 @@ export const OverviewMedicalRecords = (props) => {
                                     sx={{
                                         height: 120,
                                         width: 120
-                                    }}    
+                                    }}
                                 />
                             </ListItemAvatar>
                             <ListItemText
@@ -127,7 +135,6 @@ export const OverviewMedicalRecords = (props) => {
                     </Card>
                 ))}
             </Box>
-            <Divider />
         </CardContent>
     );
 };

@@ -1,27 +1,52 @@
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import PropTypes from 'prop-types';
-import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
 import ChevronUpDownIcon from '@heroicons/react/24/solid/ChevronUpDownIcon';
 import {
   Box,
   Button,
   Divider,
   Drawer,
+  IconButton,
+  Menu,
+  MenuItem,
   Stack,
   SvgIcon,
+  Tooltip,
   Typography,
   useMediaQuery
 } from '@mui/material';
+
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
+import { useState } from 'react';
+import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 
 export const SideNav = (props) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+  const buttons = ["El7a2ny Virtual Clinic", "El7a2ny Virtual Pharmacy"];
+  const handleMenuItemClick = (item) => {
+    if (item === "El7a2ny Virtual Clinic") {
+      window.location.href = "http://localhost:3000/user/doctors";
+    }
+    else {
+      window.location.href = "http://localhost:3001/user/medicines";
+    }
+  }
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleIconClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
 
   const content = (
     <Scrollbar
@@ -77,15 +102,53 @@ export const SideNav = (props) => {
                 color="neutral.400"
                 variant="body2"
               >
-                Clinic
+                Virtual Clinic
               </Typography>
             </div>
-            <SvgIcon
-              fontSize="small"
-              sx={{ color: 'neutral.500' }}
-            >
-              <ChevronUpDownIcon />
-            </SvgIcon>
+
+            {(
+              <div>
+                <Tooltip title="Websites">
+                  <IconButton
+                    onClick={handleIconClick}
+                    children={(
+                      // <SvgIcon fontSize="small">
+                      //   <EllipsisVerticalIcon />
+                      // </SvgIcon>
+                      <SvgIcon
+                        fontSize="small"
+                        sx={{ color: 'neutral.500' }}
+                      >
+                        <ChevronUpDownIcon />
+                      </SvgIcon>
+                    )}
+                    color="primary"
+                  />
+                </Tooltip>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleCloseMenu}
+                  MenuListProps={{
+                    'aria-labelledby': 'basic-button'
+                  }}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    horizontal: 'center',
+                  }}
+                  getContentAnchorEl={null}
+                >
+                  {buttons.map((item) => (
+                    <MenuItem onClick={() => handleMenuItemClick(item)} key={item}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>
+            )}
           </Box>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />

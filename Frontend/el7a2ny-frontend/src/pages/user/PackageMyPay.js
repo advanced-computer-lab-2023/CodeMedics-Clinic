@@ -6,8 +6,14 @@ import PackageCheckoutForm from './PackageCheckoutForm';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 const stripePromise = loadStripe('pk_test_51OA3YuHNsLfp0dKZSCi30qg6xY63jh2SiffqCIa42j0oTXnZ29hNOalf44tjkJZsjT27xldMpzbojdn6vYcEx9CI00kvtRqele');
+import Head from 'next/head';
+import { Box } from '@mui/system';
+import { Container, Grid, Typography, Stack, Card } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
+import Message from 'src/components/Message';
 
-export default function MyPay({activeStep, setStep}) {
+const Page = () => {
   const [clientSecret, setClientSecret] = useState('');
 
   const router = useRouter();
@@ -22,9 +28,8 @@ export default function MyPay({activeStep, setStep}) {
       }
       );
   }, []);
-
-
-
+  const [invalidAction, setInvalidAction] = useState(false);
+  const [message2, setMessage2] = useState(null);
 
   const appearance = {
     theme: 'stripe',
@@ -35,15 +40,58 @@ export default function MyPay({activeStep, setStep}) {
   };
 
   return (
-    
-      <div className='MyPay'>
+    <>
+    <Head>
+    <title>El7a2ny Clinic</title>
+  </Head>
+  <Box
+    component="main"
+    backgroundColor="linear-gradient(to bottom, #FFFFFF, #000000)"
+    sx={{
+      pt: 8,
+      textAlign: 'center',
+      display: 'flex',
+      justifyContent: 'center', // Horizontal centering
+      alignItems: 'center',     // Vertical centering
+    }}
+  >
+    <Stack spacing={3}>
+      <Typography variant="h3" >
+        Package Payment
+      </Typography>
+      <Card sx={{height: 420 , backgroundColor: "#d9dee4"}}>
         {clientSecret && (
           <Elements options={options} stripe={stripePromise}>
-            <PackageCheckoutForm packageName = {packageName} packagePrice = {packagePrice} />
+            <PackageCheckoutForm packageName = {packageName} packagePrice = {packagePrice} setInvalidAction={setInvalidAction} setMessage2={setMessage2} />
           </Elements>
         )}
-      </div>
+        </Card>
+      </Stack>
+    </Box >
+    {invalidAction && (
+          <Dialog
+          open={invalidAction}
+          onClose={() => { setInvalidAction(false) }}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle>Invalid Action</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {message2}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => { setInvalidAction(false) }}>OK</Button>
+            </DialogActions>
+          </Dialog>
+        )}
+  </>
   
 
   );
 }
+
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+
+export default Page;

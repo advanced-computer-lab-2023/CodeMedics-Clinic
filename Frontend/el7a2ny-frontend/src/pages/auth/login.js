@@ -59,23 +59,38 @@ const Page = () => {
           .then((data) => {
             console.log('Here ----> ');
             if (data['Type'] === 'Patient') {
-              Cookies.set('username', data['patient']['username']);
+              Cookies.set('username', data['patient']['Username']);
               Cookies.set('isDoctor', false);
+              Cookies.set('type', 'patient');
               socket.on('me', (id) => {
                 Cookies.set('socketID', id);
               });
               socket.emit('iAmReady', Cookies.get('username'));
               router.push(`/user/doctors`);
             } else if (data['Type'] === 'Doctor') {
-              Cookies.set('username', data['doctor']['username']);
-              Cookies.set('isDoctor', true);
-              socket.on('me', (id) => {
-                Cookies.set('socketID', id);
-              });
-              socket.emit('iAmReady', Cookies.get('username'));
-              router.push(`/doctor/patients`);
+              console.log(data);
+              if (data.doctor.Status == 'Pending') {
+                helpers.setStatus({ success: false });
+                helpers.setErrors({ submit: 'Your request is still pending' });
+                helpers.setSubmitting(false);
+              }
+              else if(data.doctor.Status == 'Contract'){
+                Cookies.set('doctor', data['doctor']['Username']);
+                router.push(`/doctor/contract`);
+              }
+              else {
+                Cookies.set('username', data['doctor']['Username']);
+                Cookies.set('isDoctor', true);
+                Cookies.set('type', 'doctor');
+                socket.on('me', (id) => {
+                  Cookies.set('socketID', id);
+                });
+                socket.emit('iAmReady', Cookies.get('username'));
+                router.push(`/doctor/patients`);
+              }
             } else if (data['Type'] === 'Admin') {
-              Cookies.set('username', data['admin']['username']);
+              Cookies.set('username', data['admin']['Username']);
+              Cookies.set('type', 'admin');
               router.push(`/admin/admins`);
             }
           });
@@ -124,6 +139,7 @@ const Page = () => {
             if (data['Type'] === 'Patient') {
               Cookies.set('username', data['patient']['Username']);
               Cookies.set('isDoctor', false);
+              Cookies.set('type', 'patient');
               socket.on('me', (id) => {
                 Cookies.set('socketID', id);
               });
@@ -143,6 +159,7 @@ const Page = () => {
               else {
                 Cookies.set('username', data['doctor']['Username']);
                 Cookies.set('isDoctor', true);
+                Cookies.set('type', 'doctor');
                 socket.on('me', (id) => {
                   Cookies.set('socketID', id);
                 });
@@ -151,6 +168,7 @@ const Page = () => {
               }
             } else if (data['Type'] === 'Admin') {
               Cookies.set('username', data['admin']['Username']);
+              Cookies.set('type', 'admin');
               router.push(`/admin/admins`);
             }
           });
@@ -234,20 +252,7 @@ const Page = () => {
                 </Link>
               </Typography>
             </Stack>
-            <Tabs
-              onChange={handleMethodChange}
-              sx={{ mb: 3 }}
-              value={method}
-            >
-              <Tab
-                label="Username"
-                value="Username"
-              />
-              <Tab
-                label="Email"
-                value="email"
-              />
-            </Tabs>
+            
             {method === 'email' && (
               <form
                 noValidate

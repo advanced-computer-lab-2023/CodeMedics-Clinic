@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Stack } from '@mui/system';
 import Cookies from 'js-cookie';
+import Message from 'src/components/Message';
 
 const now = new Date();
 
@@ -18,6 +19,8 @@ const Page = () => {
     const [chats, setChats] = useState([]);
     const [messages, setMessages] = useState([]);
     const [selectedChat, setSelectedChat] = useState(null);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     useEffect(() => {
         axios.get('http://localhost:8000/chat/getPatientChats', { withCredentials: true })
             .then((response) => {
@@ -25,6 +28,8 @@ const Page = () => {
                 setChats(response.data.chats);
             }).catch((error) => {
                 console.log(error);
+                setShowError(true);
+                setErrorMessage(error.response.data.message);
             });
     }, []);
 
@@ -52,11 +57,11 @@ const Page = () => {
         }
     };
 
-    socket.on('newMessage', (message) => {
+    socket.off('newMessage').on('newMessage', (message) => {
         changeChatAndMessages(message);
     });
 
-    socket.on('newMessagePharmacy', (message) => {
+    socket.off('newMessagePharmacy').on('newMessagePharmacy', (message) => {
         changeChatAndMessages(message);
     });
 
@@ -67,6 +72,8 @@ const Page = () => {
                 setMessages(response.data.messages);
             }).catch((error) => {
                 console.log(error);
+                setShowError(true);
+                setErrorMessage(error.response.data.message);
             });
      };
 
@@ -86,6 +93,8 @@ const Page = () => {
                 }
             }).catch((error) => {
                 console.log(error);
+                setShowError(true);
+                setErrorMessage(error.response.data.message);
             });
 
      };
@@ -95,6 +104,7 @@ const Page = () => {
             <Head>
                 <title>El7a2ny Clinic</title>
             </Head>
+            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
             <Box>
                 <Divider />
                 <Stack direction="row" >

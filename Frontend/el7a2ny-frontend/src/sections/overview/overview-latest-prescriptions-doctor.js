@@ -3,13 +3,24 @@ import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 import { getInitials } from 'src/utils/get-initials';
 import { Scrollbar } from 'src/components/scrollbar';
-import { Button } from '@mui/material';
+import { Button, IconButton, Input, SvgIcon, Tab } from '@mui/material';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import {Avatar,Box,Card,Stack,Table,TableBody,TableCell,TableHead,TablePagination,
-  TableRow,Typography,Dialog, DialogTitle, DialogContent, DialogContentText, 
+  TableRow,Typography,Dialog, DialogTitle, DialogContent, DialogContentText, TextField,
   DialogActions} from '@mui/material';
+  
+import ArrowDownTrayIcon from '@heroicons/react/24/solid/ArrowDownTrayIcon';
+import EyeIcon from '@heroicons/react/24/solid/EyeIcon';
+import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
+import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
+
+import { set } from 'lodash';
+import { Form } from 'formik';
+import { InputRounded } from '@mui/icons-material';
+
 
 let doctorUsername = '';
 const doctorUsernameCookie = Cookies.get('jwt');
@@ -47,6 +58,9 @@ export const DoctorPrescriptionsTable = (props) => {
     medicineName: '',
     dosage: ''
   });
+
+  
+
   const [DeleteMedData, setDeleteData] = useState({
     prescriptionID:'',
     medicineName: '',
@@ -78,13 +92,17 @@ export const DoctorPrescriptionsTable = (props) => {
       FileSaver.saveAs(blob, fileName);
     } catch (error) {
       console.error('Error downloading PDF:', error);
+      setErrorMessage('An error occurred while downloading this prescription. Please try again later.');
     }
   };
-
-
-  const handleEditClick = (prescriptionId, medicineIndex, medName) => {
+  const[dosage, setDosage] = useState(null);
+  const [medName, setMedName] = useState(null);
+  const handleEditClick = (prescriptionId, medicineIndex, medName, dos) => {
     setEditablePrescriptionId(prescriptionId);
     setEditableMedicineIndex(medicineIndex);
+    if(dos > 0)
+      setDosage(dos);
+    setMedName(medName);
     setPrescriptionData((prevData) => ({
       ...prevData,prescriptionID:prescriptionId,
       medicineName:medName
@@ -92,24 +110,25 @@ export const DoctorPrescriptionsTable = (props) => {
   };
 
   const handleDeleteMedicine = (prescriptionId,  medName) => {
-    setDeleteData((prevData) => ({
-      ...prevData,prescriptionID:prescriptionId,
-      medicineName:medName
-    }));
     axios.post(`http://localhost:8000/doctor/removeMedicineFromPrescription`, 
-    DeleteMedData, { withCredentials: true })
+    {
+      prescriptionID: prescriptionId,
+      medicineName: medName
+    }, { withCredentials: true })
     .then((req) => {
       console.log(req.data);
       window.location.reload();
     })
     .catch((error) => {
       console.error('Error updating prescription:', error);
+      setErrorMessage('An error occurred while deleting this medicine. Please try again later.');
     });
-};
+  };
 
 
 const handleAddMedicine = (prescriptionId) => {
   setIsAddingMedicine(null);
+  console.log("adding ", AddMedData);
   axios.post(`http://localhost:8000/doctor/addMedicineToPrescription`, AddMedData, { withCredentials: true })
     .then((req) => {
       console.log(req.data);
@@ -122,20 +141,28 @@ const handleAddMedicine = (prescriptionId) => {
 };
 
 
-  const handleSaveClick = async (prescriptionId) => {
+  const handleSaveClick = async ({prescriptionId, keep}) => {
     setEditablePrescriptionId(null);
-    setEditableMedicineIndex(null);
+    if(!keep)
+      setEditableMedicineIndex(null);
     setPrescriptionData({});
     axios.post(`http://localhost:8000/doctor/addMedicineDosage`, 
-    newprescriptionData, { withCredentials: true })
+    {prescriptionID: toBeUpadted._id, 
+      medicineName: medName,
+      dosage: dosage
+    }, { withCredentials: true })
       .then((req) => {
         console.log(req.data);
         window.location.reload();
       })
       .catch((error) => {
         console.error('Error updating prescription:', error);
+        setErrorMessage('An error occurred while updating this prescription. Please try again later.');
       });
   };
+
+
+  
 
   const handleInputChange = (field, value) => {
     setPrescriptionData((prevData) => ({
@@ -152,17 +179,9 @@ const handleAddMedicine = (prescriptionId) => {
     }));
   };
   
-  const handleCancelClick = () => {
-    setEditablePrescriptionId(null);
-    setEditableMedicineIndex(null);
-    setPrescriptionData({
-      patientUsername: '',
-      medicineName: '',
-      dosage: '',
-    });
-  };
-  
-  
+  const [viewing, setViewing] = useState(false);
+  const [toBeUpadted, setToBeUpadted] = useState({});
+
   
   return (
     <Card>
@@ -171,111 +190,18 @@ const handleAddMedicine = (prescriptionId) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Drug</TableCell>
                 <TableCell>Patient</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell>Action</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((prescription, prescriptionIndex) => {
+              {items.map((prescription) => {
                 const status = prescription.filled ? 'filled' : 'unfilled';
-                const isSelectedPrescription = selectedPrescriptionId === prescription._id;
   
                 return (
                   <TableRow hover key={prescription._id}>
-                    <TableCell>
-                      {prescription.Drug.map((drug, medicineIndex) => (
-                        <div key={medicineIndex} style={{ display: 'flex', alignItems: 'center' }}>
-                          <Button
-                            onClick={() => handleDeleteMedicine(prescription._id, drug.drugName)}
-                            color="error"
-                            size="small"
-                          >
-                            Remove
-                          </Button>
-                          <div style={{ marginLeft: '8px', display: 'flex', flexDirection: 'column' }}>
-                            <Typography variant="body1">{drug.drugName}</Typography>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <Typography variant="body2" style={{ marginRight: '8px' }}>
-                                Dosage:
-                              </Typography>
-                              {editablePrescriptionId === prescription._id && editableMedicineIndex === medicineIndex && (
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <Typography variant="body2" style={{ marginRight: '4px' }}>
-                                    <input
-                                      type="text"
-                                      value={newprescriptionData.dosage}
-                                      onChange={(e) => handleInputChange('dosage', e.target.value)}
-                                    />
-                                  </Typography>
-                                  <Button onClick={() => handleSaveClick(prescription._id)} size="small">
-                                    Save
-                                  </Button>
-                                  <Button onClick={handleCancelClick} size="small">
-                                    Cancel
-                                  </Button>
-                                </div>
-                              )}
-                              {editablePrescriptionId !== prescription._id || editableMedicineIndex !== medicineIndex ? (
-                                <Typography variant="body2">{drug.dosage}</Typography>
-                              ) : null}
-                            </div>
-                          </div>
-                          {editablePrescriptionId !== prescription._id && editableMedicineIndex !== medicineIndex && !prescription.filled && (
-                            <Button onClick={() => handleEditClick(prescription._id, medicineIndex, drug.drugName)} size="small">
-                              Edit
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                      {isSelectedPrescription && isAddingMedicine ? (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <input
-                            type="text"
-                            placeholder="Medicine Name"
-                            value={AddMedData.medicineName}
-                            onChange={(e) => handleInputChange2('medicineName', e.target.value, prescription._id)}
-                          />
-                          <input
-                            type="text"
-                            placeholder="Dosage"
-                            value={AddMedData.dosage}
-                            onChange={(e) => handleInputChange2('dosage', e.target.value, prescription._id)}
-                          />
-                          <Button onClick={() => setIsAddingMedicine(false)} size="small">
-                            Cancel
-                          </Button>
-                          <Button onClick={() => handleAddMedicine(prescription._id)} size="small">
-                            Save
-                          </Button>
-                        </div>
-                      ) : null}
-                      {!isAddingMedicine && !prescription.filled && (
-                        <Button
-                          onClick={() => {
-                            setIsAddingMedicine(true);
-                            setSelectedPrescriptionId(prescription._id);
-                            setErrorMessage(null); 
-                          }}
-                          size="small"
-                        >
-                          Add Medicine
-                        </Button>
-                      )}
-                      {errorMessage && (
-                         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                         <DialogTitle>Error</DialogTitle>
-                         <DialogContent>
-                           <DialogContentText>{errorMessage}</DialogContentText>
-                         </DialogContent>
-                         <DialogActions>
-                           <Button onClick={() => setOpenDialog(false)}>OK</Button>
-                         </DialogActions>
-                       </Dialog>
-                      )}
-                    </TableCell>
                     <TableCell>
                       <Stack alignItems="center" direction="row" spacing={2}>
                         <Typography variant="subtitle2">{prescription.Patient}</Typography>
@@ -286,7 +212,27 @@ const handleAddMedicine = (prescriptionId) => {
                       <SeverityPill color={statusMap[status]}>{status}</SeverityPill>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => downloadPDF(prescription)}>Download PDF</Button>
+                    <IconButton title='Add Medicine' onClick={() => {
+                          setIsAddingMedicine(true);
+                          setToBeUpadted(prescription);
+                        }}>
+                          <SvgIcon fontSize="small">
+                            <PlusIcon />
+                          </SvgIcon>
+                        </IconButton>
+                    <IconButton title='View Prescription' onClick={() => {
+                          setViewing(true);
+                          setToBeUpadted(prescription);
+                        }}>
+                          <SvgIcon fontSize="small">
+                            <EyeIcon />
+                          </SvgIcon>
+                        </IconButton>
+                      <IconButton title='Download as PDF' onClick={() => downloadPDF(prescription)}>
+                        <SvgIcon fontSize="small">
+                          <ArrowDownTrayIcon />
+                        </SvgIcon>
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 );
@@ -294,6 +240,131 @@ const handleAddMedicine = (prescriptionId) => {
             </TableBody>
           </Table>
         </Box>
+        {isAddingMedicine && toBeUpadted && !toBeUpadted.filled && (
+          <Dialog open={isAddingMedicine} onClose={() => 
+            {
+              setIsAddingMedicine(false);
+              handleInputChange2('medicineName', "");
+              handleInputChange2('dosage', "");
+            }
+          }>
+          <DialogTitle>Add Medicine</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please enter the medicine name and dosage you want to add.
+            </DialogContentText>
+            <Box>
+              <TextField
+                type="text"
+                label="Medicine Name"
+                value={AddMedData.medicineName}
+                onChange={(e) => handleInputChange2('medicineName', e.target.value, toBeUpadted._id)}
+                required
+                fullWidth
+                sx={{ marginBottom: 2, borderRadius: 4, marginTop: 2 }}
+              />
+              <TextField
+                type="number"
+                label="Dosage"
+                value={AddMedData.dosage}
+                onChange={(e) => handleInputChange2('dosage', e.target.value, toBeUpadted._id)}
+                required
+                fullWidth
+                sx={{ borderRadius: 4 }}
+                
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+              setIsAddingMedicine(false);
+              handleInputChange2('medicineName', "");
+              handleInputChange2('dosage', "");
+            }}>Cancel</Button>
+            <Button onClick={() => handleAddMedicine(toBeUpadted._id)} disabled={!AddMedData.medicineName || !AddMedData.dosage}>
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+        
+        )}
+        
+        {viewing && (
+          <Dialog open={viewing} onClose={() => {
+            setViewing(false);
+            setMedName(null);
+            setDosage(null);
+            setEditableMedicineIndex(null);
+          }} sx={{minWidth: 200}} fullWidth>
+          <DialogTitle>Prescription</DialogTitle>
+          <DialogContent>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Drug</TableCell>
+                  <TableCell>Dosage</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+            {toBeUpadted.Drug.map((drug, medicineIndex) => (
+              <TableRow hover key={medicineIndex}>
+                <TableCell>{drug.drugName}</TableCell>
+                <TableCell>
+                <TextField
+                      type="number"
+                      label="Dosage"
+                      value={medicineIndex == editableMedicineIndex ? dosage || drug.dosage: drug.dosage}
+                      disabled={toBeUpadted.filled}
+                      onChange={(e) => {
+                        setEditableMedicineIndex(medicineIndex);
+                        handleEditClick(toBeUpadted._id, medicineIndex, drug.drugName, e.target.value);
+                    }}
+                    />
+                </TableCell>
+                <TableCell>
+                  <IconButton title='Save Dosage' onClick={() => {
+                        handleSaveClick({keep: true});
+                    }}>
+                    <SvgIcon fontSize="small">
+                      <PencilSquareIcon />
+                    </SvgIcon>
+                  </IconButton>
+
+                  <IconButton title='Delete Medicine' onClick={() => handleDeleteMedicine(toBeUpadted._id, drug.drugName)}>
+                    <SvgIcon fontSize="small">
+                      <XMarkIcon />
+                    </SvgIcon>
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+            {errorMessage && (
+                         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                         <DialogTitle>Error</DialogTitle>
+                         <DialogContent>
+                           <DialogContentText>{errorMessage}</DialogContentText>
+                         </DialogContent>
+                         <DialogActions>
+                           <Button onClick={() => setOpenDialog(false)}>OK</Button>
+                         </DialogActions>
+                       </Dialog>
+                      )}
+          </TableBody>
+            </Table>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => {
+            setViewing(false);
+            setMedName(null);
+            setDosage(null);
+            setEditableMedicineIndex(null);
+          }}>OK</Button>
+          </DialogActions>
+        </Dialog>
+    
+        )}
+
       </Scrollbar>
       <TablePagination
         component="div"

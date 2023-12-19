@@ -40,6 +40,10 @@ const medicineSchema = new Schema({
         required: [true, 'Please enter the medicine picture']
     },
     
+    archived: {
+        type: Boolean,
+        default: false,
+    },
 }, { timestamps: true });
 
 

@@ -77,19 +77,19 @@ const patientSchema = new Schema({
     HealthPackage: {
         type: {
             membership: String, // Free, Silver, Gold, Platinum
-            date: Date,
             Price: Number,
-            discount: Number,
-            discountEndDate: Date,
             status: String,
+            discount: Number,
+            date: Date,
+            discountEndDate: Date,
         },
         default: {
             membership: "Free",
-            date: null,
             Price: 0,
             discount: 0,
-            discountEndDate: null,
             status: "Inactive",
+            date: null,
+            discountEndDate: null,
         },
         required: false
     },

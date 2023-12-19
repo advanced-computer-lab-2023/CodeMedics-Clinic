@@ -141,7 +141,6 @@ export const OverviewDoctors = (props) => {
           );
         })}
       </Box>
-      <Divider />
     </CardContent>
   );
 };

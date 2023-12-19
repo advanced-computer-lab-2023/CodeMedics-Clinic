@@ -9,6 +9,9 @@ import { DocPrescriptionsFilter } from 'src/sections/user/prescriptions-filter-d
 import { DoctorPrescriptionsTable } from 'src/sections/overview/overview-latest-prescriptions-doctor';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
+import Message from 'src/components/Message';
 
 let doctorUsername = '';
 const doctorUsernameCookie = Cookies.get('jwt');
@@ -52,9 +55,12 @@ const Page = () => {
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
   const router = useRouter();
-
+  const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     axios.get(`http://localhost:8000/doctor/getAllPrescriptions`, { withCredentials: true })
       .then((req) => {
         console.log(req.data);
@@ -67,9 +73,12 @@ const Page = () => {
         });
   
         setAllData(prescriptions);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        // setShowError(true);
+        // setErrorMessage(err.response.error.error);
       });
   }, []);
   
@@ -120,6 +129,7 @@ const Page = () => {
           Prescriptions
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{
@@ -147,7 +157,10 @@ const Page = () => {
               </Stack>
             </Stack>
             <DocPrescriptionsFilter setFilterStartDate={setFilter1} setFilterEndDate={setFilter2} setFilledStatus={setFilter3} setPatient={setPatient} />
-            {<DoctorPrescriptionsTable
+            {loading ? <LoadingSpinner /> : (
+              <>
+              {data.length === 0 ? <NoRecords message = {"No Prescriptions Found"}/> : 
+              <DoctorPrescriptionsTable
               count={data.length}
               items={customers}
               onDeselectAll={customersSelection.handleDeselectAll}
@@ -160,6 +173,8 @@ const Page = () => {
               rowsPerPage={rowsPerPage}
               selected={customersSelection.selected}
             />}
+              </>
+            )}
           </Stack>
         </Container>
       </Box>

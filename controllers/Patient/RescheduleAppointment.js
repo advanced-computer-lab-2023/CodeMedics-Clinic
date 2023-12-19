@@ -7,23 +7,22 @@ const nodemailer = require('nodemailer');
 
 exports.RescheduleAppointment = async (req, res) => {
     try {
-        const {appointmentID, oldAppointmentID, username} = req.query;
-
+        const { appointmentID, oldAppointmentID, username } = req.query;
         console.log("in reschedule appointment");
         console.log(appointmentID, oldAppointmentID, username);
-        const patient = await Patient.findOne({Username: username});
+        const patient = await Patient.findOne({ Username: username });
         const appointment = await Appointment.findOne({ _id: appointmentID });
         const oldAppointment = await Appointment.findOne({ _id: oldAppointmentID });
-        console.log(patient, appointment, oldAppointment);
-        console.log(patient.Appointments);
+        // console.log(patient, appointment, oldAppointment);
+        // console.log(patient.Appointments);
         patient.Appointments = patient.Appointments.filter(item => item != oldAppointmentID);
         patient.Appointments.push(appointmentID);
-        console.log(patient.Appointments);
+        // console.log(patient.Appointments);
         appointment.patient = oldAppointment.patient;
         appointment.status = "upcoming";
         oldAppointment.patient = null;
         oldAppointment.status = "unreserved";
-        console.log(appointment, oldAppointment, patient);
+        // console.log(appointment, oldAppointment, patient);
         await appointment.save();
         await oldAppointment.save();
         await patient.save();
@@ -36,28 +35,27 @@ exports.RescheduleAppointment = async (req, res) => {
         // Notify both doctor and patient
         sendEmail(doctor.Email, 'Appointment Update', `Your appointment with your patient ${patient.FirstName} ${patient.LastName} has been rescheduled to be on ${appointment.date} from ${appointment.startHour} to  ${appointment.endHour}.`);
         // Generate success message
-const doctorMessage = `Your appointment with your patient ${patient.FirstName} ${patient.LastName} has been rescheduled to be on ${appointment.date} from ${appointment.startHour} to  ${appointment.endHour}.`;
+        const doctorMessage = `Your appointment with your patient ${patient.FirstName} ${patient.LastName} has been rescheduled to be on ${appointment.date} from ${appointment.startHour} to  ${appointment.endHour}.`;
 
-// Add the success message to the doctor's messages list
-doctor.Messages.push({
-    sender: 'System',
-    content: doctorMessage,
-    timestamp: new Date(),
-});
-await doctor.save();
+        // Add the success message to the doctor's messages list
+        doctor.Messages.push({
+            sender: 'System',
+            content: doctorMessage,
+            timestamp: new Date(),
+        });
+        await doctor.save();
 
         sendEmail(patient.Email, 'Appointment Update', `Your appointment with your Doctor ${doctor.FirstName} ${doctor.LastName} has been rescheduled to be on ${appointment.date} from ${appointment.startHour} to  ${appointment.endHour}.`);
-  // Generate success message
-  const successMessage = `Your appointment with your Doctor ${doctor.FirstName} ${doctor.LastName} has been rescheduled to be on ${appointment.date} from ${appointment.startHour} to  ${appointment.endHour}.`;
+        // Generate success message
+        const successMessage = `Your appointment with your Doctor ${doctor.FirstName} ${doctor.LastName} has been rescheduled to be on ${appointment.date} from ${appointment.startHour} to  ${appointment.endHour}.`;
 
-  // Add the success message to the patient's messages list
-  patient.Messages.push({
-      sender: 'System',
-      content: successMessage,
-      timestamp: new Date(),
-  });
-  await patient.save();
-
+        // Add the success message to the patient's messages list
+        patient.Messages.push({
+            sender: 'System',
+            content: successMessage,
+            timestamp: new Date(),
+        });
+        await patient.save();
         res.status(200).json({ message: 'Appointment rescheduled successfully' });
     } catch (error) {
         res.status(400).json({ message: error.message });

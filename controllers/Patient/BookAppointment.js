@@ -2,6 +2,7 @@ const Doctor = require('../../models/Doctor');
 const Appointment = require('../../models/Appointment');
 const Patient = require('../../models/Patient');
 const packageModel = require('../../models/Package');
+const ClinicWallet = require('../../models/ClinicWallet');
 const nodemailer = require('nodemailer');
 const {getUsername} = require('../../config/infoGetter');
 
@@ -10,8 +11,8 @@ exports.bookAppointment = async (req, res) => {
         const { appointmentId, patientUsername, isRequested } = req.query;
         const appointment = await Appointment.findOne({ _id: appointmentId });
         console.log("in the book appointment");
-        console.log(appointmentId, patientUsername);
-        console.log(appointmentId, appointment);
+        console.log(appointmentId, patientUsername, isRequested);
+        // console.log(appointmentId, appointment);
         if (!appointment) {
             return res.status(400).json({ message: 'Appointment not found' });
         }
@@ -24,8 +25,8 @@ exports.bookAppointment = async (req, res) => {
         if (!patient) {
             return res.status(400).json({ message: 'Patient not found' });
         }
-        console.log(patient);
-        console.log(appointment);
+        // console.log(patient);
+        // console.log(appointment);
         // Update appointment details
         appointment.patient = patientUsername;
         appointment.status = 'upcoming';
@@ -52,7 +53,7 @@ exports.bookAppointment = async (req, res) => {
 
         // Send email notification to patient
         if(isRequested == 'true'){
-            sendEmail(patient.Email, 'Follow-up Request Confirmation', `Your Follow-up Request has been accepted to be on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
+            sendEmail(patient.Email, 'Follow-up Scheduled', `Doctor ${doctor.FirstName + " " + doctor.LastName} has scheduled a Follow-up to you on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
         }
         else
             sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);
@@ -106,8 +107,10 @@ await doctor.save();
 
 exports.payWithWallet = async (req, res) => {
     try {
-        const Username = await getUsername(req, res);
+        const temp = req.body.username;
+        const Username = temp ? temp : await getUsername(req, res);
         const { AppointmentId } = req.body;
+        console.log("in the pay with wallet", temp, Username);
         if (!AppointmentId) {
             return res.status(400).json({ message: "Appointment ID not found" });
         }
@@ -125,7 +128,11 @@ exports.payWithWallet = async (req, res) => {
         }
         const package = await packageModel.findOne({ Name: patient.HealthPackage.membership });
         let price = doctor.HourlyRate + 0.1 * doctor.HourlyRate;
-        price *= (appointment.endHour - appointment.startHour);
+        let clinicWallet = await ClinicWallet.find();
+        clinicWallet = clinicWallet[0];
+        
+        const hours = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
+        price *= hours;
         if (package != null) {
             price -= price * (package.SessionDiscount / 100);
         }
@@ -133,6 +140,8 @@ exports.payWithWallet = async (req, res) => {
             return res.status(400).json({ message: "Insufficient funds" });
         }
         patient.Wallet -= price;
+        doctor.Wallet += hours * doctor.HourlyRate;
+        clinicWallet.Wallet += 0.1 * doctor.HourlyRate;
         if(!patient.Appointments.includes(appointment._id)){
             patient.Appointments.push(appointment._id);
         }
@@ -147,6 +156,7 @@ exports.payWithWallet = async (req, res) => {
             doctor.Patients.push(patient._id);
         }
         await doctor.save();
+        await clinicWallet.save();
 
         // Send email notification to patient
         sendEmail(patient.Email, 'Appointment Confirmation', `Your appointment has been booked successfully on ${appointment.date} from ${appointment.startHour} to ${appointment.endHour}.`);

@@ -38,6 +38,7 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
       method: 'PATCH',
       withCredentials: true,
       data: {
+        username: patientUsername,
         AppointmentId: appointmentId,
       }
     }).then((res) => {
@@ -139,7 +140,7 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "120vh",
+        // height: "120vh",
       }}
     >
       <form
@@ -168,25 +169,26 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
             transition: "background-color 0.3s",
           }}
         >
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay Order"}
+          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay Appointment"}
         </button>
         {!isLoading && (
-          <Button variant="contained" style={{
+          <button variant="contained" style={{
             padding: "10px 15px",
             fontSize: "18px",
             fontWeight: "bold",
-            backgroundColor: "#6666FF", // Light Blue color
+            backgroundColor: "#6666FF",
             color: "white",
             borderRadius: "20px",
             cursor: "pointer",
-            marginTop: "20px", // Adjust marginTop as needed
+            marginTop: "20px",
+            marginLeft: "10px",
             transition: "background-color 0.3s",
           }}
 
             onClick={handlePayUsingWallet}
           >
             Pay using my Wallet
-          </Button>
+          </button>
         )}
         {message && <div id="payment-message">{message}</div>}
       </form>

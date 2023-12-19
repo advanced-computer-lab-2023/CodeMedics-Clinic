@@ -6,6 +6,7 @@ import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
 import AdjustmentsVerticalIcon from '@heroicons/react/24/solid/AdjustmentsVerticalIcon';
 import { format } from 'date-fns';
+import Message from 'src/components/Message';
 import {
   Avatar,
   Box,
@@ -35,6 +36,8 @@ const axios = require('axios');
 export const Row = (props) => {
   const { row: patient } = props;
   const [open, setOpen] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const onRemovePatient = async (username) => {
     try {
       const removeResponse = await axios.delete('http://localhost:8000/removePatient', {
@@ -42,7 +45,8 @@ export const Row = (props) => {
       });
     } catch (error) {
       console.error('Error removing Pharmacist:', error);
-      throw error;
+      setShowError(true);
+      setErrorMessage(error.response.data);
     }
   };
   const router = useRouter();
@@ -52,18 +56,21 @@ export const Row = (props) => {
     } catch (error) {
       // Handle errors appropriately
       console.error('Error removing patient:', error);
+      setShowError(true);
+      setErrorMessage(error.response.data);
     }
     router.refresh();
   };
 
   return (
     <Fragment>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell padding="normal">
           <IconButton
             children={(
               <SvgIcon>
-                {!open ? <ChevronRightIcon/> : <ChevronDownIcon/>}
+                {!open ? <ChevronRightIcon /> : <ChevronDownIcon />}
               </SvgIcon>
             )}
             color="primary"
@@ -202,7 +209,7 @@ export const Row = (props) => {
                   sx={{ height: 40, backgroundColor: 'success.main', mt: 'auto' }}
                   variant="contained"
                   type="submit"
-                  onClick={() => {setOpen(!open);}}
+                  onClick={() => { setOpen(!open); }}
                 >
                   Done
                 </Button>

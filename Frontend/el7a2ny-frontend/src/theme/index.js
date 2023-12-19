@@ -1,15 +1,11 @@
 import { createTheme as createMuiTheme } from '@mui/material';
-import { createPalette } from './create-palette';
-import { createComponents } from './create-components';
-import { createShadows } from './create-shadows';
 import { createTypography } from './create-typography';
+import { createOptions } from './light/create-options';
+import { darkOptions} from './dark/create-options';
 
-export function createTheme() {
-  const palette = createPalette();
-  const components = createComponents({ palette });
-  const shadows = createShadows();
-  const typography = createTypography();
-
+export function createTheme({mode}) {
+  const option = mode === 'dark' ? darkOptions() : createOptions();
+  
   return createMuiTheme({
     breakpoints: {
       values: {
@@ -20,12 +16,12 @@ export function createTheme() {
         xl: 1440
       }
     },
-    components,
-    palette,
-    shadows,
+    palette: option.palette,
+    components: option.components,
+    shadows: option.shadows,
+    createTypography,
     shape: {
       borderRadius: 8
     },
-    typography
   });
 }

@@ -6,6 +6,7 @@ const Patient = require('../../models/Patient');
 const Doctor = require('../../models/Doctor');
 const nodemailer = require('nodemailer');
 const ClinicWallet = require('../../models/ClinicWallet');
+const Package = require('../../models/Package');
 
 
 async function sendEmail(recipient, subject, message) {
@@ -50,13 +51,22 @@ exports.CancelAppointment = async (req, res) => {
             // Cancellation beyond 24 hours
             const doctor = await Doctor.findOne({ Username: appointment.doctorUsername });
             const patient = await Patient.findOne({ Username: appointment.patient });
+            const package = await Package.findOne({ Name: patient.HealthPackage.membership });
+            let clinicWallet = await ClinicWallet.find();
+            clinicWallet = clinicWallet[0];
             if (!doctor || !patient) {
                 return res.status(404).json({ success: false, message: 'Doctor or patient not found' });
             }
-
-            const appointmentPrice = (Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour))) * doctor.HourlyRate;
-            doctor.Wallet -= appointmentPrice;
-            patient.Wallet += appointmentPrice;
+            var discount = 0;
+            if(package){
+                discount = package.SessionDiscount;
+            }
+            const hours = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
+            const clinicFees = 0.1 * doctor.HourlyRate;
+            const appointmentPrice = hours * (doctor.HourlyRate + clinicFees);
+            doctor.Wallet -= (hours * doctor.HourlyRate);
+            patient.Wallet += appointmentPrice - (appointmentPrice * discount / 100);
+            clinicWallet.Wallet -= clinicFees;
             const unreservedAppointment = new Appointment();
             unreservedAppointment.doctor = doctor.FirstName + doctor.LastName;
             unreservedAppointment.doctorUsername = doctor.Username;
@@ -71,6 +81,7 @@ exports.CancelAppointment = async (req, res) => {
             await patient.save();
             appointment.status = 'cancelled';
             await appointment.save();
+            await clinicWallet.save();
         
 
         // Notify both doctor and patient

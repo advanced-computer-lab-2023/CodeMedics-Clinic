@@ -6,6 +6,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { Button } from '@mui/material';
 import FileSaver from 'file-saver';
 import axios from 'axios';
+import Message from 'src/components/Message';
 
 import {
   Avatar,
@@ -52,6 +53,8 @@ export const PatientPrescriptionsTable = (props) => {
       FileSaver.saveAs(blob, fileName);
     } catch (error) {
       console.error('Error downloading PDF:', error);
+      setShowError(true);
+      setErrorMessage(error.response.data);
     }
   };
   const [prescriptionStatus, setPrescriptionStatus] = useState(items);
@@ -74,11 +77,14 @@ export const PatientPrescriptionsTable = (props) => {
         setPrescriptionStatus(items);
     } catch (error) {
       console.error('Error filling prescription:', error);
+      setShowError(true);
+      setErrorMessage(error.response.data);
     }
   };
 
   return (
     <Card>
+      {/* <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} /> */}
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>

@@ -4,6 +4,7 @@ import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
+import Message from 'src/components/Message';
 
 import { List, ListItemButton, ListItem, ListItemText} from '@mui/material';
 import {
@@ -58,7 +59,8 @@ export const PatientAppointmentsTable = (props) => {
     onSelectOne,
     page = 0,
     rowsPerPage = 0,
-    selected = []
+    selected = [],
+    curUsername, setCurUsername
   } = props;
 
   
@@ -72,28 +74,37 @@ export const PatientAppointmentsTable = (props) => {
   const [rescheduling, setRescheduling] = useState(false);
   const [requesting, setRequesting] = useState(false);
   const [invalidRequest, setInvalidRequest] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const CancelAppointment = async (appointmentID) => {
     await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`).then(res =>{
       console.log(res);
       window.location.reload();
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
-
+  
   
   const getUnreservedAppointments = async (doctorUsername) => {
+    setLoading(true);
     await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername).then((res) => {
       setUnreservedAppointments(res.data.appointments);
+      setLoading(false);
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
     
 
   const [appointmentMenu, setAppointmentMenu] = useState({});
-  const [toBeUpdated, settoBeUpdated] = useState(null);
+  const [toBeUpdated, setToBeUpdated] = useState(null);
   const [cancelling, setCancelling] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleButtonClick = (event, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -127,38 +138,40 @@ export const PatientAppointmentsTable = (props) => {
     if(item === "Cancel"){
       if(appointment.status !== 'upcoming'){
           setInvalidCancel(true);
-          settoBeUpdated(appointment);
+          setToBeUpdated(appointment);
       }
       else{
         setCancelling(true);
-        settoBeUpdated(appointment);
+        setToBeUpdated(appointment);
       }
     }
     else if(item === "Reschedule"){
-      getUnreservedAppointments(appointment.doctorUsername);
-      settoBeUpdated(appointment);
+      setToBeUpdated(appointment);
       setRescheduling(true);
+      getUnreservedAppointments(appointment.doctorUsername);
     }
     else if(item === "Request a Follow-up"){
       if(appointment.status !== 'completed'){
         setInvalidRequest(true);
-        settoBeUpdated(appointment);
+        setToBeUpdated(appointment);
       }
       else{
         setRequesting(true);
-        settoBeUpdated(appointment);
+        setToBeUpdated(appointment);
       }
     }
   };
 
   const rescheduleAppointment = async (appointmentID, oldAppointment) => {
-    await axios.patch(`http://localhost:8000/patient/RescheduleAppointment?appointmentID=${appointmentID}&oldAppointmentID=${oldAppointment}&username=${Cookies.get('username')}`).then
+    await axios.patch(`http://localhost:8000/patient/RescheduleAppointment?appointmentID=${appointmentID}&oldAppointmentID=${oldAppointment}&username=${curUsername}`).then
     ((res) => {
       console.log(res);
       window.location.reload();
     }
     ).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
 
@@ -170,6 +183,8 @@ export const PatientAppointmentsTable = (props) => {
     }
     ).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
 
@@ -177,6 +192,7 @@ export const PatientAppointmentsTable = (props) => {
   const buttons = ["Cancel", "Request a Follow-up", "Reschedule"];
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -255,8 +271,8 @@ export const PatientAppointmentsTable = (props) => {
                             handleMenuClose(appointment._id);
                             
                           }}
-                          anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
-                          transformOrigin={{ vertical: 'center', horizontal: 'right' }}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
                         >
                           {buttons.map((item, index) => (
                             <MenuItem key={index} onClick={() => {handleMenuItemClick(item, appointment)
@@ -276,7 +292,7 @@ export const PatientAppointmentsTable = (props) => {
           {rescheduling && toBeUpdated.status !== 'upcoming' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -294,7 +310,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -311,7 +327,7 @@ export const PatientAppointmentsTable = (props) => {
           {rescheduling && toBeUpdated.status === 'upcoming' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setUnreservedAppointments([]);
                   setAppointmentMenu({
                     ...appointmentMenu,
@@ -323,11 +339,13 @@ export const PatientAppointmentsTable = (props) => {
                 }}}>
               <DialogTitle>Reschedule</DialogTitle>
               <DialogContent>
-                
-                  {unreservedAppointments.length === 0 && (<div>
+                {loading && (<div>
+                  <DialogContentText>Loading...</DialogContentText>
+                </div>)}
+                  {!loading && unreservedAppointments.length === 0 && (<div>
                     <DialogContentText>No Available Slots</DialogContentText>
                   </div>)}
-                {unreservedAppointments.length > 0 && (
+                {!loading && unreservedAppointments.length > 0 && (
                   <Table>
             <TableHead>
               <TableRow>
@@ -383,7 +401,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRescheduling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setUnreservedAppointments([]);
                   setAppointmentMenu({
                     ...appointmentMenu,
@@ -431,7 +449,7 @@ export const PatientAppointmentsTable = (props) => {
             
             <Dialog open={cancelling} onClose={() => {{
                   setCancelling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -449,7 +467,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setCancelling(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -497,7 +515,7 @@ export const PatientAppointmentsTable = (props) => {
             
             <Dialog open={requesting} onClose={() => {{
                   setRequesting(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {
@@ -515,7 +533,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogActions>
                 <Button onClick={() => {
                   setRequesting(false);
-                  settoBeUpdated(null);
+                  setToBeUpdated(null);
                   setAppointmentMenu({
                     ...appointmentMenu,
                     [toBeUpdated._id]: {

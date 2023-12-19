@@ -27,6 +27,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { set } from 'lodash';
 import Cookies from 'js-cookie';
+import Message from 'src/components/Message';
 
 export const CustomersTable = (props) => {
   const {
@@ -49,20 +50,26 @@ export const CustomersTable = (props) => {
   const [rejecting, setRejecting] = useState(false);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
   const [toBeUpdated, setToBeUpdated] = useState(null);
-  
+  const[loading, setLoading] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const accept = async (appointment) => {
     console.log("in the accept");
+    getUnreservedAppointments();
     setAccepting(true);
     setToBeUpdated(appointment);
   }
 
-  const getUnreservedAppointments = async (doctorUsername) => {
-    
+  const getUnreservedAppointments = async () => {
+    setLoading(true);
     await axios.get('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+username).then((res) => {
       setUnreservedAppointments(res.data.appointments);
+      setLoading(false);
       console.log("in the getUnreserved");
     }).catch((err) => {
       console.log(err);
+      setShowError(true);
+      setErrorMessage(err.response.data.message);
     });
   };
 
@@ -79,13 +86,17 @@ export const CustomersTable = (props) => {
             console.log(res);
         }).catch((err) => {
             console.log(err);
+            setShowError(true);
+            setErrorMessage(err.response.data.message);
         });
 
     await axios.patch('http://localhost:8000/patient/updateAppointmentStatus?oldAppointmentId='+oldAppointmentId).then(res => {
         console.log(res);
         window.location.reload();
-    }).catch(err => {
+    }).catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
     });
     
   }
@@ -99,6 +110,8 @@ export const CustomersTable = (props) => {
         window.location.reload();
     }).catch(err => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
     });
 }
 
@@ -106,6 +119,7 @@ export const CustomersTable = (props) => {
 
   return (
     <Card>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
@@ -228,10 +242,13 @@ export const CustomersTable = (props) => {
             <Dialog open={accepting} onClose={() => setAccepting(false)}>
                 <DialogTitle>Accept Follow-up Request</DialogTitle>
                 <DialogContent>
-                {unreservedAppointments.length === 0 && (<div>
+                {loading && (<div>
+                    <DialogContentText>Loading...</DialogContentText>
+                  </div>)}
+                {!loading && unreservedAppointments.length === 0 && (<div>
                     <DialogContentText>No Available Slots</DialogContentText>
                   </div>)}
-                {unreservedAppointments.length > 0 && (
+                {!loading && unreservedAppointments.length > 0 && (
                   <Table>
             <TableHead>
               <TableRow>

@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
 import FileSaver from 'file-saver';
+import Message from 'src/components/Message';
 
 import {
     Button,
@@ -33,6 +34,8 @@ import {
 export const OverviewMedicalRecords = (props) => {
     const router = useRouter();
     const { medicalRecords } = props;
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const username = Cookies.get('username');
 
@@ -47,6 +50,8 @@ export const OverviewMedicalRecords = (props) => {
             })
             .catch(error => {
                 console.log(error);
+                setShowError(true);
+                setErrorMessage(error.response.data);
             });
     };
 
@@ -63,11 +68,14 @@ export const OverviewMedicalRecords = (props) => {
     })
     .catch(error => {
         console.log(error);
+        setShowError(true);
+        setErrorMessage(error.response.data);
     });
 };
 
     return (
         <CardContent>
+            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
             <Box
                 display="grid"
                 gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"

@@ -75,6 +75,7 @@ exports.removeFamilyMemberNoAccount = async (req, res) => {
 exports.viewFamilyMembers = async (req, res) => {
    const Username = await getUsername(req, res);
    const patient = await Patient.findOne({Username});
+   console.log("in the view family members ", Username);
    if(patient == null){
       return res.status(404).json({message: 'Patient does not exist'});
    }
@@ -90,6 +91,7 @@ exports.viewFamilyMembers = async (req, res) => {
          const familyMemberNoAccount = await FamilyMember.findOne({_id: patient.FamilyMembersNoAccount[i]});
          familyMembersNoAccount.push(familyMemberNoAccount);
       }
+      // console.log(familyMembers);
       res.status(200).json({message: 'Family members fetched successfully' , familyMembers, familyMembersNoAccount});
    }
    catch(e){

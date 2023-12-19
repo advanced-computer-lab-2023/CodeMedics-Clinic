@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { AppointmentsFilter } from 'src/sections/doctor/appointments/appointments-filter';
 import Cookies from 'js-cookie';
 
+import LoadingSpinner from 'src/components/LoadingSpinner';
+import NoRecords from 'src/components/NoRecords';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {
@@ -43,8 +45,9 @@ const Page = () => {
   const router = useRouter();
   const [filter1, setFilter1] = useState('');
   const [filter2, setFilter2] = useState('');
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
+    setLoading(true);
     fetch('http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername='+doctorUsername)
       .then((res) => {
         if(res.statusCode == 401)
@@ -69,6 +72,7 @@ const Page = () => {
         });
 
         setAllData(appointments);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -140,20 +144,24 @@ const Page = () => {
                 </Stack>
               </Stack>
             </Stack>
-            <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} />
-            { <AppointmentsTable
-              count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
-            />}
+            {loading? <LoadingSpinner /> : (
+              <>
+              <AppointmentsFilter setState1={setFilter1} setState2={setFilter2} />
+              {data.length == 0 ? <NoRecords message={"No Appointments Found"}/> : <AppointmentsTable
+                count={data.length}
+                items={customers}
+                onDeselectAll={customersSelection.handleDeselectAll}
+                onDeselectOne={customersSelection.handleDeselectOne}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onSelectAll={customersSelection.handleSelectAll}
+                onSelectOne={customersSelection.handleSelectOne}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                selected={customersSelection.selected}
+              />}
+              </>
+            )}
           </Stack>
         </Container>
       </Box>

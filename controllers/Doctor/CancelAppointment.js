@@ -4,6 +4,7 @@ const Appointments = require('../../models/Appointment');
 const Patient = require('../../models/Patient');
 const Doctor = require('../../models/Doctor');
 const Package = require('../../models/Package');
+const ClinicWallet = require('../../models/ClinicWallet');
 const nodemailer = require('nodemailer');
 
 
@@ -31,14 +32,20 @@ exports.CancelAppointment = async (req, res) => {
         const doctor = await Doctor.findOne({Username: appointment.doctorUsername});
         const patient = await Patient.findOne({Username: appointment.patient});
         const package = await Package.findOne({ Name: patient.HealthPackage.membership });
+        let clinicWallet = await ClinicWallet.find();
+        clinicWallet = clinicWallet[0];
         var discount = 0;
         if(package){
             discount = package.SessionDiscount;
         }
-        const appointmentPrice = ((Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour))) * doctor.HourlyRate) ;
-        doctor.Wallet = doctor.Wallet - appointmentPrice; // handle case that the wallet is initially empty ... or maybe it's a feature :)
-        patient.Wallet = patient.Wallet + (appointmentPrice * 1.1 - discount); //TODO handle correct calculation
+        const clinicFees = doctor.HourlyRate * 0.1;
+        const hours = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
+        const appointmentPrice = hours * (doctor.HourlyRate + clinicFees);
+        doctor.Wallet = doctor.Wallet - hours * doctor.HourlyRate; // handle case that the wallet is initially empty ... or maybe it's a feature :)
+        patient.Wallet += appointmentPrice - (appointmentPrice * discount / 100); //TODO handle correct calculation
+        clinicWallet.Wallet -= clinicFees;
         appointment.status = 'cancelled';
+        await clinicWallet.save();
         await doctor.save();
         await patient.save();
         await appointment.save();

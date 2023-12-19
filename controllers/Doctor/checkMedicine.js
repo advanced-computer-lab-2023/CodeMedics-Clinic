@@ -2,7 +2,7 @@ const Medicine = require('../../models/Medicine');
 
 exports.checkMedicine = async (req, res) => {
   try {
-    const { medicineName } = req.body;
+    const { medicineName, dosage } = req.body;
     console.log('Received request to check medicine:', medicineName);
     const medicine = await Medicine.findOne({ name: medicineName });
 
@@ -23,6 +23,9 @@ exports.checkMedicine = async (req, res) => {
         exists: false,
         message: `Medicine ${medicineName} is out of stock.`,
       });
+    }
+    if(isNaN(parseInt(dosage))){
+      return res.status(400).json({exists: false, message: 'Dosage must be a number'});
     }
 
     return res.status(200).json({

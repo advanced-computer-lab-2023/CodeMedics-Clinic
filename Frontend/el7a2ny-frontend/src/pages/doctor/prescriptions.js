@@ -10,6 +10,7 @@ import { PrescriptionsFilter } from 'src/sections/user/prescriptions-filter';
 import { PatientPrescriptionsTable } from 'src/sections/overview/overview-latest-prescriptions';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import Message from 'src/components/Message';
 
 const now = new Date();
 
@@ -42,6 +43,8 @@ const Page = () => {
   const router = useRouter();
   const params = new URLSearchParams(window.location.search);
   const username = params.get('username');
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
 
   useEffect(() => {
@@ -60,6 +63,8 @@ const Page = () => {
       })
       .catch((err) => {
         console.log(err);
+        setShowError(true);
+        setErrorMessage(err.response.data.message);
       });
   }, []);
   
@@ -110,6 +115,7 @@ const Page = () => {
           Prescriptions
         </title>
       </Head>
+      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
       <Box
         component="main"
         sx={{
@@ -128,13 +134,20 @@ const Page = () => {
                 <Typography variant="h4">
                   Prescriptions
                 </Typography>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={1}
-                >
-                </Stack>
               </Stack>
+              <div>
+                <Button
+                  startIcon={(
+                    <SvgIcon fontSize="small">
+                      <PlusIcon />
+                    </SvgIcon>
+                  )}
+                  variant="contained"
+                  onClick={() => router.push(`/doctor/addPrescriptionFront?username=${username}`)}
+                >
+                  Add Prescription
+                </Button>
+              </div>
             </Stack>
             <PrescriptionsFilter setFilterStartDate={setFilter1} setFilterEndDate={setFilter2} setFilledStatus={setFilter3} setDoctor={setDoctor} />
             {<PatientPrescriptionsTable

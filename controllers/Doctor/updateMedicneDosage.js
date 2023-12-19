@@ -68,6 +68,7 @@ exports.addMedicineDosage = async (req, res) => {
     try {
       const doctorUsername = await getUsername(req, res);
       const { prescriptionID, medicineName, dosage } = req.body;
+      console.log("in the add medicine to prescription", prescriptionID, medicineName, dosage);
       if (!doctorUsername) {
         return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
       }
