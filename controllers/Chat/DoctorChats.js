@@ -16,7 +16,7 @@ exports.getDoctorChats = async (req, res) => {
         const patients = [];
         for (let i = 0; i < user.Appointments.length; i++) {
             const appointment = await Appointment.findById(user.Appointments[i]);
-            if (appointment && appointment.status == 'completed') {
+            if (appointment && (appointment.status == 'completed' || appointment.status == 'follow-up Requested')) {
                 const patient = await Patient.findOne({Username: appointment.patient});
                 if (patient) {
                     if(!patients.some (p => p.Username === patient.Username)){

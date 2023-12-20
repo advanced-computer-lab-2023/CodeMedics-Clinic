@@ -13,6 +13,7 @@ import MessageChatSquareIcon from '../../../icons/untitled-ui/duocolor/message-c
 import CreditCard01Icon from '../../../icons/untitled-ui/duocolor/credit-card-01';
 import HomeSmileIcon from '../../../icons/untitled-ui/duocolor/home-smile';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export const items = [
   {
@@ -74,7 +75,7 @@ export const items = [
     path: '/doctor/settings',
     icon: (
       <SvgIcon fontSize="small">
-        <CogIcon  />
+        <SettingsIcon  />
       </SvgIcon>
     )
   },

@@ -18,7 +18,7 @@ exports.getPatientChats = async (req, res) => {
         const doctors = [];
         for(let i=0; i<user.Appointments.length; i++){
             const appointment = await Appointment.findOne({ _id: user.Appointments[i]});
-            if(appointment.status != 'completed'){
+            if(appointment.status != 'completed' || appointment.status != 'follow-up Requested'){
                 continue;
             }
             const doctor = await Doctor.findOne({Username: appointment.doctorUsername});

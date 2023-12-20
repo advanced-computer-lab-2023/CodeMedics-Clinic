@@ -45,7 +45,7 @@ const App = (props) => {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
-          El7a2ny Pharmacy
+          El7a2ny Clinic
         </title>
         <meta
           name="viewport"
@@ -102,8 +102,8 @@ const App = (props) => {
                                       }}
                                     >
                                       <SvgIcon>
-                                        {!icon && <MoonIcon />}
-                                        {icon && <SunIcon />}
+                                        {settings.mode == 'light' && <MoonIcon />}
+                                        {settings.mode == 'dark' && <SunIcon />}
                                       </SvgIcon>
                                     </ButtonBase>
                                   </Box>

@@ -38,8 +38,8 @@ exports.resetPassword = async(req, res) => {
     const response = transporter.sendMail({
         from: "mamghany10@gmail.com",
         to: emailTo,
-        subject: "CodeMedics Pharmacy, Verify your account",
-        text: "Hello, " + name+ "!\n\n" + "Your OTP is: "+ num + "\n\n" +  "Best regards,\n" + "El7a2ny Pharmacy",
+        subject: "CodeMedics Clinic, Verify your account",
+        text: "Hello, " + name+ "!\n\n" + "Your OTP is: "+ num + "\n\n" +  "Best regards,\n" + "El7a2ny Clinic",
     }, (err, info) => {
         return info.accepted;  
       });

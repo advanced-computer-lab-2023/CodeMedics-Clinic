@@ -17,7 +17,7 @@ const Page = () => (
   <>
     <Head>
       <title>
-        El7a2ny Pharmacy
+        El7a2ny Clinic
       </title>
     </Head>
     <Box
