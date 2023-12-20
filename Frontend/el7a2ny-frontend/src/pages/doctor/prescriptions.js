@@ -137,7 +137,7 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Prescriptions
+                  Patient Prescriptions
                 </Typography>
               </Stack>
               <div>
