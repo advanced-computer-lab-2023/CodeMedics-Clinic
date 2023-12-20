@@ -7,7 +7,10 @@ import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import { SvgIcon } from '@mui/material';
-
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import ChecklistIcon from '@mui/icons-material/Checklist';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 export const items = [
   {
     title: 'Patients',
@@ -22,7 +25,7 @@ export const items = [
     path: '/admin/doctors',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <MedicalServicesIcon />
       </SvgIcon>
     )
   },
@@ -31,7 +34,7 @@ export const items = [
     path: '/admin/admins',
     icon: (
       <SvgIcon fontSize="small">
-        <UsersIcon />
+        <SupervisorAccountIcon />
       </SvgIcon>
     )
   },
@@ -40,7 +43,7 @@ export const items = [
     path: '/admin/requests',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <ChecklistIcon />
       </SvgIcon>
     )
   },
@@ -49,7 +52,7 @@ export const items = [
     path: '/admin/packages',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <AddShoppingCartIcon />
       </SvgIcon>
     )
   },
