@@ -79,15 +79,10 @@ export const PatientPrescriptionsTable = (props) => {
               Username: username,
               prescriptionID: prescriptionID
           }
-        );
-        for(let i = 0; i<items.length; i++){
-          const current = items[i];
-          if(current._id === prescriptionID){
-            current.filled = true;
-            break;
-          }
-        }
-        setPrescriptionStatus(items);
+        ).then((response) => {
+          console.log(response.data);
+          window.location.reload();
+        });
     } catch (error) {
       console.error('Error filling prescription:', error);
       setShowError(true);

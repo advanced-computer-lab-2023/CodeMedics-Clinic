@@ -40,6 +40,8 @@ const Page = () => {
             withCredentials: true,
           })
           .then((res) => {
+            Cookies.set('username', Cookies.get('doctor'));
+            Cookies.set('type', 'doctor');
             router.push('/doctor/patients');
           })
           .catch((err) => {

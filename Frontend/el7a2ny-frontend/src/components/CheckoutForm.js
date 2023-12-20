@@ -131,7 +131,7 @@ export default function CheckoutForm({activeStep, setStep}) {
   </span>
 </button>
 
-      {message && <div id="payment-message">{message}</div>}
+      {message && <Typography color="black">{message}</Typography>}
     </form>
   );
 }

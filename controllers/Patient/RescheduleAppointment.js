@@ -19,7 +19,7 @@ exports.RescheduleAppointment = async (req, res) => {
         patient.Appointments.push(appointmentID);
         // console.log(patient.Appointments);
         appointment.patient = oldAppointment.patient;
-        appointment.status = "upcoming";
+        appointment.status = "rescheduled";
         oldAppointment.patient = null;
         oldAppointment.status = "unreserved";
         // console.log(appointment, oldAppointment, patient);
