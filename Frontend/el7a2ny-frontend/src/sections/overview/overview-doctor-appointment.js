@@ -181,7 +181,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogTitle>Reschedule</DialogTitle>
               <DialogContent>
                 <DialogContentText>
-                  You can only reschedule upcoming and rescheduled appointments
+                  You can only reschedule upcoming or rescheduled appointments
                 </DialogContentText>
               </DialogContent>
               <DialogActions>

@@ -44,15 +44,15 @@ export const items = [
       </SvgIcon>
     )
   },
-  // {
-  //   title: 'Account',
-  //   path: '/admin/account',
-  //   icon: (
-  //     <SvgIcon fontSize="small">
-  //       <UserIcon />
-  //     </SvgIcon>
-  //   )
-  // },
+  {
+    title: 'Account',
+    path: '/admin/account',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserIcon />
+      </SvgIcon>
+    )
+  },
   {
     title: 'Settings',
     path: '/admin/settings',
@@ -62,4 +62,13 @@ export const items = [
       </SvgIcon>
     )
   },
+  {
+    title: 'New Admin',
+    path: '/admin/addAdmin',
+    icon: (
+      <SvgIcon fontSize="small">
+        <UserPlusIcon />
+      </SvgIcon>
+    )
+  }
 ];
