@@ -166,6 +166,25 @@ return (
           {prescriptionData.drugs.map((drug, index) => (
             <div key={index} style={{ marginBottom: '16px' }}>
               <Grid container spacing={2} alignItems="center">
+                <Grid item xs={3}>
+                  <TextField
+                    label={`Drug Name ${index + 1}`}
+                    value={drug.drugName}
+                    onChange={handleChange('drugName', index)}
+                    fullWidth
+                    margin="normal"
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    label={`Dosage ${index + 1}`}
+                    value={drug.dosage}
+                    onChange={handleChange('dosage', index)}
+                    fullWidth
+                    margin="normal"
+                    
+                  />
+                </Grid>
                 <Grid item xs={1}>
                   <Button
                     type="button"
@@ -178,26 +197,6 @@ return (
                   >
                     Remove
                   </Button>
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    label={`Drug Name ${index + 1}`}
-                    value={drug.drugName}
-                    onChange={handleChange('drugName', index)}
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <TextField
-                    label={`Dosage ${index + 1}`}
-                    value={drug.dosage}
-                    onChange={handleChange('dosage', index)}
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                  />
                 </Grid>
               </Grid>
             </div>

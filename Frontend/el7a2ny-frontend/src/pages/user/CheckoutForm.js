@@ -5,10 +5,11 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-
+import Message from "src/components/Message";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { Typography } from "@mui/material";
 
 export default function CheckoutForm({ appointmentId, patientUsername }) {
   const stripe = useStripe();
@@ -190,7 +191,7 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
             Pay using my Wallet
           </button>
         )}
-        {message && <div id="payment-message">{message}</div>}
+        {message && <Typography color="black">{message}</Typography>}
       </form>
 
     </div>
