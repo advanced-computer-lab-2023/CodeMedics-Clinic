@@ -230,8 +230,8 @@ const Page = () => {
                 items={searchData}
                 // onDeselectAll={customersSelection.handleDeselectAll}
                 // onDeselectOne={customersSelection.handleDeselectOne}
-                // onPageChange={handlePageChange}
-                // onRowsPerPageChange={handleRowsPerPageChange}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
                 // onSelectAll={customersSelection.handleSelectAll}
                 // onSelectOne={customersSelection.handleSelectOne}
                 page={page}

@@ -79,12 +79,12 @@ router.post('/download-contract', async (req, res) => {
       const pdfBuffer = await createAndDownloadContract(doctor);
   
       // Send the PDF buffer as a response
-      res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="Contract.pdf"`);
-      res.send(pdfBuffer);
+      res.status(200).send(pdfBuffer);
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      res.status(500).send('Error generating PDF');
+      
+      res.status(500).json({message: error.message});
     }
   });
   

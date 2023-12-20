@@ -28,7 +28,7 @@ export const CustomersTable = (props) => {
     items = [],
     onDeselectAll,
     onDeselectOne,
-    onPageChange = () => {},
+    onPageChange = () => { },
     onRowsPerPageChange,
     onSelectAll,
     onSelectOne,
@@ -46,17 +46,17 @@ export const CustomersTable = (props) => {
   const [invalidComplete, setInvalidComplete] = useState(false);
   const [added, setAdded] = useState(false);
   const CancelAppointment = async (appointmentID) => {
-    await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`).then(res =>{
+    await axios.patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`).then(res => {
       console.log(res);
       window.location.reload();
     }).catch((err) => {
       console.log(err);
     });
   };
-  
-  
+
+
   const CompleteAppointment = async (appointmentID) => {
-    await axios.patch(`http://localhost:8000/patient/updateAppointmentStatus?oldAppointmentId=${appointmentID}`+`&status=${"completed"}`).then(res =>{
+    await axios.patch(`http://localhost:8000/patient/updateAppointmentStatus?oldAppointmentId=${appointmentID}` + `&status=${"completed"}`).then(res => {
       console.log(res);
       setAdded(true);
     }
@@ -64,7 +64,7 @@ export const CustomersTable = (props) => {
       console.log(err);
     });
   }
-  
+
   const [appointmentMenu, setAppointmentMenu] = useState({});
   const [toBeUpdated, settoBeUpdated] = useState(null);
   const [cancelling, setCancelling] = useState(false);
@@ -95,7 +95,7 @@ export const CustomersTable = (props) => {
     cancelled: 'error',
     completed: 'success',
     rescheduled: 'warning'
-};  
+  };
   const handleMenuItemClick = (item, appointment) => {
     setAppointmentMenu({
       ...appointmentMenu,
@@ -105,28 +105,28 @@ export const CustomersTable = (props) => {
       },
     });
     if(item === "Cancel"){
-      if(appointment.status !== 'upcoming' && appointment.status !== 'rescheduled'){
+      if(appointment.status !== 'upcoming'){
           setInvalidCancel(true);
           settoBeUpdated(appointment);
           console.log("invalid cancel");
       }
-      else{
+      else {
         setCancelling(true);
         settoBeUpdated(appointment);
       }
     }
-    else if(item === "Complete"){
+    else if (item === "Complete") {
       const appointmentDate = new Date(appointment.date);
       appointmentDate.setHours(appointment.endHour);
       console.log(appointmentDate);
       console.log(new Date());
       console.log(appointmentDate < new Date());
-      if(appointmentDate > new Date() || (appointment.status !== 'upcoming' && appointment.status !== 'rescheduled')){
+      if(appointmentDate > new Date() || appointment.status !== 'upcoming'){
         setInvalidComplete(true);
         settoBeUpdated(appointment);
         console.log("invalid complete");
       }
-      else{
+      else {
         setCompleting(true);
         settoBeUpdated(appointment);
       }
@@ -134,7 +134,7 @@ export const CustomersTable = (props) => {
     }
   };
 
-  
+
 
   const buttons = [
     'Cancel', 'Complete'
@@ -147,26 +147,13 @@ export const CustomersTable = (props) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedSome}
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        onSelectAll?.();
-                      } else {
-                        onDeselectAll?.();
-                      }
-                    }}
-                  />
-                </TableCell>
+
                 <TableCell>
                   Patient Name
                 </TableCell>
                 <TableCell>
                   Date
                 </TableCell>
-                    
                 <TableCell>
                   From
                 </TableCell>
@@ -186,7 +173,7 @@ export const CustomersTable = (props) => {
                 const isSelected = selected.includes(appointment.id);
                 // const createdAt = format(appointment.createdAt, 'dd/MM/yyyy');
 
-                
+
 
 
                 return (
@@ -195,18 +182,6 @@ export const CustomersTable = (props) => {
                     key={appointment.id}
                     selected={isSelected}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => {
-                          if (event.target.checked) {
-                            onSelectOne?.(appointment.id);
-                          } else {
-                            onDeselectOne?.(appointment.id);
-                          }
-                        }}
-                      />
-                    </TableCell>
                     <TableCell>
                       <Stack
                         alignItems="center"
@@ -228,43 +203,42 @@ export const CustomersTable = (props) => {
                     <TableCell>
                       {appointment.endHour}
                     </TableCell>
-                    <TableCell>
                     <SeverityPill color={statusMap[appointment.status]}>
                         {appointment.status}
                     </SeverityPill>
-                    </TableCell>
                     <TableCell>
-                    <div>
-                      <Tooltip title="Menu">
-                        <IconButton
-                          onClick={(event) => handleButtonClick(event, appointment)}
-                          children={(
-                            <SvgIcon fontSize="small">
-                              <EllipsisVerticalIcon />
-                            </SvgIcon>
-                          )}
-                          color="primary"
-                        >
-                        </IconButton >
-                      </Tooltip>
-                      <Menu
+                      <div>
+                        <Tooltip title="Menu">
+                          <IconButton
+                            onClick={(event) => handleButtonClick(event, appointment)}
+                            children={(
+                              <SvgIcon fontSize="small">
+                                <EllipsisVerticalIcon />
+                              </SvgIcon>
+                            )}
+                            color="primary"
+                          >
+                          </IconButton >
+                        </Tooltip>
+                        <Menu
                           anchorEl={appointmentMenu[appointment._id]?.anchorEl}
                           open={Boolean(appointmentMenu[appointment._id]?.anchorEl)}
                           onClose={() => {
                             handleMenuClose(appointment._id);
-                            
+
                           }}
                           anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
                           transformOrigin={{ vertical: 'center', horizontal: 'right' }}
                         >
                           {buttons.map((item, index) => (
-                            <MenuItem key={index} onClick={() => {handleMenuItemClick(item, appointment)
+                            <MenuItem key={index} onClick={() => {
+                              handleMenuItemClick(item, appointment)
                             }}>
                               {item}
                             </MenuItem>
                           ))}
                         </Menu>
-                    </div>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -273,7 +247,8 @@ export const CustomersTable = (props) => {
           </Table>
         </Box>
         {cancelling && (<div>
-            <Dialog open={cancelling} onClose={() => {{
+          <Dialog open={cancelling} onClose={() => {
+            {
               setCancelling(false);
               settoBeUpdated(null);
             }}}>
@@ -298,7 +273,7 @@ export const CustomersTable = (props) => {
           </div>)
           }
           {invalidCancel && (<div>
-            <Message condition={invalidCancel} isError={true} setCondition={setInvalidCancel} title={"Invalid Action"} message = {"You can only cancel upcoming or rescheduled Appointments"} buttonAction={"Close"}/>
+            <Message condition={invalidCancel} isError={true} setCondition={setInvalidCancel} title={"Invalid Action"} message = {"You can only cancel upcoming Appointments"} buttonAction={"Close"}/>
           </div>)
           }
           {completing && (<div>
@@ -327,29 +302,31 @@ export const CustomersTable = (props) => {
           </div>)
           }
           {invalidComplete && (<div>
-            <Message condition={invalidComplete} setCondition={setInvalidComplete} title={"Invalid Action"} message = {toBeUpdated.status ==='upcoming'|| toBeUpdated.status === 'rescheduled' ? "You can only complete past Appointments" : "You can only complete upcoming or rescheduled Appointments"} buttonAction={"Close"}/>
+            <Message condition={invalidComplete} setCondition={setInvalidComplete} title={"Invalid Action"} message = {toBeUpdated.status ==='upcoming'? "You can only complete past Appointments" : "You can only complete upcoming Appointments"} buttonAction={"Close"}/>
           </div>)
           }
         {added && (
           <div>
-          <Dialog open={added} onClose={() => {{
+            <Dialog open={added} onClose={() => {
+              {
                 setAdded(false);
                 window.location.reload();
-                }}}>
-            <DialogTitle>Message</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
+              }
+            }}>
+              <DialogTitle>Message</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
                   Appointment Completed Successfully!
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => {
-                setAdded(false);
-                window.location.reload();
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => {
+                  setAdded(false);
+                  window.location.reload();
                 }}>ok</Button>
-            </DialogActions>
-          </Dialog>
-        </div>
+              </DialogActions>
+            </Dialog>
+          </div>
         )}
       </Scrollbar>
       <TablePagination

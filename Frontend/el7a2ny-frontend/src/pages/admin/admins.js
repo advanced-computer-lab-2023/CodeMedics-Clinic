@@ -129,6 +129,19 @@ return (
                 Admins
               </Typography>
             </Stack>
+            <div>
+                <Button
+                  startIcon={(
+                    <SvgIcon fontSize="small">
+                      <PlusIcon />
+                    </SvgIcon>
+                  )}
+                  variant="contained"
+                  onClick={() => router.push('/admin/addAdmin')}
+                >
+                  Add Admin
+                </Button>
+              </div>
           </Stack>
           <AdminsSearch/>
           <AdminsTable
