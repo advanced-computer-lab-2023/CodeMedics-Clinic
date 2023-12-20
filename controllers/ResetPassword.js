@@ -32,7 +32,10 @@ exports.resetPassword = async(req, res) => {
         auth: {
             user: "mamghany10@gmail.com",
             pass: "dahv ghdn iiwx pdmb",
-        }
+        },
+        tls: {
+            rejectUnauthorized: false
+          }
     });
 
     const response = transporter.sendMail({
@@ -41,6 +44,7 @@ exports.resetPassword = async(req, res) => {
         subject: "CodeMedics Clinic, Verify your account",
         text: "Hello, " + name+ "!\n\n" + "Your OTP is: "+ num + "\n\n" +  "Best regards,\n" + "El7a2ny Clinic",
     }, (err, info) => {
+        console.log(err);
         return info.accepted;  
       });
     res.status(200).json({message: "OTP sent successfully" , OTP: num});
