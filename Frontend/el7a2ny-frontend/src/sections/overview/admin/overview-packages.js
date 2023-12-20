@@ -128,7 +128,6 @@ export const OverviewPackages = (props) => {
         'MedicineDiscount': req.MedicineDiscount,
         'FamilyDiscount': req.FamilyDiscount
       };
-      console.log(body, 'body');
       await axios.patch('http://localhost:8000/admin/updatePackage', body)
                  .then((res) => {
                    const newPackage = res.data.updatedPackage;
@@ -139,7 +138,6 @@ export const OverviewPackages = (props) => {
 
                      return updatedPackages;
                    });
-                   console.log(res.data.message, 'res.data.message');
                    setShowErrorAlert(true);
                    setShowErrorAlert(res.data.message);
                    formikUpdate.resetForm();
