@@ -105,7 +105,7 @@ export const CustomersTable = (props) => {
       },
     });
     if(item === "Cancel"){
-      if(appointment.status !== 'upcoming'){
+      if(appointment.status !== 'upcoming' && appointment.status !== 'rescheduled'){
           setInvalidCancel(true);
           settoBeUpdated(appointment);
           console.log("invalid cancel");
@@ -121,7 +121,7 @@ export const CustomersTable = (props) => {
       console.log(appointmentDate);
       console.log(new Date());
       console.log(appointmentDate < new Date());
-      if(appointmentDate > new Date() || appointment.status !== 'upcoming'){
+      if(appointmentDate > new Date() || (appointment.status !== 'upcoming' && appointment.status !== 'rescheduled')){
         setInvalidComplete(true);
         settoBeUpdated(appointment);
         console.log("invalid complete");
@@ -228,9 +228,11 @@ export const CustomersTable = (props) => {
                     <TableCell>
                       {appointment.endHour}
                     </TableCell>
+                    <TableCell>
                     <SeverityPill color={statusMap[appointment.status]}>
                         {appointment.status}
                     </SeverityPill>
+                    </TableCell>
                     <TableCell>
                     <div>
                       <Tooltip title="Menu">
@@ -296,7 +298,7 @@ export const CustomersTable = (props) => {
           </div>)
           }
           {invalidCancel && (<div>
-            <Message condition={invalidCancel} isError={true} setCondition={setInvalidCancel} title={"Invalid Action"} message = {"You can only cancel upcoming Appointments"} buttonAction={"Close"}/>
+            <Message condition={invalidCancel} isError={true} setCondition={setInvalidCancel} title={"Invalid Action"} message = {"You can only cancel upcoming or rescheduled Appointments"} buttonAction={"Close"}/>
           </div>)
           }
           {completing && (<div>
@@ -325,7 +327,7 @@ export const CustomersTable = (props) => {
           </div>)
           }
           {invalidComplete && (<div>
-            <Message condition={invalidComplete} setCondition={setInvalidComplete} title={"Invalid Action"} message = {toBeUpdated.status ==='upcoming'? "You can only complete past Appointments" : "You can only complete upcoming Appointments"} buttonAction={"Close"}/>
+            <Message condition={invalidComplete} setCondition={setInvalidComplete} title={"Invalid Action"} message = {toBeUpdated.status ==='upcoming'|| toBeUpdated.status === 'rescheduled' ? "You can only complete past Appointments" : "You can only complete upcoming or rescheduled Appointments"} buttonAction={"Close"}/>
           </div>)
           }
         {added && (

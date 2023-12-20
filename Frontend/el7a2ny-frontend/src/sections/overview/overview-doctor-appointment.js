@@ -172,7 +172,7 @@ export const PatientAppointmentsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
-        {rescheduling && toBeUpdated.status !== 'upcoming' && (<div>
+        {rescheduling && toBeUpdated.status !== 'upcoming' && toBeUpdated.status !== 'rescheduled' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
                   setToBeUpdated(null);
@@ -181,7 +181,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogTitle>Reschedule</DialogTitle>
               <DialogContent>
                 <DialogContentText>
-                  You can only reschedule upcoming appointments
+                  You can only reschedule upcoming and rescheduled appointments
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -193,7 +193,7 @@ export const PatientAppointmentsTable = (props) => {
               </DialogActions>
             </Dialog>
           </div>)}
-        {rescheduling && toBeUpdated.status === 'upcoming' && (<div>
+        {rescheduling && (toBeUpdated.status === 'upcoming' || toBeUpdated.status === 'rescheduled') && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
                   setToBeUpdated(null);

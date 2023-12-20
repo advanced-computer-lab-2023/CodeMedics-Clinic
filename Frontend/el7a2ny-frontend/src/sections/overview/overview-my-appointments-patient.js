@@ -136,7 +136,7 @@ export const PatientAppointmentsTable = (props) => {
       },
     });
     if(item === "Cancel"){
-      if(appointment.status !== 'upcoming'){
+      if(appointment.status !== 'upcoming' && appointment.status !== 'rescheduled'){
           setInvalidCancel(true);
           setToBeUpdated(appointment);
       }
@@ -289,7 +289,7 @@ export const PatientAppointmentsTable = (props) => {
             </TableBody>
           </Table>
         </Box>
-          {rescheduling && toBeUpdated.status !== 'upcoming' && (<div>
+          {rescheduling && toBeUpdated.status !== 'upcoming' && toBeUpdated.status != 'rescheduled' && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
                   setToBeUpdated(null);
@@ -304,7 +304,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogTitle>Invalid Action</DialogTitle>
               <DialogContent>
               <DialogContentText sx={{ color: 'error.main' }}>
-                  Appointment should be upcoming to be rescheduled
+                  Appointment should be upcoming or rescheduled to be rescheduled
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -324,7 +324,7 @@ export const PatientAppointmentsTable = (props) => {
             </Dialog>
           </div>)
           }
-          {rescheduling && toBeUpdated.status === 'upcoming' && (<div>
+          {rescheduling && (toBeUpdated.status === 'upcoming' || toBeUpdated.status === 'rescheduled') && (<div>
             <Dialog open={rescheduling} onClose={() => {{
                   setRescheduling(false);
                   setToBeUpdated(null);
@@ -428,7 +428,7 @@ export const PatientAppointmentsTable = (props) => {
               <DialogTitle>Invalid Action</DialogTitle>
               <DialogContent>
               <DialogContentText sx={{ color: 'error.main' }}>
-                Appointment should be upcoming to be rescheduled
+                Appointment should be upcoming or rescheduled to be rescheduled
               </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -445,7 +445,7 @@ export const PatientAppointmentsTable = (props) => {
               </DialogActions>
             </Dialog>
           </div>)}
-          {cancelling && toBeUpdated.status === 'upcoming' && (<div>
+          {cancelling && (toBeUpdated.status === 'upcoming' || toBeUpdated.status === 'rescheduled') && (<div>
             
             <Dialog open={cancelling} onClose={() => {{
                   setCancelling(false);
