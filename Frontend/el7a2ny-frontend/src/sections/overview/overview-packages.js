@@ -159,16 +159,42 @@ export const OverviewPackages = (props) => {
               <Stack direction="row">
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
                   {(Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' || Object.keys(me).length !== 0 && me.HealthPackage.membership !== myPackage.Name && me.HealthPackage.membership !== "Free") ?
-                    <Button variant="contained" disabled>
-                      Subscribe
-                    </Button>
+                    <>
+                      <Button variant="contained" disabled>
+                        Add
+                      </Button>
+                      <Button variant="contained" disabled>
+                        Update
+                      </Button>
+                      <Button variant="contained" disabled>
+                        Delete
+                      </Button>
+                    </>
                     : Object.keys(me).length !== 0 && me.HealthPackage.status === 'Inactive' ?
-                      <Button variant="contained" onClick={() => subscribeHealthPackage(myPackage)}>
-                        Subscribe
-                      </Button> :
-                      <Button variant="contained" onClick={unsubscribeHealthPackage}>
-                        Unsubscribe
-                      </Button>}
+                      <>
+                        <Button variant="contained" onClick={() => subscribeHealthPackage(myPackage)}>
+                          Add
+                        </Button>
+                        <Button variant="contained" disabled>
+                          Update
+                        </Button>
+                        <Button variant="contained" disabled>
+                          Delete
+                        </Button>
+                      </>
+                      :
+                      <>
+                        <Button variant="contained" disabled>
+                          Add
+                        </Button>
+                        <Button variant="contained" disabled>
+                          Update
+                        </Button>
+                        <Button variant="contained" onClick={unsubscribeHealthPackage}>
+                          Delete
+                        </Button>
+                      </>
+                  }
                 </CardActions>
               </Stack>
             </Card>

@@ -126,13 +126,24 @@ const addPackage = async (req, res) => {
         const newPackage = new packageModel({ Name, Price, SessionDiscount, MedicineDiscount, FamilyDiscount });
         try {
             await newPackage.save();
-            return res.status(201).json({message: '${Name} Package created successfully!'});
+            return res.status(201).json({
+                message: `${Name} Package created successfully!`,
+                package: {
+                    _id: newPackage._id,
+                    Name: newPackage.Name,
+                    Price: newPackage.Price,
+                    SessionDiscount: newPackage.SessionDiscount,
+                    MedicineDiscount: newPackage.MedicineDiscount,
+                    FamilyDiscount: newPackage.FamilyDiscount,
+
+                },
+            });
         } catch (error) {
             return res.status(409).json({ message: error.message });
         }
     } else {
         console.log("Package already exists");
-        return res.status(400).json({ message: "Package already exists" });
+        return res.status(400).json({ message: "Package name already exists" });
     }
 }
 
@@ -180,21 +191,22 @@ const updatePackage = async (req, res) => {
     // Check which variables (besides Name) exist in the request body
     const updateFields = {};
 
-    if (Price !== undefined) {
+    if (Price !== undefined && Price !== '') {
         updateFields.Price = Price;
     }
 
-    if (SessionDiscount !== undefined) {
+    if (SessionDiscount !== undefined && SessionDiscount !== '') {
         updateFields.SessionDiscount = SessionDiscount;
     }
 
-    if (MedicineDiscount !== undefined) {
+    if (MedicineDiscount !== undefined && MedicineDiscount !== '') {
         updateFields.MedicineDiscount = MedicineDiscount;
     }
 
-    if (FamilyDiscount !== undefined) {
+    if (FamilyDiscount !== undefined && FamilyDiscount !== '') {
         updateFields.FamilyDiscount = FamilyDiscount;
     }
+
 
     try {
         const updatedPackage = await packageModel.findOneAndUpdate(
@@ -204,7 +216,10 @@ const updatePackage = async (req, res) => {
         );
 
         if (updatedPackage) {
-            return res.status(200).json(Name + " has been updated!");
+            return res.status(200).json({
+                message: Name + ' has been updated!',
+                updatedPackage: updatedPackage.toJSON() // Convert the Mongoose model to JSON
+            });
         } else {
             return res.status(404).json({message: "Package not found in the database!"});
         }

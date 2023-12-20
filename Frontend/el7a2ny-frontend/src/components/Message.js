@@ -4,8 +4,6 @@ import React from 'react';
 import { DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
 const Message = ({condition, setCondition, title, message, isError, buttonAction }) => {
-    console.log(condition);
-    console.log(title, message, buttonAction);
   return (
     (<div>
         <Dialog open={condition} onClose={() => {{
