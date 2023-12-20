@@ -201,7 +201,7 @@ export default function PackageCheckoutForm({ packageName, packagePrice, setMess
             Pay using wallet
           </button>
         )}
-        {message && <div id="payment-message">{message}</div>}
+        {message && <Typography color="black">{message}</Typography>}
       </form>
     </div>
     
