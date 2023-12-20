@@ -22,6 +22,8 @@ import {
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import Message from 'src/components/Message';
 
+const username = Cookies.get('doctor');
+
 const Page = () => {
     const router = useRouter();
     const auth = useAuth();
@@ -54,7 +56,12 @@ const Page = () => {
        // Redirect to the doctor's dashboard
     };
   
-    const handleRejectContract = () => {
+    const handleRejectContract = async () => {
+      await axios.post(`http://localhost:8000/admin/acceptRejectDoctorRequest`, {
+        username: username,
+        action: "reject"
+      }
+      )
       auth.signOut();
       router.push('/auth/login'); // Redirect to the login page
     };
@@ -135,7 +142,7 @@ const Page = () => {
           color="error"
           sx={{ width: 'calc(50% - 5px)', fontSize: '1.1rem' }}
         >
-          Sign Out
+          Reject
         </Button>
       </Box>
         </Box>

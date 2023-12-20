@@ -284,7 +284,7 @@ const acceptRejectDoctorRequest = async (req, res) => {
         } 
         else if (action === 'reject') {
             // If rejected, delete the doctor's record from the database
-            await doctorModel.deleteOne({ Username: username, Status: 'Pending' });
+            await doctorModel.deleteOne({ Username: username});
             // Return success message or any relevant information
             return res.status(200).json({ message: 'Doctor request rejected and record deleted' });
         } else {
