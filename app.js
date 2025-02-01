@@ -1,4 +1,3 @@
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv').config();
@@ -7,7 +6,7 @@ const logger = require('morgan');
 const colors = require('colors');
 const cors = require('cors');
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: `http://localhost:${3000}`,
   credentials: true,
   optionSuccessStatus: 200
 };
