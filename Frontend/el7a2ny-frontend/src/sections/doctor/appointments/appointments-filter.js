@@ -61,7 +61,6 @@ export const AppointmentsFilter = ({setState1, setState2 , setState3, setCurUser
           fullWidth
           label="Patient"
           defaultValue= {curUsername}
-          helperText=""
           onChange={(str) => {setCurUsername(str.target.value)}}
         >
         {familyMembers && familyMembers.map((option) => (
