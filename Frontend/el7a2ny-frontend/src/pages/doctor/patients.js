@@ -14,7 +14,7 @@ import { set } from 'nprogress';
 import { bool } from 'prop-types';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 const now = new Date();
 
 const useMedicines = (data, page, rowsPerPage) => {

@@ -6,7 +6,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { Button, IconButton, SvgIcon } from '@mui/material';
 import FileSaver from 'file-saver';
 import axios from 'axios';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';

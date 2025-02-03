@@ -15,7 +15,7 @@ import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
-import  Message from 'src/components/Message';
+import  Message from 'src/components/Miscellaneous/Message';
 import { DialogActions, DialogTitle } from '@mui/material';
 import { set } from 'lodash';
 const now = new Date();

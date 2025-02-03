@@ -10,7 +10,7 @@ import { PrescriptionsFilter } from 'src/sections/user/prescriptions-filter';
 import { PatientPrescriptionsTable } from 'src/sections/overview/overview-latest-prescriptions';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';

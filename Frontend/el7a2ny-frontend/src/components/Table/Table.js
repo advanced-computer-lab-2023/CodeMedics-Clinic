@@ -1,31 +1,30 @@
-import { useContext } from "react";
+import {createContext } from "react";
 import {Box, Container, Stack} from "@mui/material"
 import Title from "./Body/Title";
 import Header from "./Body/Header";
 import Filters from "../Filters/Filters";
-import { TableContext } from "../Themes/PatientPrescriptionsTheme";
 import Content from "./Body/Content";
 import NoRecords from "../NoRecords";
 import LoadingSpinner from "../Miscellaneous/LoadingSpinner";
+const TableContext = createContext();
 
-function Table() {
+function Table({value}) {
   console.log("table rendered")
-  const { title, filters, data, noRecords, loading } = useContext(TableContext);
   
   return (
-    <>
-      <Title title={title} />
+    <TableContext.Provider value={value}>
+      <Title title={value.title} />
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Header name={title} />
-            <Filters filters={filters} />
-            {loading ? <LoadingSpinner/> : data.length == 0 ? <NoRecords message={noRecords}/> : <Content />}
+            <Header name={value.title} />
+            <Filters filters={value.filters} />
+            {value.loading ? <LoadingSpinner/> : value.data.length == 0 ? <NoRecords message={value.noRecords}/> : <Content />}
           </Stack>
         </Container>
       </Box>
-    </>
+    </TableContext.Provider>
   );
 }
 
-export default Table;
+export {Table, TableContext};

@@ -21,7 +21,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
 import axios from 'axios';
 import { useState } from 'react';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 export const CustomersTable = (props) => {
   const {
     count = 0,

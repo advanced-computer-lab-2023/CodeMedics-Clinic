@@ -1,4 +1,4 @@
-import { PatientPrescriptionsTheme } from "src/components/Themes/PatientPrescriptionsTheme";
+import { PatientPrescriptionsTheme } from "src/Themes/PatientPrescriptionsTheme";
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 const Page = () => {
   return <PatientPrescriptionsTheme />;

@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
 import Link from 'next/link';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 

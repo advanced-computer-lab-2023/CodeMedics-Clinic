@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const now = new Date();
 

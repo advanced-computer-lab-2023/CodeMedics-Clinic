@@ -15,7 +15,7 @@ import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import { set } from 'lodash';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 const now = new Date();
 
 

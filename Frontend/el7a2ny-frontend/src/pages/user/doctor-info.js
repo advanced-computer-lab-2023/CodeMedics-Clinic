@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { OverviewDoctorInfoProfile } from 'src/sections/overview/overview-doctor-info-profile';
 import { OverviewDoctorInfoDetails } from 'src/sections/overview/overview-doctor-info-details';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const Page = () => {
     

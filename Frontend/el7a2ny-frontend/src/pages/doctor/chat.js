@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { Stack } from '@mui/system';
 import Cookies from 'js-cookie';
 import socket from 'src/components/socket';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const now = new Date();
 

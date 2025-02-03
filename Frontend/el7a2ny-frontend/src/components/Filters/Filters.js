@@ -1,12 +1,13 @@
 import { Card, Stack } from "@mui/material";
 import DateFilter from "./DateFilter";
 import TextFilter from "./TextFilter";
-import MenuFilter from "./Menu/MenuFilter";
+import MenuFilter from "./MenuFilter";
 
 function Filters({filters}){
-    console.log("all filters rendered")
+    console.log("all filters rendered ", filters)
     const allFilters = filters.map((filter) => {
         if(filter.type === "menu"){
+            console.log("menu filter", filter)
             return <MenuFilter 
                 options={filter.options}
                 menuName={filter.name}

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { OverviewPackageInfo } from 'src/sections/overview/overview-package-info';
 import { OverviewPackageInfoDetails } from 'src/sections/overview/overview-package-info-details';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const Page = () => {
 

@@ -13,7 +13,7 @@ import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
 import FileSaver from 'file-saver';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 const now = new Date();
 
 const Page = () => {

@@ -26,7 +26,7 @@ import 'reactjs-popup/dist/index.css';
 import { indigo } from '../../../theme/colors';
 import { PatientPopup } from '../Popup-generic';
 import axios from 'axios';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 export const DoctorsTable = (props) => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');

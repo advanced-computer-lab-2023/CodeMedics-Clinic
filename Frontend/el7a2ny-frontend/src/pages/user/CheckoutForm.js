@@ -5,7 +5,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import Message from "src/components/Message";
+import Message from "src/components/Miscellaneous/Message";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";

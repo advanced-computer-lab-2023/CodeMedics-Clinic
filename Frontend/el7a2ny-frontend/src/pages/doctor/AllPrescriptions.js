@@ -11,7 +11,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 let doctorUsername = '';
 const doctorUsernameCookie = Cookies.get('jwt');

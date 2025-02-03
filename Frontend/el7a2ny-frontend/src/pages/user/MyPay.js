@@ -8,7 +8,7 @@ import Head from 'next/head';
 import { Box } from '@mui/system';
 import { Container, Grid, Typography, Stack, Card } from '@mui/material';
 import CheckoutForm from './CheckoutForm';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const stripePromise = loadStripe('pk_test_51OA3YuHNsLfp0dKZSCi30qg6xY63jh2SiffqCIa42j0oTXnZ29hNOalf44tjkJZsjT27xldMpzbojdn6vYcEx9CI00kvtRqele');
 

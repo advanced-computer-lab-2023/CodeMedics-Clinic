@@ -11,7 +11,7 @@ import { Box } from '@mui/system';
 import { Container, Grid, Typography, Stack, Card } from '@mui/material';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const Page = () => {
   const [clientSecret, setClientSecret] = useState('');

@@ -3,7 +3,7 @@ import { Box, Container, Typography } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const Page = () => {
   const [notifications, setNotifications] = useState([]);

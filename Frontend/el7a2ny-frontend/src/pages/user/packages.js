@@ -4,7 +4,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewPackages } from 'src/sections/overview/overview-packages';
 import axios from 'axios';
 import { useState , useEffect } from 'react';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const now = new Date();
 

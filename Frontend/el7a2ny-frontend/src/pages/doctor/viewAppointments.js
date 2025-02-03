@@ -12,7 +12,7 @@ import { PatientAppointmentsTable } from 'src/sections/overview/overview-doctor-
 import axios from 'axios';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {

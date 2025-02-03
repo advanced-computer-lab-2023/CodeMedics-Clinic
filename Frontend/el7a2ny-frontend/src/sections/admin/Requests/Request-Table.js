@@ -7,7 +7,7 @@ import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
 import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import ArrowDownTrayIcon from '@heroicons/react/24/solid/ArrowDownTrayIcon';
 import file from '../../../file.png'
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 import {
   Avatar,
   Box,

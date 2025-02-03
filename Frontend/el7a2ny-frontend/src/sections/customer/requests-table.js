@@ -27,7 +27,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { set } from 'lodash';
 import Cookies from 'js-cookie';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 export const CustomersTable = (props) => {
   const {

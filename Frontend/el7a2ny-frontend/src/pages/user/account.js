@@ -6,7 +6,7 @@ import { AccountProfileDetailsPatient } from 'src/sections/account/account-profi
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 
 const Page = () => {

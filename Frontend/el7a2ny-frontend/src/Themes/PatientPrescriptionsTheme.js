@@ -1,11 +1,8 @@
-import { createContext } from "react";
-import Message from "../Miscellaneous/Message";
+import Message from "../components/Miscellaneous/Message";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Table from "../Table/Table";
+import {Table} from "../components/Table/Table";
 
-const TableContext = createContext();
-const PrescriptionsRoute = "http://localhost:8000/patient/prescriptions";
 
 function PatientPrescriptionsTheme() {
   const [allData, setAllData] = useState(null);
@@ -18,6 +15,8 @@ function PatientPrescriptionsTheme() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
+  
+  const dataRoute = "http://localhost:8000/patient/prescriptions";
   console.log("theme rendered")
   const filters = [
     {
@@ -88,7 +87,7 @@ function PatientPrescriptionsTheme() {
 
   useEffect(() => {
     axios
-      .get(PrescriptionsRoute, { withCredentials: true })
+      .get(dataRoute, { withCredentials: true })
       .then((res) => {
         const prescriptions = sortByDate(res.data);
         setAllData(prescriptions);
@@ -122,7 +121,7 @@ function PatientPrescriptionsTheme() {
 
 
   return (
-    <TableContext.Provider
+      <Table
       value={{
         data,
         filters,
@@ -133,15 +132,11 @@ function PatientPrescriptionsTheme() {
         setShowError,
         setError,
         setLoading,
-        filterData,
-        setData,
         setAllData,
         noRecords: "No Prescriptions Found",
       }}
-    >
-      <Table />
-    </TableContext.Provider>
+      />
   );
 }
 
-export { TableContext, PatientPrescriptionsTheme };
+export { PatientPrescriptionsTheme };

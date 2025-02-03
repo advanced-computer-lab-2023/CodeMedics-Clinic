@@ -5,7 +5,7 @@ import { TableRow, TableCell, TextField, IconButton, SvgIcon } from "@mui/materi
 import EyeIcon from "@heroicons/react/24/solid/EyeIcon";
 import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 import ArrowDownTrayIcon from "@heroicons/react/24/solid/ArrowDownTrayIcon";
-import { TableContext } from "../Themes/PatientPrescriptionsTheme";
+import { TableContext } from "../Table/Table";
 import PopUp from "../Miscellaneous/PopUp";
 import FileSaver from 'file-saver';
 
@@ -13,7 +13,7 @@ import FileSaver from 'file-saver';
 
 function PatientPrescriptionActions({ state }) {
   const [viewing, setViewing] = useState(false);
-  const { setShowError, setError, setLoading, setAllData, setData } = useContext(TableContext);
+  const { setShowError, setError, setLoading, setAllData } = useContext(TableContext);
   const downloadPDF = async () => {
     try {
       console.log("State", state, state._id)

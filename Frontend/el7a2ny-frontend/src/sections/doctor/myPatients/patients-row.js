@@ -5,7 +5,7 @@ import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import { format } from 'date-fns';
 import {

@@ -1,4 +1,5 @@
 import { TextField, MenuItem } from "@mui/material";
+import { useEffect, useState } from "react";
 
 function MenuFilter({ options, menuName, setValue }) {
 
@@ -13,7 +14,7 @@ function MenuFilter({ options, menuName, setValue }) {
       sx={{ width: 500 }}
       select
       label={menuName}
-      defaultValue={options[0].value}
+      defaultValue={options.length ? options[0].value: ""}
       onChange={(event) => {
         setValue(event.target.value);
       }}

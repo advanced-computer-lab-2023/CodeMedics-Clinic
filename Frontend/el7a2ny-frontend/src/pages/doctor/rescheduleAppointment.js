@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import FileSaver from 'file-saver';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import {
   Button,
