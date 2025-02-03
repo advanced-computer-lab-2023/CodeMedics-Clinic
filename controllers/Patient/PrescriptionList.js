@@ -157,7 +157,7 @@ exports.createAndDownloadPDF = (prescription) => {
     try {
       const PDFDocument = require('pdfkit');
       const doc = new PDFDocument();
-
+      console.log(prescription)
       // Load the regular font
       doc.font('./Frontend/el7a2ny-frontend/public/assets/Rubik-Light.ttf'); 
       

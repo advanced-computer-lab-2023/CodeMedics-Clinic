@@ -137,6 +137,8 @@ function PatientPrescriptionsTheme() {
         setError,
         setLoading,
         filterData,
+        setData,
+        setAllData,
         noRecords: "No Prescriptions Found",
       }}
     >

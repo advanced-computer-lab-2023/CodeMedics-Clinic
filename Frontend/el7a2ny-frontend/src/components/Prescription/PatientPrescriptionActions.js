@@ -7,17 +7,19 @@ import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 import ArrowDownTrayIcon from "@heroicons/react/24/solid/ArrowDownTrayIcon";
 import { TableContext } from "../Themes/PatientPrescriptionsTheme";
 import PopUp from "../Miscellaneous/PopUp";
+import FileSaver from 'file-saver';
 
-function PatientPrescriptionActions({ state, setState }) {
+
+
+function PatientPrescriptionActions({ state }) {
   const [viewing, setViewing] = useState(false);
-  const { setShowError, setError, setLoading, data } = useContext(TableContext);
-  console.log(state._id)
-  console.log(data)
-  const downloadPDF = async (state) => {
+  const { setShowError, setError, setLoading, setAllData, setData } = useContext(TableContext);
+  const downloadPDF = async () => {
     try {
+      console.log("State", state, state._id)
       const response = await axios.post(
         `http://localhost:8000/patient/download-prescription-pdf`,
-        { state },
+        { prescription: state },
         { responseType: "blob" }
       );
 
@@ -33,6 +35,7 @@ function PatientPrescriptionActions({ state, setState }) {
 
   const fillPrescription = async (prescriptionID) => {
     try {
+      console.log("before filling", state)
       setLoading(true);
       await axios
         .patch(`http://localhost:8000/patient/fillPrescription`, {
@@ -41,10 +44,16 @@ function PatientPrescriptionActions({ state, setState }) {
         })
         .then((response) => {
           console.log(response.data);
-          setState((prev) => ({
-            ...prev,
-            filled: true,
-          }));
+          setAllData(prev => {
+            const temp = prev.map(item => {
+              if(item._id == state._id){
+                item.filled = true
+              }
+              return item
+            })
+            setData(temp)
+            return temp
+          })
           setLoading(false);
         });
     } catch (error) {
@@ -54,6 +63,8 @@ function PatientPrescriptionActions({ state, setState }) {
       setError(error.response.data.message);
     }
   };
+
+  console.log("PP rendered", state)
 
   const drugs = state.Drug.map((drug, medicineIndex) => (
     <TableRow hover key={medicineIndex}>
@@ -86,7 +97,7 @@ function PatientPrescriptionActions({ state, setState }) {
             <CheckCircleIcon />
           </SvgIcon>
         </IconButton>
-        <IconButton title="Download as PDF" onClick={() => downloadPDF(state)}>
+        <IconButton title="Download as PDF" onClick={() => downloadPDF()}>
           <SvgIcon fontSize="small">
             <ArrowDownTrayIcon />
           </SvgIcon>
