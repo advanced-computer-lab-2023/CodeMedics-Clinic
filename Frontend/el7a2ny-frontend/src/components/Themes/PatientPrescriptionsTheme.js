@@ -1,5 +1,4 @@
 import { createContext } from "react";
-import LoadingSpinner from "../Miscellaneous/LoadingSpinner";
 import Message from "../Miscellaneous/Message";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -84,6 +83,7 @@ function PatientPrescriptionsTheme() {
     console.log("newData", newData);
     console.log("All data", allData)
     setData(newData);
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -106,7 +106,7 @@ function PatientPrescriptionsTheme() {
   useEffect(() => {
     if(allData && allData.length)
         filterData();
-  }, [startDate, endDate, status, doctorName]);
+  }, [startDate, endDate, status, doctorName, allData]);
 
   if (showError) {
     return (
@@ -120,10 +120,6 @@ function PatientPrescriptionsTheme() {
     );
   }
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
 
   return (
     <TableContext.Provider
@@ -131,6 +127,7 @@ function PatientPrescriptionsTheme() {
         data,
         filters,
         columns,
+        loading,
         elementType: "patientPrescription",
         title: "Prescriptions",
         setShowError,

@@ -45,15 +45,13 @@ function PatientPrescriptionActions({ state }) {
         .then((response) => {
           console.log(response.data);
           setAllData(prev => {
-            const temp = prev.map(item => {
+            return prev.map(item => {
               if(item._id != state._id)
                 return item
               return {...item, filled: true}
             })
-            setData(temp)
-            return temp
           })
-          setLoading(false);
+          // loading = false is in the useEffect in the theme
         });
     } catch (error) {
       console.error("Error filling prescription: ", error);

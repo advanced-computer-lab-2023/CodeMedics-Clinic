@@ -6,10 +6,11 @@ import Filters from "../Filters/Filters";
 import { TableContext } from "../Themes/PatientPrescriptionsTheme";
 import Content from "./Body/Content";
 import NoRecords from "../NoRecords";
+import LoadingSpinner from "../Miscellaneous/LoadingSpinner";
 
 function Table() {
   console.log("table rendered")
-  const { title, filters, data, noRecords } = useContext(TableContext);
+  const { title, filters, data, noRecords, loading } = useContext(TableContext);
   
   return (
     <>
@@ -19,7 +20,7 @@ function Table() {
           <Stack spacing={3}>
             <Header name={title} />
             <Filters filters={filters} />
-            {data.length == 0 ? <NoRecords message={noRecords}/> : <Content />}
+            {loading ? <LoadingSpinner/> : data.length == 0 ? <NoRecords message={noRecords}/> : <Content />}
           </Stack>
         </Container>
       </Box>
