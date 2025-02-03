@@ -46,10 +46,9 @@ function PatientPrescriptionActions({ state }) {
           console.log(response.data);
           setAllData(prev => {
             const temp = prev.map(item => {
-              if(item._id == state._id){
-                item.filled = true
-              }
-              return item
+              if(item._id != state._id)
+                return item
+              return {...item, filled: true}
             })
             setData(temp)
             return temp
