@@ -99,7 +99,6 @@ export const PatientPrescriptionsTable = (props) => {
   return (
     <Card>
       <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
-      <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
@@ -209,7 +208,6 @@ export const PatientPrescriptionsTable = (props) => {
           <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
         )}
         
-      </Scrollbar>
       <TablePagination
         component="div"
         count={count}
