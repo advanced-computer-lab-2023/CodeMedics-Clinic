@@ -11,7 +11,8 @@ import Head from "../Table/Body/Head";
 import PatientAppointmentInfo from "./PatientAppointmentInfo";
 
 function PatientAppointmentActions({ appointment }) {
-  const { setShowError, setError, setAllData, currentPatient, setPopUpDisplay, setPopUpElement } = useContext(TableContext);
+  const { setShowError, setError, setAllData, currentPatient, setPopUpDisplay, setPopUpElement } =
+    useContext(TableContext);
   const [loading, setLoading] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
@@ -24,8 +25,8 @@ function PatientAppointmentActions({ appointment }) {
           <Button
             onClick={() => {
               hanldeRescheduleAppointment(item, appointment);
-              setRescheduling(false)
-              setPopUpDisplay(false)
+              setRescheduling(false);
+              setPopUpDisplay(false);
             }}
           >
             Reschedule
@@ -43,7 +44,9 @@ function PatientAppointmentActions({ appointment }) {
       actionName="Close"
       setPopUpDisplay={setPopUpDisplay}
     >
-      {loading ? <LoadingSpinner /> : (
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
         <Table>
           {unreservedAppointments.length ? (
             <>
@@ -60,19 +63,12 @@ function PatientAppointmentActions({ appointment }) {
     </PopUp>
   );
 
-  useEffect(() => {
-    if (rescheduling) {
-      setPopUpDisplay(true);
-      setPopUpElement(reschedulePopUp);
-    }
-  }, [rescheduling]);
-
   const getUnreservedAppointments = async (doctorUsername) => {
     setLoading(true);
     await axios
       .get("http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername=" + doctorUsername)
       .then((res) => {
-        console.log(doctorUsername, "unreserved slots", res.data.appointments)
+        console.log(doctorUsername, "unreserved slots", res.data.appointments);
         setUnreservedAppointments(res.data.appointments);
         setLoading(false);
       })
@@ -107,7 +103,7 @@ function PatientAppointmentActions({ appointment }) {
         `http://localhost:8000/patient/RescheduleAppointment?appointmentID=${curAppointment._id}&oldAppointmentID=${oldAppointment._id}&username=${currentPatient}`
       )
       .then((res) => {
-        console.log("LLL", res)
+        console.log("LLL", res);
         setAllData((prev) =>
           prev.map((item) => {
             if (item._id !== oldAppointment._id) return item;
@@ -139,6 +135,13 @@ function PatientAppointmentActions({ appointment }) {
         setError(err.response.data.message);
       });
   };
+
+  useEffect(() => {
+    if (rescheduling) {
+      setPopUpDisplay(true);
+      setPopUpElement(reschedulePopUp);
+    }
+  }, [rescheduling, loading]);
 
   useEffect(() => {
     getUnreservedAppointments(appointment.doctorUsername);
