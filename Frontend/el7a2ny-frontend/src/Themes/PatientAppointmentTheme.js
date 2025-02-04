@@ -15,7 +15,8 @@ function PatientAppointmentTheme() {
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
   const [currentPatient, setCurrentPatient] = useState(Cookies.get("username"));
-
+  const [popUpDisplay, setPopUpDisplay] = useState(false)
+  const [popUpElement, setPopUpElement] = useState(null)
   const dataRoute = "http://localhost:8000/patient/getAllFamilyAppointments";
   const familyMembersRoute = "http://localhost:8000/patient/familyMembers";
   
@@ -148,6 +149,11 @@ function PatientAppointmentTheme() {
         setShowError,
         setError,
         setLoading,
+        popUpDisplay,
+        popUpElement,
+        setPopUpDisplay,
+        setPopUpElement,
+        currentPatient,
         title: "Appointments",
         elementType: "patientAppointment",
         noRecords: "No Appointments Found",

@@ -7,7 +7,7 @@ import { TableContext } from "../Table";
 import { Box } from "@mui/system";
 
 function Content() {
-  const { elementType, setShowError, setError, columns, data } = useContext(TableContext);
+  const { elementType, setShowError, setError, columns, data, popUpDisplay, popUpElement } = useContext(TableContext);
 
   const content = data.map((item) => {
     if (elementType == "patientPrescription") {
@@ -21,7 +21,9 @@ function Content() {
       setError("unhandled Table Element Type");
     }
   });
-
+  if(popUpDisplay){
+    console.log("POP up display is true", popUpElement)
+  }
   return (
     <Card>
       <Box>
@@ -29,6 +31,7 @@ function Content() {
           <Head columns={columns} />
           <TableBody>{content}</TableBody>
         </Table>
+        {popUpDisplay && popUpElement}
       </Box>
     </Card>
   );

@@ -56,7 +56,7 @@ exports.RescheduleAppointment = async (req, res) => {
             timestamp: new Date(),
         });
         await patient.save();
-        res.status(200).json({ message: 'Appointment rescheduled successfully' });
+        res.status(200).json({ message: 'Appointment rescheduled successfully', appointment });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

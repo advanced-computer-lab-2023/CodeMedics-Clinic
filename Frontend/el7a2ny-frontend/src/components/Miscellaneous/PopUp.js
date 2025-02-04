@@ -8,17 +8,22 @@ import {
   DialogContent,
   DialogTitle,
   Button,
-  TableBody
+  TableBody,
 } from "@mui/material";
 
-function PopUp({ title, viewing, setViewing, tableCells, actionName, children }) {
-  const tableCellsElements = tableCells.map((cell) => <TableCell>{cell}</TableCell>);
+function PopUp({ title, viewing, setViewing, tableCells, actionName, setPopUpDisplay, children }) {
+  const tableCellsElements = tableCells
+    ? tableCells.map((cell) => <TableCell>{cell}</TableCell>)
+    : null;
 
   return (
     <Dialog
       open={viewing}
       onClose={() => {
         setViewing(false);
+        if(setPopUpDisplay){
+          setPopUpDisplay(false)
+        }
       }}
       sx={{ minWidth: 200 }}
       fullWidth
@@ -26,9 +31,11 @@ function PopUp({ title, viewing, setViewing, tableCells, actionName, children })
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Table>
-          <TableHead>
-            <TableRow>{tableCellsElements}</TableRow>
-          </TableHead>
+          {tableCellsElements ? (
+            <TableHead>
+              <TableRow>{tableCellsElements}</TableRow>
+            </TableHead>
+          ) : null}
           <TableBody>{children}</TableBody>
         </Table>
       </DialogContent>
@@ -36,6 +43,11 @@ function PopUp({ title, viewing, setViewing, tableCells, actionName, children })
         <Button
           onClick={() => {
             setViewing(false);
+            if(setPopUpDisplay){
+              setPopUpDisplay(false)
+            }
+            console.log("Closing")
+            console.log(setPopUpDisplay)
           }}
         >
           {actionName}
