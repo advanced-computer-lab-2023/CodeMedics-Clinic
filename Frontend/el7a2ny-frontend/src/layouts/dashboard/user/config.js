@@ -19,7 +19,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 export const items = [
   {
     title: 'Doctors',
-    path: '/user/doctors',
+    path: '/patient/doctors',
     icon: (
       <SvgIcon fontSize="small">
         <UserIcon />
@@ -28,7 +28,7 @@ export const items = [
   },
   {
     title: 'Family Members',
-    path: '/user/family-members',
+    path: '/patient/family-members',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
@@ -37,7 +37,7 @@ export const items = [
   },
   {
     title: 'Appointments',
-    path: '/user/my-appointments',
+    path: '/patient/appointments',
     icon: (
       <SvgIcon fontSize="small">
         <CalendarDaysIcon />
@@ -46,7 +46,7 @@ export const items = [
   },
   {
     title: 'Health Packages',
-    path: '/user/packages',
+    path: '/patient/packages',
     icon: (
       <SvgIcon fontSize="small">
         <CreditCard01Icon />
@@ -55,7 +55,7 @@ export const items = [
   },
   {
     title: 'Prescriptions',
-    path: '/user/prescriptions',
+    path: '/patient/prescriptions',
     icon: (
       <SvgIcon fontSize="small">
         <AssignmentIcon      />
@@ -64,7 +64,7 @@ export const items = [
   },
   {
     title: 'Medical History',
-    path: '/user/medical-history',
+    path: '/patient/medical-history',
     icon: (
       <SvgIcon fontSize="small">
         <ClipboardDocumentListIcon      />
@@ -73,7 +73,7 @@ export const items = [
   },
   {
     title: 'Chat',
-    path: '/user/chat',
+    path: '/patient/chat',
     icon: (
       <SvgIcon fontSize="small">
         <MessageChatSquareIcon   />
@@ -82,7 +82,7 @@ export const items = [
   },
   {
     title: 'Account',
-    path: '/user/account',
+    path: '/patient/account',
     icon: (
       <SvgIcon fontSize="small">
         <UserIcon />
@@ -91,7 +91,7 @@ export const items = [
   },
   {
     title: 'Settings',
-    path: '/user/settings',
+    path: '/patient/settings',
     icon: (
       <SvgIcon fontSize="small">
         <SettingsIcon  />

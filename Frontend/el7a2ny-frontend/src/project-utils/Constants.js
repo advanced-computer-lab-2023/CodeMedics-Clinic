@@ -7,7 +7,8 @@ const freeSlotsRoute = `${backendRoute}/patient/getFreeSlotsOfDoctor`;
 const followUpRequestRoute = `${backendRoute}/patient/RequestFollowUp`;
 const appointmentRescheduleRoute = `${backendRoute}/patient/RescheduleAppointment`;
 const appointmentCancellationRoute = `${backendRoute}/patient/CancelAppointment`;
-
+const patientUpdateRoute = `${backendRoute}/patient/updateMe`
+const patientRoute = `${backendRoute}/patient/getMe`
 export {
   patientPrescriptionRoute,
   patientAppointmentRoute,
@@ -15,5 +16,7 @@ export {
   freeSlotsRoute,
   followUpRequestRoute,
   appointmentRescheduleRoute,
-  appointmentCancellationRoute
+  appointmentCancellationRoute,
+  patientUpdateRoute,
+  patientRoute
 };
