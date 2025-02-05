@@ -4,20 +4,25 @@ import axios from "axios";
 import { Table } from "../components/Table/Table";
 import { patientPrescriptionRoute } from "src/project-utils/Constants";
 import { sortByDate } from "src/project-utils/HelperFunctions";
+import PatientPrescription from "src/components/Prescription/PatientPrescription";
 
 const columns = ["Doctor", "Date", "Status", "Actions"];
 
 function PatientPrescriptionsTheme() {
-  const [allData, setAllData] = useState(null);
-  const [data, setData] = useState(null);
+  const [allData, setAllData] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(null);
-
   const [doctorName, setDoctorName] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
+
+  const tableRows = data.map(prescription =>
+    <PatientPrescription prescription={prescription}/>
+   )
+
   const filters = [
     {
       type: "text",
@@ -110,17 +115,18 @@ function PatientPrescriptionsTheme() {
     <Table
       value={{
         data,
-        filters,
         columns,
         loading,
-        elementType: "patientPrescription",
-        title: "Prescriptions",
         setShowError,
         setError,
         setLoading,
         setAllData,
         noRecords: "No Prescriptions Found",
+        tableRows
       }}
+
+      title="Prescriptions"
+      filters={filters}
     />
   );
 }

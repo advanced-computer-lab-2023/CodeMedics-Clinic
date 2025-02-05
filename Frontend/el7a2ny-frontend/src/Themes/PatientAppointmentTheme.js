@@ -5,7 +5,7 @@ import Message from "src/components/Miscellaneous/Message";
 import { Table } from "src/components/Table/Table";
 import { patientAppointmentRoute, familyMembersRoute } from "src/project-utils/Constants";
 import { sortByDate } from "src/project-utils/HelperFunctions";
-
+import PatientAppointment from "src/components/Appointment/PatientAppointment";
 
 const columns = ["Doctor", "Date", "Day", "From", "To", "Status", "Actions"];
 
@@ -22,6 +22,10 @@ function PatientAppointmentTheme() {
   const [currentPatient, setCurrentPatient] = useState(Cookies.get("username"));
   const [popUpDisplay, setPopUpDisplay] = useState(false);
   const [popUpElement, setPopUpElement] = useState(null);
+
+  const tableRows = data.map((appointment) => {
+    <PatientAppointment appointment={appointment} />;
+  });
 
   const filters = [
     {
@@ -135,7 +139,6 @@ function PatientAppointmentTheme() {
     <Table
       value={{
         data,
-        filters,
         columns,
         loading,
         setShowError,
@@ -146,11 +149,13 @@ function PatientAppointmentTheme() {
         setPopUpDisplay,
         setPopUpElement,
         currentPatient,
-        title: "Appointments",
-        elementType: "patientAppointment",
         noRecords: "No Appointments Found",
         setAllData,
+        tableRows,
       }}
+
+      title="Appointments"
+      filters={filters}
     />
   );
 }
