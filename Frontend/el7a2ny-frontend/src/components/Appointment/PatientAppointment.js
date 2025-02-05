@@ -1,4 +1,4 @@
-import { TableRow, TableCell, Stack, Typography, Button, Menu, MenuItem } from "@mui/material";
+import {Stack, Typography} from "@mui/material";
 import { SeverityPill } from "../severity-pill";
 import PatientAppointmentActions from "./PatientAppointmentActions";
 import PatientAppointmentInfo from "./PatientAppointmentInfo";
@@ -13,6 +13,7 @@ const statusMap = {
 };
 
 function PatientAppointment({ appointment }) {
+  console.log("in the PA", appointment)
   return (
     <Row hover key={appointment._id}>
       <Cell>

@@ -24,8 +24,10 @@ function PatientAppointmentTheme() {
   const [popUpElement, setPopUpElement] = useState(null);
 
   const tableRows = data.map((appointment) => {
-    <PatientAppointment appointment={appointment} />;
+    return <PatientAppointment appointment={appointment} />;
   });
+
+  console.log("tableRows", tableRows, data)
 
   const filters = [
     {

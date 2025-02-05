@@ -9,7 +9,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import PopUp from "../Miscellaneous/PopUp";
 import Head from "../Table/Body/Head";
 import PatientAppointmentInfo from "./PatientAppointmentInfo";
-import Button from "../Button";
+import ButtonElement from "../ButtonElement";
 import Cell from "../Table/BasicElements/Cell";
 import Row from "../Table/BasicElements/Row";
 import Icon from "../Icon";
@@ -21,13 +21,13 @@ function PatientAppointmentActions({ appointment }) {
   const [loading, setLoading] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
-
+  console.log("in the patient appointments actions")
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
     return (
       <Row key={item._id}>
         <PatientAppointmentInfo appointment={item} />
         <Cell>
-          <Button actionName="Reschedule"onClick={() => {
+          <ButtonElement actionName="Reschedule"onClick={() => {
               hanldeRescheduleAppointment(item, appointment);
               setRescheduling(false);
               setPopUpDisplay(false);

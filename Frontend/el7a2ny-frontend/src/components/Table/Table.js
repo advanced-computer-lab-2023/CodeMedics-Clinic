@@ -27,7 +27,7 @@ function Table({ value, title, filters }) {
           </Stack>
         </Container>
       </Box>
-      {popUpDisplay && popUpElement}
+      {value.popUpDisplay && value.popUpElement}
     </TableContext.Provider>
   );
 }
