@@ -1,6 +1,6 @@
 import { TextField, MenuItem } from "@mui/material";
 
-function MenuFilter({ options, menuName, setValue }) {
+function MenuInput({ options, menuName, setValue }) {
 
   const menuElems = options.map((option) => (
     <MenuItem key={option.value} value={option.value}>
@@ -23,4 +23,4 @@ function MenuFilter({ options, menuName, setValue }) {
   );
 }
 
-export default MenuFilter;
+export default MenuInput;

@@ -1,19 +1,17 @@
 import { TextField } from "@mui/material";
 
-function DateFilter({option, setDate}){
-
-    return(
+function TextInput({option, setValue}){
+    return (
         <TextField
             label={option}
             fullWidth
-            onChange={(date) => {
-                setDate(date.target.value);
+            onChange={(event) => {
+              setValue(event.target.value);
             }}
-            type="date"
             sx={{ maxWidth: 500 }}
             InputLabelProps={{ shrink: true }}
           />
     )
 }
 
-export default DateFilter
+export default TextInput

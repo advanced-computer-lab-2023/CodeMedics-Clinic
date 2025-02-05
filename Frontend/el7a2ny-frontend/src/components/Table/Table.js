@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { Box, Container, Stack } from "@mui/material";
 import Title from "./Body/Title";
 import Header from "./Body/Header";
-import Filters from "../Filters/Filters";
+import Filters from "../Filters";
 import Content from "./Body/Content";
 import NoRecords from "../NoRecords";
 import LoadingSpinner from "../Miscellaneous/LoadingSpinner";
