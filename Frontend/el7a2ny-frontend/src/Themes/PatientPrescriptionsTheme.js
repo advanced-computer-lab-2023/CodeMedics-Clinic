@@ -1,8 +1,11 @@
 import Message from "../components/Miscellaneous/Message";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {Table} from "../components/Table/Table";
+import { Table } from "../components/Table/Table";
+import { patientPrescriptionRoute } from "src/project-utils/Constants";
+import { sortByDate } from "src/project-utils/HelperFunctions";
 
+const columns = ["Doctor", "Date", "Status", "Actions"];
 
 function PatientPrescriptionsTheme() {
   const [allData, setAllData] = useState(null);
@@ -15,9 +18,6 @@ function PatientPrescriptionsTheme() {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
-  
-  const dataRoute = "http://localhost:8000/patient/prescriptions";
-  console.log("theme rendered")
   const filters = [
     {
       type: "text",
@@ -48,23 +48,11 @@ function PatientPrescriptionsTheme() {
     },
   ];
 
-  const columns = ["Doctor", "Date", "Status", "Actions"];
-
-  function sortByDate(prescriptions) {
-    prescriptions.sort((a, b) => {
-      if (new Date(a.Date) < new Date(b.Date)) return -1;
-      if (new Date(a.Date) > new Date(b.Date)) return 1;
-      return 0;
-    });
-    return prescriptions;
-  }
-
   function filterData() {
-    console.log("in the filterData");
     const newData = allData.filter((item) => {
       const itemDate = new Date(item.Date);
-      console.log(new Date(startDate), new Date(endDate), itemDate, item.Date)
-      console.log(item)
+      console.log(new Date(startDate), new Date(endDate), itemDate, item.Date);
+      console.log(item);
       if (startDate && itemDate < new Date(startDate)) return false;
 
       if (endDate && itemDate > new Date(endDate)) return false;
@@ -72,22 +60,22 @@ function PatientPrescriptionsTheme() {
       const doctorCondition =
         !doctorName || item.Doctor.toLowerCase().includes(doctorName.toLowerCase());
       console.log(doctorName, item.Doctor);
-      const itemStatus = item.filled? "filled" : "unfilled"
+      const itemStatus = item.filled ? "filled" : "unfilled";
       if (!doctorCondition) return false;
-      
+
       if (status !== "None" && itemStatus !== status) return false;
 
       return true;
     });
     console.log("newData", newData);
-    console.log("All data", allData)
+    console.log("All data", allData);
     setData(newData);
-    setLoading(false)
+    setLoading(false);
   }
 
   useEffect(() => {
     axios
-      .get(dataRoute, { withCredentials: true })
+      .get(patientPrescriptionRoute, { withCredentials: true })
       .then((res) => {
         const prescriptions = sortByDate(res.data);
         setAllData(prescriptions);
@@ -103,8 +91,7 @@ function PatientPrescriptionsTheme() {
   }, []);
 
   useEffect(() => {
-    if(allData && allData.length)
-        filterData();
+    if (allData && allData.length) filterData();
   }, [startDate, endDate, status, doctorName, allData]);
 
   if (showError) {
@@ -119,9 +106,8 @@ function PatientPrescriptionsTheme() {
     );
   }
 
-
   return (
-      <Table
+    <Table
       value={{
         data,
         filters,
@@ -135,7 +121,7 @@ function PatientPrescriptionsTheme() {
         setAllData,
         noRecords: "No Prescriptions Found",
       }}
-      />
+    />
   );
 }
 

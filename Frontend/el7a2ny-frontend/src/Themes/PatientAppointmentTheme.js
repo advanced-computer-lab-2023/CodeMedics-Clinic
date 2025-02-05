@@ -3,6 +3,11 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
 import { Table } from "src/components/Table/Table";
+import { patientAppointmentRoute, familyMembersRoute } from "src/project-utils/Constants";
+import { sortByDate } from "src/project-utils/HelperFunctions";
+
+
+const columns = ["Doctor", "Date", "Day", "From", "To", "Status", "Actions"];
 
 function PatientAppointmentTheme() {
   const [data, setData] = useState([]);
@@ -15,12 +20,8 @@ function PatientAppointmentTheme() {
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
   const [currentPatient, setCurrentPatient] = useState(Cookies.get("username"));
-  const [popUpDisplay, setPopUpDisplay] = useState(false)
-  const [popUpElement, setPopUpElement] = useState(null)
-  const dataRoute = "http://localhost:8000/patient/getAllFamilyAppointments";
-  const familyMembersRoute = "http://localhost:8000/patient/familyMembers";
-  
-  const columns = ["Doctor", "Date", "Day", "From", "To", "Status", "Actions"];
+  const [popUpDisplay, setPopUpDisplay] = useState(false);
+  const [popUpElement, setPopUpElement] = useState(null);
 
   const filters = [
     {
@@ -44,7 +45,7 @@ function PatientAppointmentTheme() {
         { value: "rescheduled", label: "Rescheduled" },
         { value: "cancelled", label: "Cancelled" },
         { value: "completed", label: "Completed" },
-        {value: "follow-up Requested", label: "Follow-up Requested"}
+        { value: "follow-up Requested", label: "Follow-up Requested" },
       ],
     },
     {
@@ -52,21 +53,14 @@ function PatientAppointmentTheme() {
       name: "Patient",
       state: currentPatient,
       setState: setCurrentPatient,
-      options: familyMembers.map(item => {
-        // console.log("family member", item)
-        return {value: item.familyMember.Username, label: item.familyMember.FirstName+" "+item.familyMember.LastName}
-      })
+      options: familyMembers.map((item) => {
+        return {
+          value: item.familyMember.Username,
+          label: item.familyMember.FirstName + " " + item.familyMember.LastName,
+        };
+      }),
     },
   ];
-
-  function sortByDate(appointments) {
-    appointments.sort((a, b) => {
-      if (new Date(a.Date) < new Date(b.Date)) return -1;
-      if (new Date(a.Date) > new Date(b.Date)) return 1;
-      return 0;
-    });
-    return appointments;
-  }
 
   function filterData() {
     const newData = allData.filter((item) => {
@@ -88,7 +82,7 @@ function PatientAppointmentTheme() {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(dataRoute, { withCredentials: true })
+      .get(patientAppointmentRoute, { withCredentials: true })
       .then((res) => {
         const appointments = sortByDate(res.data.appointments);
         setAllData(appointments);
@@ -104,8 +98,6 @@ function PatientAppointmentTheme() {
     axios
       .get(familyMembersRoute, { withCredentials: true })
       .then((res) => {
-        // console.log("got family members");
-        // console.log(res.data.familyMembers);
         let temp = [];
         temp.push({
           familyMember: { Username: Cookies.get("username"), FirstName: "me", LastName: "" },

@@ -9,7 +9,6 @@ import LoadingSpinner from "../Miscellaneous/LoadingSpinner";
 const TableContext = createContext();
 
 function Table({value}) {
-  console.log("table rendered")
   
   return (
     <TableContext.Provider value={value}>

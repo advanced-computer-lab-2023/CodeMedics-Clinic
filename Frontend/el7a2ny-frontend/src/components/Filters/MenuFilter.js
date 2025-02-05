@@ -1,5 +1,4 @@
 import { TextField, MenuItem } from "@mui/material";
-import { useEffect, useState } from "react";
 
 function MenuFilter({ options, menuName, setValue }) {
 
