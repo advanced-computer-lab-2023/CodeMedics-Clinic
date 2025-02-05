@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { TableCell, IconButton, SvgIcon, Table, Button, TableRow, TableBody } from "@mui/material";
+import { Table, TableBody } from "@mui/material";
 import ChecklistIcon from "src/icons/untitled-ui/duocolor/ChecklistIcon";
 import RescheduleIcon from "src/icons/untitled-ui/duocolor/RescheduleIcon";
 import CancelIcon from "src/icons/untitled-ui/duocolor/CancelIcon";
@@ -9,6 +9,11 @@ import LoadingSpinner from "../LoadingSpinner";
 import PopUp from "../Miscellaneous/PopUp";
 import Head from "../Table/Body/Head";
 import PatientAppointmentInfo from "./PatientAppointmentInfo";
+import Button from "../Button";
+import Cell from "../Table/BasicElements/Cell";
+import Row from "../Table/BasicElements/Row";
+import Icon from "../Icon";
+import { freeSlotsRoute, followUpRequestRoute, appointmentRescheduleRoute, appointmentCancellationRoute } from "src/project-utils/Constants";
 
 function PatientAppointmentActions({ appointment }) {
   const { setShowError, setError, setAllData, currentPatient, setPopUpDisplay, setPopUpElement } =
@@ -19,20 +24,17 @@ function PatientAppointmentActions({ appointment }) {
 
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
     return (
-      <TableRow key={item._id}>
+      <Row key={item._id}>
         <PatientAppointmentInfo appointment={item} />
-        <TableCell>
-          <Button
-            onClick={() => {
+        <Cell>
+          <Button actionName="Reschedule"onClick={() => {
               hanldeRescheduleAppointment(item, appointment);
               setRescheduling(false);
               setPopUpDisplay(false);
             }}
-          >
-            Reschedule
-          </Button>
-        </TableCell>
-      </TableRow>
+          />
+        </Cell>
+      </Row>
     );
   });
 
@@ -54,9 +56,9 @@ function PatientAppointmentActions({ appointment }) {
               <TableBody>{unreservedAppointmentsElements}</TableBody>
             </>
           ) : (
-            <TableRow>
-              <TableCell>Sorry, No Available Slots!</TableCell>
-            </TableRow>
+            <Row>
+              <Cell>Sorry, No Available Slots!</Cell>
+            </Row>
           )}
         </Table>
       )}
@@ -66,7 +68,7 @@ function PatientAppointmentActions({ appointment }) {
   const getUnreservedAppointments = async (doctorUsername) => {
     setLoading(true);
     await axios
-      .get("http://localhost:8000/patient/getFreeSlotsOfDoctor?doctorUsername=" + doctorUsername)
+      .get(`${freeSlotsRoute}?doctorUsername=${doctorUsername}`)
       .then((res) => {
         console.log(doctorUsername, "unreserved slots", res.data.appointments);
         setUnreservedAppointments(res.data.appointments);
@@ -81,7 +83,7 @@ function PatientAppointmentActions({ appointment }) {
 
   const handleRequestFollowUp = async (appointmentID) => {
     await axios
-      .patch(`http://localhost:8000/patient/RequestFollowUp?appointmentID=${appointmentID}`)
+      .patch(`${followUpRequestRoute}?appointmentID=${appointmentID}`)
       .then((res) => {
         setAllData((prev) =>
           prev.map((item) => {
@@ -100,7 +102,7 @@ function PatientAppointmentActions({ appointment }) {
   const hanldeRescheduleAppointment = async (curAppointment, oldAppointment) => {
     await axios
       .patch(
-        `http://localhost:8000/patient/RescheduleAppointment?appointmentID=${curAppointment._id}&oldAppointmentID=${oldAppointment._id}&username=${currentPatient}`
+        `${appointmentRescheduleRoute}?appointmentID=${curAppointment._id}&oldAppointmentID=${oldAppointment._id}&username=${currentPatient}`
       )
       .then((res) => {
         console.log("LLL", res);
@@ -120,7 +122,7 @@ function PatientAppointmentActions({ appointment }) {
 
   const handleCancelAppointment = async (appointmentID) => {
     await axios
-      .patch(`http://localhost:8000/patient/CancelAppointment?appointmentID=${appointmentID}`)
+      .patch(`${appointmentCancellationRoute}?appointmentID=${appointmentID}`)
       .then((res) => {
         setAllData((prev) =>
           prev.map((item) => {
@@ -148,41 +150,33 @@ function PatientAppointmentActions({ appointment }) {
   }, [appointment.doctorUsername]);
 
   return (
-    <>
-      <TableCell>
-        <IconButton
-          title="Request Follow-up"
-          onClick={() => {
-            handleRequestFollowUp(appointment._id);
-          }}
-        >
-          <SvgIcon fontSize="small">
-            <ChecklistIcon />
-          </SvgIcon>
-        </IconButton>
-        <IconButton
-          disabled={!(appointment.status === "upcoming" || appointment.status === "rescheduled")}
-          title="Reschedule Appointment"
-          onClick={() => {
-            setRescheduling(true); // This will trigger the useEffect
-          }}
-        >
-          <SvgIcon fontSize="small">
-            <RescheduleIcon />
-          </SvgIcon>
-        </IconButton>
-        <IconButton
-          title="Cancel Appointment"
-          onClick={() => {
-            handleCancelAppointment(appointment._id);
-          }}
-        >
-          <SvgIcon fontSize="small">
-            <CancelIcon />
-          </SvgIcon>
-        </IconButton>
-      </TableCell>
-    </>
+    <Cell>
+      <Icon
+        title="Request Follow-up"
+        onClick={() => {
+          handleRequestFollowUp(appointment._id);
+        }}
+      >
+        <ChecklistIcon />
+      </Icon>
+      <Icon
+        disabled={!(appointment.status === "upcoming" || appointment.status === "rescheduled")}
+        title="Reschedule Appointment"
+        onClick={() => {
+          setRescheduling(true);
+        }}
+      >
+        <RescheduleIcon />
+      </Icon>
+      <Icon
+        title="Cancel Appointment"
+        onClick={() => {
+          handleCancelAppointment(appointment._id);
+        }}
+      >
+        <CancelIcon />
+      </Icon>
+    </Cell>
   );
 }
 
