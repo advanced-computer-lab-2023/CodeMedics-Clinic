@@ -2,14 +2,15 @@ import { TableRow, TableCell, Stack, Typography, Button, Menu, MenuItem } from "
 import { SeverityPill } from "../severity-pill";
 import PatientAppointmentActions from "./PatientAppointmentActions";
 import PatientAppointmentInfo from "./PatientAppointmentInfo";
-function PatientAppointment({ appointment }) {
-  const statusMap = {
-    upcoming: "warning",
-    cancelled: "error",
-    completed: "success",
-    rescheduled: "warning",
-  };
 
+const statusMap = {
+  upcoming: "warning",
+  cancelled: "error",
+  completed: "success",
+  rescheduled: "warning",
+};
+
+function PatientAppointment({ appointment }) {
   return (
     <TableRow hover key={appointment._id}>
       <TableCell>
@@ -17,12 +18,12 @@ function PatientAppointment({ appointment }) {
           <Typography variant="subtitle2">{appointment.doctor}</Typography>
         </Stack>
       </TableCell>
-      <PatientAppointmentInfo appointment={appointment}/>
+      <PatientAppointmentInfo appointment={appointment} />
       <TableCell>
         <SeverityPill color={statusMap[appointment.status]}>{appointment.status}</SeverityPill>
       </TableCell>
       <TableCell>
-        <PatientAppointmentActions appointment={appointment}/>
+        <PatientAppointmentActions appointment={appointment} />
       </TableCell>
     </TableRow>
   );
