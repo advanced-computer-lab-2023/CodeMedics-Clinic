@@ -14,18 +14,19 @@ import {
   Box,
 } from "@mui/material";
 import TextInput from "./Inputs/TextInput";
-import DateInput from "./Inputs/DateInput";
 import MenuInput from "./Inputs/MenuInput";
 
-function Form({ title, fields, onSubmit, actionName, values}) {
+function Form({ title, fields, onSubmit, actionName, values }) {
   const [touched, setTouched] = useState(fields.map((item) => false));
-  
-  const initialValues = values ? values : fields.reduce((acc, item) => {
-    acc[item.name] = "";
-    return acc;
-  }, {});
 
-  console.log("values", initialValues)
+  const initialValues = values
+    ? values
+    : fields.reduce((acc, item) => {
+        acc[item.name] = "";
+        return acc;
+      }, {});
+
+  console.log("values", initialValues);
 
   const validationSchema = Yup.object(
     fields.reduce((acc, item) => {
@@ -54,15 +55,7 @@ function Form({ title, fields, onSubmit, actionName, values}) {
   }
   const formInputs = fields.map((item, index) => {
     const element =
-      item.type === "date" ? (
-        <DateInput
-          option={item.label}
-          defaultValue={initialValues[item.name]}
-          setValue={(value) => {
-            handleChange(item, value, index);
-          }}
-        />
-      ) : item.type === "menu" ? (
+      item.type === "menu" ? (
         <MenuInput
           menuName={item.label}
           options={item.options}
@@ -74,11 +67,10 @@ function Form({ title, fields, onSubmit, actionName, values}) {
         <TextInput
           option={item.label}
           defaultValue={initialValues[item.name]}
-          type={initialValues[item.name]}
           setValue={(value) => {
             handleChange(item, value, index);
-            console.log("form", form);
           }}
+          type={item.type}
         />
       );
 
@@ -118,7 +110,7 @@ function Form({ title, fields, onSubmit, actionName, values}) {
             variant="contained"
             type="submit"
             onClick={() => {
-              console.log(form.isValid)
+              console.log(form.isValid);
               if (!form.isValid) {
                 setTouched(fields.map((item) => true));
               }
