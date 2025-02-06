@@ -1,6 +1,5 @@
 import { Card, Stack } from "@mui/material";
 import TextInput from "./Inputs/TextInput";
-import TextInput from "./Inputs/TextInput";
 import MenuInput from "./Inputs/MenuInput";
 
 function Filters({filters}){
@@ -14,8 +13,8 @@ function Filters({filters}){
                 setValue={filter.setState}
                 />
         }
-        else if(filter.type === "text" || filter.type == "date"){
-            return <TextInput option={filter.name} setValue={filter.setState} type="text"/>
+        else if(filter.type === "text" || filter.type == "date" || filter.type == "email"){
+            return <TextInput option={filter.name} setValue={filter.setState} type={filter.type}/>
         }
         else{
             throw new Error('unhandled filter type');
