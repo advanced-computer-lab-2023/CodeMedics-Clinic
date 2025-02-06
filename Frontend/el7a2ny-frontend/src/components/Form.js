@@ -17,12 +17,15 @@ import TextInput from "./Inputs/TextInput";
 import DateInput from "./Inputs/DateInput";
 import MenuInput from "./Inputs/MenuInput";
 
-function Form({ title, fields, onSubmit, actionName }) {
+function Form({ title, fields, onSubmit, actionName, values}) {
   const [touched, setTouched] = useState(fields.map((item) => false));
-  const initialValues = fields.reduce((acc, item) => {
+  
+  const initialValues = values ? values : fields.reduce((acc, item) => {
     acc[item.name] = "";
     return acc;
   }, {});
+
+  console.log("values", initialValues)
 
   const validationSchema = Yup.object(
     fields.reduce((acc, item) => {
@@ -38,7 +41,6 @@ function Form({ title, fields, onSubmit, actionName }) {
   const form = useFormik({ initialValues, validationSchema, onSubmit });
 
   function handleChange(item, value, index) {
-    console.log("changing", item.type, value, value.length);
     item.setValue(value);
     form.setFieldValue(item.name, item.type == "date" ? fixFormDate(value) : value);
     setTouched((prev) =>
@@ -55,6 +57,7 @@ function Form({ title, fields, onSubmit, actionName }) {
       item.type === "date" ? (
         <DateInput
           option={item.label}
+          defaultValue={initialValues[item.name]}
           setValue={(value) => {
             handleChange(item, value, index);
           }}
@@ -70,9 +73,11 @@ function Form({ title, fields, onSubmit, actionName }) {
       ) : (
         <TextInput
           option={item.label}
+          defaultValue={initialValues[item.name]}
+          type={initialValues[item.name]}
           setValue={(value) => {
             handleChange(item, value, index);
-            console.log(form);
+            console.log("form", form);
           }}
         />
       );
