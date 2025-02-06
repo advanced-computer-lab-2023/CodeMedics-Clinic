@@ -1,3 +1,4 @@
+// BACKEND
 const portNumber = 8000;
 const backendRoute = `http://localhost:${portNumber}`;
 const patientPrescriptionRoute = `${backendRoute}/patient/prescriptions`;
@@ -9,6 +10,15 @@ const appointmentRescheduleRoute = `${backendRoute}/patient/RescheduleAppointmen
 const appointmentCancellationRoute = `${backendRoute}/patient/CancelAppointment`;
 const patientUpdateRoute = `${backendRoute}/patient/updateMe`
 const patientRoute = `${backendRoute}/patient/getMe`
+
+
+// FRONTEND 
+const familyMembersPageRoute = `/patient/family-members` 
+const addFamilyMemberRoute = `/patient/add-family-member`
+const addFamilyMemberNoAccountRoute = `/patient/add-family-member-no-account`
+const MAX_LEN = 100
+
+
 export {
   patientPrescriptionRoute,
   patientAppointmentRoute,
@@ -18,5 +28,9 @@ export {
   appointmentRescheduleRoute,
   appointmentCancellationRoute,
   patientUpdateRoute,
-  patientRoute
+  patientRoute,
+  MAX_LEN,
+  addFamilyMemberRoute,
+  addFamilyMemberNoAccountRoute,
+  familyMembersPageRoute
 };

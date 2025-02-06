@@ -18,7 +18,7 @@ function Filters({filters}){
             return <TextInput option={filter.name} setValue={filter.setState} />
         }
         else if(filter.type === "date"){
-            return <DateInput option={filter.name} setDate={filter.setState}/>
+            return <DateInput option={filter.name} setValue={filter.setState}/>
         }
         else{
             throw new Error('unhandled filter type');

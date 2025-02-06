@@ -26,31 +26,6 @@ const Page = () => {
                                 container
                                 spacing={3}
                             >
-                                {/* <Grid
-                                    xs={12}
-                                    md={6}
-                                    lg={4}
-                                >
-                                    <Card>
-                                        <CardContent>
-                                            <Box
-                                                sx={{
-                                                    alignItems: 'center',
-                                                    display: 'flex',
-                                                    flexDirection: 'column'
-                                                }}
-                                            >
-                                                <Avatar
-                                                    sx={{
-                                                        height: 80,
-                                                        mb: 2,
-                                                        width: 80
-                                                    }}
-                                                />
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                </Grid> */}
                                 <Grid
                                     xs={12}
                                     md={6}

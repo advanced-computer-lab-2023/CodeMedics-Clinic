@@ -1,8 +1,7 @@
 import Head from 'next/head';
-import { Box, Container, Unstable_Grid2, Stack as Grid, Button, Typography, Stack } from '@mui/material';
+import { Box, Container, Stack as Grid, Button, Typography, Stack } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
 import { OverviewFamilyMembers } from 'src/sections/overview/overview-family-members';
-import { PatientsSearch } from 'src/sections/doctor/doctor-search';
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -10,8 +9,7 @@ import { useRouter } from 'next/navigation';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
 import Message from 'src/components/Miscellaneous/Message';
-
-const now = new Date();
+import { addFamilyMemberRoute, addFamilyMemberNoAccountRoute } from 'src/project-utils/Constants';
 
 const Page = () => {
 
@@ -22,21 +20,6 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const handleSearch = (str) => {
-    if (str === "") {
-      setData(familyMembers);
-    } else {
-      setData(familyMembers.filter((familyMember) => {
-        const fullName = familyMember.FirstName + " " + familyMember.LastName;
-        return fullName.toLowerCase().includes(str.toLowerCase());
-      }));
-    }
-  };
-
-  const addFamilyMember = () => {
-    router.push(`/user/add-family-member`);
-  }
 
   useEffect(() => {
     setLoading(true);
@@ -59,11 +42,11 @@ const Page = () => {
 
 
   const addFamilyMemberRedirect = () => {
-    router.push(`/user/add-family-member`);
+    router.push(addFamilyMemberRoute);
   }
 
   const addFamilyMemberNoAccountRedirect = () => {
-    router.push(`/user/add-family-member-no-account`);
+    router.push(addFamilyMemberNoAccountRoute);
   }
 
   return (

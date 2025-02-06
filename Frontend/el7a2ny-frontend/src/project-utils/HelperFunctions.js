@@ -7,6 +7,13 @@ function sortByDate(data) {
   return data;
 }
 
+function fixFormDate(date) {
+  if (date.length <= 10) {
+    const yyyy = date.slice(0, 4).replace(/[^0-9]/g, "");
+    const mmdd = date.slice(4);
+    const formattedDate = `${yyyy}${mmdd}`;
+    return formattedDate;
+  }
+}
 
-
-export {sortByDate}
+export { sortByDate, fixFormDate };

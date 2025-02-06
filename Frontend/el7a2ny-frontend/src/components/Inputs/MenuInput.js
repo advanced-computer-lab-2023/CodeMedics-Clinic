@@ -13,7 +13,7 @@ function MenuInput({ options, menuName, setValue }) {
       sx={{ width: 500 }}
       select
       label={menuName}
-      defaultValue={options.length ? options[0].value: ""}
+      defaultValue={options.length && options[0].value.toLowerCase() == "none" ? options[0].value: ""}
       onChange={(event) => {
         setValue(event.target.value);
       }}
