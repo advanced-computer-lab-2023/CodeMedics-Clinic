@@ -1,6 +1,7 @@
 import { Card, Stack } from "@mui/material";
 import TextInput from "./Inputs/TextInput";
 import MenuInput from "./Inputs/MenuInput";
+import { TEXT_FIELD_TYPES } from "src/project-utils/Constants";
 
 function Filters({filters}){
     console.log("all filters rendered ", filters)
@@ -13,7 +14,7 @@ function Filters({filters}){
                 setValue={filter.setState}
                 />
         }
-        else if(filter.type === "text" || filter.type == "date" || filter.type == "email"){
+        else if(TEXT_FIELD_TYPES.includes(filter.type)){
             return <TextInput option={filter.name} setValue={filter.setState} type={filter.type}/>
         }
         else{

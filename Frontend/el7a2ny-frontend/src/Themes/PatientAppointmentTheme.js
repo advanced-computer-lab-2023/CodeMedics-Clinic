@@ -23,11 +23,13 @@ function PatientAppointmentTheme() {
   const [popUpDisplay, setPopUpDisplay] = useState(false);
   const [popUpElement, setPopUpElement] = useState(null);
 
+  const doctorUsername = new URLSearchParams(window.location.search).get("doctorUsername")
+
   const tableRows = data.map((appointment) => {
     return <PatientAppointment appointment={appointment} />;
   });
 
-  console.log("tableRows", tableRows, data)
+  console.log("tableRows", tableRows, data);
 
   const filters = [
     {
@@ -90,7 +92,14 @@ function PatientAppointmentTheme() {
     axios
       .get(patientAppointmentRoute, { withCredentials: true })
       .then((res) => {
-        const appointments = sortByDate(res.data.appointments);
+        let appointments = sortByDate(res.data.appointments);
+        console.log("got appointments", doctorUsername, appointments)
+        if (doctorUsername) {
+          appointments = appointments.filter(
+            (appointment) => appointment.doctorUsername == doctorUsername
+          );
+        }
+        console.log(appointments)
         setAllData(appointments);
       })
       .catch((err) => {
@@ -155,7 +164,6 @@ function PatientAppointmentTheme() {
         setAllData,
         tableRows,
       }}
-
       title="Appointments"
       filters={filters}
     />

@@ -16,8 +16,11 @@ const patientRoute = `${backendRoute}/patient/getMe`
 const familyMembersPageRoute = `/patient/family-members` 
 const addFamilyMemberRoute = `/patient/add-family-member`
 const addFamilyMemberNoAccountRoute = `/patient/add-family-member-no-account`
-const MAX_LEN = 100
 
+
+
+const MAX_LEN = 100
+const TEXT_FIELD_TYPES = ["date", "text", "emails", "date", "datetime-local"]
 
 export {
   patientPrescriptionRoute,
@@ -32,5 +35,6 @@ export {
   MAX_LEN,
   addFamilyMemberRoute,
   addFamilyMemberNoAccountRoute,
-  familyMembersPageRoute
+  familyMembersPageRoute,
+  TEXT_FIELD_TYPES
 };

@@ -35,11 +35,11 @@ export const OverviewDoctors = (props) => {
 
   const username = Cookies.get("username");
   const getSelectedDoctorAppointments = (username) => {
-    router.push(`/user/appointments?doctorUsername=${username}`);
+    router.push(`/patient/appointments?doctorUsername=${username}`);
   }
 
   const viewDoctorProfile = (username, counter) => {
-    router.push(`/user/doctor-info?doctorUsername=${username}&counter=${counter}`);
+    router.push(`/patient/doctor-info?doctorUsername=${username}&counter=${counter}`);
   }
  
   return (
@@ -105,7 +105,7 @@ export const OverviewDoctors = (props) => {
                 />
                 <ListItemText
                   primary= {doctor.doctor.Speciality}
-                  primaryTypographyProps={{ variant: 'subtitle2' }}
+                  primaryTypographyProps={{ variant: 'subtitle1' }}
                   // secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText

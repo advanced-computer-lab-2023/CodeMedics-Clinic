@@ -1,17 +1,30 @@
-import { Card, Table, TableBody } from "@mui/material";
+import { Card, Table, TableBody, Box, CardContent } from "@mui/material";
 import Head from "./Head";
 import { useContext } from "react";
 import { TableContext } from "../Table";
-import { Box } from "@mui/system";
 
 function Content() {
-  const {columns, tableRows} = useContext(TableContext);
+  const { columns, tableRows, displayGrid } = useContext(TableContext);
   return (
     <Card>
       <Box>
         <Table>
           <Head columns={columns} />
-          <TableBody>{tableRows}</TableBody>
+          <TableBody>
+            {displayGrid ? (
+              <CardContent>
+                <Box
+                  display="grid"
+                  gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
+                  gap={2}
+                >
+                  {tableRows}
+                </Box>
+              </CardContent>
+            ) : (
+               tableRows 
+            )}
+          </TableBody>
         </Table>
       </Box>
     </Card>

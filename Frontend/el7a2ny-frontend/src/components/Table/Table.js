@@ -16,13 +16,16 @@ function Table({ value, title, filters }) {
         <Container maxWidth="xl">
           <Stack spacing={3}>
             <Header name={title} />
-            <Filters filters={filters} />
             {value.loading ? (
               <LoadingSpinner />
-            ) : value.data.length == 0 ? (
-              <NoRecords message={value.noRecords} />
             ) : (
-              <Content />
+              <>
+                <Filters filters={filters} />
+                {value.data.length == 0 ? (
+                <NoRecords message={value.noRecords} />
+                ) : (
+                <Content />)}
+              </>
             )}
           </Stack>
         </Container>
