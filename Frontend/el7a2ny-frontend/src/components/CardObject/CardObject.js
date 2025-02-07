@@ -1,8 +1,4 @@
-import {
-  Card,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Card, ListItem, Box, CardContent, ListItemText } from "@mui/material";
 import CardAvatar from "./CardAvatar";
 
 function CardObject({ item, index, texts, cardActionsElement }) {
@@ -16,33 +12,31 @@ function CardObject({ item, index, texts, cardActionsElement }) {
       />
     );
   });
-  console.log("picture", item.Picture, index);
 
   return (
-    <Card
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        height: "100%",
-        width: "100%",
-        textAlign: "center",
-        alignItems: "center",
-      }}
-    >
-      <ListItem
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          height: "100%",
-          textAlign: "center",
-        }}
-      >
-        <CardAvatar src={!item.Picture ? `/assets/avatars/${index}.png` : item.Picture} />
-        {textsElement}
-      </ListItem>
-
+    <Card>
+      <CardContent>
+        <Box
+          sx={{
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <ListItem
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              height: "100%",
+              textAlign: "center",
+            }}
+          >
+            <CardAvatar src={!item.Picture ? `/assets/avatars/${index}.png` : item.Picture} />
+            {textsElement}
+          </ListItem>
+        </Box>
+      </CardContent>
       {cardActionsElement}
     </Card>
   );

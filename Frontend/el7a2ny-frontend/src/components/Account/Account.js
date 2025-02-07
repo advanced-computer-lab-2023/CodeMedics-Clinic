@@ -4,7 +4,7 @@ import AccountDetails from "./AccountDetails";
 function Account({ user }) {
   return (
     <Grid container spacing={3}>
-      <Grid xs={12} md={6} lg={4}>
+      <Grid xs={12} md={6} lg={4} sx={{px: 2}}>
         <AccountCard user={user} />
       </Grid>
       <Grid xs={12} md={6} lg={8}>

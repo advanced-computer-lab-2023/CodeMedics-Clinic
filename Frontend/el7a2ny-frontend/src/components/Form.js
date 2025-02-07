@@ -26,7 +26,7 @@ function Form({ title, fields, onSubmit, actionName, values }) {
         return acc;
       }, {});
 
-  console.log("values", initialValues);
+  console.log("values", initialValues, values);
 
   const validationSchema = Yup.object(
     fields.reduce((acc, item) => {
@@ -71,6 +71,7 @@ function Form({ title, fields, onSubmit, actionName, values }) {
             handleChange(item, value, index);
           }}
           type={item.type}
+          disabled={item.disabled}
         />
       );
 
@@ -78,8 +79,8 @@ function Form({ title, fields, onSubmit, actionName, values }) {
       <Grid key={item.name} xs={12} md={6}>
         {element}
         <TextField
-          error={!!(touched[index] && form.errors[item.name])}
-          helperText={touched[index] && form.errors[item.name]}
+          error={!!(touched[index] ? form.errors[item.name] : null)}
+          helperText={touched[index] ? form.errors[item.name] : null}
           fullWidth
           name={item.name}
           onBlur={form.handleBlur}
@@ -105,20 +106,22 @@ function Form({ title, fields, onSubmit, actionName, values }) {
             </Grid>
           </Box>
         </CardContent>
-        <CardActions sx={{ justifyContent: "flex-end" }}>
-          <Button
-            variant="contained"
-            type="submit"
-            onClick={() => {
-              console.log(form.isValid);
-              if (!form.isValid) {
-                setTouched(fields.map((item) => true));
-              }
-            }}
-          >
-            {actionName}
-          </Button>
-        </CardActions>
+        {actionName ? (
+          <CardActions sx={{ justifyContent: "flex-end" }}>
+            <Button
+              variant="contained"
+              type="submit"
+              onClick={() => {
+                console.log(form.isValid);
+                if (!form.isValid) {
+                  setTouched(fields.map((item) => true));
+                }
+              }}
+            >
+              {actionName}
+            </Button>
+          </CardActions>
+        ) : null}
       </Card>
     </form>
   );

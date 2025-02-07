@@ -1,7 +1,6 @@
 import { Box, ListItemAvatar } from "@mui/material";
 function CardAvatar({ src }) {
   return (
-    <ListItemAvatar>
       <Box
         component="img"
         src={src}
@@ -14,7 +13,6 @@ function CardAvatar({ src }) {
           backgroundColor: "neutral.200",
         }}
       />
-    </ListItemAvatar>
   );
 }
 
