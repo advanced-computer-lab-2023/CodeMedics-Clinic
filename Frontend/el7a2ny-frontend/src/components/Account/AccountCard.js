@@ -1,6 +1,11 @@
-import { Avatar, Box, Card, CardContent, Divider, Typography } from "@mui/material";
+import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 
-function AccountCard({ user }) {
+function AccountCard({ src, texts }) {
+  const textsElements = texts.map(text => (
+    <Typography gutterBottom variant={text.variant} color={text.color}>
+      {text.value}
+    </Typography>
+  ))
   return (
     <Card>
       <CardContent>
@@ -9,33 +14,18 @@ function AccountCard({ user }) {
             alignItems: "center",
             display: "flex",
             flexDirection: "column",
+            gap: 2
           }}
         >
           <Avatar
-            src={user.avatar}
+            src={src}
             sx={{
               height: 80,
               mb: 2,
               width: 80,
             }}
           />
-          <Typography gutterBottom variant="h5">
-            {user.FirstName}
-          </Typography>
-        </Box>
-      </CardContent>
-      <Divider />
-      <CardContent>
-        <Box
-          sx={{
-            alignItems: "center",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Typography gutterBottom variant="h5" color="green">
-            {user.Wallet} EGP
-          </Typography>
+          {textsElements}
         </Box>
       </CardContent>
     </Card>

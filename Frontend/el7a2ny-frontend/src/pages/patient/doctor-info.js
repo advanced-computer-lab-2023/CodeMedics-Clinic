@@ -109,7 +109,7 @@ const Page = () => {
                 <CardContent>
                   <Box
                     display="grid"
-                    gridTemplateColumns="repeat(auto-fill, minmax(500px, 1fr))"
+                    gridTemplateColumns="repeat(auto-fill, minmax(400px, 1fr))"
                     gap={2}
                   >
                     <Grid xs={12} md={6} lg={4}>

@@ -85,7 +85,7 @@ const Page = () => {
             <Typography variant="h4" gutterBottom>
               Current Health Package
             </Typography>
-            <CardContent sx={{ pt: 0 }}>
+            <CardContent sx={{ pt: 3 }}>
               <Stack spacing={3}>
                 <Stack xs={12} md={4} direction="row" spacing={3}>
                   <TextField
