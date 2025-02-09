@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { TableContext } from "../Table";
 
 function Content() {
-  const { columns, tableRows, displayGrid } = useContext(TableContext);
+  const { columns, tableRows, displayGrid, px } = useContext(TableContext);
   return (
     <Card>
       <Box>
@@ -15,7 +15,7 @@ function Content() {
               <CardContent>
                 <Box
                   display="grid"
-                  gridTemplateColumns="repeat(auto-fill, minmax(250px, 1fr))"
+                  gridTemplateColumns={`repeat(auto-fill, minmax(${px}px, 1fr))`}
                   gap={2}
                 >
                   {tableRows}

@@ -4,6 +4,8 @@ import MenuInput from "./Inputs/MenuInput";
 import { TEXT_FIELD_TYPES } from "src/project-utils/Constants";
 
 function Filters({filters}){
+    if(!filters)
+        return null
     console.log("all filters rendered ", filters)
     const allFilters = filters.map((filter) => {
         if(filter.type === "menu"){

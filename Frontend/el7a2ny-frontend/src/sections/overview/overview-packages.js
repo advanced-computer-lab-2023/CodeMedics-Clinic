@@ -116,7 +116,7 @@ export const OverviewPackages = (props) => {
                 </ListItemAvatar>
                 <Box sx={{ display: 'flex',mb:1 }}>
                   <Typography variant="h5">
-                    {Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP'}
+                    {Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP / Yr'}
                   </Typography>
                   <Typography
                     color="text.secondary"
@@ -126,7 +126,7 @@ export const OverviewPackages = (props) => {
                     }}
                     variant="subtitle2"
                   >
-                    /year
+                    {/* /year */}
                   </Typography>
                 </Box>
                 

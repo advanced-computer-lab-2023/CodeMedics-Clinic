@@ -146,10 +146,10 @@ function PatientDoctorsTheme() {
         noRecords: "No Doctors Found",
         setAllData,
         tableRows,
-        displayGrid: "true"
+        displayGrid: "true",
+        px: 250
       }}
       filters={filters}
-      
       title="Doctors"
     />
   );
