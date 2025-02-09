@@ -41,6 +41,7 @@ function getPackagePrice(membership) {
 }
 
 const maxAge = 3 * 24 * 60 * 60;
+
 const createToken = (username) => {
     return jwt.sign({ username }, 'supersecret', {
         expiresIn: maxAge

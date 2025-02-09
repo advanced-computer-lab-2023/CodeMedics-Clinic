@@ -2,15 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema({
-    doctor: {
-        type: String,
-        required: true
-    },
     doctorUsername: {
         type: String,
         required: true
     },
-    patient: {
+    patientUsername: {
         type: String,
         required: false
     },
@@ -32,7 +28,7 @@ const appointmentSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled', 'follow-up Requested', 'follow-up Accepted', 'follow-up Revoked'],
+        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled', 'followUpRequested', 'followUpAccepted', 'followUpRevoked'],
         default: 'unreserved',
         required: true
     }

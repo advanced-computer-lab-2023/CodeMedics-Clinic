@@ -106,10 +106,6 @@ app.use(express.json());
 
 //DeleteModelRecords.deleteAllRecords(); //uncomment this line to delete all records from a specific model
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -119,7 +115,6 @@ server.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
-app.set('view engine', 'ejs');
 // const corsOptions = {
 //     origin: 'http://example.com', // Replace with your frontend's URL
 //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
