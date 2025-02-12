@@ -36,23 +36,23 @@ const payAppointment = async(req, res) =>{
     }
 
     const doctor = await Doctor.findOne({Username: appointment.doctorUsername})
-    console.log(patient, doctor, appointment, patient.HealthPackage, patient.HealthPackage.membership);
-    const discount = getDiscountAmountForAppointments(patient.HealthPackage.membership);
+    console.log(patient, doctor, appointment, patient.healthPackage, patient.healthPackage.membership);
+    const discount = getDiscountAmountForAppointments(patient.healthPackage.membership);
     const duration = appointment.endHour - appointment.startHour;
-    const amount = duration * doctor.HourlyRate * (1 - discount);
+    const amount = duration * doctor.hourlyRate * (1 - discount);
 
     if(paymentMethod == "Wallet"){
-        if(patient.Wallet < amount){
+        if(patient.wallet < amount){
             res.status(200).json({message : "Insufficient funds"});
         }
         else{
-            console.log(patient.Wallet, patient.Wallet - 100, amount);
-            patient.Wallet -= amount;
+            console.log(patient.wallet, patient.wallet - 100, amount);
+            patient.wallet -= amount;
             await patient.save();
             appointment.status = "upcoming";
-            console.log(patient.Wallet);
+            console.log(patient.wallet);
             await appointment.save();
-            doctor.Wallet += amount;
+            doctor.wallet += amount;
             await doctor.save();
             res.status(200).json({message : "Appointment has been scheduled successfully"});
         }

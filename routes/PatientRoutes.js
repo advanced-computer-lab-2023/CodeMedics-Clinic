@@ -22,7 +22,7 @@ const {
 const {
   bookAppointment,
   payWithWallet,
-} = require("../controllers/Patient/Appointment/BookAppointment.js");
+} = require("../controllers/Patient/Appointment/bookAppointment.js");
 const { viewPatients } = require("../controllers/Patient/PatientController");
 const { changePassword } = require("../controllers/Patient/PatientController");
 const {
@@ -91,8 +91,6 @@ function verifyToken(req, res, next) {
 router.get("/", patientController.getPatients);
 router.get("/:patientUsername", patientController.getPatient);
 router.get("/:patientUsername/appointments", getPatientAppointments);
-router.get("/appointments/:appointmentId/amount", getAppointmentAmount);
-router.get("/appointments", getAvailableAppointments);
 router.get("/:patientUsername/messages", getPatientMessages);
 router.get("/doctors/:doctorUsername/appointments", getPatientDoctorAppointments);
 router.get("/doctors/:doctorUsername", getDoctor);
@@ -105,45 +103,35 @@ router.patch("/:patientUsername/appointments/:appointmentId", updateAppointment)
 
 
 
-router.post("/payAppointment", payAppointment);
-router.post("/payHealthPackage", payHealthPackage);
 
-router.post(
-  "/subscribeHealthPackage",
-  patientController.healthPackageSubscription
-);
-router.post(
-  "/unsubscribeHealthPackage",
-  patientController.healthPackageUnsubscription
-);
+router.post("/:patientUsername/payment/appointments/:appointmentId", payAppointment);
+router.post("/:patientUsername/payment/health-packages/:package-name", payHealthPackage);
+router.post("/:patientUsername/health-packages/subscription", patientController.healthPackageSubscription);
+router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
+router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
+router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
+router.patch("/:patientUsername/appointments/:appointmentId/cancel", CancelAppointment);
 
+router.post("/:patientUsername/family-members", addFamilyMember);
+router.post("/:patientUsername/family-members-no-account", addFamilyMemberNoAccount);
+router.delete("/:patientUsername/family-members", removeFamilyMember);
+router.delete("/:patientUsername/family-members-no-account", removeFamilyMemberNoAccount);
+router.get("/:patientUsername/family-members", viewFamilyMembers);
+router.get("/:patientUsername/family-members/appointments", getAllFamilyAppointments);
+router.post("/:patientUsername/prescriptions", addPrescription);
+router.delete("/:patientUsername/prescriptions", deletePrescriptionsByUsername);
+router.get("/:patientUsername/health-records", viewHealthRecords);
 
-router.post("/:username/MedicalHistoryUpload", uploadDocument, addDocument);
-router.delete("/:username/MedicalHistory/:documentId", removeDocument);
+/*
+ general, to be moved
+*/
 
-router.patch("/CancelAppointment", CancelAppointment);
-router.patch("/payWithWallet", payWithWallet);
-router.patch("/payWithWalletPackage", patientController.payWithWalletPackage);
-router.patch("/familyMembers", addFamilyMember);
-router.delete("/familyMembers", removeFamilyMember);
-router.delete("/familyMembersNoAccount", removeFamilyMemberNoAccount);
-router.get("/familyMembers", viewFamilyMembers);
-router.get("/getAvailablePackages", patientController.getAvailablePackages);
-router.get("/getPackage", patientController.getPackage);
-router.post("/familyMembersNoAccount", addFamilyMemberNoAccount);
-router.get("/viewappointments", filterAppointmentsPatient);
-
-router.get("/getAllFamilyAppointments", getAllFamilyAppointments);
-
-router.get("/prescriptions/filter", filterPrescriptions);
+router.get("/pacakges", patientController.getAvailablePackages);
+router.get("/appointments/:appointmentId/amount", getAppointmentAmount);
+router.get("/appointments", getAvailableAppointments);
+router.get("/packages/package-name", patientController.getPackage);
 router.get("/prescriptions", getPrescriptions);
-router.get("/prescriptions1", getPrescriptions1);
 
-router.get("/prescriptionList", (req, res) => {
-  res.render("prescriptionsList");
-});
-router.post("/addPrescription", addPrescription);
-router.delete("/deletePrescription", deletePrescriptionsByUsername);
 
 // Backend route to handle PDF generation
 // Modify the function to generate PDF content and send it in the response
@@ -165,6 +153,5 @@ router.post("/download-prescription-pdf", async (req, res) => {
   }
 });
 
-router.get("/:username/health-records", viewHealthRecords);
 
 module.exports = router;
