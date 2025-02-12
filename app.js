@@ -6,13 +6,12 @@ const logger = require('morgan');
 const colors = require('colors');
 const cors = require('cors');
 const corsOptions = {
-  origin: `http://localhost:${3000}`,
+  origin: `http://localhost:${process.env.FRONT_END_PORT}`,
   credentials: true,
   optionSuccessStatus: 200
 };
 
-
-const stripe = require("stripe")("sk_test_51OA3YuHNsLfp0dKZBQsyFFPLXepbGkt9p5xZzd2Jzzj6zxLqUTY2DYF244qILCi0cfVjg37szrwdXZzin83e5ijm00X5eXuTnM");
+const stripe = require("stripe")(process.STRIPE_SECRET_KEY);
 
 const connectDB = require('./config/MongoDBConnection');
 const adminRoutes = require('./routes/AdminRoutes');
@@ -21,6 +20,10 @@ const doctorRoutes = require('./routes/DoctorRoutes');
 const patientRoutes = require('./routes/PatientRoutes');
 const genericRoutes = require('./routes/GenericRoutes');
 const chatRoutes = require('./routes/ChatsRoutes');
+
+const {putSocket, getSocket, joinSocket} = require('./config/socket');
+
+
 
 // Connect to MongoDB
 connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
@@ -33,6 +36,38 @@ const http = require('http');
 
 const server = http.createServer(app);
 
+app.use(cors(corsOptions));
+app.use(express.static("public"));
+app.use(express.json());
+
+
+
+//DeleteModelRecords.deleteAllRecords(); //uncomment this line to delete all records from a specific model
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+server.listen(Port);
+
+console.log("Server running at http://localhost:" + process.env.PORT + "/");
+
+// const corsOptions = {
+//     origin: 'http://example.com', // Replace with your frontend's URL
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     credentials: true, // Enable credentials (e.g., cookies, authorization headers)
+// };
+//
+// app.use(cors(corsOptions));
+
+// routes
+
+app.use('/admins', adminRoutes);
+app.use('/doctors', doctorRoutes);
+app.use('/patients', patientRoutes);
+app.use('/', genericRoutes);
+app.use('/chats', chatRoutes);
 
 
 const io = require('socket.io')(server, {
@@ -42,12 +77,6 @@ const io = require('socket.io')(server, {
   }
 });
 
-app.use(cors(corsOptions));
-
-const {putSocket, getSocket, joinSocket} = require('./config/socket');
-
-
-// server.listen(5000);
 io.on("connection", (socket) => {
 
   socket.on("iAmReady", (username) => {
@@ -98,38 +127,6 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-app.use(express.static("public"));
-app.use(express.json());
-
-
-
-//DeleteModelRecords.deleteAllRecords(); //uncomment this line to delete all records from a specific model
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-server.listen(Port);
-
-console.log("Server running at http://localhost:" + process.env.PORT + "/");
-
-// const corsOptions = {
-//     origin: 'http://example.com', // Replace with your frontend's URL
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//     credentials: true, // Enable credentials (e.g., cookies, authorization headers)
-// };
-//
-// app.use(cors(corsOptions));
-
-// routes
-
-app.use('/admin', adminRoutes);
-app.use('/doctor', doctorRoutes);
-app.use('/patient', patientRoutes);
-app.use('/', genericRoutes);
-app.use('/chat', chatRoutes);
 
 
 app.post("/package/create-payment-intent", async (req, res) => {

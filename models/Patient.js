@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const Prescription = require("./Prescription");
-const Cart = require("./Cart");
 const Schema = mongoose.Schema;
 
 const patientSchema = new Schema(
