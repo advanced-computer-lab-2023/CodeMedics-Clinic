@@ -101,12 +101,9 @@ router.patch("/:patientUsername", patientController.updatePatient);
 router.post("/", patientController.createPatient);
 router.patch("/:patientUsername/prescriptions/:prescriptionId", fillPrescription);
 router.patch("/:patientUsername/appointments/:appointmentId", bookAppointment);
-
 router.patch("/:patientUsername/appointments/:appointmentId", updateAppointment);
 
 
-
-router.patch("/RescheduleAppointment", RescheduleAppointment);
 
 router.post("/payAppointment", payAppointment);
 router.post("/payHealthPackage", payHealthPackage);
@@ -120,7 +117,6 @@ router.post(
   patientController.healthPackageUnsubscription
 );
 
-// app.use(verifyToken);
 
 router.post("/:username/MedicalHistoryUpload", uploadDocument, addDocument);
 router.delete("/:username/MedicalHistory/:documentId", removeDocument);
