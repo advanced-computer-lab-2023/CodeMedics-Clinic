@@ -79,6 +79,9 @@ router.get("/:patientUsername/appointments", getPatientAppointments);
 router.get("/:patientUsername/messages", getPatientMessages);
 router.get("/doctors/:doctorUsername/appointments", getPatientDoctorAppointments);
 router.get("/doctors/:doctorUsername", getDoctor);
+router.get("/:patientUsername/family-members", viewFamilyMembers);
+router.get("/:patientUsername/family-members/appointments", getAllFamilyAppointments);
+router.get("/:patientUsername/health-records", viewHealthRecords);
 
 router.patch("/:patientUsername", patientController.updatePatient);
 router.post("/", patientController.createPatient);
@@ -87,25 +90,21 @@ router.patch("/:patientUsername/appointments/:appointmentId", bookAppointment);
 router.patch("/:patientUsername/appointments/:appointmentId", updateAppointment);
 router.post("/:patientUsername/payment/appointments/:appointmentId", payAppointment);
 router.post("/:patientUsername/payment/health-packages/:packageName", payHealthPackage);
-
-
-
-
 router.post("/:patientUsername/health-packages/subscription", patientController.healthPackageSubscription);
-router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
-router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
-router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
-router.patch("/:patientUsername/appointments/:appointmentId/cancel", CancelAppointment);
-
 router.post("/:patientUsername/family-members", addFamilyMember);
 router.post("/:patientUsername/family-members-no-account", addFamilyMemberNoAccount);
+router.post("/:patientUsername/prescriptions", addPrescription);
+
+router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
+router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
 router.delete("/:patientUsername/family-members", removeFamilyMember);
 router.delete("/:patientUsername/family-members-no-account", removeFamilyMemberNoAccount);
-router.get("/:patientUsername/family-members", viewFamilyMembers);
-router.get("/:patientUsername/family-members/appointments", getAllFamilyAppointments);
-router.post("/:patientUsername/prescriptions", addPrescription);
-router.delete("/:patientUsername/prescriptions", deletePrescriptionsByUsername);
-router.get("/:patientUsername/health-records", viewHealthRecords);
+
+
+
+
+router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
+router.patch("/:patientUsername/appointments/:appointmentId/cancel", CancelAppointment);
 
 /*
  general, to be moved

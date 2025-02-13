@@ -89,34 +89,24 @@ exports.getPrescriptions1 = async (req, res) => {
   }
 };
 
-// add prescription
 exports.addPrescription = async (req, res) => {
   try {
-    const { Drugs, Patient, Doctor, Date } = req.body;
+    const { drugs, patientUsername, doctorUsername, date } = req.body;
 
-    // Create a new prescription
     const prescription = new Prescription({
-      Patient,
-      Doctor,
-      Date,
-      Drug: Drugs,
+      patientUsername,
+      doctorUsername,
+      date,
+      drug: drugs,
       filled: false,
     });
 
-    // Save the prescription
-    const savedPrescription = await prescription.save();
+    await prescription.save();
 
-    // Find the patient and update their Prescriptions array
-    const patient = await patientSchema.findOne({ Username: Patient });
-    if (patient) {
-      patient.Prescriptions.push(savedPrescription); // Push the new prescription to the patient's Prescriptions array
-      await patient.save(); // Save the updated patient record
-    }
-
-    res.status(200).json({ message: "Prescription added successfully" });
+    res.status(204).json({ message: "Prescription added successfully" });
   } catch (error) {
     console.error("Error adding prescription:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(400).json({ message: e.message });
   }
 };
 
@@ -301,4 +291,3 @@ exports.fillPrescription = async (req, res) => {
       .json({ message: "Problem Occured While Filling Prescription" });
   }
 };
-

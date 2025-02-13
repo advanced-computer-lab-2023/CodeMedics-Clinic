@@ -1,21 +1,13 @@
-const Patient = require('../../models/Patient');
+const { validatePatient } = require("../../utils/validator");
 
 exports.viewHealthRecords = async (req, res) => {
-    try {
-        const { username } = req.params;
-        const patient = await Patient.findOne({ Username: username });
-
-        if (!patient) {
-            return res.status(404).json({ message: 'Patient not found' });
-        }
-
-        const healthRecords = patient.HealthRecords;
-        //console.log(healthRecords); 
-        res.status(200).json({ healthRecords });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
+  try {
+    const { patientUsername } = req.params;
+    const patient = await validatePatient(patientUsername, res);
+    const healthRecords = patient.healthRecords;
+    res.status(200).json({ data: healthRecords });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: e.message });
+  }
 };
-
-

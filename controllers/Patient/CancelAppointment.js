@@ -7,6 +7,7 @@ const Doctor = require('../../models/Doctor');
 const nodemailer = require('nodemailer');
 const ClinicWallet = require('../../models/ClinicWallet');
 const Package = require('../../models/Package');
+const { validateAppointment } = require('../../utils/validator');
 
 
 async function sendEmail(recipient, subject, message) {
@@ -28,18 +29,8 @@ async function sendEmail(recipient, subject, message) {
 
 exports.CancelAppointment = async (req, res) => {
     try {
-        const { appointmentID } = req.query;
-
-        if (!appointmentID) {
-            return res.status(400).json({ success: false, message: 'Appointment ID is required' });
-        }
-
-        const appointment = await Appointment.findOne({ _id: appointmentID });
-
-        if (!appointment) {
-            return res.status(404).json({ success: false, message: 'Appointment not found' });
-        }
-
+        const { appointmentId } = req.params;
+        const appointment = await validateAppointment(appointmentId);
         const currentDate = new Date();
         const appointmentDate = new Date(appointment.date);
 

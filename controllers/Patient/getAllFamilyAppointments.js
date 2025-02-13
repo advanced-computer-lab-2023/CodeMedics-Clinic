@@ -1,8 +1,4 @@
-const express = require("express");
-const router = express.Router();
-const Patient = require("../../models/Patient");
 const Appointment = require("../../models/Appointment");
-const { getUsername } = require("../../config/infoGetter");
 const { validatePatient } = require("../../utils/validator");
 
 exports.getAllFamilyAppointments = async (req, res) => {
