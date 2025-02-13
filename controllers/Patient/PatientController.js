@@ -9,6 +9,7 @@ const asyncHandler = require("express-async-handler");
 const FamilyMember = require("../../models/FamilyMember");
 const schedule = require("node-schedule");
 const jwt = require("jsonwebtoken");
+const { validatePatient } = require("../../utils/validator.js");
 
 function getDiscountAmountForHealthPackage(package) {
   if (package == "Free") {
@@ -135,60 +136,57 @@ const getPatients = asyncHandler(async (req, res) => {
   }
 });
 
-const healthPackageSubscription = asyncHandler(async (req, res) => {
-  const patient = await patientModel.findOne({
-    Username: await getUsername(req, res),
-  });
-  const { membership } = req.body;
-  if (patient && patient.HealthPackage.membership !== membership) {
-    patient.HealthPackage.membership = membership;
-    patient.HealthPackage.date = Date.now();
-    patient.HealthPackage.date.setFullYear(
-      patient.HealthPackage.date.getFullYear() + 1
-    );
-    patient.HealthPackage.status = "Active";
-    for (const member of patient.FamilyMembers) {
-      const familyMember = await patientModel.findOne({ _id: member.id });
-      if (familyMember) {
-        familyMember.HealthPackage.discount =
-          getDiscountAmountForHealthPackage(membership);
-        familyMember.HealthPackage.discountEndDate = Date.now();
-        familyMember.HealthPackage.discountEndDate.setFullYear(
-          familyMember.HealthPackage.discountEndDate.getFullYear() + 1
-        );
-        await familyMember.save();
-      }
+const updateFamilyMembers = async (patient) => {
+  for (const member of patient.familyMembers) {
+    const familyMember = await patientModel.findOne({ _id: member.id });
+    if (familyMember) {
+      familyMember.healthPackage.discount =
+        getDiscountAmountForHealthPackage(membership);
+      familyMember.healthPackage.discountEndDate = Date.now();
+      familyMember.healthPackage.discountEndDate.setFullYear(
+        familyMember.healthPackage.discountEndDate.getFullYear() + 1
+      );
+      await familyMember.save();
     }
-    await patient.save();
+  }
+};
 
+const healthPackageSubscription = asyncHandler(async (req, res) => {
+  const { patientUsername } = req.params;
+  const patient = await validatePatient(patientUsername, res);
+  const { packageName } = req.body;
+  if (patient.healthPackage.membership !== packageName) {
+    patient.healthPackage.membership = packageName;
+    patient.healthPackage.date = Date.now();
+    patient.healthPackage.date.setFullYear(
+      patient.healthPackage.date.getFullYear() + 1
+    );
+    patient.healthPackage.status = "Active";
+    updateFamilyMembers(patient);
+    await patient.save();
     return res
-      .status(200)
+      .status(204)
       .json({ message: "Health Package Subscription Successful!" });
-  } else if (patient) {
+  } else {
     return res
       .status(400)
       .json({ message: "Patient already subscribed to health package!" });
-  } else {
-    return res.status(400).json({ message: "Patient not found!" });
   }
 });
 
 const healthPackageUnsubscription = asyncHandler(async (req, res) => {
-  const patient = await patientModel.findOne({
-    Username: await getUsername(req, res),
-  });
-  if (patient && patient.HealthPackage.membership !== "Free") {
-    patient.HealthPackage.status = "EndDateCancelled";
+  const { patientUsername } = req.params;
+  const patient = await validatePatient(patientUsername, res);
+  if (patient.healthPackage.membership !== "Free") {
+    patient.healthPackage.status = "EndDateCancelled";
     await patient.save();
     return res
       .status(200)
       .json({ message: "Health Package Unsubscription Successful!" });
-  } else if (patient) {
+  } else {
     return res
       .status(400)
       .json({ message: "Patient already unsubscribed to health package!" });
-  } else {
-    return res.status(400).json({ message: "Patient not found!" });
   }
 });
 
@@ -197,15 +195,15 @@ const viewHealthPackage = asyncHandler(async (req, res) => {
     Username: await getUsername(req, res),
   });
   if (patient) {
-    return res.status(200).json(patient.HealthPackage);
+    return res.status(200).json(patient.healthPackage);
   } else {
     return res.status(400).json({ message: "Patient not found!" });
   }
 });
 
 const getPatient = asyncHandler(async (req, res) => {
-  const patientUsername  = req.params.patientUsername;
-  console.log(req.params, patientUsername)
+  const patientUsername = req.params.patientUsername;
+  console.log(req.params, patientUsername);
   const patient = await patientModel.findOne({ username: patientUsername });
   if (patient) {
     return res.status(200).json({ data: patient });
