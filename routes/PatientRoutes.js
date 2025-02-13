@@ -17,14 +17,10 @@ const {
 } = require("../controllers/Patient/MedicalHistory");
 const {
   getPatientAppointments,
-  viewPastAppointments,
 } = require("../controllers/Patient/Appointment/getPatientAppointments.js");
 const {
   bookAppointment,
-  payWithWallet,
 } = require("../controllers/Patient/Appointment/bookAppointment.js");
-const { viewPatients } = require("../controllers/Patient/PatientController");
-const { changePassword } = require("../controllers/Patient/PatientController");
 const {
   CancelAppointment,
 } = require("../controllers/Patient/CancelAppointment");
@@ -34,21 +30,11 @@ const {
 const {
   getPatientMessages,
 } = require("../controllers/Patient/getPatientMessages");
-const { RequestFollowUp } = require("../controllers/Patient/RequestFollowUp");
-const PDFDocument = require("pdfkit");
-const fs = require("fs");
-const Prescription = require("../models/Prescription");
-
-const {
-  RescheduleAppointment,
-} = require("../controllers/Patient/RescheduleAppointment");
 
 const {
   getPrescriptions,
-  filterPrescriptions,
   addPrescription,
   deletePrescriptionsByUsername,
-  getPrescriptions1,
   createAndDownloadPDF,
   fillPrescription,
 } = require("../controllers/Patient/PrescriptionList");
@@ -68,7 +54,6 @@ const {
 const {
   viewHealthRecords,
 } = require("../controllers/Patient/viewHealthRecords");
-const Patient = require("../models/Patient.js");
 
 const {
   updateAppointment,
@@ -100,12 +85,12 @@ router.post("/", patientController.createPatient);
 router.patch("/:patientUsername/prescriptions/:prescriptionId", fillPrescription);
 router.patch("/:patientUsername/appointments/:appointmentId", bookAppointment);
 router.patch("/:patientUsername/appointments/:appointmentId", updateAppointment);
-
-
-
-
 router.post("/:patientUsername/payment/appointments/:appointmentId", payAppointment);
-router.post("/:patientUsername/payment/health-packages/:package-name", payHealthPackage);
+router.post("/:patientUsername/payment/health-packages/:packageName", payHealthPackage);
+
+
+
+
 router.post("/:patientUsername/health-packages/subscription", patientController.healthPackageSubscription);
 router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
 router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
