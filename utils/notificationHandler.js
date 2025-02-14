@@ -28,11 +28,11 @@ async function sendEmail(recipient, subject, message) {
   }
 }
 
-async function sendNotification(user, emailSubject, emailContent) {
+async function sendNotification(user, emailSubject, emailContent, message) {
   await sendEmail(user.email, emailSubject, emailContent);
   user.messages.push({
     sender: "System",
-    content: successMessage,
+    content: message,
     timestamp: new Date(),
   });
   await user.save();
@@ -70,4 +70,4 @@ async function handleDoctorAppointmentNotification(doctor, patient, appointment)
   );
 }
 
-module.exports = { sendEmail, handleDoctorAppointmentNotification, handlePatientAppointmentNotification };
+module.exports = { sendEmail, sendNotification,  handleDoctorAppointmentNotification, handlePatientAppointmentNotification };

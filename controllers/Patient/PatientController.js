@@ -25,15 +25,15 @@ function getDiscountAmountForHealthPackage(package) {
   }
 }
 
-function getPackagePrice(membership) {
-  if (membership == "Silver") {
+function getPackagePrice(packageName) {
+  if (packageName == "Silver") {
     return 3600;
-  } else if (membership == "Gold") {
+  } else if (packageName == "Gold") {
     return 6000;
-  } else if (membership == "Platinum") {
+  } else if (packageName == "Platinum") {
     return 9000;
   } else {
-    console.error("Invalid membership");
+    console.error("Invalid package name");
   }
 }
 

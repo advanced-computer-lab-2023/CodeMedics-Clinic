@@ -1,120 +1,98 @@
+const Doctor = require("../../models/Doctor");
+const Appointment = require("../../models/Appointment");
+const Patient = require("../../models/Patient");
+const Package = require("../../models/Package");
+const ClinicWallet = require("../../models/ClinicWallet");
+const { sendNotification } = require("../../utils/notificationHandler");
+const {
+  validateAppointment,
+  validateDoctor,
+  validatePatient,
+} = require("../../utils/validator");
 
-const express = require('express');
-const router = express.Router();
-const Appointment = require('../../models/Appointment');
-const Patient = require('../../models/Patient');
-const Doctor = require('../../models/Doctor');
-const nodemailer = require('nodemailer');
-const ClinicWallet = require('../../models/ClinicWallet');
-const Package = require('../../models/Package');
-const { validateAppointment } = require('../../utils/validator');
-
-
-async function sendEmail(recipient, subject, message) {
-    try {
-        const mailOptions = {
-            from: 'codemedics2@gmail.com', // Replace with your Gmail email
-            to: recipient,
-            subject: subject,
-            text: message,
-        };
-
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent:', info.response);
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw new Error('Failed to send email');
-    }
-}
-
-exports.CancelAppointment = async (req, res) => {
-    try {
-        const { appointmentId } = req.params;
-        const appointment = await validateAppointment(appointmentId);
-        const currentDate = new Date();
-        const appointmentDate = new Date(appointment.date);
-
-        if (Math.abs(currentDate - appointmentDate) < 24 * 60 * 60 * 1000) {
-            // Cancellation within 24 hours
-            appointment.status = 'cancelled';
-            await appointment.save();
-        } else {
-            // Cancellation beyond 24 hours
-            const doctor = await Doctor.findOne({ Username: appointment.doctorUsername });
-            const patient = await Patient.findOne({ Username: appointment.patient });
-            const package = await Package.findOne({ Name: patient.HealthPackage.membership });
-            let clinicWallet = await ClinicWallet.find();
-            clinicWallet = clinicWallet[0];
-            if (!doctor || !patient) {
-                return res.status(404).json({ success: false, message: 'Doctor or patient not found' });
-            }
-            var discount = 0;
-            if(package){
-                discount = package.SessionDiscount;
-            }
-            const hours = Math.abs(parseInt(appointment.startHour) - parseInt(appointment.endHour));
-            const clinicFees = 0.1 * doctor.HourlyRate;
-            const appointmentPrice = hours * (doctor.HourlyRate + clinicFees);
-            doctor.Wallet -= (hours * doctor.HourlyRate);
-            patient.Wallet += appointmentPrice - (appointmentPrice * discount / 100);
-            clinicWallet.Wallet -= clinicFees;
-            const unreservedAppointment = new Appointment();
-            unreservedAppointment.doctor = doctor.FirstName + doctor.LastName;
-            unreservedAppointment.doctorUsername = doctor.Username;
-            unreservedAppointment.patient = null;
-            unreservedAppointment.date = appointmentDate;
-            unreservedAppointment.startHour = appointment.startHour;
-            unreservedAppointment.endHour = appointment.endHour;
-            unreservedAppointment.status = 'unreserved';
-            await unreservedAppointment.save();
-            doctor.Appointments.push(unreservedAppointment._id);
-            await doctor.save();
-            await patient.save();
-            appointment.status = 'cancelled';
-            await appointment.save();
-            await clinicWallet.save();
-        
-
-        // Notify both doctor and patient
-        sendEmail(doctor.Email, 'Appointment Cancelled', `Your appointment on ${appointment.date} has been canceled.`);
-        // Generate success message
-const doctorMessage = `Your appointment on ${appointment.date} has been canceled.`;
-
-// Add the success message to the doctor's messages list
-doctor.Messages.push({
-    sender: 'System',
-    content: doctorMessage,
-    timestamp: new Date(),
-});
-await doctor.save();
-
-        sendEmail(patient.Email, 'Appointment Cancelled', `Your appointment on ${appointment.date} has been canceled.`);
-  // Generate success message
-  const successMessage = `Your appointment on ${appointment.date} has been canceled.`;
-
-  // Add the success message to the patient's messages list
-  patient.Messages.push({
-      sender: 'System',
-      content: successMessage,
-      timestamp: new Date(),
-  });
-  await patient.save();
-  
-        res.status(200).json({ success: true, message: 'Appointment Canceled Successfully' });}
-    } catch (error) {
-        console.error('Error canceling appointment:', error);
-        return res.status(500).json({ success: false, message: 'Something went wrong while canceling the appointment' });
-    }
+const cancelWithin24Hours = async (appointment) => {
+  appointment.status = "cancelled";
+  await appointment.save();
 };
 
+const cancelBeyond24Hours = async (appointment) => {
+  const doctor = await Doctor.findOne({ username: appointment.doctorUsername });
+  const patient = await Patient.findOne({
+    username: appointment.patientUsername,
+  });
+  const package = await Package.findOne({ name: patient.healthPackage.name });
+  let clinicWallet = await ClinicWallet.find();
+  clinicWallet = clinicWallet[0];
 
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'codemedics2@gmail.com',
-        pass: 'wwtv oszi mcju tilf',
-    },
-    tls: {
-        rejectUnauthorized: false
+  if (!doctor || !patient) {
+    throw new Error("Doctor or patient not found");
+  }
+
+  const discount = package ? package.sessionDiscount : 0;
+  const hours = Math.abs(
+    parseInt(appointment.startHour) - parseInt(appointment.endHour)
+  );
+  const clinicFees = 0.1 * doctor.hourlyRate;
+  const appointmentPrice = hours * (doctor.hourlyRate + clinicFees);
+
+  // Update wallets
+  doctor.wallet -= hours * doctor.hourlyRate;
+  patient.wallet += appointmentPrice - (appointmentPrice * discount) / 100;
+  clinicWallet.wallet -= clinicFees;
+
+  // Create a new unreserved appointment
+  const unreservedAppointment = new Appointment({
+    doctor: doctor.firstName + doctor.lastName,
+    doctorUsername: doctor.username,
+    patientUsername: null,
+    date: appointment.date,
+    startHour: appointment.startHour,
+    endHour: appointment.endHour,
+    status: "unreserved",
+  });
+  await unreservedAppointment.save();
+
+  await doctor.save();
+  await patient.save();
+  await clinicWallet.save();
+
+  appointment.status = "cancelled";
+  await appointment.save();
+};
+
+exports.CancelAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const appointment = await validateAppointment(appointmentId, res);
+    const currentDate = new Date();
+    const appointmentDate = new Date(appointment.date);
+
+    if (Math.abs(currentDate - appointmentDate) < 24 * 60 * 60 * 1000) {
+      await cancelWithin24Hours(appointment);
+    } else {
+      await cancelBeyond24Hours(appointment);
     }
-});
+
+    const doctor = await validateDoctor(appointment.doctorUsername, res);
+    const patient = await validatePatient(appointment.patientUsername, res);
+
+    const notificationMessage = `Your appointment on ${appointment.date} has been canceled.`;
+    await sendNotification(
+      doctor,
+      "Appointment Cancelled",
+      notificationMessage,
+      notificationMessage
+    );
+    await sendNotification(
+      patient,
+      "Appointment Cancelled",
+      notificationMessage,
+      notificationMessage
+    );
+
+    res.status(204).json({ message: "Appointment Canceled Successfully" });
+  } catch (error) {
+    console.error("Error canceling appointment:", error);
+    res.status(500).json({ message: error.message });
+  }
+};

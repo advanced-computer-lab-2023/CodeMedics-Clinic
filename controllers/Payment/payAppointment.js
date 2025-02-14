@@ -29,7 +29,7 @@ payWithWallet = async (patientUsername, appointmentId, res) => {
     const doctor = await validateDoctor(appointment.doctorUsername, res);
     const patient = await validatePatient(patientUsername, res);
     const package = await validatePackage(
-      patient.healthPackage.membership,
+      patient.healthPackage.name,
       res
     );
     let price = doctor.hourlyRate + 0.1 * doctor.hourlyRate;

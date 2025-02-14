@@ -94,6 +94,7 @@ router.post("/:patientUsername/health-packages/subscription", patientController.
 router.post("/:patientUsername/family-members", addFamilyMember);
 router.post("/:patientUsername/family-members-no-account", addFamilyMemberNoAccount);
 router.post("/:patientUsername/prescriptions", addPrescription);
+router.patch("/:patientUsername/appointments/:appointmentId/cancel", CancelAppointment);
 
 router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
 router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
@@ -104,7 +105,6 @@ router.delete("/:patientUsername/family-members-no-account", removeFamilyMemberN
 
 
 router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
-router.patch("/:patientUsername/appointments/:appointmentId/cancel", CancelAppointment);
 
 /*
  general, to be moved
