@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 
 
 exports.getMe = asyncHandler(async (req, res) => {
-    const user = await patientModel.findOne({Username: await getUsername(req, res)}) || await adminModel.findOne({Username: await getUsername(req, res)}) || await doctorModel.findOne({Username: await getUsername(req, res)});
+    const user = await patientModel.findOne({username: await getUsername(req, res)}) || await adminModel.findOne({username: await getUsername(req, res)}) || await doctorModel.findOne({username: await getUsername(req, res)});
     if (user) {
         return res.status(200).json(user);
     } else {

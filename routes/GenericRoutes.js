@@ -4,10 +4,6 @@ const Login = require('../controllers/Login.js');
 const {resetPassword} = require('../controllers/ResetPassword.js');
 const {getMe} = require('../controllers/GetMe.js');
 
-router.get('/login', (req, res) => {
-    res.render('login');
-});
-
 router.post('/login', (req, res) => {
     Login.login(req, res).then();
 });
