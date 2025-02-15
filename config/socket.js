@@ -2,18 +2,18 @@
 const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 
-exports.putSocket = async (username, socketID) => {
+exports.putSocket = async (username, socketId) => {
     try {
-        const id = socketID;
-        const user1 = await Patient.findOne({ Username: username });
-        const user2 = await Doctor.findOne({ Username: username });
+        const id = socketId;
+        const user1 = await Patient.findOne({ username: username });
+        const user2 = await Doctor.findOne({ username: username });
         if (!user1 && !user2) {
             console.log("User not found"); 
             // return res.status(404).json({ message: "User not found" });
             return;
         }
         const user = user1 ? user1 : user2;
-        user.SocketID = id;
+        user.socketId = id;
         await user.save();
 
     } catch (error) {
@@ -23,15 +23,15 @@ exports.putSocket = async (username, socketID) => {
 
 exports.getSocket = async (username) => {
     try{
-        const user1 = await Patient.findOne({ Username: username });
-        const user2 = await Doctor.findOne({ Username: username });
+        const user1 = await Patient.findOne({ username: username });
+        const user2 = await Doctor.findOne({ username: username });
         if (!user1 && !user2) {
             console.log("User not found", username); 
             // return res.status(404).json({ message: "User not found" });
             return;
         }
         const user = user1 ? user1 : user2;
-        return user.SocketID;
+        return user.socketId;
     }catch(error){
         console.log(error);
     }

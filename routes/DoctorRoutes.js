@@ -33,9 +33,6 @@ const {rescheduleAppointment} = require('../controllers/Doctor/rescheduleAppoint
 const {viewPatientAppointment} = require('../controllers/Doctor/viewPatientAppointment.js');
 const {getFollowRequests} = require('../controllers/Doctor/getFollowRequests');
 
-
-
-
 function verifyToken(req, res, next) {
     const token = req.headers['token'];
     try {
@@ -46,6 +43,8 @@ function verifyToken(req, res, next) {
         res.status(401).json({message: e.message});
     }
 }
+
+
 
 router.post('/checkMedicine',checkMedicine);
 
@@ -81,7 +80,7 @@ router.get('/searchPatient', searchPatient);
 router.get('/viewPatients', viewPatients);
 router.get('/getDoctors', getDoctors);
 router.get('/filterPatients', filterPatients);
-router.get('/getDoctorsAndAppointments', getDoctorsAndAppointments);
+router.get('/', getDoctorsAndAppointments);
 router.get("/getAllDocAppointments", getAllDocAppointments);
 router.get('/getPatientByUsername', getPatientByUsername);
 

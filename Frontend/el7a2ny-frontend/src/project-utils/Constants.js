@@ -1,40 +1,38 @@
 // BACKEND
-const portNumber = 8000;
-const backendRoute = `http://localhost:${portNumber}`;
-const patientPrescriptionRoute = `${backendRoute}/patient/prescriptions`;
-const patientAppointmentRoute = `${backendRoute}/patient/getAllFamilyAppointments`;
-const familyMembersRoute = `${backendRoute}/patient/familyMembers`;
-const freeSlotsRoute = `${backendRoute}/patient/getFreeSlotsOfDoctor`;
-const followUpRequestRoute = `${backendRoute}/patient/RequestFollowUp`;
-const appointmentRescheduleRoute = `${backendRoute}/patient/RescheduleAppointment`;
-const appointmentCancellationRoute = `${backendRoute}/patient/CancelAppointment`;
-const patientUpdateRoute = `${backendRoute}/patient/updateMe`
-const patientRoute = `${backendRoute}/patient/getMe`
-
+const BACKEND_PORT_NUMBER = 8000;
+const BACKEND_ROUTE = `http://localhost:${BACKEND_PORT_NUMBER}`;
+const PATIENT_PRESCRIPTION_ROUTE = `${BACKEND_ROUTE}/patient/prescriptions`;
+const PATIENT_APPOINTMENT_ROUTE = `${BACKEND_ROUTE}/patient/:patie`;
+const FAMILY_MEMBERS_ROUTE = `${BACKEND_ROUTE}/patient/familyMembers`;
+const FREE_SLOTS_ROUTE = `${BACKEND_ROUTE}/patient/getFreeSlotsOfDoctor`;
+const FOLLOW_UP_REQUEST_ROUTE = `${BACKEND_ROUTE}/patient/RequestFollowUp`;
+const APPOINTMENT_RESCHEDULE_ROUTE = `${BACKEND_ROUTE}/patient/RescheduleAppointment`;
+const APPOINTMENT_CANCELLATION_ROUTE = `${BACKEND_ROUTE}/patient/CancelAppointment`;
+const PATIENT_UPDATE_ROUTE = `${BACKEND_ROUTE}/patient/updateMe`;
+const PATIENT_ROUTE = `${BACKEND_ROUTE}/patient/getMe`;
 
 // FRONTEND 
-const familyMembersPageRoute = `/patient/family-members` 
-const addFamilyMemberRoute = `/patient/add-family-member`
-const addFamilyMemberNoAccountRoute = `/patient/add-family-member-no-account`
+const FAMILY_MEMBERS_PAGE_ROUTE = `/patient/family-members`;
+const ADD_FAMILY_MEMBER_ROUTE = `/patient/add-family-member`;
+const ADD_FAMILY_MEMBER_NO_ACCOUNT_ROUTE = `/patient/add-family-member-no-account`;
 
-
-
-const MAX_LEN = 100
-const TEXT_FIELD_TYPES = ["date", "text", "emails", "date", "datetime-local"]
+const MAX_LEN = 100;
+const TEXT_FIELD_TYPES = ["date", "text", "emails", "date", "datetime-local"];
 
 export {
-  patientPrescriptionRoute,
-  patientAppointmentRoute,
-  familyMembersRoute,
-  freeSlotsRoute,
-  followUpRequestRoute,
-  appointmentRescheduleRoute,
-  appointmentCancellationRoute,
-  patientUpdateRoute,
-  patientRoute,
+  BACKEND_ROUTE,
+  PATIENT_PRESCRIPTION_ROUTE,
+  PATIENT_APPOINTMENT_ROUTE,
+  FAMILY_MEMBERS_ROUTE,
+  FREE_SLOTS_ROUTE,
+  FOLLOW_UP_REQUEST_ROUTE,
+  APPOINTMENT_RESCHEDULE_ROUTE,
+  APPOINTMENT_CANCELLATION_ROUTE,
+  PATIENT_UPDATE_ROUTE,
+  PATIENT_ROUTE,
   MAX_LEN,
-  addFamilyMemberRoute,
-  addFamilyMemberNoAccountRoute,
-  familyMembersPageRoute,
+  ADD_FAMILY_MEMBER_ROUTE,
+  ADD_FAMILY_MEMBER_NO_ACCOUNT_ROUTE,
+  FAMILY_MEMBERS_PAGE_ROUTE,
   TEXT_FIELD_TYPES
 };

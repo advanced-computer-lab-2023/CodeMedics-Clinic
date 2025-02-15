@@ -3,19 +3,18 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
 import { Table } from "src/components/Table/Table";
-import { patientAppointmentRoute, familyMembersRoute } from "src/project-utils/Constants";
-import { sortByDate } from "src/project-utils/HelperFunctions";
+import { BACKEND_ROUTE } from "src/project-utils/Constants";
 import PatientAppointment from "src/components/Appointment/PatientAppointment";
+import { useGet } from "src/hooks/custom-hooks";
 
 const columns = ["Doctor", "Date", "Day", "From", "To", "Status", "Actions"];
 
 function PatientAppointmentTheme() {
-  const [data, setData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState(null);
-  const [familyMembers, setFamilyMembers] = useState([]);
+  const [familyMembersData, setFamilyMembersData] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
@@ -23,14 +22,20 @@ function PatientAppointmentTheme() {
   const [popUpDisplay, setPopUpDisplay] = useState(false);
   const [popUpElement, setPopUpElement] = useState(null);
 
-  const doctorUsername = new URLSearchParams(window.location.search).get("doctorUsername")
+  const doctorUsername = new URLSearchParams(window.location.search).get("doctorUsername");
+
+  const data = filterData();
+  const familyMembers = [{username: Cookies.get("username"), firstName: "me", lastName: ""}]
+  for(let i = 0; i < familyMembersData.length; i++){
+    familyMembers.push(familyMembersData[i]);
+  }
 
   const tableRows = data.map((appointment) => {
     return <PatientAppointment appointment={appointment} />;
   });
 
-  console.log("tableRows", tableRows, data);
-
+  console.log("tableRows", allData, data);
+  console.log("username", Cookies.get("username"));
   const filters = [
     {
       type: "date",
@@ -63,15 +68,15 @@ function PatientAppointmentTheme() {
       setState: setCurrentPatient,
       options: familyMembers.map((item) => {
         return {
-          value: item.familyMember.Username,
-          label: item.familyMember.FirstName + " " + item.familyMember.LastName,
+          value: item.username,
+          label: item.firstName + " " + item.lastName,
         };
       }),
     },
   ];
 
   function filterData() {
-    const newData = allData.filter((item) => {
+    return allData.filter((item) => {
       const itemDate = new Date(item.date);
       if (startDate && itemDate < new Date(startDate)) return false;
 
@@ -81,54 +86,26 @@ function PatientAppointmentTheme() {
 
       if (item.patient != currentPatient) return false;
 
+      if (doctorUsername && item.doctorUsername != doctorUsername) return false;
+
       return true;
     });
-    setData(newData);
-    setLoading(false);
   }
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(patientAppointmentRoute, { withCredentials: true })
-      .then((res) => {
-        let appointments = sortByDate(res.data.appointments);
-        console.log("got appointments", doctorUsername, appointments)
-        if (doctorUsername) {
-          appointments = appointments.filter(
-            (appointment) => appointment.doctorUsername == doctorUsername
-          );
-        }
-        console.log(appointments)
-        setAllData(appointments);
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowError(true);
-        setErrorMessage(err.response.data.message);
-      });
-  }, []);
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/${Cookies.get("username")}/appointments`,
+    setData: setAllData,
+    setShowError,
+    setError,
+  });
 
-  useEffect(() => {
-    axios
-      .get(familyMembersRoute, { withCredentials: true })
-      .then((res) => {
-        let temp = [];
-        temp.push({
-          familyMember: { Username: Cookies.get("username"), FirstName: "me", LastName: "" },
-          relation: "me",
-        });
-        for (let i = 0; i < res.data.familyMembers.length; i++) {
-          temp.push(res.data.familyMembers[i]);
-        }
-        setFamilyMembers(temp);
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowError(true);
-        setErrorMessage(err.response.data.message);
-      });
-  }, []);
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/${Cookies.get("username")}/family-members`,
+    setData: setFamilyMembersData,
+    setLoading,
+    setShowError,
+    setError,
+  });
 
   useEffect(() => {
     if (allData && allData.length) filterData(allData);

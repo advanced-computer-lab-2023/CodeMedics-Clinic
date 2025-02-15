@@ -8,10 +8,10 @@ const {getUsername} = require('../../config/infoGetter');
 
 exports.getPatientChats = async (req, res) => {
     try {
-        const Username = await getUsername(req , res);
+        const username = await getUsername(req , res);
         
-        console.log('here ----> ', Username);
-        const user = await Patient.findOne({ Username });
+        console.log('here ----> ', username);
+        const user = await Patient.findOne({ username });
         if (!user) {
             return res.status(400).json({ message: 'User not found' });
         }
@@ -21,19 +21,19 @@ exports.getPatientChats = async (req, res) => {
             if(appointment.status != 'completed' || appointment.status != 'follow-up Requested'){
                 continue;
             }
-            const doctor = await Doctor.findOne({Username: appointment.doctorUsername});
+            const doctor = await Doctor.findOne({username: appointment.doctorUsername});
             if(!doctor){
                 return res.status(400).json({ message: 'Doctor not found' });
             }
-            if(!doctors.some(doc => doc.Username == doctor.Username)){
+            if(!doctors.some(doc => doc.username == doctor.username)){
                 doctors.push(doctor);
             }
         }
         const chats = [];
-        const pharmacyChat = await Chat.findOne({users: [Username , 'admin']});
+        const pharmacyChat = await Chat.findOne({users: [username , 'admin']});
         if(!pharmacyChat){
             const newChat = new Chat({
-                users: [Username , 'admin'],
+                users: [username , 'admin'],
             });
             await newChat.save();
             chats.push({pharmacy: true , chat: newChat , latestMessage: null});
@@ -43,10 +43,10 @@ exports.getPatientChats = async (req, res) => {
             chats.push({pharmacy: true , chat: pharmacyChat , latestMessage});
         }
         for(let i=0; i<doctors.length; i++){
-            const chat = await Chat.findOne({users: [user.Username, doctors[i].Username]});
+            const chat = await Chat.findOne({users: [user.username, doctors[i].username]});
             if(!chat){
                 const newChat = new Chat({
-                    users: [user.Username, doctors[i].Username],
+                    users: [user.username, doctors[i].username],
                 });
                 await newChat.save();
                 chats.push({doctor: doctors[i] , chat: newChat , latestMessage: null , user});

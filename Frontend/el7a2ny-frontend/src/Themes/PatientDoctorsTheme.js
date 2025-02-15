@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Table } from "src/components/Table/Table";
 import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
+import { useGet } from "src/hooks/custom-hooks";
 import { useRouter } from "next/router";
 import axios from "axios";
 
@@ -10,11 +11,19 @@ function PatientDoctorsTheme() {
   const [doctorName, setDoctorName] = useState("");
   const [speciality, setSpeciality] = useState("None");
   const [allData, setAllData] = useState([]);
-  const [data, setData] = useState([]);
-  const [specialities, setSpecialities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
+
+  const data = filterData();
+  const specialities = [{ value: "None", label: "None" }];
+  for (let i = 0; i < allData.length; i++) {
+    if (!specialities.includes(allData[i].doctor.speciality)) {
+      specialities.push({ value: allData[i].doctor.speciality, label: allData[i].doctor.speciality });
+    }
+  }
+
+  console.log("doctors", data);
 
   const filters = [
     {
@@ -49,21 +58,21 @@ function PatientDoctorsTheme() {
   const actions = data.map((item, index) => [
     {
       name: "Appointments",
-      onClick: () => getSelectedDoctorAppointments(item.doctor.Username),
+      onClick: () => getSelectedDoctorAppointments(item.doctor.username),
     },
     {
       name: "View Profile",
-      onClick: () => viewDoctorProfile(item.doctor.Username, index),
+      onClick: () => viewDoctorProfile(item.doctor.username, index),
     },
   ]);
 
   const tableRows = data.map((item, index) => {
     return (
       <CardObject
-        item={{ Picture: item.doctor.Picture }}
+        item={{ Picture: item.doctor.picture }}
         texts={[
-          `${item.doctor.FirstName} ${item.doctor.LastName}`,
-          `${item.doctor.Speciality}`,
+          `${item.doctor.firstName} ${item.doctor.lastName}`,
+          `${item.doctor.speciality}`,
           `${item.price} EGP`,
         ]}
         cardActionsElement={<CardActionsElement actions={actions[index]} />}
@@ -73,63 +82,42 @@ function PatientDoctorsTheme() {
   });
 
   function filterData() {
-    setData(
-      allData.filter((doctor) => {
-        const name = doctor.doctor.FirstName + " " + doctor.doctor.LastName;
-        if (doctorName !== "" && !name.includes(doctorName)) {
-          return false;
-        }
-        if (speciality !== "None" && doctor.doctor.Speciality !== speciality) {
-          return false;
-        }
-        if (date) {
-          const filteredDateTime = new Date(date);
-          let hasAvailableAppointment = false;
+    return allData.filter((item) => {
+      const name = item.doctor.firstName + " " + item.doctor.lastName;
+      if (doctorName !== "" && !name.includes(doctorName)) {
+        return false;
+      }
+      if (speciality !== "None" && item.doctor.speciality !== speciality) {
+        return false;
+      }
+      if (date) {
+        const filteredDateTime = new Date(date);
+        let hasAvailableAppointment = false;
 
-          for (const appointment of doctor.Appointments) {
-            const appointmentStart = new Date(`${appointment.date}T${appointment.startHour}:00`);
-            const appointmentEnd = new Date(`${appointment.date}T${appointment.endHour}:00`);
+        for (const appointment of item.appointments) {
+          const appointmentStart = new Date(`${appointment.date}T${appointment.startHour}:00`);
+          const appointmentEnd = new Date(`${appointment.date}T${appointment.endHour}:00`);
 
-            if (filteredDateTime >= appointmentStart && filteredDateTime <= appointmentEnd) {
-              hasAvailableAppointment = true;
-              break;
-            }
-          }
-          if (!hasAvailableAppointment) {
-            return false;
+          if (filteredDateTime >= appointmentStart && filteredDateTime <= appointmentEnd) {
+            hasAvailableAppointment = true;
+            break;
           }
         }
-        return true;
-      })
-    );
+        if (!hasAvailableAppointment) {
+          return false;
+        }
+      }
+      return true;
+    });
   }
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get("http://localhost:8000/doctor/getDoctorsAndAppointments", { withCredentials: true })
-      .then((response) => {
-        return response.data.data;
-      })
-      .then((data) => {
-        console.log("doctors", data);
-        setAllData(data);
-        const sepciality = [{ value: "None", label: "None" }];
-        for (let i = 0; i < data.length; i++) {
-          if (!sepciality.includes(data[i].doctor.Speciality)) {
-            sepciality.push({ value: data[i].doctor.Speciality, label: data[i].doctor.Speciality });
-          }
-        }
-        setSpecialities(sepciality);
-        setData(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowError(true);
-        setError(error.response.data.message);
-      });
-  }, []);
+  useGet({
+    url: "http://localhost:8000/doctors",
+    setData: setAllData,
+    setLoading,
+    setShowError,
+    setError,
+  });
 
   useEffect(() => {
     if (allData && allData.length) filterData();
@@ -147,7 +135,7 @@ function PatientDoctorsTheme() {
         setAllData,
         tableRows,
         displayGrid: "true",
-        px: 250
+        px: 250,
       }}
       filters={filters}
       title="Doctors"

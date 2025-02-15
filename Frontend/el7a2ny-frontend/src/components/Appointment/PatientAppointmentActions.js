@@ -13,7 +13,8 @@ import ButtonElement from "../ButtonElement";
 import Cell from "../Table/BasicElements/Cell";
 import Row from "../Table/BasicElements/Row";
 import Icon from "../Icon";
-import { freeSlotsRoute, followUpRequestRoute, appointmentRescheduleRoute, appointmentCancellationRoute } from "src/project-utils/Constants";
+import { BACKEND_ROUTE } from "src/project-utils/Constants";
+
 
 function PatientAppointmentActions({ appointment }) {
   const { setShowError, setError, setAllData, currentPatient, setPopUpDisplay, setPopUpElement } =
@@ -21,13 +22,15 @@ function PatientAppointmentActions({ appointment }) {
   const [loading, setLoading] = useState(false);
   const [rescheduling, setRescheduling] = useState(false);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
-  console.log("in the patient appointments actions")
+  console.log("in the patient appointments actions");
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
     return (
       <Row key={item._id}>
         <PatientAppointmentInfo appointment={item} />
         <Cell>
-          <ButtonElement actionName="Reschedule"onClick={() => {
+          <ButtonElement
+            actionName="Reschedule"
+            onClick={() => {
               hanldeRescheduleAppointment(item, appointment);
               setRescheduling(false);
               setPopUpDisplay(false);
@@ -65,21 +68,7 @@ function PatientAppointmentActions({ appointment }) {
     </PopUp>
   );
 
-  const getUnreservedAppointments = async (doctorUsername) => {
-    setLoading(true);
-    await axios
-      .get(`${freeSlotsRoute}?doctorUsername=${doctorUsername}`)
-      .then((res) => {
-        console.log(doctorUsername, "unreserved slots", res.data.appointments);
-        setUnreservedAppointments(res.data.appointments);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowError(true);
-        setError(err.response.data.message);
-      });
-  };
+  const getUnreservedAppointments = async (doctorUsername) => {};
 
   const handleRequestFollowUp = async (appointmentID) => {
     await axios
@@ -146,7 +135,19 @@ function PatientAppointmentActions({ appointment }) {
   }, [rescheduling, loading]);
 
   useEffect(() => {
-    getUnreservedAppointments(appointment.doctorUsername);
+    setLoading(true);
+    axios
+      .get(`${BACKEND_ROUTE}/patients/doctors/${appointment.doctorUsername}/appointments?status=unreserved`)
+      .then((res) => {
+        console.log(doctorUsername, "unreserved slots", res.data.appointments);
+        setUnreservedAppointments(res.data.appointments);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowError(true);
+        setError(err.response.data.message);
+      });
   }, [appointment.doctorUsername]);
 
   return (

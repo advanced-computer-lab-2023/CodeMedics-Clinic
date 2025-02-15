@@ -18,7 +18,7 @@ function PatientAppointment({ appointment }) {
     <Row hover key={appointment._id}>
       <Cell>
         <Stack alignItems="center" direction="row" spacing={2}>
-          <Typography variant="subtitle2">{appointment.doctor}</Typography>
+          <Typography variant="subtitle2">{appointment.doctorUsername}</Typography>
         </Stack>
       </Cell>
       <PatientAppointmentInfo appointment={appointment} />

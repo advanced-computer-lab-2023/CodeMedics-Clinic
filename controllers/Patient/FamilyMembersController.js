@@ -29,7 +29,7 @@ exports.addFamilyMember = async (req, res) => {
     ) {
       return res.status(400).json({ message: "Family member already added" });
     }
-    patient.familyMembers.push({ username: exists.username});
+    patient.familyMembers.push({ username: exists.username });
     exists.linked = patient._id;
     await patient.save();
     await exists.save();
@@ -40,7 +40,7 @@ exports.addFamilyMember = async (req, res) => {
 };
 
 exports.addFamilyMemberNoAccount = async (req, res) => {
-   const { patientUsername } = req.params;
+  const { patientUsername } = req.params;
   const { name, nationalId, gender, dateOfBirth, relationship } = req.body;
 
   try {
@@ -64,7 +64,7 @@ exports.addFamilyMemberNoAccount = async (req, res) => {
 };
 
 exports.removeFamilyMemberNoAccount = async (req, res) => {
-   const { patientUsername } = req.params;
+  const { patientUsername } = req.params;
   const { familyMemberId } = req.body;
   try {
     const patient = await validatePatient(patientUsername, res);
@@ -85,6 +85,7 @@ exports.viewFamilyMembers = async (req, res) => {
   const patient = await validatePatient(patientUsername, res);
   try {
     const familyMembers = [];
+    console.log(patient.familyMembers)
     for (let i = 0; i < patient.familyMembers.length; i++) {
       const familyMember = await Patient.findOne({
         username: patient.familyMembers[i].username,
@@ -92,28 +93,21 @@ exports.viewFamilyMembers = async (req, res) => {
       familyMembers.push(familyMember);
     }
 
-    const familyMembersNoAccount = [];
-    for (let i = 0; i < patient.familyMembersNoAccount.length; i++) {
-      const familyMemberNoAccount = await FamilyMember.findOne({
-        _id: patient.familyMembersNoAccount[i],
-      });
-      familyMembersNoAccount.push(familyMemberNoAccount);
-    }
-    res.status(200).json({
-      data: { familyMembers, familyMembersNoAccount },
-    });
+    res.status(200).json({ data: familyMembers });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }
 };
 
 exports.removeFamilyMember = async (req, res) => {
-  const {patientUsername} = req.params;
+  const { patientUsername } = req.params;
   const patient = validatePatient(patientUsername);
   try {
     const { familyMemberUsername } = req.body;
     if (
-      !patient.familyMembers.some((el) => el.username.toString() == familyMemberUsername)
+      !patient.familyMembers.some(
+        (el) => el.username.toString() == familyMemberUsername
+      )
     ) {
       return res.status(404).json({ message: "Family member does not exist" });
     }

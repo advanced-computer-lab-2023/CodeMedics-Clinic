@@ -1,7 +1,6 @@
 import { TextField } from "@mui/material";
 
 function TextInput({ option, setValue, defaultValue, type, disabled }) {
-  console.log("setValue", setValue);
   return (
     <TextField
       label={option}
