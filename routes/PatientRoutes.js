@@ -87,14 +87,14 @@ router.patch("/:patientUsername", patientController.updatePatient);
 router.post("/", patientController.createPatient);
 router.patch("/:patientUsername/prescriptions/:prescriptionId", fillPrescription);
 router.patch("/:patientUsername/appointments/:appointmentId", bookAppointment);
-router.patch("/:patientUsername/appointments/:appointmentId", updateAppointment);
+router.patch("/appointments/:appointmentId", updateAppointment);
 router.post("/:patientUsername/payment/appointments/:appointmentId", payAppointment);
 router.post("/:patientUsername/payment/health-packages/:packageName", payHealthPackage);
 router.post("/:patientUsername/health-packages/subscription", patientController.healthPackageSubscription);
 router.post("/:patientUsername/family-members", addFamilyMember);
 router.post("/:patientUsername/family-members-no-account", addFamilyMemberNoAccount);
 router.post("/:patientUsername/prescriptions", addPrescription);
-router.patch("/:patientUsername/appointments/:appointmentId/cancel", CancelAppointment);
+router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
 
 router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
 router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
