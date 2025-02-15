@@ -3,7 +3,7 @@ import { Stack, CardActions, Button } from "@mui/material";
 function CardActionsElement({ actions }) {
   const actionElements = actions.map((action) => {
     return (
-      <CardActions>
+      <CardActions sx={{pl: 4, pb: 2}}>
         <Button color="primary" variant="contained" size="small" onClick={action.onClick}>
             {action.name}
         </Button>

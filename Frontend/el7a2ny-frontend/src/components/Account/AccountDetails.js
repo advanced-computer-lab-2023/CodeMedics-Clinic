@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { patientUpdateRoute } from "src/project-utils/Constants";
+import { patientUpdateRoute } from "src/project-utils/constants";
 import Form from "../Form";
 
 function AccountDetails({ user }) {

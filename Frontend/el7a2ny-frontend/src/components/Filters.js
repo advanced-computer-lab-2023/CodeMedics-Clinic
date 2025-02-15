@@ -1,7 +1,7 @@
 import { Card, Stack } from "@mui/material";
 import TextInput from "./Inputs/TextInput";
 import MenuInput from "./Inputs/MenuInput";
-import { TEXT_FIELD_TYPES } from "src/project-utils/Constants";
+import { TEXT_FIELD_TYPES } from "src/project-utils/constants";
 
 function Filters({filters}){
     if(!filters)
