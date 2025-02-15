@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const patientController = require("../controllers/Patient/PatientController");
-const { getDoctor } = require("../controllers/Patient/getDoctor.js");
+const { getDoctor, getDoctors } = require("../controllers/Patient/getDoctor.js");
 const {
   addFamilyMember,
   viewFamilyMembers,
@@ -61,6 +61,7 @@ const {
 const {
   getAllFamilyAppointments,
 } = require("../controllers/Patient/getAllFamilyAppointments");
+const { getDoctorsAndAppointments } = require("../controllers/Doctor/GetDoctors.js");
 
 function verifyToken(req, res, next) {
   const token = req.headers["token"];
@@ -73,13 +74,16 @@ function verifyToken(req, res, next) {
   }
 }
 
+
 router.get("/", patientController.getPatients);
 router.get("/:patientUsername", patientController.getPatient);
 router.get("/:patientUsername/appointments", getPatientAppointments);
 router.get("/:patientUsername/messages", getPatientMessages);
 router.get("/doctors/:doctorUsername/appointments", getPatientDoctorAppointments);
+router.get("/:patientUsername/doctors", getDoctorsAndAppointments);
 router.get("/doctors/:doctorUsername", getDoctor);
 router.get("/:patientUsername/family-members", viewFamilyMembers);
+router.get("/:patientUsername/prescriptions", getPrescriptions);
 router.get("/:patientUsername/family-members/appointments", getAllFamilyAppointments);
 router.get("/:patientUsername/health-records", viewHealthRecords);
 

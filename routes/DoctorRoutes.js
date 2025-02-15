@@ -44,6 +44,7 @@ router.post('/register', upload.fields([
 router.get('/patients', viewPatients);
 router.get('/:doctorUsername/patients/:patientUsername/appointments', viewPatientAppointment)
 router.get("/:doctorUsername/appointments", getAllDocAppointments);
+router.get('/', getDoctorsAndAppointments);
 
 
 router.post('/:doctorUsername/appointments', addAppointments);
@@ -74,7 +75,6 @@ router.get('/getAllAppointments', getAllApointments);
 router.get('/searchPatient', searchPatient);
 router.get('/getDoctors', getDoctors);
 router.get('/filterPatients', filterPatients);
-router.get('/', getDoctorsAndAppointments);
 router.get('/getPatientByUsername', getPatientByUsername);
 
 
