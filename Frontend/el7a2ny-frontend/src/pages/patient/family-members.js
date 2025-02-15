@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
 import Message from 'src/components/Miscellaneous/Message';
-import { addFamilyMemberRoute, addFamilyMemberNoAccountRoute } from 'src/project-utils/Constants';
+import { addFamilyMemberRoute, addFamilyMemberNoAccountRoute } from 'src/project-utils/constants';
 
 const Page = () => {
 

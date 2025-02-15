@@ -1,7 +1,134 @@
-import { PatientPrescriptionsTheme } from "src/Themes/PatientPrescriptionsTheme";
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
+import Message from 'src/components/Miscellaneous/Message';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Table } from 'src/components/Table/Table';
+import { BACKEND_ROUTE, patientPrescriptionRoute } from "src/project-utils/constants";
+import { sortByDate } from "src/project-utils/helper-functions";
+import PatientPrescription from "src/components/Prescription/PatientPrescription";
+const columns = ["Doctor", "Date", "Status", "Actions"];
+
 const Page = () => {
-  return <PatientPrescriptionsTheme />;
+  const [allData, setAllData] = useState([]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState(null);
+  const [doctorName, setDoctorName] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [status, setStatus] = useState("None");
+
+  const tableRows = data.map(prescription =>
+    <PatientPrescription prescription={prescription}/>
+   )
+
+  const filters = [
+    {
+      type: "text",
+      name: "Doctor Name",
+      state: doctorName,
+      setState: setDoctorName,
+    },
+    {
+      type: "date",
+      name: "Start Date",
+      setState: setStartDate,
+    },
+    {
+      type: "date",
+      name: "End Date",
+      setState: setEndDate,
+    },
+    {
+      type: "menu",
+      name: "Filled",
+      state: status,
+      setState: setStatus,
+      options: [
+        { value: "None", label: "None" },
+        { value: "filled", label: "Filled" },
+        { value: "unfilled", label: "Unfilled" },
+      ],
+    },
+  ];
+
+  function filterData() {
+    const newData = allData.filter((item) => {
+      const itemDate = new Date(item.Date);
+      console.log(new Date(startDate), new Date(endDate), itemDate, item.Date);
+      console.log(item);
+      if (startDate && itemDate < new Date(startDate)) return false;
+
+      if (endDate && itemDate > new Date(endDate)) return false;
+
+      const doctorCondition =
+        !doctorName || item.Doctor.toLowerCase().includes(doctorName.toLowerCase());
+      console.log(doctorName, item.Doctor);
+      const itemStatus = item.filled ? "filled" : "unfilled";
+      if (!doctorCondition) return false;
+
+      if (status !== "None" && itemStatus !== status) return false;
+
+      return true;
+    });
+    console.log("newData", newData);
+    console.log("All data", allData);
+    setData(newData);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    axios
+      .get(`${BACKEND_ROUTE}/patients/:patientUsername/prescriptions`, { withCredentials: true })
+      .then((response) => {
+        const prescriptions = sortByDate(response.data.data);
+        setAllData(prescriptions);
+        setData(prescriptions);
+        setLoading(false);
+        console.log("data is passed ", prescriptions);
+      })
+      .catch((err) => {
+        console.log(err);
+        setShowError(true);
+        setError(err.response.data.message);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (allData && allData.length) filterData();
+  }, [startDate, endDate, status, doctorName, allData]);
+
+  if (showError) {
+    return (
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title="Error"
+        message={error}
+        action="Close"
+      />
+    );
+  }
+
+  return (
+    <Table
+      value={{
+        data,
+        columns,
+        loading,
+        setShowError,
+        setError,
+        setLoading,
+        setAllData,
+        noRecords: "No Prescriptions Found",
+        tableRows
+      }}
+
+      title="Prescriptions"
+      filters={filters}
+    />
+  );
 }
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;

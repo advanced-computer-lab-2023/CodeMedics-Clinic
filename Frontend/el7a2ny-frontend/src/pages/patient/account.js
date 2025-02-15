@@ -6,7 +6,7 @@ import Message from "src/components/Miscellaneous/Message";
 import Title from "src/components/Table/Body/Title";
 import LoadingSpinner from "src/components/LoadingSpinner";
 import Account from "src/components/Account/Account";
-import { patientRoute } from "src/project-utils/Constants";
+import { patientRoute } from "src/project-utils/constants";
 
 const Page = () => {
   const [patient, setPatient] = useState({});
