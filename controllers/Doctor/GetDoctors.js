@@ -19,7 +19,7 @@ exports.getDoctors = async (req, res) => {
 
 exports.getDoctorsAndAppointments = async (req, res) => {
   try {
-    const patientUsername = await getUsername(req, res);
+    const {patientUsername} = req.params;
     const patient = await validatePatient(patientUsername, res);
     const doctors = await Doctor.find({ status: "approved" });
     const package = await Package.findOne({
