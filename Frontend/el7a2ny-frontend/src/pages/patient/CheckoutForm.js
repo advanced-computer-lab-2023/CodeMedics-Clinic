@@ -1,163 +1,102 @@
-import React, { useEffect, useState } from "react";
-import Button from "@mui/material/Button";
-import {
-  PaymentElement,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
-import Message from "src/components/Miscellaneous/Message";
+import { useEffect, useState } from "react";
+import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { Typography } from "@mui/material";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
 
 export default function CheckoutForm({ appointmentId, patientUsername }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
-
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const username = Cookies.get("username");
-  const [isDone, setIsDone] = useState(false);
-  const [isPatched, setIsPatched] = useState(false);
 
   useEffect(() => {
-    if (isDone) {
-      axios.patch(
-        `http://localhost:8000/patient/bookAppointment?appointmentId=${appointmentId}&patientUsername=${patientUsername}`
-      ).catch((err) => {
-        console.log(err);
-      })
-      setIsPatched(true);
-    }
-  }, [isDone]);
-
-  const handlePayUsingWallet = async (e) => {
-    e.preventDefault();
-    axios('http://localhost:8000/patient/payWithWallet', {
-      method: 'PATCH',
-      withCredentials: true,
-      data: {
-        username: patientUsername,
-        AppointmentId: appointmentId,
-      }
-    }).then((res) => {
-      console.log(res);
-      setIsPatched(true);
-      setMessage("Payment succeeded!");
-    }).catch((err) => {
-      console.log(err);
-      setMessage("Your payment was not successful, please try again.");
-    })
-  };
-
-  useEffect(() => {
-    if (isPatched) {
-      router.push(`/user/doctors`);
-    }
-  }, [isPatched]);
-
-
-
-
-
-  useEffect(() => {
-    if (!stripe) {
-      return;
-    }
+    if (!stripe) return;
 
     const clientSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
 
-    if (!clientSecret) {
-      return;
-    }
+    if (!clientSecret) return;
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      console.log(paymentIntent.status);
       switch (paymentIntent.status) {
         case "succeeded":
-          {
-            setIsDone(true);
-            setMessage("Payment succeeded!");
-          }
+          router.push("/patient/doctors");
           break;
         case "processing":
           setMessage("Your payment is processing.");
           break;
         case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
+          setMessage("Payment failed. Please try another method.");
           break;
         default:
           setMessage("Something went wrong.");
           break;
       }
     });
-  }, [stripe]);
+  }, [stripe, router]);
 
-  const handleSubmit = async (e) => {
+  const handleWalletPayment = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (!stripe || !elements) {
-      return;
+    try {
+      await axios.post(
+        `${BACKEND_ROUTE}/patients/${patientUsername}/payment/appointments/${appointmentId}`,
+        { paymentMethod: "Wallet" }
+      );
+      router.push("/patient/doctors");
+    } catch (err) {
+      console.log("error", err);
+      setMessage(err.response?.data?.message || "Payment failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleStripePayment = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
 
     setIsLoading(true);
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        // return_url: "http://localhost:3000/user/orders"
-        return_url: window.location.href,
-      },
+      confirmParams: { return_url: `${window.location.origin}/patient/doctors` },
+      redirect: "if_required",
     });
 
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-    console.log(error.type);
-    if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(error.message);
-    } else {
-      setMessage("An unexpected error occurred.");
+    if (error) {
+      setMessage(error.message || "An unexpected error occurred.");
+      setIsLoading(false);
+      return;
+    }
+    if (paymentIntent && paymentIntent.status === "succeeded") {
+      try {
+        await axios.post(
+          `${BACKEND_ROUTE}/patients/${patientUsername}/payment/appointments/${appointmentId}`,
+          { paymentMethod: "Card" }
+        );
+        router.push("/patient/doctors");
+      } catch (err) {
+        setMessage("Payment succeeded, but failed to update the backend. Please contact support.");
+        console.error("Backend update error:", err);
+      }
     }
 
     setIsLoading(false);
   };
 
-
-  const paymentElementOptions = {
-    layout: "tabs",
-  };
-
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        // height: "120vh",
-      }}
-    >
-      <form
-        id="payment-form"
-        onSubmit={handleSubmit}
-        style={{
-          width: "400px", // Adjust the width as needed
-          height: "500px", // Adjust the height as needed
-          margin: "40px", // Increase the margin
-        }}
-      >
-        <PaymentElement id="payment-element" options={paymentElementOptions} style={{ fontSize: "20px", marginBottom: "20px", }} />
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <form id="payment-form" onSubmit={handleStripePayment} style={{ margin: "40px" }}>
+        <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
         <button
-          disabled={isLoading || !stripe || !elements}
-          id="submit"
-          variant="contained"
+          disabled={isLoading || !stripe}
+          type="submit"
           style={{
             padding: "10px 15px",
             fontSize: "18px",
@@ -167,13 +106,17 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
             borderRadius: "20px",
             cursor: "pointer",
             marginTop: "20px",
-            transition: "background-color 0.3s",
+            opacity: isLoading ? 0.7 : 1,
           }}
         >
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay Appointment"}
+          {isLoading ? "Processing..." : "Pay with Card"}
         </button>
-        {!isLoading && (
-          <button variant="contained" style={{
+
+        <button
+          type="button"
+          onClick={handleWalletPayment}
+          disabled={isLoading}
+          style={{
             padding: "10px 15px",
             fontSize: "18px",
             fontWeight: "bold",
@@ -183,17 +126,18 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
             cursor: "pointer",
             marginTop: "20px",
             marginLeft: "10px",
-            transition: "background-color 0.3s",
+            opacity: isLoading ? 0.7 : 1,
           }}
+        >
+          Pay with Wallet
+        </button>
 
-            onClick={handlePayUsingWallet}
-          >
-            Pay using my Wallet
-          </button>
+        {message && (
+          <Typography color={message.includes("success") ? "green" : "red"} sx={{ mt: 2 }}>
+            {message}
+          </Typography>
         )}
-        {message && <Typography color="black">{message}</Typography>}
       </form>
-
     </div>
   );
 }

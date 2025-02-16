@@ -77,7 +77,7 @@ function PatientAppointmentActions({ appointment }) {
       updater: () => {
         setAllData((prev) =>
           prev.map((item) => {
-            if (item._id !== oldApp._id) return item;
+            if (item._id !== appointmentId) return item;
             return { ...item, status: "follow-up Requested" };
           })
         );
@@ -151,6 +151,7 @@ function PatientAppointmentActions({ appointment }) {
     <>
       <Icon
         title="Request Follow-up"
+        disabled={!(appointment.status == "completed")}
         onClick={() => {
           handleRequestFollowUp(appointment._id);
         }}

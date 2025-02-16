@@ -188,8 +188,8 @@ export const CustomersTable = (props) => {
                         direction="row"
                         spacing={2}
                       >
-                        <Typography variant="subtitle2">
-                          {!appointment.patient ? '-----' : appointment.patient}
+                        <Typography variant="subtitle1">
+                          {!appointment.patientUsername ? '-----' : appointment.patientUsername}
                         </Typography>
                       </Stack>
                     </TableCell>

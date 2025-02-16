@@ -7,8 +7,8 @@ import PatientAppointment from "src/components/Appointment/PatientAppointment";
 import Icon from "src/components/Icon";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-const columns = ["Date", "Day", "From", "To", "Actions"];
-const attributes = ["date", "day", "startHour", "endHour"];
+const columns = ["date", "day", "from", "to", "price", "actions"];
+const attributes = ["date", "day", "startHour", "endHour", "price"];
 
 const Page = () => {
   const [allData, setAllData] = useState([]);
@@ -31,7 +31,7 @@ const Page = () => {
           <Icon
             title="Book Appointment"
             onClick={() => {
-              router.push(`/patient/payment?patientUsername=${username}&appointmentId=${item.id}`);
+              router.push(`/patient/payment?patientUsername=${username}&appointmentId=${item._id}`);
             }}
           >
             <CheckIcon />

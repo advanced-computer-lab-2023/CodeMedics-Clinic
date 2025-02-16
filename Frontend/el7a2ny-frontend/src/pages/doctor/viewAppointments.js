@@ -13,6 +13,8 @@ import axios from 'axios';
 import LoadingSpinner from 'src/components/LoadingSpinner';
 import NoRecords from 'src/components/NoRecords';
 import Message from 'src/components/Miscellaneous/Message';
+import Cookies from 'js-cookie';
+import { BACKEND_ROUTE } from 'src/project-utils/constants';
 const now = new Date();
 
 const useCustomers = (data, page, rowsPerPage) => {
@@ -33,9 +35,6 @@ const useCustomerIds = (customers) => {
   );
 };
 const Page = () => {
-
-  const doctorUsername = new URLSearchParams(window.location.search).get('doctorUsername');
-
   const [data, setData] = useState([]);
   const [allData , setAllData] = useState([]);
   const [page, setPage] = useState(0);
@@ -48,13 +47,13 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const username = Cookies.get('username');
   useEffect(() => {
     setLoading(true);
-    axios.get(`http://localhost:8000/doctor/viewPatientAppointment/${patientUsername}`, {withCredentials: true})
-    .then((req) => {
+    axios.get(`${BACKEND_ROUTE}/doctors/${username}/patients/${patientUsername}/appointments`, {withCredentials: true})
+    .then((response) => {
 
-        const appointments = req.data.upcomingAppointments;
+        const appointments = response.data.data;
 
         appointments.sort((a, b) => {
           if(new Date(a.date) < new Date(b.date))

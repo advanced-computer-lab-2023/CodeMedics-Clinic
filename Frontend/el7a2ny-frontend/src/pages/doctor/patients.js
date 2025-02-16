@@ -54,15 +54,15 @@ const Page = () => {
     setLoading(true);
     axios({
       method: 'GET',
-      url: 'http://localhost:8000/doctor/viewPatients',
+      url: 'http://localhost:8000/doctors/patients',
       withCredentials: true,
     })
-      .then((data) => {
-        if (data.data.patients.length > 0) {
-          setData(data.data.patients);
-          setAllData(data.data.patients);
-          setSearchData(data.data.patients);
-          setFilteredData(data.data.patients);
+      .then((response) => {
+        if (response.data.data.length > 0) {
+          setData(response.data.data);
+          setAllData(response.data.data);
+          setSearchData(response.data.data);
+          setFilteredData(response.data.data);
         }
         setLoading(false);
       })
@@ -102,7 +102,7 @@ const Page = () => {
     }
     else {
       setSearchData(allData.filter((patient) => {
-        const name = patient.FirstName + " " + patient.LastName;
+        const name = patient.firstName + " " + patient.lastName;
         return name.toLowerCase().includes(str.toLowerCase());
       }));
     }
