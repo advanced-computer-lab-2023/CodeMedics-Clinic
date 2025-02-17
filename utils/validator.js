@@ -28,11 +28,17 @@ const validateDoctor = async (doctorUsername, res) => {
 };
 
 const validatePackage = async (packageName, res) => {
-  const package = await Package.findOne({name: packageName});
+  const package = await Package.findOne({ name: packageName });
+  console.log("package", packageName, package);
   if (!package) {
     res.status(400).json({ message: "Package not found" });
   }
   return package;
-}
+};
 
-module.exports = { validateAppointment, validatePatient, validateDoctor, validatePackage };
+module.exports = {
+  validateAppointment,
+  validatePatient,
+  validateDoctor,
+  validatePackage,
+};
