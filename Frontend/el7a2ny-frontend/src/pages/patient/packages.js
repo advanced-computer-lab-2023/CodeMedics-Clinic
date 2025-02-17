@@ -1,15 +1,4 @@
-import Head from "next/head";
-import {
-  Box,
-  Container,
-  Unstable_Grid2 as Grid,
-  Typography,
-  CardContent,
-  TextField,
-  Stack,
-} from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
-import { OverviewPackages } from "src/sections/overview/overview-packages";
 import { useState } from "react";
 import Message from "src/components/Miscellaneous/Message";
 import LoadingSpinner from "src/components/LoadingSpinner";
@@ -18,6 +7,10 @@ import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import Title from "src/components/Table/Body/Title";
 import Form from "src/components/Form";
+import CardObject from "src/components/CardObject/CardObject";
+import CardActionsElement from "src/components/CardObject/CardActionsElement";
+import { DELETE } from "src/project-utils/helper-functions";
+import { Table } from "src/components/Table/Table";
 
 const Page = () => {
   const [packages, setPackages] = useState([]);
@@ -28,20 +21,22 @@ const Page = () => {
 
   const username = Cookies.get("username");
 
-  const values = patient ? {
-    healthPackageName: patient.healthPackage.name,
-    healthPackageExpirationDate:
-      patient.healthPackage.date == null
-        ? "No Expiration"
-        : new Date(patient.healthPackage.date).toDateString(),
-    healthPackageStatus:
-      patient.healthPackage.status == "EndDateCancelled"
-        ? "Cancelled with end date"
-        : patient.healthPackage.status == "Inactive"
-        ? "Free Package Active"
-        : "Active",
-    healthPackageType: patient.healthPackage.status == "main" ? "Main" : "Family",
-  } : null;
+  const values = patient
+    ? {
+        healthPackageName: patient.healthPackage.name,
+        healthPackageExpirationDate:
+          patient.healthPackage.date == null
+            ? "No Expiration"
+            : new Date(patient.healthPackage.date).toDateString(),
+        healthPackageStatus:
+          patient.healthPackage.status == "EndDateCancelled"
+            ? "Cancelled with end date"
+            : patient.healthPackage.status == "Inactive"
+            ? "Free Package Active"
+            : "Active",
+        healthPackageType: patient.healthPackage.status == "main" ? "Main" : "Family",
+      }
+    : null;
 
   const fields = [
     {
@@ -85,6 +80,59 @@ const Page = () => {
     setLoading,
   });
 
+  const subscribeHealthPackage = (packageName) => {
+    router.push(`/patient/payment?packageName=${packageName}&patientUsername=${patient.username}`);
+  };
+
+  const unsubscribeHealthPackage = () => {
+    DELETE({
+      url: `${BACKEND_ROUTE}/patient/${username}/health-packages/subscription`,
+      updater: () => {
+        setPatient((prev) => ({
+          ...prev,
+          healthPackage: {
+            name: "Free",
+            price: 0,
+            discount: 0,
+            status: "Inactive",
+            date: null,
+            discountEndDate: null,
+          },
+        }));
+      },
+      setShowError,
+      setError,
+    });
+  };
+
+  const actions = packages.map((item) => [
+    {
+      name: "Add",
+      disabled: !(patient.packageName == "Free"),
+      onClick: () => subscribeHealthPackage(item.name),
+    },
+    {
+      name: "Delete",
+      disabled: !(item.name == patient.healthPackage.name),
+      onClick: () => unsubscribeHealthPackage(),
+    },
+  ]);
+
+  const tableRows = packages.map((item, index) => (
+    <CardObject
+      item={{ src: `/assets/Packages/${item.name}.jpg` }}
+      texts={[
+        `${item.price} EGP / Yr`,
+        `${item.name} Package`,
+        `${item.sessionDiscount}% Session Discount`,
+        `${item.medicineDiscount}% Medicine Discount`,
+        `${item.familyDiscount}% Family Discount`,
+      ]}
+      variants={["h5", "subtitle2", "subtitle1", "subtitle1", "subtitle1"]}
+      cardActionsElement={<CardActionsElement actions={actions[index]} />}
+    />
+  ));
+
   return (
     <>
       <Title title="El7a2ny Clinic" />
@@ -99,25 +147,20 @@ const Page = () => {
         <LoadingSpinner />
       ) : (
         <>
-          <Form title="Current Health Package" values={values} fields={fields} largeTitle="true"/>
-          <Box
-            component="data"
-            sx={{
-              flexGrow: 1,
-              py: 2,
+          <Form title="Current Health Package" values={values} fields={fields} largeTitle="true" />
+          <Table
+            value={{
+              setLoading,
+              loading,
+              setShowError,
+              setError,
+              noRecords: "No Packages Found",
+              tableRows,
+              displayGrid: "true",
+              px: 250,
             }}
-          >
-            <Container maxWidth="xl">
-              <Typography variant="h4" gutterBottom>
-                Packages
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid xs={20} md={20} lg={15}>
-                  <OverviewPackages packages={packages} patient={patient} sx={{ height: "100%" }} />
-                </Grid>
-              </Grid>
-            </Container>
-          </Box>
+            title="Packages"
+          />
         </>
       )}
     </>
