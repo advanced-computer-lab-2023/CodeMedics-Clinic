@@ -1,38 +1,37 @@
-const express = require('express');
-const path = require('path');
-const dotenv = require('dotenv').config();
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const colors = require('colors');
-const cors = require('cors');
+const express = require("express");
+const path = require("path");
+const dotenv = require("dotenv").config();
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const colors = require("colors");
+const cors = require("cors");
 const corsOptions = {
   origin: `http://localhost:${process.env.FRONT_END_PORT}`,
   credentials: true,
-  optionSuccessStatus: 200
+  optionSuccessStatus: 200,
 };
 
-const stripe = require("stripe")(process.STRIPE_SECRET_KEY);
 
-const connectDB = require('./config/MongoDBConnection');
-const adminRoutes = require('./routes/AdminRoutes');
-const DeleteModelRecords = require('./config/DeleteAllRecords');
-const doctorRoutes = require('./routes/DoctorRoutes');
-const patientRoutes = require('./routes/PatientRoutes');
-const genericRoutes = require('./routes/GenericRoutes');
-const chatRoutes = require('./routes/ChatsRoutes');
+const connectDB = require("./config/MongoDBConnection");
+const adminRoutes = require("./routes/AdminRoutes");
+const DeleteModelRecords = require("./config/DeleteAllRecords");
+const doctorRoutes = require("./routes/DoctorRoutes");
+const patientRoutes = require("./routes/PatientRoutes");
+const genericRoutes = require("./routes/GenericRoutes");
+const chatRoutes = require("./routes/ChatsRoutes");
 
-const {putSocket, getSocket, joinSocket} = require('./config/socket');
-
-
+const { putSocket, getSocket, joinSocket } = require("./config/socket");
 
 // Connect to MongoDB
-connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
+connectDB().then((r) =>
+  console.log("Connected to MongoDB 200 OK".bgGreen.bold)
+);
 
 //Start Express server
 const app = express();
 const Port = process.env.PORT;
 
-const http = require('http');
+const http = require("http");
 
 const server = http.createServer(app);
 
@@ -40,15 +39,13 @@ app.use(cors(corsOptions));
 app.use(express.static("public"));
 app.use(express.json());
 
-
-
 //DeleteModelRecords.deleteAllRecords(); //uncomment this line to delete all records from a specific model
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 server.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
@@ -63,22 +60,20 @@ console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
 // routes
 
-app.use('/admins', adminRoutes);
-app.use('/doctors', doctorRoutes);
-app.use('/patients', patientRoutes);
-app.use('/', genericRoutes);
-app.use('/chats', chatRoutes);
+app.use("/admins", adminRoutes);
+app.use("/doctors", doctorRoutes);
+app.use("/patients", patientRoutes);
+app.use("/", genericRoutes);
+app.use("/chats", chatRoutes);
 
-
-const io = require('socket.io')(server, {
+const io = require("socket.io")(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
 io.on("connection", (socket) => {
-
   socket.on("iAmReady", (username) => {
     console.log("iAmReady: " + username);
     putSocket(username, socket.id);
@@ -91,7 +86,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded")
+    socket.broadcast.emit("callEnded");
   });
 
   socket.on("callUser", async ({ userToCall, signalData, from, name }) => {
@@ -102,32 +97,50 @@ io.on("connection", (socket) => {
 
   socket.on("answerCall", (data) => {
     console.log("call answered, " + data.to + " is the caller");
-    io.to(data.to).emit("callAccepted", data.signal)
+    io.to(data.to).emit("callAccepted", data.signal);
   });
-  
+
   socket.on("join chat", (room) => {
     socket.join(room);
     console.log("User Joined Room: " + room);
   });
 
-  socket.on("newMessage", async({message, receiver}) => {
+  socket.on("newMessage", async ({ message, receiver }) => {
     const socketID = await getSocket(receiver);
-    console.log("newMessage: " + message.content + " to " + receiver + " with socketID: " + socketID);
+    console.log(
+      "newMessage: " +
+        message.content +
+        " to " +
+        receiver +
+        " with socketID: " +
+        socketID
+    );
     io.to(socketID).emit("newMessage", message);
   });
 
-  socket.on("newMessagePharmacy", async({message, receiver, sendingToPharmacy}) => {
-    const socketID = await getSocket(receiver);
-    console.log("newMessagePharmacy: " + message.content + " to " + receiver + " with socketID: " + socketID + " sendingToPharmacy: " + sendingToPharmacy);
-    const room = receiver + " room";
-    if(sendingToPharmacy){
-      io.to(room).emit("newMessagePharmacy", message);
-    }else{
-      io.to(socketID).to(room).emit("newMessagePharmacy", message);
+  socket.on(
+    "newMessagePharmacy",
+    async ({ message, receiver, sendingToPharmacy }) => {
+      const socketID = await getSocket(receiver);
+      console.log(
+        "newMessagePharmacy: " +
+          message.content +
+          " to " +
+          receiver +
+          " with socketID: " +
+          socketID +
+          " sendingToPharmacy: " +
+          sendingToPharmacy
+      );
+      const room = receiver + " room";
+      if (sendingToPharmacy) {
+        io.to(room).emit("newMessagePharmacy", message);
+      } else {
+        io.to(socketID).to(room).emit("newMessagePharmacy", message);
+      }
     }
-  });
+  );
 });
-
 
 app.post("/package/create-payment-intent", async (req, res) => {
   // const { items } = req.body;
@@ -140,26 +153,7 @@ app.post("/package/create-payment-intent", async (req, res) => {
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
       enabled: true,
-    }
-  });
-
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
-});
-
-app.post("/create-payment-intent", async (req, res) => {
-  // const { items } = req.body;
-  const card = req.body.card;
-  console.log("in the payment intent");
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 100,
-    currency: "usd",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    }
+    },
   });
 
   res.send({
