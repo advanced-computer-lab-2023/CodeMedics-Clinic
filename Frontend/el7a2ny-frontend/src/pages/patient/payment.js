@@ -18,11 +18,11 @@ const Page = () => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
-  const { appointmentId, patientUsername } = router.query;
+  const { appointmentId, packageName, patientUsername } = router.query;
 
   useEffect(() => {
     axios
-      .post("http://localhost:8000/payment/payment-intent", { appointmentId, currency: "EGP" })
+      .post("http://localhost:8000/payment/payment-intent", { appointmentId, packageName, currency: "EGP" })
       .then((response) => {
         console.log(response);
         setClientSecret(response.data.data);
@@ -69,11 +69,11 @@ const Page = () => {
         }}
       >
         <Stack spacing={3}>
-          <Typography variant="h3">Appointment Payment</Typography>
+          <Typography variant="h3">{appointmentId ? "Appointment" : "Package"} Payment</Typography>
           <Card sx={{ backgroundColor: "#d9dee4" }}>
             {clientSecret && (
               <Elements options={options} stripe={stripePromise}>
-                <CheckoutForm appointmentId={appointmentId} patientUsername={patientUsername} />
+                <CheckoutForm appointmentId={appointmentId} patientUsername={patientUsername} packageName={packageName} />
               </Elements>
             )}
           </Card>

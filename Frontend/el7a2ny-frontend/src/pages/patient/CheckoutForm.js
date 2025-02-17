@@ -5,12 +5,14 @@ import { useRouter } from "next/router";
 import { Typography } from "@mui/material";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 
-export default function CheckoutForm({ appointmentId, patientUsername }) {
+export default function CheckoutForm({ appointmentId, patientUsername, packageName }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`
 
   useEffect(() => {
     if (!stripe) return;
@@ -45,13 +47,13 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
 
     try {
       await axios.post(
-        `${BACKEND_ROUTE}/patients/${patientUsername}/payment/appointments/${appointmentId}`,
+        `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
         { paymentMethod: "Wallet" }
       );
       router.push("/patient/doctors");
     } catch (err) {
       console.log("error", err);
-      setMessage(err.response?.data?.message || "Payment failed. Please try again.");
+      setMessage("Payment failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +79,7 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
     if (paymentIntent && paymentIntent.status === "succeeded") {
       try {
         await axios.post(
-          `${BACKEND_ROUTE}/patients/${patientUsername}/payment/appointments/${appointmentId}`,
+          `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
           { paymentMethod: "Card" }
         );
         router.push("/patient/doctors");
@@ -111,26 +113,27 @@ export default function CheckoutForm({ appointmentId, patientUsername }) {
         >
           {isLoading ? "Processing..." : "Pay with Card"}
         </button>
-
-        <button
-          type="button"
-          onClick={handleWalletPayment}
-          disabled={isLoading}
-          style={{
-            padding: "10px 15px",
-            fontSize: "18px",
-            fontWeight: "bold",
-            backgroundColor: "#6666FF",
-            color: "white",
-            borderRadius: "20px",
-            cursor: "pointer",
-            marginTop: "20px",
-            marginLeft: "10px",
-            opacity: isLoading ? 0.7 : 1,
-          }}
-        >
-          Pay with Wallet
-        </button>
+        {isLoading ? null : (
+          <button
+            type="button"
+            onClick={handleWalletPayment}
+            disabled={isLoading}
+            style={{
+              padding: "10px 15px",
+              fontSize: "18px",
+              fontWeight: "bold",
+              backgroundColor: "#6666FF",
+              color: "white",
+              borderRadius: "20px",
+              cursor: "pointer",
+              marginTop: "20px",
+              marginLeft: "10px",
+              opacity: isLoading ? 0.7 : 1,
+            }}
+          >
+            Pay with Wallet
+          </button>
+        )}
 
         {message && (
           <Typography color={message.includes("success") ? "green" : "red"} sx={{ mt: 2 }}>

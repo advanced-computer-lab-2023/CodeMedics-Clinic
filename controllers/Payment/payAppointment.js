@@ -9,20 +9,6 @@ const {
   validatePackage,
 } = require("../../utils/validator");
 
-function getDiscountAmountForAppointments(package) {
-  if (package == "Free") {
-    return 0;
-  } else if (package == "Silver") {
-    return 0.4;
-  } else if (package == "Gold") {
-    return 0.6;
-  } else if (package == "Platinum") {
-    return 0.8;
-  } else {
-    console.error("Invalid package");
-  }
-}
-
 async function addAppointment(appointment, patient, doctor, res) {
   appointment.patientUsername = patient.username;
   appointment.status = "upcoming";
