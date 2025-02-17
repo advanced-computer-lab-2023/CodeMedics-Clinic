@@ -16,7 +16,7 @@ import {
 import TextInput from "./Inputs/TextInput";
 import MenuInput from "./Inputs/MenuInput";
 
-function Form({ title, fields, onSubmit, actionName, values }) {
+function Form({ title, fields, onSubmit, actionName, values, largeTitle }) {
   const [touched, setTouched] = useState(fields.map((item) => false));
 
   const initialValues = values
@@ -98,7 +98,7 @@ function Form({ title, fields, onSubmit, actionName, values }) {
   return (
     <form noValidate onSubmit={form.handleSubmit}>
       <Card>
-        <CardHeader title={title} />
+        <CardHeader title={title} titleTypographyProps={{ variant: largeTitle ? "h4" : null }}/>
         <CardContent>
           <Box>
             <Grid container spacing={3}>
