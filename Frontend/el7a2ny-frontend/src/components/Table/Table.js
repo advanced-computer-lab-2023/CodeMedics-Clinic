@@ -21,7 +21,7 @@ function Table({ value, title, filters }) {
             ) : (
               <>
                 <Filters filters={filters} />
-                {value.data.length == 0 ? (
+                {value.data && value.data.length == 0 ? (
                 <NoRecords message={value.noRecords} />
                 ) : (
                 <Content />)}

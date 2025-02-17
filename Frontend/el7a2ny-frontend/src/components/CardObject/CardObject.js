@@ -1,13 +1,19 @@
 import { Card, ListItem, Box, CardContent, ListItemText } from "@mui/material";
 import CardAvatar from "./CardAvatar";
 
-function CardObject({ item, index, texts, cardActionsElement }) {
+function CardObject({ item, index, texts, variants, cardActionsElement }) {
   const textsElement = texts.map((text, idx) => {
     return (
       <ListItemText
         primary={text}
         primaryTypographyProps={{
-          variant: idx == 0 ? "h6" : idx == 1 ? "subtitle1" : "subtitle2",
+          variant: variants
+            ? variants[idx]
+            : idx == 0
+            ? "h6"
+            : idx == 1
+            ? "subtitle1"
+            : "subtitle2",
         }}
       />
     );
@@ -32,7 +38,11 @@ function CardObject({ item, index, texts, cardActionsElement }) {
               textAlign: "center",
             }}
           >
-            <CardAvatar src={!item.Picture ? `/assets/avatars/${index}.png` : item.Picture} />
+            <CardAvatar
+              src={
+                item.src ? item.src : !item.Picture ? `/assets/avatars/${index}.png` : item.Picture
+              }
+            />
             {textsElement}
           </ListItem>
         </Box>
