@@ -4,9 +4,7 @@ import {
   Container,
   Unstable_Grid2 as Grid,
   Typography,
-  Card,
   CardContent,
-  CardHeader,
   TextField,
   Stack,
 } from "@mui/material";
@@ -16,47 +14,66 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import Message from "src/components/Miscellaneous/Message";
 import LoadingSpinner from "src/components/LoadingSpinner";
-const now = new Date();
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import Cookies from "js-cookie";
+import { useGet } from "src/hooks/custom-hooks";
 
 const Page = () => {
   const [packages, setPackages] = useState([]);
-  const [me, setMe] = useState({});
+  const [patient, setPatient] = useState({});
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/patient/getAvailablePackages", { withCredentials: true })
-      .then((response) => {
-        return response.data;
-      })
-      .then((data) => {
-        setPackages(data);
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowError(true);
-        setErrorMessage(error.response.data.message);
-      });
-  }, []);
+  const username = Cookies.get('username');
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/patient/getMe", { withCredentials: true })
-      .then((response) => {
-        console.log("response", response);
-        setMe(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowError(true);
-        setErrorMessage(error.response.data.message);
-      });
-  }, []);
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/packages`,
+    setData: setPackages,
+    setShowError,
+    setError
+  })
 
-  console.log("patient", me);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${BACKEND_ROUTE}/patients/packages`, { withCredentials: true })
+  //     .then((response) => {
+  //       return response.data;
+  //     })
+  //     .then((data) => {
+  //       setPackages(data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setShowError(true);
+  //       setErrorMessage(error.response.data.message);
+  //     });
+  // }, []);
+
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/${username}`,
+    setData: setPatient,
+    setShowError,
+    setError,
+    setLoading
+  })
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`${BACKEND_ROUTE}/patients/${username}`, { withCredentials: true })
+  //     .then((response) => {
+  //       console.log("response", response);
+  //       setPatient(response.data);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setShowError(true);
+  //       setErrorMessage(error.response.data.message);
+  //     });
+  // }, []);
+
+  // console.log("patient", patient);
 
   return (
     <>
@@ -67,7 +84,7 @@ const Page = () => {
         condition={showError}
         setCondition={setShowError}
         title={"Error"}
-        message={errorMessage}
+        message={error}
         buttonAction={"Close"}
       />
       {loading ? (
@@ -93,7 +110,7 @@ const Page = () => {
                     label="Health Package Name"
                     disabled
                     name="HealthPackageName"
-                    value={me.HealthPackage.membership}
+                    value={patient.healthPackage.name}
                     sx={{
                       width: "30%"
                     }}
@@ -106,9 +123,9 @@ const Page = () => {
                       width: "30%"
                     }}
                     value={
-                      me.HealthPackage.date == null
+                      patient.healthPackage.date == null
                         ? "No Expiration"
-                        : new Date(me.HealthPackage.date).toDateString()
+                        : new Date(patient.healthPackage.date).toDateString()
                     }
                   />
                 </Stack>
@@ -121,9 +138,9 @@ const Page = () => {
                       width: "30%"
                     }}
                     value={
-                      me.HealthPackage.status == "EndDateCancelled"
+                      patient.healthPackage.status == "EndDateCancelled"
                         ? "Cancelled with end date"
-                        : me.HealthPackage.status == "Inactive"
+                        : patient.healthPackage.status == "Inactive"
                         ? "Free Package Active"
                         : "Active"
                     }
@@ -135,7 +152,7 @@ const Page = () => {
                     sx={{
                       width: "30%"
                     }}
-                    value={me.HealthPackage.status == "main" ? "Main" : "Family"}
+                    value={patient.healthPackage.status == "main" ? "Main" : "Family"}
                   />
                 </Stack>
               </Stack>
@@ -154,7 +171,7 @@ const Page = () => {
               </Typography>
               <Grid container spacing={3}>
                 <Grid xs={20} md={20} lg={15}>
-                  <OverviewPackages packages={packages} me={me} sx={{ height: "100%" }} />
+                  <OverviewPackages packages={packages} patient={patient} sx={{ height: "100%" }} />
                 </Grid>
               </Grid>
             </Container>

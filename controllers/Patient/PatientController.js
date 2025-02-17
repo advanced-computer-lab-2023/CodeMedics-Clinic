@@ -1,13 +1,10 @@
 const patientModel = require("../../models/Patient");
 const adminModel = require("../../models/Administrator");
 const doctorModel = require("../../models/Doctor");
-const packageModel = require("../../models/Package");
-const appointmentModel = require("../../models/Appointment");
+const Package = require("../../models/Package");
 const { getUsername } = require("../../config/infoGetter.js");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const FamilyMember = require("../../models/FamilyMember");
-const schedule = require("node-schedule");
 const jwt = require("jsonwebtoken");
 const { validatePatient } = require("../../utils/validator.js");
 
@@ -248,9 +245,10 @@ const updatePatient = asyncHandler(async (req, res) => {
 });
 
 const getAvailablePackages = asyncHandler(async (req, res) => {
-  const packages = await packageModel.find();
+  const packages = await Package.find();
+  console.log("in the get packages");
   if (packages) {
-    return res.status(200).json(packages);
+    return res.status(200).json({data : packages});
   } else {
     return res.status(400).json({ message: "packages model is empty!" });
   }
@@ -258,7 +256,7 @@ const getAvailablePackages = asyncHandler(async (req, res) => {
 
 const getPackage = asyncHandler(async (req, res) => {
   const { packageName } = req.query;
-  const package = await packageModel.findOne({ Name: packageName });
+  const package = await Package.findOne({ Name: packageName });
   if (package) {
     return res.status(200).json(package);
   } else {

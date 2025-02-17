@@ -76,6 +76,7 @@ function verifyToken(req, res, next) {
 
 
 router.get("/", patientController.getPatients);
+router.get("/packages", patientController.getAvailablePackages);
 router.get("/:patientUsername", patientController.getPatient);
 router.get("/:patientUsername/appointments", getPatientAppointments);
 router.get("/:patientUsername/messages", getPatientMessages);
@@ -114,7 +115,6 @@ router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
  general, to be moved
 */
 
-router.get("/pacakges", patientController.getAvailablePackages);
 router.get("/appointments/:appointmentId/amount", getAppointmentAmount);
 router.get("/appointments", getAvailableAppointments);
 router.get("/packages/package-name", patientController.getPackage);

@@ -1,9 +1,6 @@
-import { useEffect, useState } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PropTypes from 'prop-types';
-import ArrowRightIcon from '@heroicons/react/24/solid/ArrowRightIcon';
-import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import Message from 'src/components/Miscellaneous/Message';
@@ -13,32 +10,23 @@ import {
   Card,
   CardActions,
   CardContent,
-  Divider,
-  IconButton,
-  List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  SvgIcon,
   Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Typography,
   Stack
 } from '@mui/material';
-import { get } from 'http';
 
 export const OverviewPackages = (props) => {
 
   const router = useRouter();
-  const { packages = [], me } = props;
+  const { packages = [], patient } = props;
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const subscribeHealthPackage = (curPackage) => {
-    router.push('/user/PackageMyPay?packageName=' + curPackage.Name + '&packagePrice=' + curPackage.Price);
+    router.push(`/patient/payment?packageName=${curPackage.name}&patientUsername=${patient.username}`);
   }
 
   const unsubscribeHealthPackage = () => {
@@ -88,10 +76,10 @@ export const OverviewPackages = (props) => {
                 }}
               >
                 <ListItemAvatar>
-                  {myPackage.Picture ? (
+                  {myPackage.picture ? (
                     <Box
                       component="img"
-                      src={doctor.Picture}
+                      src={doctor.picture}
                       sx={{
                         borderRadius: '70%',
                         height: 130,
@@ -103,7 +91,7 @@ export const OverviewPackages = (props) => {
                   ) : (
                     <Box
                       component="img"
-                      src={`/assets/Packages/${myPackage.Name}.jpg`}
+                      src={`/assets/Packages/${myPackage.name}.jpg`}
                       sx={{
                         borderRadius: '50%',
                         backgroundColor: 'neutral.200',
@@ -116,7 +104,7 @@ export const OverviewPackages = (props) => {
                 </ListItemAvatar>
                 <Box sx={{ display: 'flex',mb:1 }}>
                   <Typography variant="h5">
-                    {Object.keys(me).length !== 0 && (myPackage.Price * (1 - me.HealthPackage.discount)) + ' EGP / Yr'}
+                    {Object.keys(patient).length !== 0 && (myPackage.price * (1 - patient.healthPackage.discount)) + ' EGP / Yr'}
                   </Typography>
                   <Typography
                     color="text.secondary"
@@ -132,25 +120,25 @@ export const OverviewPackages = (props) => {
                 
                 <ListItemText
                   sx={{ alignSelf: 'flex-start', ml: 4 }}
-                  primary={myPackage.Name + " Package"}
+                  primary={myPackage.name + " Package"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
                   sx={{ alignSelf: 'flex-start', ml: 4 }}
-                  primary={myPackage.SessionDiscount + "% Session Discount"}
+                  primary={myPackage.sessionDiscount + "% Session Discount"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
                   sx={{ alignSelf: 'flex-start', ml: 4 }}
-                  primary={myPackage.MedicineDiscount + "% Medicine Discount"}
+                  primary={myPackage.medicineDiscount + "% Medicine Discount"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
                 <ListItemText
                   sx={{ alignSelf: 'flex-start', ml: 4 }}
-                  primary={myPackage.FamilyDiscount + "% Family Discount"}
+                  primary={myPackage.familyDiscount + "% Family Discount"}
                   primaryTypographyProps={{ variant: 'subtitle1' }}
                   secondaryTypographyProps={{ variant: 'body2' }}
                 />
@@ -158,7 +146,7 @@ export const OverviewPackages = (props) => {
 
               <Stack direction="row">
                 <CardActions sx={{ justifyContent: 'flex-end' }}>
-                  {(Object.keys(me).length !== 0 && me.HealthPackage.status === 'EndDateCancelled' || Object.keys(me).length !== 0 && me.HealthPackage.membership !== myPackage.Name && me.HealthPackage.membership !== "Free") ?
+                  {(Object.keys(patient).length !== 0 && patient.healthPackage.status === 'EndDateCancelled' || Object.keys(patient).length !== 0 && patient.healthPackage.name !== myPackage.name && patient.healthPackage.name !== "Free") ?
                     <>
                       <Button variant="contained" disabled>
                         Add
@@ -170,7 +158,7 @@ export const OverviewPackages = (props) => {
                         Delete
                       </Button>
                     </>
-                    : Object.keys(me).length !== 0 && me.HealthPackage.status === 'Inactive' ?
+                    : Object.keys(patient).length !== 0 && patient.healthPackage.status === 'Inactive' ?
                       <>
                         <Button variant="contained" onClick={() => subscribeHealthPackage(myPackage)}>
                           Add
