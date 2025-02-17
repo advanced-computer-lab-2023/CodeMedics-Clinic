@@ -1,5 +1,6 @@
 const ClinicWallet = require("../../models/ClinicWallet");
 const stripe = require("stripe")(process.env.SECRET_KEY);
+const { handlePatientAppointmentNotification, handleDoctorAppointmentNotification } = require("../../utils/notificationHandler");
 
 const {
   validatePatient,
@@ -22,16 +23,33 @@ function getDiscountAmountForAppointments(package) {
   }
 }
 
-payWithWallet = async (patientUsername, appointmentId, res) => {
+async function addAppointment(appointment, patient, doctor, res) {
+  appointment.patientUsername = patient.username;
+  appointment.status = "upcoming";
+  await appointment.save();
+
+  handlePatientAppointmentNotification(patient, appointment, doctor);
+  handleDoctorAppointmentNotification(doctor, patient, appointment);
+
+  res.status(200).json({
+    message: "Appointment booked successfully",
+    data: {
+      id: appointment._id,
+      doctorName: `${doctor.firstName} ${doctor.lastName}`,
+      patientName: `${patient.firstName} ${patient.lastName}`,
+      date: appointment.date,
+      startHour: appointment.startHour,
+      endHour: appointment.endHour,
+      status: appointment.status,
+    },
+  });
+}
+
+async function payWithWallet(patient, appointment, res) {
   try {
     console.log("in the pay with wallet");
-    const appointment = await validateAppointment(appointmentId, res);
     const doctor = await validateDoctor(appointment.doctorUsername, res);
-    const patient = await validatePatient(patientUsername, res);
-    const package = await validatePackage(
-      patient.healthPackage.name,
-      res
-    );
+    const package = await validatePackage(patient.healthPackage.name, res);
     let price = doctor.hourlyRate + 0.1 * doctor.hourlyRate;
     let clinicWallet = await ClinicWallet.find();
     clinicWallet = clinicWallet[0];
@@ -47,61 +65,30 @@ payWithWallet = async (patientUsername, appointmentId, res) => {
     patient.wallet -= price;
     doctor.wallet += hours * doctor.hourlyRate;
     clinicWallet.Wallet += 0.1 * doctor.hourlyRate;
-    appointment.patient = patientUsername;
     await patient.save();
-    await appointment.save();
     await doctor.save();
     await clinicWallet.save();
 
-    handlePatientAppointmentNotification(patient, appointment, doctor);
-    handleDoctorAppointmentNotification(doctor, patient, appointment);
-
-    res.status(200).json({
-      message: "Appointment booked successfully",
-      data: {
-        id: appointment._id,
-        doctorName: `${appointment.doctor.firstName} ${appointment.doctor.lastName}`,
-        patientName: `${patient.firstName} ${patient.lastName}`,
-        date: appointment.date,
-        startHour: appointment.startHour,
-        endHour: appointment.endHour,
-        status: appointment.status,
-      },
-    });
+    addAppointment(appointment, patient, doctor, res);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
-};
+}
 
 const payAppointment = async (req, res) => {
   const { patientUsername, appointmentId } = req.params;
   const { paymentMethod } = req.body;
-  const patient = await validatePatient(patientUsername, res);
 
+  const patient = await validatePatient(patientUsername, res);
   const appointment = await validateAppointment(appointmentId, res);
 
   const doctor = await validateDoctor(appointment.doctorUsername, res);
-  const discount = getDiscountAmountForAppointments(
-    patient.healthPackage.membership
-  );
-  const duration = appointment.endHour - appointment.startHour;
-  const amount = duration * doctor.hourlyRate * (1 - discount);
-
+  console.log("patient", patient);
   if (paymentMethod == "Wallet") {
-    payWithWallet(patientUsername, appointmentId, res);
+    payWithWallet(patient, appointment, res);
   } else if (paymentMethod == "Card") {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,
-      currency: "usd",
-      payment_method_types: ["card"],
-      automatic_payment_methods: {
-        enabled: true,
-      },
-    });
-    res.send({
-      clientSecret: paymentIntent.client_secret,
-    });
+    addAppointment(appointment, patient, doctor, res);
   } else {
     res.status(404).json({ message: "Invalid payment method" });
   }
