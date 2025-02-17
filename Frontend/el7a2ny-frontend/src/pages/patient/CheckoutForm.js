@@ -12,7 +12,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`
+  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/subscription`
 
   useEffect(() => {
     if (!stripe) return;
@@ -48,7 +48,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     try {
       await axios.post(
         `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
-        { paymentMethod: "Wallet" }
+        { paymentMethod: "Wallet", packageName }
       );
       router.push("/patient/doctors");
     } catch (err) {
@@ -80,7 +80,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
       try {
         await axios.post(
           `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
-          { paymentMethod: "Card" }
+          { paymentMethod: "Card", packageName }
         );
         router.push("/patient/doctors");
       } catch (err) {
