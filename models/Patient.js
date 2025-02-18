@@ -44,7 +44,7 @@ const patientSchema = new Schema(
       required: false,
     },
     familyMembers: {
-      type: [{ relation: String, id: Schema.Types.ObjectId }],
+      type: [{ relation: String, username: String }],
       ref: "Patient",
     },
     familyMembersNoAccount: {
