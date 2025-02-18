@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Card,
@@ -60,31 +60,6 @@ export const SettingsPassword = () => {
       }
     },
   });
-
-  // const [values, setValues] = useState({
-  //   password: "",
-  //   confirm: "",
-  // });
-
-  // const handleChange = useCallback((event) => {
-  //   setValues((prevState) => ({
-  //     ...prevState,
-  //     [event.target.name]: event.target.value,
-  //   }));
-  // }, []);
-
-  // const handleSubmit = useCallback(
-  //   async (event) => {
-  //     event.preventDefault();
-
-  //     // Check if password and confirm match
-  //     if (values.password !== values.confirm) {
-  //       console.error("Passwords do not match");
-  //       return;
-  //     }
-  //   },
-  //   [values.password, values.confirm]
-  // );
 
   return (
     <form noValidate onSubmit={formik.handleSubmit}>
