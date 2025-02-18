@@ -22,7 +22,7 @@ router.post("/resetPassword", resetPassword);
 
 router.post("/payment/payment-intent", async (req, res) => {
   const { card, appointmentId, packageName, currency } = req.body;
-  console.log("in the payment intent");
+  console.log("in the payment intent", req.body);
 
   let amount;
   if (appointmentId) {
@@ -32,7 +32,9 @@ router.post("/payment/payment-intent", async (req, res) => {
     });
     amount = (appointment.endHour - appointment.startHour) * doctor.hourlyRate;
   } else {
-    amount = await Package.findOne({ name: packageName }).price;
+    const package = await Package.findOne({ name: packageName });
+    console.log("package", package);
+    amount = package.price;
   }
 
   console.log("amount", amount);
