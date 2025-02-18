@@ -103,8 +103,8 @@ router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
 
 router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
 router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
-router.delete("/:patientUsername/family-members", removeFamilyMember);
-router.delete("/:patientUsername/family-members-no-account", removeFamilyMemberNoAccount);
+router.delete("/:patientUsername/family-members/:familyMemberUsername", removeFamilyMember);
+router.delete("/:patientUsername/family-members-no-account/:familyMemberId", removeFamilyMemberNoAccount);
 
 
 
