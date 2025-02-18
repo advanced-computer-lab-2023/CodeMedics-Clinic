@@ -1,52 +1,107 @@
-import Head from 'next/head';
-import { Box, Container, Stack as Grid, Button, Typography, Stack } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import { OverviewFamilyMembers } from 'src/sections/overview/overview-family-members';
-import axios from 'axios';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import LoadingSpinner from 'src/components/LoadingSpinner';
-import NoRecords from 'src/components/NoRecords';
-import Message from 'src/components/Miscellaneous/Message';
-import { addFamilyMemberRoute, addFamilyMemberNoAccountRoute } from 'src/project-utils/constants';
+import Head from "next/head";
+import { Box, Container, Button, Stack } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Message from "src/components/Miscellaneous/Message";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import Cookies from "js-cookie";
+import { useGet } from "src/hooks/custom-hooks";
+import CardObject from "src/components/CardObject/CardObject";
+import CardActionsElement from "src/components/CardObject/CardActionsElement";
+import { Table } from "src/components/Table/Table";
+import { DELETE } from "src/project-utils/helper-functions";
 
 const Page = () => {
-
   const router = useRouter();
 
-  const [familyMembers, setFamilyMembers] = useState([]);
-  const [familyMembersNoAccount, setFamilyMembersNoAccount] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({ familyMembers: [], familyMembersNoAccount: [] });
+  const familyMembers = data.familyMembers;
+  const familyMembersNoAccount = data.familyMembersNoAccount;
+  const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    setLoading(true);
-    axios('http://localhost:8000/patient/familyMembers', {
-      method: 'GET',
-      withCredentials: true
-    }).then(response => {
-      console.log(response);
-      setFamilyMembers(response.data.familyMembers);
-      setFamilyMembersNoAccount(response.data.familyMembersNoAccount);
-      setLoading(false);
-    }).catch(error => {
-      console.log(error);
-      setShowError(true);
-      setErrorMessage(error.response.data.message);
-    });
-  }, []);
+  const username = Cookies.get("username");
 
-  console.log("My family: ", familyMembers, familyMembersNoAccount);
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/${username}/family-members`,
+    setData,
+    setLoading,
+    setShowError,
+    setError,
+  });
 
+  console.log("My family: ", data);
 
   const addFamilyMemberRedirect = () => {
-    router.push(addFamilyMemberRoute);
-  }
+    router.push("/patient/add-family-member");
+  };
 
   const addFamilyMemberNoAccountRedirect = () => {
-    router.push(addFamilyMemberNoAccountRoute);
+    router.push("/patient/add-family-member-no-account");
+  };
+
+  const removeFamilyMember = (familyMemberUsername) => {
+    DELETE({
+      url: `${BACKEND_ROUTE}/patients/${username}/family-members`,
+      body: { familyMemberUsername },
+      setShowError,
+      setError,
+      updater: () => {
+        setData((prev) => ({
+          ...prev,
+          familyMembers: prev.familyMembers.filter((item) => item.username != familyMemberUsername),
+        }));
+      },
+    });
+  };
+
+  const removeFamilyMemberNoAccount = (familyMemberId) => {
+    DELETE({
+      url: `${BACKEND_ROUTE}/patients/${username}/family-members-no-account`,
+      body: { familyMemberId },
+      setShowError,
+      setError,
+      updater: () => {
+        setData((prev) => ({
+          ...prev,
+          familyMembersNoAccount: prev.familyMembersNoAccount.filter(
+            (item) => item._id != familyMemberId
+          ),
+        }));
+      },
+    });
+  };
+
+  const actions = familyMembers.map((item) => [
+    {
+      name: "Remove",
+      onClick: () => removeFamilyMember(item.username),
+    },
+  ]);
+  const tableRows = familyMembers.map((item, index) => (
+    <CardObject
+      item={item}
+      index={index}
+      texts={[`${item.firstName} ${item.lastName}`]}
+      variants={["subtitle1"]}
+      cardActionsElement={<CardActionsElement actions={actions[index]} />}
+    />
+  ));
+  for (let i = 0; i < familyMembersNoAccount.length; i++) {
+    const curActions = [
+      { name: "Remove", onClick: () => removeFamilyMemberNoAccount(familyMembersNoAccount[i]._id) },
+    ];
+    tableRows.push(
+      <CardObject
+        item={familyMembersNoAccount[i]}
+        index={i}
+        texts={[`${familyMembersNoAccount[i].name}`]}
+        variants={["subtitle1"]}
+        cardActionsElement={<CardActionsElement actions={curActions} />}
+      />
+    );
   }
 
   return (
@@ -54,7 +109,13 @@ const Page = () => {
       <Head>
         <title>El7a2ny Clinic</title>
       </Head>
-      <Message condition={showError} setCondition={setShowError} title="Error" message={errorMessage} buttonAction="Close" />
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title="Error"
+        message={error}
+        buttonAction="Close"
+      />
       <Box
         component="main"
         sx={{
@@ -64,34 +125,31 @@ const Page = () => {
       >
         <Container maxWidth="xl">
           <Stack direction="row">
-            <Typography variant="h3" gutterBottom>
-              Family Members
-            </Typography>
-            <Button
-              onClick={addFamilyMemberNoAccountRedirect} sx={{marginLeft: 'auto'}}>
+            <Button onClick={addFamilyMemberNoAccountRedirect} sx={{ marginLeft: "auto" }}>
               Add Family Member
             </Button>
-            <Button
-              onClick={addFamilyMemberRedirect} sx={{marginLeft: '0'}}>
+            <Button onClick={addFamilyMemberRedirect} sx={{ marginLeft: "0" }}>
               Add existing user as Family Member
             </Button>
           </Stack>
-          {loading ? <LoadingSpinner /> : (
-            familyMembers.length === 0 && familyMembersNoAccount.length === 0 ? (
-              <NoRecords message={"No Family Members Found"} />
-            ) : (
-              <Grid container spacing={3}>
-                <Grid xs={20} md={20} lg={15}>
-                  <OverviewFamilyMembers familyMembers={familyMembers} familyMembersNoAccount={familyMembersNoAccount} sx={{ height: '100%' }} />
-                </Grid>
-              </Grid>
-            )
-          )}
+          <Table
+            title="Family Members"
+            value={{
+              loading,
+              setShowError,
+              setError,
+              setLoading,
+              noRecords: "No Family Members Found",
+              tableRows,
+              displayGrid: "true",
+              px: 250,
+            }}
+          />
         </Container>
       </Box>
     </>
   );
-}
+};
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
