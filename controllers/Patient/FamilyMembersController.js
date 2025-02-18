@@ -4,10 +4,11 @@ const { validatePatient } = require("../../utils/validator");
 
 exports.addFamilyMember = async (req, res) => {
   const { patientUsername } = req.params;
-  const { familyMemberEmail, relation } = req.body;
+  const { email, relation } = req.body;
+  console.log("add family member", req.body);
   try {
     const patient = await validatePatient(patientUsername, res);
-    const exists = await Patient.findOne({ email: familyMemberEmail });
+    const exists = await Patient.findOne({ email: email });
     if (exists == null) {
       return res.status(400).json({ message: "Family member does not exist" });
     }
@@ -63,8 +64,7 @@ exports.addFamilyMemberNoAccount = async (req, res) => {
 };
 
 exports.removeFamilyMemberNoAccount = async (req, res) => {
-  const { patientUsername } = req.params;
-  const { familyMemberId } = req.body;
+  const { patientUsername, familyMemberId } = req.params;
   try {
     const patient = await validatePatient(patientUsername, res);
     console.log(patient.familyMembersNoAccount, familyMemberId, req.body)
@@ -107,10 +107,10 @@ exports.viewFamilyMembers = async (req, res) => {
 };
 
 exports.removeFamilyMember = async (req, res) => {
-  const { patientUsername } = req.params;
-  const patient = validatePatient(patientUsername);
+  const { patientUsername, familyMemberUsername } = req.params;
+  const patient = await validatePatient(patientUsername, res);
+  console.log(patient);
   try {
-    const { familyMemberUsername } = req.body;
     if (
       !patient.familyMembers.some(
         (el) => el.username.toString() == familyMemberUsername
