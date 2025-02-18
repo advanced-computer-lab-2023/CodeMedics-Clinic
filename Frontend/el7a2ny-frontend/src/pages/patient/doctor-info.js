@@ -14,6 +14,8 @@ import Message from "src/components/Miscellaneous/Message";
 import CardObject from "src/components/CardObject/CardObject";
 import Form from "src/components/Form";
 import LoadingSpinner from "src/components/LoadingSpinner";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { useGet } from "src/hooks/custom-hooks";
 
 const Page = () => {
   const params = new URLSearchParams(window.location.search);
@@ -22,60 +24,53 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [doctor, setDoctor] = useState({});
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:8000/patient/getDoctorByUsername?username=${doctorUsername}`)
-      .then((res) => {
-        console.log("data", res.data.doctor);
-        setDoctor(res.data.doctor);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowError(true);
-        setErrorMessage(err.response.data.message);
-      });
-  }, []);
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/doctors/${doctorUsername}`,
+    setData: setDoctor,
+    setError,
+    setLoading,
+    setShowError,
+  });
 
   const values = {
-    FirstName: doctor.FirstName,
-    LastName: doctor.LastName,
-    Email: doctor.Email,
-    HourlyRate: doctor.HourlyRate,
-    Speciality: doctor.Speciality,
+    firstName: doctor.firstName,
+    lastName: doctor.lastName,
+    email: doctor.email,
+    hourlyRate: doctor.hourlyRate,
+    speciality: doctor.speciality,
   };
 
   console.log("first values", values);
 
   const fields = [
     {
-      name: "FirstName",
+      name: "firstName",
       label: "FirstName",
       type: "text",
       disabled: true,
     },
     {
-      name: "LastName",
+      name: "lastName",
       label: "LastName",
       type: "text",
       disabled: true,
     },
     {
-      name: "Email",
+      name: "email",
       label: "Email Address",
       type: "email",
       disabled: true,
     },
     {
-      name: "HourlyRate",
+      name: "hourlyRate",
       label: "Hourly Rate",
       type: "text",
       disabled: true,
     },
     {
-      name: "Speciality",
+      name: "speciality",
       label: "Speciality",
       type: "text",
       disabled: true,
@@ -89,20 +84,20 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>{doctor.FirstName}</title>
+        <title>{doctor.firstName}</title>
       </Head>
       <Message
         condition={showError}
         setCondition={setShowError}
         title={"Error"}
-        message={errorMessage}
+        message={error}
         buttonAction={"Close"}
       />
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="lg">
           <Stack spacing={3}>
             <div>
-              <Typography variant="h4">Dr. {doctor.FirstName}'s Profile</Typography>
+              <Typography variant="h4">Dr. {doctor.firstName}'s Profile</Typography>
             </div>
             <div>
               <Grid containerspacing={3}>
@@ -117,14 +112,14 @@ const Page = () => {
                         item={doctor}
                         index={counter}
                         texts={[
-                          `${doctor.FirstName} ${doctor.LastName}`,
-                          `${doctor.affiliation} / ${doctor.Degree}`,
+                          `${doctor.firstName} ${doctor.lastName}`,
+                          `${doctor.affiliation} / ${doctor.degree}`,
                         ]}
                       />
                     </Grid>
                     <Grid xs={12} md={6} lg={8} sx={{ width: "100%" }}>
                       <Form
-                        title={`${doctor.Username}'s Profile`}
+                        title={`${doctor.username}'s Profile`}
                         fields={fields}
                         values={values}
                       />
