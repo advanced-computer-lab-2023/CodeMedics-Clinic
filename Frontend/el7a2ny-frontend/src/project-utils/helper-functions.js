@@ -60,8 +60,9 @@ async function PATCH({ url, body, updater, setLoading, setShowError, setError })
 }
 
 async function DELETE({ url, body, updater, setLoading, setShowError, setError }) {
+  console.log("delete body", body);
   await axios
-    .delete(url, body)
+    .delete(url, {data: body})
     .then(() => {
       if (updater) updater();
       if (setLoading) setLoading(false);
