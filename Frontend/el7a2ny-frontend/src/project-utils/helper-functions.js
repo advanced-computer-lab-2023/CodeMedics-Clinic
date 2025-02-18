@@ -32,6 +32,7 @@ async function GET({ url, setData, setLoading, setShowError, setError }) {
 }
 
 async function POST({ url, body, updater, setLoading, setShowError, setError }) {
+  console.log("posting");
   await axios
     .post(url, body)
     .then(() => {
@@ -59,10 +60,9 @@ async function PATCH({ url, body, updater, setLoading, setShowError, setError })
     });
 }
 
-async function DELETE({ url, body, updater, setLoading, setShowError, setError }) {
-  console.log("delete body", body);
+async function DELETE({ url, updater, setLoading, setShowError, setError }) {
   await axios
-    .delete(url, {data: body})
+    .delete(url)
     .then(() => {
       if (updater) updater();
       if (setLoading) setLoading(false);
