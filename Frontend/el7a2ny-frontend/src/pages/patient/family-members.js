@@ -44,7 +44,7 @@ const Page = () => {
 
   const removeFamilyMember = (familyMemberUsername) => {
     DELETE({
-      url: `${BACKEND_ROUTE}/patients/${username}/family-members`,
+      url: `${BACKEND_ROUTE}/patients/${username}/family-members/${familyMemberUsername}`,
       body: { familyMemberUsername },
       setShowError,
       setError,
@@ -59,8 +59,7 @@ const Page = () => {
 
   const removeFamilyMemberNoAccount = (familyMemberId) => {
     DELETE({
-      url: `${BACKEND_ROUTE}/patients/${username}/family-members-no-account`,
-      body: { familyMemberId },
+      url: `${BACKEND_ROUTE}/patients/${username}/family-members-no-account/${familyMemberId}`,
       setShowError,
       setError,
       updater: () => {
@@ -80,6 +79,7 @@ const Page = () => {
       onClick: () => removeFamilyMember(item.username),
     },
   ]);
+  console.log(familyMembers)
   const tableRows = familyMembers.map((item, index) => (
     <CardObject
       item={item}

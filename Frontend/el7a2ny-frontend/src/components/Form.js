@@ -26,7 +26,7 @@ function Form({ title, fields, onSubmit, actionName, values, largeTitle }) {
         return acc;
       }, {});
 
-  console.log("values", initialValues, values);
+  // console.log("values", initialValues, values);
 
   const validationSchema = Yup.object(
     fields.reduce((acc, item) => {
