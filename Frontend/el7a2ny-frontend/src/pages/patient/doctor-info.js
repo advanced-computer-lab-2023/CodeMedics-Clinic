@@ -8,8 +8,7 @@ import {
   CardContent,
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
-import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Message from "src/components/Miscellaneous/Message";
 import CardObject from "src/components/CardObject/CardObject";
 import Form from "src/components/Form";
