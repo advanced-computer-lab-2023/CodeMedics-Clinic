@@ -12,7 +12,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/subscription`
+  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`
 
   useEffect(() => {
     if (!stripe) return;
@@ -26,7 +26,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
       switch (paymentIntent.status) {
         case "succeeded":
-          router.push("/patient/doctors");
+          setMessage("Payment succeeded.");
           break;
         case "processing":
           setMessage("Your payment is processing.");
@@ -53,7 +53,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
       router.push("/patient/doctors");
     } catch (err) {
       console.log("error", err);
-      setMessage("Payment failed. Please try again.");
+      setMessage(err.response.data.message || "Payment failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -72,6 +72,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     });
 
     if (error) {
+      console.log(error);
       setMessage(error.message || "An unexpected error occurred.");
       setIsLoading(false);
       return;

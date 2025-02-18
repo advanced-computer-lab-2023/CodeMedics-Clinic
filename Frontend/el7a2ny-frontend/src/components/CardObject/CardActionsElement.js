@@ -25,10 +25,10 @@ function CardActionsElement({ actions }) {
   return (
     <Stack
       direction="row"
-      justifyContent="center" // Center the buttons horizontally
-      alignItems="center" // Center the buttons vertically
-      spacing={2} // Add spacing between buttons
-      sx={{ width: "100%" }} // Ensure the Stack takes full width
+      justifyContent="center"
+      alignItems="center"
+      spacing={2} 
+      sx={{ width: "100%" }}
     >
       {actionElements}
     </Stack>
