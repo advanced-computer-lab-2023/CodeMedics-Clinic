@@ -11,6 +11,7 @@ import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
 import { DELETE } from "src/project-utils/helper-functions";
 import { Table } from "src/components/Table/Table";
+import { useRouter } from "next/router";
 
 const Page = () => {
   const [packages, setPackages] = useState([]);
@@ -18,6 +19,7 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const username = Cookies.get("username");
 
@@ -86,7 +88,7 @@ const Page = () => {
 
   const unsubscribeHealthPackage = () => {
     DELETE({
-      url: `${BACKEND_ROUTE}/patient/${username}/health-packages/subscription`,
+      url: `${BACKEND_ROUTE}/patients/${username}/health-packages/subscription`,
       updater: () => {
         setPatient((prev) => ({
           ...prev,
@@ -108,12 +110,12 @@ const Page = () => {
   const actions = packages.map((item) => [
     {
       name: "Add",
-      disabled: !(patient.packageName == "Free"),
+      disabled: !(patient && patient.healthPackage.name == "Free"),
       onClick: () => subscribeHealthPackage(item.name),
     },
     {
       name: "Delete",
-      disabled: !(item.name == patient.healthPackage.name),
+      disabled: !(patient && item.name == patient.healthPackage.name),
       onClick: () => unsubscribeHealthPackage(),
     },
   ]);
