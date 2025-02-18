@@ -100,7 +100,7 @@ const createPatient = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Email already taken" });
   }
 
-  const salt = await bcrypt.genSalt(process.env.BCRYPT_NUMBER_OF_ROUNDS);
+  const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
   const newPatient = new Patient({
@@ -231,17 +231,17 @@ const updatePatient = asyncHandler(async (req, res) => {
       wallet,
     } = req.body;
     if (password) {
-      const salt = await bcrypt.genSalt(process.env.BCRYPT_NUMBER_OF_ROUNDS);
+      const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       patient.password = hashedPassword;
     }
-    patient.firstName = firstName;
-    patient.lastName = lastName;
-    patient.email = email;
-    patient.number = number;
-    patient.emergencyContact = emergencyContact;
-    patient.dateOfBirth = dateOfBirth;
-    patient.wallet = wallet;
+    if (firstName) patient.firstName = firstName;
+    if (lastName) patient.lastName = lastName;
+    if (email) patient.email = email;
+    if (number) patient.number = number;
+    if (emergencyContact) patient.emergencyContact = emergencyContact;
+    if (dateOfBirth) patient.dateOfBirth = dateOfBirth;
+    if (wallet) patient.wallet = wallet;
     await patient.save();
     return res
       .status(200)
