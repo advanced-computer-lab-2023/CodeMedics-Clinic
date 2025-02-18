@@ -1,12 +1,9 @@
 const Doctor = require("../../models/Doctor");
+const { validateDoctor } = require("../../utils/validator");
 exports.getDoctor = async (req, res) => {
   const { doctorUsername } = req.params;
-  if (doctorUsername.length == 0) {
-    res.status(400).json({ message: "A username must be provided." });
-    return;
-  }
   try {
-    const doctor = await Doctor.findOne({ username: doctorUsername });
+    const doctor = await validateDoctor(doctorUsername, res);
     res.status(200).json({ data: doctor });
   } catch (err) {
     console.error(err);
