@@ -1,6 +1,5 @@
 const Patient = require("../../models/Patient");
 const FamilyMember = require("../../models/FamilyMember");
-const { getUsername } = require("../../config/infoGetter");
 const { validatePatient } = require("../../utils/validator");
 
 exports.addFamilyMember = async (req, res) => {
@@ -68,6 +67,7 @@ exports.removeFamilyMemberNoAccount = async (req, res) => {
   const { familyMemberId } = req.body;
   try {
     const patient = await validatePatient(patientUsername, res);
+    console.log(patient.familyMembersNoAccount, familyMemberId, req.body)
     patient.familyMembersNoAccount = patient.familyMembersNoAccount.filter(
       (member) => member.toString() != familyMemberId
     );
@@ -85,15 +85,22 @@ exports.viewFamilyMembers = async (req, res) => {
   const patient = await validatePatient(patientUsername, res);
   try {
     const familyMembers = [];
-    console.log(patient.familyMembers)
+    console.log(patient.familyMembers);
     for (let i = 0; i < patient.familyMembers.length; i++) {
       const familyMember = await Patient.findOne({
         username: patient.familyMembers[i].username,
       });
       familyMembers.push(familyMember);
     }
+    const familyMembersNoAccount = [];
+    for (let i = 0; i < patient.familyMembersNoAccount.length; i++) {
+      const familyMemberNoAccount = await FamilyMember.findOne({
+        _id: patient.familyMembersNoAccount[i],
+      });
+      familyMembersNoAccount.push(familyMemberNoAccount);
+    }
 
-    res.status(200).json({ data: familyMembers });
+    res.status(200).json({ data: { familyMembers, familyMembersNoAccount } });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }
