@@ -1,94 +1,97 @@
 import { useState } from "react";
 import axios from "axios";
-import { patientUpdateRoute } from "src/project-utils/constants";
+import { BACKEND_ROUTE, patientUpdateRoute } from "src/project-utils/constants";
 import Form from "../Form";
+import { PATCH } from "src/project-utils/helper-functions";
 
 function AccountDetails({ user }) {
   const values = {
-    FirstName: user.FirstName,
-    LastName: user.LastName,
-    Username: user.Username,
-    Email: user.Email,
-    Number: user.Number,
-    DateOfBirth: user.DateOfBirth,
-    EmergencyContactName: user.EmergencyContact.Name,
-    EmergencyContactNumber: user.EmergencyContact.Number,
-    EmergencyContactRelation: user.EmergencyContact.Relation,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+    email: user.email,
+    number: user.number,
+    dateOfBirth: user.dateOfBirth,
+    emergencyContactName: user.emergencyContact.name,
+    emergencyContactNumber: user.emergencyContact.number,
+    emergencyContactRelation: user.emergencyContact.relation,
   };
 
-  const [firstName, setFirstName] = useState(user.FirstName);
-  const [lastName, setLastName] = useState(user.LastName);
-  const [username, setUsername] = useState(user.Username);
-  const [email, setEmail] = useState(user.Email);
-  const [number, setNumber] = useState(user.Number);
-  const [dateOfBirth, setDateOfBirth] = useState(user.DateOfBirth);
-  const [emergencyContactName, setEmergencyContactName] = useState(user.EmergencyContact.Name);
+  const [firstName, setFirstName] = useState(user.firstName);
+  const [lastName, setLastName] = useState(user.lastName);
+  const [username, setUsername] = useState(user.username);
+  const [email, setEmail] = useState(user.email);
+  const [number, setNumber] = useState(user.number);
+  const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth);
+  const [emergencyContactName, setEmergencyContactName] = useState(user.emergencyContact.name);
   const [emergencyContactNumber, setEmergencyContactNumber] = useState(
-    user.EmergencyContact.Number
+    user.emergencyContact.number
   );
   const [emergencyContactRelation, setEmergencyContactRelation] = useState(
-    user.EmergencyContact.Relation
+    user.emergencyContact.relation
   );
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
 
   const fields = [
     {
-      name: "FirstName",
+      name: "firstName",
       label: "First Name",
       type: "text",
       value: firstName,
       setValue: setFirstName,
     },
     {
-      name: "LastName",
+      name: "lastName",
       label: "Last Name",
       type: "text",
       value: lastName,
       setValue: setLastName,
     },
     {
-      name: "Username",
+      name: "username",
       label: "Username",
       type: "text",
       value: username,
       setValue: setUsername,
     },
     {
-      name: "Email",
+      name: "email",
       label: "Email",
       type: "email",
       value: email,
       setValue: setEmail,
     },
     {
-      name: "Number",
+      name: "number",
       label: "Phone Number",
       type: "text",
       value: number,
       setValue: setNumber,
     },
     {
-      name: "DateOfBirth",
+      name: "dateOfBirth",
       label: "Date Of Birth",
       type: "date",
       value: dateOfBirth,
       setValue: setDateOfBirth,
     },
     {
-      name: "EmergencyContactName",
+      name: "emergencyContactName",
       label: "Emergency Contact Name",
       type: "text",
       value: emergencyContactName,
       setValue: setEmergencyContactName,
     },
     {
-      name: "EmergencyContactNumber",
+      name: "emergencyContactNumber",
       label: "Emergency Contact Number",
       type: "text",
       value: emergencyContactNumber,
       setValue: setEmergencyContactNumber,
     },
     {
-      name: "EmergencyContactRelation",
+      name: "emergencyContactRelation",
       label: "Emergency Contact Relation",
       type: "text",
       value: emergencyContactRelation,
@@ -99,44 +102,41 @@ function AccountDetails({ user }) {
   const onSubmit = async (user, helpers) => {
     try {
       const body = {
-        FirstName: user.FirstName,
-        LastName: user.LastName,
-        Username: user.Username,
-        Email: user.Email,
-        DateOfBirth: user.DateOfBirth,
-        Number: user.Number,
-        Gender: user.Gender,
-        EmergencyContact: {
-          Name: user.EmergencyContactName,
-          Number: user.EmergencyContactNumber,
-          Relation: user.EmergencyContactRelation,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        email: user.email,
+        dateOfBirth: user.dateOfBirth,
+        number: user.number,
+        gender: user.gender,
+        emergencyContact: {
+          name: user.emergencyContactName,
+          number: user.emergencyContactNumber,
+          relation: user.emergencyContactRelation,
         },
       };
-      await axios(patientUpdateRoute, {
-        method: "PATCH",
-        data: body,
-        withCredentials: true,
-      })
-        .then((res) => {
-          if (res.status != 200) {
-            throw new Error(res.data.message);
-          }
-          return res["data"];
-        })
-        .then((data) => {
+      PATCH({
+        url: `${BACKEND_ROUTE}/patients/${username}`,
+        body,
+        setShowError,
+        setError,
+        updater: () => {
           window.location.reload();
-        });
+        },
+      });
     } catch (err) {
-      console.log("err", err)
+      console.log("err", err);
       helpers.setStatus({ success: false });
-      helpers.setErrors({ Submit: err.response.data.message });
+      helpers.setErrors({ submit: err.response?.data?.message || "An error occurred" });
       helpers.setSubmitting(false);
     }
   };
+
   return (
     <div>
-      <Form title="Profile" fields={fields} actionName="save" onSubmit={onSubmit} values={values}/>
+      <Form title="Profile" fields={fields} actionName="save" onSubmit={onSubmit} values={values} />
     </div>
   );
 }
+
 export default AccountDetails;

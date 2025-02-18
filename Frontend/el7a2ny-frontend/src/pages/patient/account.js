@@ -6,26 +6,25 @@ import Message from "src/components/Miscellaneous/Message";
 import Title from "src/components/Table/Body/Title";
 import LoadingSpinner from "src/components/LoadingSpinner";
 import Account from "src/components/Account/Account";
-import { patientRoute } from "src/project-utils/constants";
+import { BACKEND_ROUTE, patientRoute } from "src/project-utils/constants";
+import { useGet } from "src/hooks/custom-hooks";
+import Cookies from "js-cookie";
 
 const Page = () => {
   const [patient, setPatient] = useState({});
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    axios
-      .get(patientRoute, { withCredentials: true })
-      .then((res) => {
-        setPatient(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowError(true);
-        setErrorMessage(err.response.data.message);
-      });
-  }, []);
+
+  const username = Cookies.get("username");
+
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/${username}`,
+    setData: setPatient,
+    setLoading,
+    setError,
+    setShowError,
+  });
 
   return (
     <>
@@ -42,9 +41,7 @@ const Page = () => {
             <div>
               <Typography variant="h4">Account</Typography>
             </div>
-            <div>
-              {loading ? <LoadingSpinner /> : <Account user={patient}/>}
-            </div>
+            <div>{loading ? <LoadingSpinner /> : <Account user={patient} />}</div>
           </Stack>
         </Container>
       </Box>
@@ -52,7 +49,7 @@ const Page = () => {
         condition={showError}
         setCondition={setShowError}
         title={"Error"}
-        message={errorMessage}
+        message={error}
         buttonAction={"Close"}
       />
     </>

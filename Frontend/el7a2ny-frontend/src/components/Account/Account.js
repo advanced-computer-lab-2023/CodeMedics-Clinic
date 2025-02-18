@@ -8,8 +8,8 @@ function Account({ user }) {
         <AccountCard
           src={user.avatar}
           texts={[
-            { value: user.Username, variant: "h5" },
-            { value: `${user.Wallet} EGP`, variant: "h5", color: "green" },
+            { value: user.username, variant: "h5" },
+            { value: `${user.wallet} EGP`, variant: "h5", color: "green" },
           ]}
         />
       </Grid>
