@@ -43,11 +43,6 @@ const patientSchema = new Schema(
       },
       required: false,
     },
-    package: {
-      type: String,
-      default: "Free",
-      required: false,
-    },
     familyMembers: {
       type: [{ relation: String, id: Schema.Types.ObjectId }],
       ref: "Patient",
