@@ -1,8 +1,7 @@
 import {useState} from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 
-const Message = ({title, message, buttonAction }) => {
-  const [condition, setCondition] = useState(true)
+const Message = ({title, message, buttonAction, condition, setCondition }) => {
   return (
     (<div>
         <Dialog open={condition} onClose={() => {{
