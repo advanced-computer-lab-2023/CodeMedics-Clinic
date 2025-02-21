@@ -56,7 +56,7 @@ const Chat = ({isPatient}) => {
         }
         return chat;
       })
-      .sort((a, b) => new Date(b.chat.updatedAt) - new Date(a.chat.updatedAt));
+      .sort((a, b) => new Date(b.latestMessage.createdAt) - new Date(a.chat.latestMessage.createdAt));
     setChats(updatedChats);
     if (messagesCache[message.chat]) {
       setMessagesCache((prev) => ({
@@ -114,6 +114,7 @@ const Chat = ({isPatient}) => {
           chat: selectedChat.chat._id,
           sender: body.sender,
           content: body.content,
+          createdAt: new Date()
         };
         updateChats(newMessage);
         const eventName = selectedChat.pharmacy ? "newMessagePharmacy" : "newMessage";
