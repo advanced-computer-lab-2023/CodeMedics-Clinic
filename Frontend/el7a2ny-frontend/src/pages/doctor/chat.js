@@ -1,97 +1,98 @@
 import Head from "next/head";
-import {
-  Box,
-  Container,
-  Divider,
-  Unstable_Grid2 as Grid,
-  Typography,
-  Avatar,
-  Card,
-  OutlinedInput,
-  InputAdornment,
-  SvgIcon,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
-import { ChatSidebar } from "src/sections/doctor/chat/ChatSidebar";
-import { ChatBox } from "src/sections/doctor/chat/ChatBox";
-
-import axios from "axios";
+import { ChatSidebar } from "src/sections/user/chat/ChatSidebar";
+import { ChatBox } from "src/sections/user/chat/ChatBox";
 import { useState, useEffect } from "react";
 import { Stack } from "@mui/system";
 import Cookies from "js-cookie";
 import socket from "src/components/socket";
 import Message from "src/components/Miscellaneous/Message";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
-
-const now = new Date();
+import NoChat from "src/components/Miscellaneous/NoChat";
+import { useGet } from "src/hooks/custom-hooks";
+import { POST, GET } from "src/project-utils/helper-functions";
+import LoadingSpinner from "src/components/Miscellaneous/LoadingSpinner";
 
 const Page = () => {
   const username = Cookies.get("username");
   const [chats, setChats] = useState([]);
-  const [messages, setMessages] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [messagesCache, setMessagesCache] = useState({});
+  const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
+  const [messages, setMessages] = useState([]);
+
+  useGet({
+    url: `${BACKEND_ROUTE}/doctors/${username}/chats`,
+    setData: setChats,
+    setLoading,
+    setShowError,
+    setError,
+  });
 
   useEffect(() => {
-    axios
-      .get(`${BACKEND_ROUTE}/doctors/${username}/chats`, { withCredentials: true })
-      .then((response) => {
-        console.log(response.data.chats);
-        setChats(response.data.chats);
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowError(true);
-        setErrorMessage(error.response.data.message);
-      });
-  }, []);
-
-  const changeChatAndMessages = (message) => {
-    const tmp = [];
-    for (let i = 0; i < chats.length; i++) {
-      if (chats[i].chat._id == message.chat) {
-        tmp.push(chats[i]);
-        tmp[i].chat.latestMessage = message;
-        tmp[i].chat.updatedAt = message.createdAt;
-        tmp[i].latestMessage = message;
-      } else {
-        tmp.push(chats[i]);
+    const fetchMessages = async () => {
+      if (selectedChat) {
+        await getMessages(selectedChat.chat._id);
+        if (messagesCache[selectedChat.chat._id]) setMessages(messagesCache[selectedChat.chat._id]);
       }
-    }
-    tmp.sort((a, b) => {
-      if (a.chat.updatedAt > b.chat.updatedAt) return -1;
-      if (a.chat.updatedAt < b.chat.updatedAt) return 1;
-      return 0;
-    });
-    setChats(tmp);
-    if (selectedChat && selectedChat.chat._id == message.chat) {
-      setMessages([...messages, message]);
+    };
+
+    fetchMessages();
+  }, [selectedChat, messagesCache]);
+
+  const updateChats = (message) => {
+    const updatedChats = chats
+      .map((chat) => {
+        if (chat.chat._id == message.chat) {
+          return {
+            ...chat,
+            chat: { latestMessage: message, updatedAt: message.createdAt },
+            latestMessage: message,
+          };
+        }
+        return chat;
+      })
+      .sort((a, b) => new Date(b.chat.updatedAt) - new Date(a.chat.updatedAt));
+    setChats(updatedChats);
+    if (messagesCache[message.chat]) {
+      setMessagesCache((prev) => ({
+        ...prev,
+        [message.chat]: [...(prev[message.chat] || []), message],
+      }));
+    } else {
+      GET({
+        url: `${BACKEND_ROUTE}/doctors/chats/${message.chat}/messages`,
+        setData: (data) => {
+          setMessagesCache((prev) => ({ ...prev, [message.chat]: data }));
+        },
+        setShowError,
+        setError,
+      });
     }
   };
 
   socket.off("newMessage").on("newMessage", (message) => {
-    changeChatAndMessages(message);
+    updateChats(message);
   });
 
   socket.off("newMessagePharmacy").on("newMessagePharmacy", (message) => {
-    changeChatAndMessages(message);
+    updateChats(message);
   });
 
-  const getMessages = (chatId) => {
-    if (selectedChat && chatId == selectedChat.chat._id) return;
-    axios
-      .get(`${BACKEND_ROUTE}/doctors/chats/${chatId}/messages`, { withCredentials: true })
-      .then((response) => {
-        setMessages(response.data.messages);
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowError(true);
-        setErrorMessage(error.response.data.message);
+  const getMessages = async (chatId) => {
+    if (chatId && !messagesCache[chatId]) {
+      GET({
+        url: `${BACKEND_ROUTE}/doctors/chats/${chatId}/messages`,
+        setData: (data) => {
+          setMessagesCache((prev) => ({ ...prev, [chatId]: data }));
+        },
+        setShowError,
+        setError,
       });
+    }
   };
 
   const sendMessage = (message) => {
@@ -99,31 +100,34 @@ const Page = () => {
       sender: username,
       content: message,
     };
-    axios
-      .post(`${BACKEND_ROUTE}/doctors/chats/${selectedChat.chat._id}/messages`, body, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        changeChatAndMessages(response.data.newMessage);
-        if (selectedChat.pharmacy) {
-          socket.emit("newMessagePharmacy", {
-            message: response.data.newMessage,
-            receiver: Cookies.get("username"),
-            sendingToPharmacy: true,
-          });
-        } else {
-          socket.emit("newMessage", {
-            message: response.data.newMessage,
-            receiver: selectedChat.patient.Username,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setShowError(true);
-        setErrorMessage(error.response.data.message);
-      });
+
+    console.log("message", message);
+
+    POST({
+      url: `${BACKEND_ROUTE}/doctors/chats/${selectedChat.chat._id}/messages`,
+      body,
+      setShowError,
+      setError,
+      updater: () => {
+        const newMessage = {
+          chat: selectedChat.chat._id,
+          sender: body.sender,
+          content: body.content,
+        };
+        updateChats(newMessage);
+        const eventName = selectedChat.pharmacy ? "newMessagePharmacy" : "newMessage";
+        const payload = selectedChat.pharmacy
+          ? { message: newMessage, receiver: Cookies.get("username"), sendingToPharmacy: true }
+          : { message: newMessage, receiver: selectedChat.patient.username };
+
+        socket.emit(eventName, payload);
+      },
+    });
   };
+
+  if(loading){
+    return <LoadingSpinner />
+  }
 
   return (
     <>
@@ -134,7 +138,7 @@ const Page = () => {
         condition={showError}
         setCondition={setShowError}
         title={"Error"}
-        message={errorMessage}
+        message={error}
         buttonAction={"Close"}
       />
       <Box>
@@ -144,27 +148,12 @@ const Page = () => {
             chats={chats}
             selectedChat={selectedChat}
             setSelectedChat={setSelectedChat}
-            username={username}
-            getMessages={getMessages}
           />
           <Divider orientation="vertical" flexItem />
           {selectedChat == null ? (
-            <Stack>
-              <Avatar
-                src={`/assets/errors/error-404.png`}
-                sx={{ height: 140, width: 140, p: 2, mt: 25, ml: 39 }}
-              />
-              <Typography variant="subtitle2" sx={{ mb: 4, ml: 33, fontSize: 16 }}>
-                Start meaningful conversations!
-              </Typography>
-            </Stack>
+            <NoChat />
           ) : (
-            <ChatBox
-              selectedChat={selectedChat}
-              messages={messages}
-              username={username}
-              sendMessage={sendMessage}
-            />
+            <ChatBox selectedChat={selectedChat} messages={messages} sendMessage={sendMessage} />
           )}
         </Stack>
       </Box>

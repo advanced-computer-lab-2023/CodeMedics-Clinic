@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Box, Divider, Typography, Avatar } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { ChatSidebar } from "src/sections/user/chat/ChatSidebar";
 import { ChatBox } from "src/sections/user/chat/ChatBox";
@@ -43,11 +43,16 @@ const Page = () => {
     fetchMessages();
   }, [selectedChat, messagesCache]);
 
+  for (let i = 0; i < chats.length; i++) {
+    console.log("i", i, chats[i].latestMessage);
+  }
+
   const updateChats = (message) => {
     const updatedChats = chats
       .map((chat) => {
-        if (chat._id == message.chat) {
+        if (chat.chat._id == message.chat) {
           return {
+            ...chat,
             chat: { latestMessage: message, updatedAt: message.createdAt },
             latestMessage: message,
           };
@@ -154,11 +159,7 @@ const Page = () => {
           {selectedChat == null ? (
             <NoChat />
           ) : (
-            <ChatBox
-              selectedChat={selectedChat}
-              messages={messages}
-              sendMessage={sendMessage}
-            />
+            <ChatBox selectedChat={selectedChat} messages={messages} sendMessage={sendMessage} />
           )}
         </Stack>
       </Box>
