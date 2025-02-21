@@ -63,7 +63,7 @@ const Page = () => {
               Cookies.set('isDoctor', false);
               Cookies.set('type', 'patient');
               socket.on('me', (id) => {
-                Cookies.set('socketID', id);
+                Cookies.set('socketId', id);
               });
               socket.emit('iAmReady', Cookies.get('username'));
               router.push(`/patient/doctors`);
@@ -83,7 +83,7 @@ const Page = () => {
                 Cookies.set('isDoctor', true);
                 Cookies.set('type', 'doctor');
                 socket.on('me', (id) => {
-                  Cookies.set('socketID', id);
+                  Cookies.set('socketId', id);
                 });
                 socket.emit('iAmReady', Cookies.get('username'));
                 router.push(`/doctor/patients`);
@@ -141,7 +141,7 @@ const Page = () => {
               Cookies.set('isDoctor', false);
               Cookies.set('type', 'patient');
               socket.on('me', (id) => {
-                Cookies.set('socketID', id);
+                Cookies.set('socketId', id);
               });
               socket.emit('iAmReady', Cookies.get('username'));
               router.push(`/patient/doctors`);
@@ -161,7 +161,7 @@ const Page = () => {
                 Cookies.set('isDoctor', true);
                 Cookies.set('type', 'doctor');
                 socket.on('me', (id) => {
-                  Cookies.set('socketID', id);
+                  Cookies.set('socketId', id);
                 });
                 socket.emit('iAmReady', Cookies.get('username'));
                 router.push(`/doctor/patients`);

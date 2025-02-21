@@ -157,7 +157,7 @@ export const AuthProvider = (props) => {
   const signOut = () => {
     Cookies.remove('username');
     Cookies.remove('jwt');
-    Cookies.remove('socketID');
+    Cookies.remove('socketId');
     axios('http://localhost:8000/logout', {
       method: 'POST',
       withCredentials: true
