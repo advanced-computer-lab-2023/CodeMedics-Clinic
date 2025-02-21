@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 export const ChatItem = (props) => {
   const { chat, obj, isPharmacy, index, selectedChat, setSelectedChat } = props;
+  console.log("chat item", obj, selectedChat)
   const username = Cookies.get("username");
   const name = isPharmacy ? "Code Medics Pharmacy" : `${obj.firstName} ${obj.lastName}`;
 

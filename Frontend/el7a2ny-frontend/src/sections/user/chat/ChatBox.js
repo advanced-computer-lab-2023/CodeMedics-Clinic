@@ -8,7 +8,11 @@ export const ChatBox = (props) => {
   const { selectedChat, messages, sendMessage } = props;
   return (
     <Stack sx={{ flexGrow: 1 }}>
-      <ChatBoxTop selectedChat={selectedChat} isPharmacy={selectedChat.pharmacy ? true : false} />
+      <ChatBoxTop
+        selectedChat={selectedChat}
+        isPharmacy={selectedChat.pharmacy ? true : false}
+        user={selectedChat.doctor ? "doctor" : "patient"}
+      />
       <Divider />
       <Box
         sx={{

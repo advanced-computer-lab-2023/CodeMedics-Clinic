@@ -1,8 +1,4 @@
-import {
-  Box,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { ChatSidebarSearch } from "./ChatSidebarSearch";
 import { Scrollbar } from "src/components/scrollbar";
 import { ChatItem } from "./ChatItem";
@@ -10,17 +6,20 @@ import { ChatItem } from "./ChatItem";
 export const ChatSidebar = (props) => {
   const { chats, selectedChat, setSelectedChat } = props;
 
-  const chatElements = chats.map((chat, index) => (
-    <ChatItem
-      key={index}
-      index={index}
-      chat={chat}
-      obj={chat.doctor || chat.pharmacy}
-      isPharmacy={chat.pharmacy ? true : false}
-      selectedChat={selectedChat}
-      setSelectedChat={setSelectedChat}
-    />
-  ));
+  const chatElements = chats.map((chat, index) => {
+    console.log(chat, chat.doctor || chat.patient || chat.pharmacy)
+    return (
+      <ChatItem
+        key={index}
+        index={index}
+        chat={chat}
+        obj={chat.doctor || chat.pharmacy || chat.patient}
+        isPharmacy={chat.pharmacy ? true : false}
+        selectedChat={selectedChat}
+        setSelectedChat={setSelectedChat}
+      />
+    );
+  });
 
   return (
     <div>
