@@ -76,7 +76,7 @@ exports.getDoctorChats = async (req, res) => {
       if (a.chat.updatedAt < b.chat.updatedAt) return 1;
       return 0;
     });
-    res.status(200).json({ chats });
+    res.status(200).json({ data: chats });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
