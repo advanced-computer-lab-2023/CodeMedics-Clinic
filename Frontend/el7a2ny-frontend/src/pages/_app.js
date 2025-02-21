@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 import Cookies from 'js-cookie';
 import socket from 'src/components/socket';
 import 'simplebar-react/dist/simplebar.min.css';
-import PopUp from 'src/components/PopUp';
+import { CallDialog } from 'src/components/CallDialog';
 import { VideoCallContext } from 'src/components/VideoCallContext';
 import { SettingsConsumer, SettingsProvider } from '../contexts/settings-context';
 import { Tooltip, SvgIcon, Box, ButtonBase } from '@mui/material';
@@ -35,7 +35,7 @@ const App = (props) => {
   useEffect(() => {
     if (Cookies.get('username') !== undefined) {
       socket.on('me', (id) => {
-        Cookies.set('socketID', id);
+        Cookies.set('socketId', id);
       });
       socket.emit('iAmReady', Cookies.get('username'));
     }
@@ -52,9 +52,9 @@ const App = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
-      <VideoCallContext>
-        <PopUp />
-      </VideoCallContext>
+      {/* <VideoCallContext>
+        <CallDialog />
+      </VideoCallContext> */}
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <AuthProvider>
           <AuthConsumer>
