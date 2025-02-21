@@ -20,12 +20,11 @@ exports.getDoctorChats = async (req, res) => {
     for (let i = 0; i < appointments.length; i++) {
       const appointment = appointments[i];
       if (
-        appointment &&
-        (appointment.status == "completed" ||
-          appointment.status == "follow-up Requested")
+        appointment.status == "completed" ||
+        appointment.status == "follow-up Requested"
       ) {
         const patient = await Patient.findOne({
-          username: appointment.patient,
+          username: appointment.patientUsername,
         });
         if (patient) {
           if (!patients.some((p) => p.username === patient.username)) {
@@ -35,6 +34,7 @@ exports.getDoctorChats = async (req, res) => {
       }
     }
     const chats = [];
+    console.log("doctor chats", patients);
     const pharmacyChat = await Chat.findOne({
       users: [doctorUsername, "admin"],
     });
