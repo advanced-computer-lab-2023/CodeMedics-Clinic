@@ -11,7 +11,6 @@ const corsOptions = {
   optionSuccessStatus: 200,
 };
 
-
 const connectDB = require("./config/MongoDBConnection");
 const adminRoutes = require("./routes/AdminRoutes");
 const DeleteModelRecords = require("./config/DeleteAllRecords");
@@ -50,15 +49,6 @@ server.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
-// const corsOptions = {
-//     origin: 'http://example.com', // Replace with your frontend's URL
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//     credentials: true, // Enable credentials (e.g., cookies, authorization headers)
-// };
-//
-// app.use(cors(corsOptions));
-
-// routes
 
 app.use("/admins", adminRoutes);
 app.use("/doctors", doctorRoutes);
@@ -91,7 +81,7 @@ io.on("connection", (socket) => {
 
   socket.on("callUser", async ({ userToCall, signalData, from, name }) => {
     const idToCall = await getSocket(userToCall);
-    console.log("callUser: " + userToCall + " with socketID: " + idToCall);
+    console.log("callUser: " + userToCall + " with socketId: " + idToCall);
     io.to(idToCall).emit("callUser", { signal: signalData, from, name });
   });
 
@@ -106,29 +96,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("newMessage", async ({ message, receiver }) => {
-    const socketID = await getSocket(receiver);
+    const socketId = await getSocket(receiver);
     console.log(
       "newMessage: " +
         message.content +
         " to " +
         receiver +
-        " with socketID: " +
-        socketID
+        " with socketI: " +
+        socketId
     );
-    io.to(socketID).emit("newMessage", message);
+    io.to(socketId).emit("newMessage", message);
   });
 
   socket.on(
     "newMessagePharmacy",
     async ({ message, receiver, sendingToPharmacy }) => {
-      const socketID = await getSocket(receiver);
+      const socketId = await getSocket(receiver);
       console.log(
         "newMessagePharmacy: " +
           message.content +
           " to " +
           receiver +
-          " with socketID: " +
-          socketID +
+          " with socketId: " +
+          socketId +
           " sendingToPharmacy: " +
           sendingToPharmacy
       );
@@ -136,29 +126,10 @@ io.on("connection", (socket) => {
       if (sendingToPharmacy) {
         io.to(room).emit("newMessagePharmacy", message);
       } else {
-        io.to(socketID).to(room).emit("newMessagePharmacy", message);
+        io.to(socketId).to(room).emit("newMessagePharmacy", message);
       }
     }
   );
-});
-
-app.post("/package/create-payment-intent", async (req, res) => {
-  // const { items } = req.body;
-  const card = req.body.card;
-  console.log("in the package payment intent");
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 100,
-    currency: "usd",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    },
-  });
-
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
 });
 
 module.exports = app;
