@@ -45,6 +45,7 @@ const Chat = ({isPatient}) => {
   }, [selectedChat, messagesCache]);
 
   const updateChats = (message) => {
+    console.log("updating", message);
     const updatedChats = chats
       .map((chat) => {
         if (chat.chat._id == message.chat) {
