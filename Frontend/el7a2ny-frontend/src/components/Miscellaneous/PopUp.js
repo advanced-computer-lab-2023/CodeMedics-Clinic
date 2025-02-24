@@ -11,7 +11,16 @@ import {
   TableBody,
 } from "@mui/material";
 
-function PopUp({ title, viewing, setViewing, tableCells, actionName, setPopUpDisplay, children }) {
+function PopUp({
+  title,
+  viewing,
+  setViewing,
+  tableCells,
+  actionName,
+  setPopUpDisplay,
+  children,
+  actions,
+}) {
   const tableCellsElements = tableCells
     ? tableCells.map((cell) => <TableCell>{cell}</TableCell>)
     : null;
@@ -21,8 +30,8 @@ function PopUp({ title, viewing, setViewing, tableCells, actionName, setPopUpDis
       open={viewing}
       onClose={() => {
         setViewing(false);
-        if(setPopUpDisplay){
-          setPopUpDisplay(false)
+        if (setPopUpDisplay) {
+          setPopUpDisplay(false);
         }
       }}
       sx={{ minWidth: 200 }}
@@ -40,18 +49,20 @@ function PopUp({ title, viewing, setViewing, tableCells, actionName, setPopUpDis
         </Table>
       </DialogContent>
       <DialogActions>
-        <Button
-          onClick={() => {
-            setViewing(false);
-            if(setPopUpDisplay){
-              setPopUpDisplay(false)
-            }
-            console.log("Closing")
-            console.log(setPopUpDisplay)
-          }}
-        >
-          {actionName}
-        </Button>
+        {actions ? (
+          actions
+        ) : (
+          <Button
+            onClick={() => {
+              setViewing(false);
+              if (setPopUpDisplay) {
+                setPopUpDisplay(false);
+              }
+            }}
+          >
+            {actionName}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
