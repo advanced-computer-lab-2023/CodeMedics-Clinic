@@ -5,15 +5,15 @@ const LoadingSpinner = () => {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%', // Takes up the full height of its parent
+    padding: '20px 0', 
   };
 
   const spinnerStyle = {
-    border: '4px solid #f3f3f3', // Light gray
-    borderTop: '4px solid #3498db', // Blue
+    border: '3px solid #f3f3f3', 
+    borderTop: '3px solid #3498db',
     borderRadius: '50%',
-    width: '50px',
-    height: '50px',
+    width: '40px', 
+    height: '40px',
     animation: 'spin 1s linear infinite',
   };
 
@@ -25,11 +25,9 @@ const LoadingSpinner = () => {
   `;
 
   return (
-    <div>
+    <div style={containerStyle}>
       <style>{keyframes}</style>
-      <div style={containerStyle}>
-        <div style={spinnerStyle}></div>
-      </div>
+      <div style={spinnerStyle}></div>
     </div>
   );
 };
