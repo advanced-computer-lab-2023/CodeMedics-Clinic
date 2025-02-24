@@ -4,6 +4,7 @@ const dotenv = require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const colors = require("colors");
+const { v4: uuidV4 } = require("uuid");
 const cors = require("cors");
 const corsOptions = {
   origin: `http://localhost:${process.env.FRONT_END_PORT}`,
@@ -19,7 +20,12 @@ const patientRoutes = require("./routes/PatientRoutes");
 const genericRoutes = require("./routes/GenericRoutes");
 const chatRoutes = require("./routes/ChatsRoutes");
 
-const { putSocket, getSocket, joinSocket } = require("./config/socket");
+const {
+  putSocket,
+  getSocket,
+  joinSocket,
+  getUser,
+} = require("./config/socket");
 
 // Connect to MongoDB
 connectDB().then((r) =>
@@ -49,12 +55,13 @@ server.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
-
 app.use("/admins", adminRoutes);
 app.use("/doctors", doctorRoutes);
 app.use("/patients", patientRoutes);
 app.use("/", genericRoutes);
 app.use("/chats", chatRoutes);
+
+const rooms = new Map();
 
 const io = require("socket.io")(server, {
   cors: {
@@ -65,34 +72,58 @@ const io = require("socket.io")(server, {
 
 io.on("connection", (socket) => {
   socket.on("iAmReady", (username) => {
-    console.log("iAmReady: " + username);
+    console.log("iAmReady: " + username, socket.id);
+    io.to(socket.id).emit("me", socket.id);
     putSocket(username, socket.id);
     socket.emit("me", socket.id);
   });
 
-  socket.on("iWantToJoin", async () => {
-    console.log("iWantToJoin");
-    await joinSocket(socket);
+  socket.on("create-room", (roomId) => {
+    if (rooms.has(roomId)) {
+      return;
+    }
+    rooms.set(roomId, { participants: [] });
+    console.log("room created", roomId);
   });
 
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded");
+  socket.on("join-room", (roomId, userId, name) => {
+    if (!rooms.has(roomId)) {
+      socket.emit("invalid-room");
+      return;
+    }
+    const room = rooms.get(roomId);
+    if (room.participants.some((p) => p.userId == userId)) return;
+    console.log("participants", room.participants, { userId, name });
+    console.log(userId);
+    room.participants.push({ userId, name });
+    socket.join(roomId);
+    socket.to(roomId).emit("user-connected", { userId, name });
+
+    socket.emit(
+      "existing-users",
+      room.participants.filter((item) => item.userId !== userId)
+    );
+
+    socket.on("disconnect", () => {
+      const userId = socket.id;
+      room.participants = room.participants.filter(
+        (item) => item.userId !== userId
+      );
+      console.log("disconnecting ", userId);
+      socket.to(roomId).emit("user-disconnected", userId);
+    });
   });
 
-  socket.on("callUser", async ({ userToCall, signalData, from, name }) => {
-    const idToCall = await getSocket(userToCall);
-    console.log("callUser: " + userToCall + " with socketId: " + idToCall);
-    io.to(idToCall).emit("callUser", { signal: signalData, from, name });
+  socket.on("offer", (userId, offer) => {
+    socket.broadcast.to(userId).emit("offer", socket.id, offer);
   });
 
-  socket.on("answerCall", (data) => {
-    console.log("call answered, " + data.to + " is the caller");
-    io.to(data.to).emit("callAccepted", data.signal);
+  socket.on("answer", (userId, answer) => {
+    socket.broadcast.to(userId).emit("answer", socket.id, answer);
   });
 
-  socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log("User Joined Room: " + room);
+  socket.on("ice-candidate", (userId, candidate) => {
+    socket.broadcast.to(userId).emit("ice-candidate", socket.id, candidate);
   });
 
   socket.on("newMessage", async ({ message, receiver }) => {
