@@ -1,61 +1,65 @@
-import { Stack, Box, Container, Divider, Unstable_Grid2 as Grid, Typography, Avatar, Card, OutlinedInput, InputAdornment, SvgIcon, IconButton, Tooltip } from '@mui/material';
+import { Stack, Box, Typography, Card } from "@mui/material";
 
 export const Message = (props) => {
-    const { message , position } = props;
-    return (
-        <Box
+  const { message, position = "right" } = props; // Default position to "right"
+
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const period = hours >= 12 ? "PM" : "AM";
+
+    hours = hours % 12 || 12;
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+    return `${hours}:${minutes} ${period}`;
+  }
+
+  return (
+    <Box
       sx={{
-        m: 2,
-        display: 'flex',
-        alignItems: position === 'right' ? 'flex-end' : 'flex-start'
+        display: "flex",
+        alignItems: position === "right" ? "flex-end" : "flex-start",
+        justifyContent: "flex-end", // Align messages to the right by default
+        my: 0.5, // Reduce spacing between messages
       }}
-      >
+    >
       <Stack
-        alignItems="flex-start"
-        direction={position === 'right' ? 'row-reverse' : 'row'}
-        spacing={2}
+        direction={position === "right" ? "row-reverse" : "row"}
+        spacing={1}
         sx={{
-          maxWidth: 500,
-          ml: position === 'right' ? 'auto' : 0,
-          mr: position === 'left' ? 'auto' : 0
+          maxWidth: "60%",
+          ml: position === "right" ? "auto" : 0,
+          mr: position === "left" ? "auto" : 0,
         }}
       >
-        {/* <Avatar
-          src={authorAvatar || undefined}
-          sx={{
-            height: 32,
-            width: 32
-          }}
-        /> */}
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
           <Card
             sx={{
-              backgroundColor: position === 'right' ? 'primary.main' : 'background.paper',
-              color: position === 'right' ? 'primary.contrastText' : 'text.primary',
-              px: 2,
-              py: 1
+              backgroundColor: position === "right" ? "#DCF8C6" : "#FFFFFF",
+              color: "text.primary",
+              px: 1.5,
+              py: 0.75,
+              borderRadius: 2,
+              boxShadow: 1,
             }}
           >
-            
-              <Typography
-                color="inherit"
-                variant="body1"
-              >
-                {message}
-              </Typography>
-            
+            <Typography variant="body2">{message.content}</Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                textAlign: "right",
+                mt: 0.5,
+                fontSize: "0.75rem",
+                color: "text.secondary",
+              }}
+            >
+              {formatTimestamp(message.createdAt)}
+            </Typography>
           </Card>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: position === 'right' ? 'flex-end' : 'flex-start',
-              mt: 1,
-              px: 2
-            }}
-          >
-          </Box>
         </Box>
       </Stack>
     </Box>
-    );
+  );
 };
