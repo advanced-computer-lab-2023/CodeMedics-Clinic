@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { Box } from "@mui/system";
 import { Typography, Stack, Card } from "@mui/material";
-import CheckoutForm from "./CheckoutForm";
+import CheckoutForm from "../../components/CheckoutForm";
 import Message from "src/components/Miscellaneous/Message";
 const STRIPE_KEY =
   "pk_test_51OA3YuHNsLfp0dKZSCi30qg6xY63jh2SiffqCIa42j0oTXnZ29hNOalf44tjkJZsjT27xldMpzbojdn6vYcEx9CI00kvtRqele";
