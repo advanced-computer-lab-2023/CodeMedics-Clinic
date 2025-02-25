@@ -1,6 +1,4 @@
-import {
-  Stack,
-} from "@mui/material";
+import { Stack } from "@mui/material";
 import { Message } from "./Message";
 import { useEffect, useRef } from "react";
 import Cookies from "js-cookie";
@@ -21,10 +19,7 @@ export const ChatMessages = (props) => {
       <Stack spacing={2} sx={{ p: 3 }}>
         {messages.map((message, index) => {
           return (
-            <Message
-              message={message.content}
-              position={message.sender == username ? "right" : "left"}
-            />
+            <Message message={message} position={message.sender == username ? "right" : "left"} />
           );
         })}
       </Stack>
