@@ -8,23 +8,24 @@ import NoRecords from "../NoRecords";
 import LoadingSpinner from "../Miscellaneous/LoadingSpinner";
 const TableContext = createContext();
 
-function Table({ value, title, filters }) {
+function Table({ value, title, filters, actions }) {
   return (
     <TableContext.Provider value={value}>
       <Title title={title} />
       <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
         <Container maxWidth="xl">
           <Stack spacing={3}>
-            <Header name={title} />
+            <Header name={title} actions={actions} />
             {value.loading ? (
               <LoadingSpinner />
             ) : (
               <>
                 <Filters filters={filters} />
                 {value.data && value.data.length == 0 ? (
-                <NoRecords message={value.noRecords} />
+                  <NoRecords message={value.noRecords} />
                 ) : (
-                <Content />)}
+                  <Content />
+                )}
               </>
             )}
           </Stack>
