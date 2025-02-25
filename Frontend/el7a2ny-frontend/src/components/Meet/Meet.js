@@ -95,9 +95,6 @@ function Meet({ participants, toggleVideo, toggleAudio, hasPendingRequests }) {
           <IconButton onClick={copyMeetingLink} color="primary" title="Copy meeting link">
             <ContentCopy />
           </IconButton>
-          <IconButton title="More options">
-            <MoreVert />
-          </IconButton>
         </Toolbar>
       </AppBar>
 
