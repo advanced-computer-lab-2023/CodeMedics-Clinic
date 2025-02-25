@@ -1,42 +1,67 @@
-import Head from 'next/head';
-import { Box, Container, Typography } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import Message from 'src/components/Miscellaneous/Message';
+import Head from "next/head";
+import { Box, Container, Typography } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
+import { useState } from "react";
+import Message from "src/components/Miscellaneous/Message";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import Cookies from "js-cookie";
+import LoadingSpinner from "src/components/LoadingSpinner";
+import Header from "src/components/Table/Body/Header";
+import NoRecords from "src/components/NoRecords";
 
 const Page = () => {
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState("");
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/patient/getPatientMessages', { withCredentials: true });
-      setNotifications(response.data.messages.reverse());
-    } catch (error) {
-      console.log(error);
-      setShowError(true);
-      setErrorMessage(error.response.data.message);
-    }
-  };
-  useEffect(() => {
-    // Fetch notifications initially
-    fetchNotifications();
+  const username = Cookies.get("username");
 
-    // Set up interval to fetch notifications every 5 minutes (adjust as needed)
-    const intervalId = setInterval(fetchNotifications, 5 * 60 * 1000);
+  useGet({
+    url: `${BACKEND_ROUTE}/patients/${username}/messages`,
+    setData: setNotifications,
+    setShowError,
+    setError,
+    setLoading,
+  });
 
-    // Clean up interval when the component is unmounted
-    return () => clearInterval(intervalId);
-  }, []);
+  if (loading) return <LoadingSpinner />;
+
+  const notificationsELement = notifications.map((notification, index) => (
+    <Box
+      key={index}
+      sx={{
+        border: "1px solid #ccc",
+        borderRadius: "8px",
+        padding: "16px",
+        marginBottom: "16px",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Typography variant="body1" gutterBottom>
+        {notification.content}
+      </Typography>
+      <Typography variant="caption" color="textSecondary" sx={{ marginTop: "8px" }}>
+        {new Date(notification.timestamp).toLocaleDateString()}{" "}
+        {new Date(notification.timestamp).toLocaleTimeString()}
+      </Typography>
+    </Box>
+  ));
 
   return (
     <>
       <Head>
         <title>El7a2ny Clinic</title>
       </Head>
-      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title={"Error"}
+        message={error}
+        buttonAction={"Close"}
+      />
       <Box
         component="main"
         sx={{
@@ -45,47 +70,11 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
-          <Typography variant="h3" gutterBottom>
-            Notifications
-          </Typography>
+          <Header name="Notifications" />
           {notifications.length > 0 ? (
-            notifications.map((notification, index) => (
-              <Box
-                key={index}
-                sx={{
-                  border: '1px solid #ccc',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  marginBottom: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {/* Notification Message */}
-                <Typography variant="body1" gutterBottom>
-                  {notification.content}
-                </Typography>
-
-                {/* Date and Time */}
-                <Typography variant="caption" color="textSecondary" sx={{ marginTop: '8px' }}>
-                  {new Date(notification.timestamp).toLocaleDateString()}{' '}
-                  {new Date(notification.timestamp).toLocaleTimeString()}
-                </Typography>
-              </Box>
-            ))
+            notificationsELement
           ) : (
-            <Box
-              sx={{
-                border: '1px solid #ccc',
-                borderRadius: '8px',
-                padding: '16px',
-                marginBottom: '16px',
-              }}
-            >
-              <Typography variant="body1">
-                There are no notifications yet.
-              </Typography>
-            </Box>
+            <NoRecords message="No Notifications Found" />
           )}
         </Container>
       </Box>
@@ -96,4 +85,3 @@ const Page = () => {
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
-
