@@ -13,7 +13,7 @@ import LoadingSpinner from "src/components/Miscellaneous/LoadingSpinner";
 import { GET, POST } from "src/project-utils/helper-functions";
 import NoChat from "src/components/Miscellaneous/NoChat";
 
-const Chat = ({isPatient}) => {
+const Chat = ({ isPatient }) => {
   const username = Cookies.get("username");
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
@@ -22,8 +22,11 @@ const Chat = ({isPatient}) => {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [messages, setMessages] = useState([]);
+  const [searchName, setSearchName] = useState("");
 
-  const route = isPatient ? "patients" : "doctors"
+  const data = filterData();
+  const route = isPatient ? "patients" : "doctors";
+  console.log("filtering", searchName, chats, data);
 
   useGet({
     url: `${BACKEND_ROUTE}/${route}/${username}/chats`,
@@ -44,6 +47,24 @@ const Chat = ({isPatient}) => {
     fetchMessages();
   }, [selectedChat, messagesCache]);
 
+  function filterData() {
+    console.log("search name", searchName);
+    if (searchName == "") return chats;
+    return chats.filter((item) => {
+      if (item.pharmacy) {
+        return "code medics pharmacy".includes(searchName.toLowerCase());
+      }
+      const obj = item.patient || item.doctor;
+      console.log(
+        "filtering name",
+        `${obj.firstName} ${obj.lastName}`,
+        searchName,
+        `${obj.firstName} ${obj.lastName}`.toLowerCase().includes(searchName.toLowerCase())
+      );
+      return `${obj.firstName} ${obj.lastName}`.toLowerCase().includes(searchName.toLowerCase());
+    });
+  }
+
   const updateChats = (message) => {
     console.log("updating", message);
     const updatedChats = chats
@@ -57,7 +78,9 @@ const Chat = ({isPatient}) => {
         }
         return chat;
       })
-      .sort((a, b) => new Date(b.latestMessage.createdAt) - new Date(a.chat.latestMessage.createdAt));
+      .sort(
+        (a, b) => new Date(b.latestMessage.createdAt) - new Date(a.chat.latestMessage.createdAt)
+      );
     setChats(updatedChats);
     if (messagesCache[message.chat]) {
       setMessagesCache((prev) => ({
@@ -115,13 +138,16 @@ const Chat = ({isPatient}) => {
           chat: selectedChat.chat._id,
           sender: body.sender,
           content: body.content,
-          createdAt: new Date()
+          createdAt: new Date(),
         };
         updateChats(newMessage);
         const eventName = selectedChat.pharmacy ? "newMessagePharmacy" : "newMessage";
         const payload = selectedChat.pharmacy
           ? { message: newMessage, receiver: Cookies.get("username"), sendingToPharmacy: true }
-          : { message: newMessage, receiver: isPatient ? selectedChat.doctor.username : selectedChat.patient.username };
+          : {
+              message: newMessage,
+              receiver: isPatient ? selectedChat.doctor.username : selectedChat.patient.username,
+            };
 
         socket.emit(eventName, payload);
       },
@@ -150,9 +176,11 @@ const Chat = ({isPatient}) => {
         <Divider />
         <Stack direction="row">
           <ChatSidebar
-            chats={chats}
+            chats={data}
             selectedChat={selectedChat}
             setSelectedChat={setSelectedChat}
+            searchName={searchName}
+            setSearchName={setSearchName}
           />
           <Divider orientation="vertical" flexItem />
           {selectedChat == null ? (

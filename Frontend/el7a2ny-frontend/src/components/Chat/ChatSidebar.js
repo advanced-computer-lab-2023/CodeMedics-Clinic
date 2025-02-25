@@ -2,12 +2,13 @@ import { Box, Stack, Typography } from "@mui/material";
 import { ChatSidebarSearch } from "./ChatSidebarSearch";
 import { Scrollbar } from "src/components/scrollbar";
 import { ChatItem } from "./ChatItem";
+import NoRecords from "../NoRecords";
 
 export const ChatSidebar = (props) => {
-  const { chats, selectedChat, setSelectedChat } = props;
+  const { chats, selectedChat, setSelectedChat, searchName, setSearchName } = props;
 
   const chatElements = chats.map((chat, index) => {
-    console.log(chat, chat.doctor || chat.patient || chat.pharmacy)
+    console.log(chat, chat.doctor || chat.patient || chat.pharmacy);
     return (
       <ChatItem
         key={index}
@@ -28,7 +29,7 @@ export const ChatSidebar = (props) => {
           Chats
         </Typography>
       </Stack>
-      <ChatSidebarSearch />
+      <ChatSidebarSearch searchName={searchName} setSearchName={setSearchName} />
       <Box
         sx={{
           flexGrow: 1,
@@ -46,7 +47,7 @@ export const ChatSidebar = (props) => {
               p: 2,
             }}
           >
-            {chatElements}
+            {chats.length == 0 ? <NoRecords message={"No Chats Found"} /> : chatElements}
           </Stack>
         </Scrollbar>
       </Box>
