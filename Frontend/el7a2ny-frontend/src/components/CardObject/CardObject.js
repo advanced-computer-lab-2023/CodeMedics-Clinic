@@ -20,13 +20,14 @@ function CardObject({ item, index, texts, variants, cardActionsElement }) {
   });
 
   return (
-    <Card>
-      <CardContent>
+    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <CardContent sx={{ flexGrow: 1 }}>
         <Box
           sx={{
             alignItems: "center",
             display: "flex",
             flexDirection: "column",
+            height: "100%",
           }}
         >
           <ListItem
@@ -36,6 +37,7 @@ function CardObject({ item, index, texts, variants, cardActionsElement }) {
               justifyContent: "space-between",
               height: "100%",
               textAlign: "center",
+              flexGrow: 1,
             }}
           >
             <CardAvatar

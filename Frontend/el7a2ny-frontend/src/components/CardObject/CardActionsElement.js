@@ -1,8 +1,17 @@
 import { Stack, CardActions, Button } from "@mui/material";
 
 function CardActionsElement({ actions }) {
-  const actionElements = actions.map((action, index) => (
-    <CardActions key={index} sx={{ pl: 2, pb: 2 }}>
+  const actionElements = actions.map((action) => (
+    <CardActions
+      sx={{
+        pt: 1,
+        pb: 2,
+        px: 0,
+        display: "flex",
+        justifyContent: "center",
+        gap: 0,
+      }}
+    >
       <Button
         color="primary"
         variant="contained"
@@ -27,7 +36,7 @@ function CardActionsElement({ actions }) {
       direction="row"
       justifyContent="center"
       alignItems="center"
-      spacing={2} 
+      spacing={2}
       sx={{ width: "100%" }}
     >
       {actionElements}
