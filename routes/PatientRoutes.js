@@ -81,6 +81,8 @@ function verifyToken(req, res, next) {
   }
 }
 
+// GET Requests
+
 router.get("/", patientController.getPatients);
 router.get("/packages", patientController.getAvailablePackages);
 router.get("/:patientUsername", patientController.getPatient);
@@ -102,6 +104,7 @@ router.get("/:patientUsername/health-records", viewHealthRecords);
 router.get("/:patientUsername/chats", getPatientChats);
 router.get("/chats/:chatId/messages", getMessages);
 
+// POST Requests
 
 router.post("/chats/:chatId/messages", sendMessage);
 router.patch("/:patientUsername", patientController.updatePatient);
@@ -131,6 +134,9 @@ router.post(
 );
 router.post("/:patientUsername/prescriptions", addPrescription);
 router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
+router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
+
+// DELETE Requests
 
 router.delete(
   "/:patientUsername/health-packages/subscription",
@@ -145,8 +151,6 @@ router.delete(
   "/:patientUsername/family-members-no-account/:familyMemberId",
   removeFamilyMemberNoAccount
 );
-
-router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
 
 /*
  general, to be moved
