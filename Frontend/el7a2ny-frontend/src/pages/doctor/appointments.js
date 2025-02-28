@@ -1,291 +1,162 @@
-import { useCallback, useEffect, useState } from "react";
-import Head from "next/head";
-import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  SvgIcon,
-  Typography,
-  TextField,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-} from "@mui/material";
+import { useState } from "react";
+import { Box, Button, SvgIcon } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
-import { CustomersTable } from "src/sections/customer/appointment-table";
 import axios from "axios";
-import { DoctorSearch } from "src/sections/admin/Doctors/DoctorsSearch";
-import { useRouter } from "next/navigation";
-import LoadingSpinner from "src/components/LoadingSpinner";
-import NoRecords from "src/components/NoRecords";
-import Message from "src/components/Miscellaneous/Message";
-import { DialogActions, DialogTitle } from "@mui/material";
 import Cookies from "js-cookie";
+import Title from "src/components/Table/Body/Title";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import Appointment from "src/components/Appointment/Appointment";
+import Icon from "src/components/Icon";
+import { PATCH } from "src/project-utils/helper-functions";
+import CancelIcon from "src/icons/untitled-ui/duocolor/CancelIcon";
+import { CheckIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { Table } from "src/components/Table/Table";
+
 const now = new Date();
 
+const columns = ["patient", "date", "from", "to", "status", "actions"];
+const attributes = ["patientUsername", "date", "startHour", "endHour", "status"];
+
 const Page = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [appointments, setAppointments] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [startHour, setStartHour] = useState("09:00"); // Initial start hour
-  const [endHour, setEndHour] = useState("17:00"); // Initial end hour
-  const [searchData, setSearchData] = useState([]);
+  const [allData, setAllData] = useState([]);
+  const [doctorName, setDoctorName] = useState("");
+  const [status, setStatus] = useState("None");
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
-  const [message, setMessage] = useState("");
-  const [invalidDate, setInvalidDate] = useState(false);
+
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [startHour, setStartHour] = useState("09:00");
+  const [endHour, setEndHour] = useState("17:00");
+
+  const appointments = filterData();
+
+  const filters = [
+    {
+      type: "text",
+      name: "Search Doctor Name",
+      state: doctorName,
+      setState: setDoctorName,
+    },
+    {
+      type: "menu",
+      name: "Status",
+      state: status,
+      setState: setStatus,
+      options: [
+        { value: "None", label: "None" },
+        { value: "unreserved", label: "Unreserved" },
+        { value: "upcoming", label: "Upcoming" },
+        { value: "rescheduled", label: "Rescheduled" },
+        { value: "cancelled", label: "Cancelled" },
+        { value: "completed", label: "Completed" },
+      ],
+    },
+  ];
 
   const username = Cookies.get("username");
 
-  useEffect(() => {
-    setLoading(true);
-    axios({
-      method: "GET",
-      url: `http://localhost:8000/doctors/${username}/appointments`,
-      withCredentials: true,
-    })
-      .then((response) => {
-        console.log("APPOINTMENTS___", response.data);
-        setAppointments(response.data.data);
-        setSearchData(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  useGet({
+    url: `${BACKEND_ROUTE}/doctors/${username}/appointments`,
+    setData: setAllData,
+    setLoading,
+    setError,
+    setShowError,
+  });
 
-  const handlePageChange = useCallback((event, value) => {
-    setPage(value);
-  }, []);
+  function filterData() {
+    return allData.filter((item) => {
+      if (item.status === "follow-up Requested") return false;
+      if (status !== "None" && item.status !== status) return false;
+      if (doctorName !== "" && !`${item.firstName} ${item.lastName}`.includes(doctorName))
+        return false;
 
-  const handleRowsPerPageChange = useCallback((event) => {
-    setRowsPerPage(event.target.value);
-  }, []);
+      return true;
+    });
+  }
 
-  const handleDateChange = (event) => {
-    console.log(event.target.value);
-    setSelectedDate(event.target.value);
-  };
+  function updateAppointment(appointmentId, status) {
+    PATCH({
+      url: `${BACKEND_ROUTE}/doctors/appointments/${appointmentId}`,
+      body: { status },
+      updater: () => {
+        setAllData((prev) =>
+          prev.map((item) => {
+            if (item._id == appointmentId) {
+              return { ...item, status: "cancelled" };
+            }
+            return item;
+          })
+        );
+      },
+      setShowError,
+      setError,
+    });
+  }
 
-  const handleStartHourChange = (event) => {
-    setStartHour(event.target.value);
-  };
-
-  const handleEndHourChange = (event) => {
-    setEndHour(event.target.value);
-  };
-  const [waiting, setWaiting] = useState(false);
-  const [added, setAdded] = useState(false);
-  const addAppointment = async (startHour, endHour, date) => {
-    if (!date) {
-      setInvalidDate(true);
-      setMessage("Please choose a date!");
-      return;
-    }
-    if (date < now) {
-      setInvalidDate(true);
-      setMessage("You cannot add an appointment in the past!");
-      return;
-    }
-    const appointmentDate = new Date(date);
-    const today = new Date();
-    if (
-      appointmentDate.getDate() === today.getDate() &&
-      appointmentDate.getMonth() === today.getMonth() &&
-      appointmentDate.getFullYear() === today.getFullYear() &&
-      startHour < today.getHours()
-    ) {
-      setInvalidDate(true);
-      setMessage("You cannot add an appointment in the past!");
-      return;
-    }
-
-    setWaiting(true);
-    axios
-      .post(
-        `http://localhost:8000/doctors/${username}/appointments`,
-        { startHour, endHour, date },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        setWaiting(false);
-        setAdded(true);
-      })
-      .catch((err) => {
-        setInvalidDate(true);
-        setMessage(err.response.data.message);
-        console.log(err);
-      });
-  };
-
-  const handleSearch = (str) => {
-    if (str === "") {
-      setSearchData(appointments);
-    } else {
-      console.log(appointments);
-      setSearchData(
-        appointments.filter(
-          (appointment) =>
-            appointment.patient && appointment.patient.toLowerCase().includes(str.toLowerCase())
-        )
-      );
-    }
-  };
-
-  const handleFilter = (str) => {
-    if (str === "None") {
-      setSearchData(appointments);
-    } else {
-      console.log(searchData);
-
-      setSearchData(appointments.filter((appointment) => appointment.status === str));
-    }
-  };
-
-  console.log(searchData);
-
-  return (
+  const actions = appointments.map((item) => (
     <>
-      <Head>
-        <title>Appointments</title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
+      <Icon
+        disabled={!(item.status == "upcoming" || item.status == "rescheduled")}
+        title="Complete Appointment"
+        onClick={() => {
+          updateAppointment(item._id, "completed");
         }}
       >
-        <Container maxWidth="xl">
-          <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
-                <Typography variant="h4">Appointments</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}>
-                  <Box sx={{ ml: "auto" }}>
-                    {/* Date selector */}
-                    <TextField
-                      type="Date"
-                      label="Date"
-                      id="appDate"
-                      value={selectedDate ? selectedDate : new Date()}
-                      onChange={handleDateChange}
-                    />
-                  </Box>
-                  {/* Start Hour selector */}
-                  <TextField
-                    type="time"
-                    label="Start Hour"
-                    value={startHour}
-                    onChange={handleStartHourChange}
-                    sx={{ ml: 1 }}
-                  />
-                  {/* End Hour selector */}
-                  <TextField
-                    type="time"
-                    label="End Hour"
-                    value={endHour}
-                    onChange={handleEndHourChange}
-                    sx={{ ml: 1 }}
-                  />
-                </Stack>
-              </Stack>
-              <div>
-                <Button
-                  startIcon={
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  }
-                  variant="contained"
-                  onClick={() => {
-                    addAppointment(startHour, endHour, selectedDate);
-                  }}
-                >
-                  Add Appointment
-                </Button>
-              </div>
-            </Stack>
-            <DoctorSearch
-              data={searchData}
-              handleSearch={handleSearch}
-              handleFilter={handleFilter}
-            />
-            {loading ? (
-              <LoadingSpinner />
-            ) : (
-              <>
-                {searchData.length === 0 ? (
-                  <NoRecords message={"No Appointments Found"} />
-                ) : (
-                  <CustomersTable
-                    count={searchData.length}
-                    items={searchData}
-                    // onDeselectAll={customersSelection.handleDeselectAll}
-                    // onDeselectOne={customersSelection.handleDeselectOne}
-                    // onPageChange={handlePageChange}
-                    // onRowsPerPageChange={handleRowsPerPageChange}
-                    // onSelectAll={customersSelection.handleSelectAll}
-                    // onSelectOne={customersSelection.handleSelectOne}
-                    page={page}
-                    rowsPerPage={rowsPerPage}
-                    // selected={customersSelection.selected}
-                  />
-                )}
-              </>
-            )}
-          </Stack>
-        </Container>
-      </Box>
-      {waiting && (
-        <Dialog>
-          <LoadingSpinner />
-        </Dialog>
-      )}
-      {added && (
-        <div>
-          <Dialog
-            open={added}
-            onClose={() => {
-              {
-                setAdded(false);
-                router.refresh();
-              }
-            }}
-          >
-            <DialogTitle>Message</DialogTitle>
-            <DialogContent>
-              <DialogContentText>Appointment Added Successfully!</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={() => {
-                  setAdded(false);
-                  router.refresh();
-                }}
-              >
-                ok
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
-      )}
-
-      {invalidDate && (
-        <Message
-          condition={invalidDate}
-          setCondition={setInvalidDate}
-          title={"Invalid Action"}
-          message={message}
-          isError={true}
-          buttonAction={"OK"}
-        />
-      )}
+        <CheckIcon />
+      </Icon>
+      <Icon
+        disabled={!(item.status == "upcoming" || item.status == "rescheduled")}
+        title="Cancel Appointment"
+        onClick={() => {
+          updateAppointment(item._id, "cancelled");
+        }}
+      >
+        <CancelIcon />
+      </Icon>
     </>
+  ));
+
+  const tableRows = appointments.map((item, index) => {
+    return <Appointment actions={actions[index]} appointment={item} attributes={attributes} />;
+  });
+
+  function addAppointment() {}
+
+  const tableActions = (
+    <Button
+      startIcon={
+        <SvgIcon fontSize="small">
+          <PlusIcon />
+        </SvgIcon>
+      }
+      variant="contained"
+      onClick={() => {
+        addAppointment();
+      }}
+    >
+      Add Appointment
+    </Button>
+  );
+
+  return (
+    <Table
+      value={{
+        data: appointments,
+        columns,
+        loading,
+        setShowError,
+        setError,
+        setLoading,
+        noRecords: "No Appointments Found",
+        setAllData,
+        tableRows,
+      }}
+      title="Appointments"
+      filters={filters}
+      actions={tableActions}
+    />
   );
 };
 
