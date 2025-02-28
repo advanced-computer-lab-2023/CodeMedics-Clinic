@@ -26,6 +26,7 @@ const {
 const {
   getDoctors,
   getDoctorsAndAppointments,
+  getDoctor,
 } = require("../controllers/Doctor/GetDoctors");
 const { getAllDoctors } = require("../controllers/Doctor/registerDoctor");
 const { scheduleFollowUp } = require("../controllers/Doctor/ScheduleFollowup");
@@ -83,8 +84,7 @@ router.post(
   createDoctor
 );
 
-//app.use(verifyToken);
-
+router.get("/:doctorUsername", getDoctor);
 router.get("/patients", viewPatients);
 router.get(
   "/:doctorUsername/patients/:patientUsername/appointments",
@@ -95,11 +95,8 @@ router.get("/", getDoctorsAndAppointments);
 router.get("/:doctorUsername/chats", getDoctorChats);
 router.get("/chats/:chatId/messages", getMessages);
 
-
-
 router.post("/chats/:chatId/messages", sendMessage);
 router.post("/:doctorUsername/appointments", addAppointments);
-
 
 router.get("/getAllDoctors", requireAuth, getAllDoctors);
 

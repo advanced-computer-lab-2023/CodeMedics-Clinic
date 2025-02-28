@@ -3,10 +3,20 @@ const router = express.Router();
 const Doctor = require("../../models/Doctor");
 const Package = require("../../models/Package");
 const Appointment = require("../../models/Appointment");
-const { getUsername } = require("../../config/infoGetter");
-const { validatePatient } = require("../../utils/validator");
+const { validatePatient, validateDoctor } = require("../../utils/validator");
 
-// Get all available doctors
+exports.getDoctor = async (req, res) => {
+  try {
+    const { doctorUsername } = req.params;
+    console.log("username", doctorUsername);
+    console.log(Doctor.findOne({ username: doctorUsername }));
+    const doctor = await validateDoctor(doctorUsername, res);
+    res.status(200).json({ data: doctor });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.getDoctors = async (req, res) => {
   try {
     const doctors = await Doctor.find();
@@ -19,7 +29,7 @@ exports.getDoctors = async (req, res) => {
 
 exports.getDoctorsAndAppointments = async (req, res) => {
   try {
-    const {patientUsername} = req.params;
+    const { patientUsername } = req.params;
     const patient = await validatePatient(patientUsername, res);
     const doctors = await Doctor.find({ status: "approved" });
     const package = await Package.findOne({
@@ -32,7 +42,10 @@ exports.getDoctorsAndAppointments = async (req, res) => {
         price -= price * (package.sessionDiscount / 100);
         doctors[i]["price"] = price;
       }
-      let appointments = await Appointment.find({status: "unreserved", doctorUsername: doctors[i].username})
+      let appointments = await Appointment.find({
+        status: "unreserved",
+        doctorUsername: doctors[i].username,
+      });
       data.push({
         doctor: doctors[i],
         price: price,
