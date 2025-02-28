@@ -7,7 +7,6 @@ import { TableContext } from "../Table/Table";
 import LoadingSpinner from "../LoadingSpinner";
 import PopUp from "../Miscellaneous/PopUp";
 import Head from "../Table/Body/Head";
-import PatientAppointmentInfo from "./PatientAppointmentInfo";
 import ButtonElement from "../ButtonElement";
 import Cell from "../Table/BasicElements/Cell";
 import Row from "../Table/BasicElements/Row";
@@ -15,6 +14,7 @@ import Icon from "../Icon";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { useGet } from "src/hooks/custom-hooks";
 import { PATCH } from "src/project-utils/helper-functions";
+import AppointmentInfo from "./AppointmentInfo";
 const attributes = ["date", "day", "startHour", "endHour"];
 
 function PatientAppointmentActions({ appointment }) {
@@ -26,7 +26,7 @@ function PatientAppointmentActions({ appointment }) {
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
     return (
       <Row key={item._id}>
-        <PatientAppointmentInfo appointment={item} attributes={attributes} />
+        <AppointmentInfo appointment={item} attributes={attributes} />
         <Cell>
           <ButtonElement
             actionName="Reschedule"

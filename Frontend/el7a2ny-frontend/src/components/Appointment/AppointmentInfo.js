@@ -8,7 +8,7 @@ const statusMap = {
   rescheduled: "warning",
 };
 
-function PatientAppointmentInfo({ appointment, attributes }) {
+function AppointmentInfo({ appointment, attributes }) {
   console.log("PAI", attributes);
   const cells = attributes.map((item) => {
     let content;
@@ -27,4 +27,4 @@ function PatientAppointmentInfo({ appointment, attributes }) {
   });
   return cells;
 }
-export default PatientAppointmentInfo;
+export default AppointmentInfo;
