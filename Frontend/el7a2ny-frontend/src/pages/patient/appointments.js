@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
 import { Table } from "src/components/Table/Table";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
-import PatientAppointment from "src/components/Appointment/PatientAppointment";
+import Appointment from "src/components/Appointment/Appointment";
 import { useGet } from "src/hooks/custom-hooks";
 import PatientAppointmentActions from "src/components/Appointment/PatientAppointmentActions";
 
@@ -34,7 +34,7 @@ const Page = () => {
   }
   const tableRows = data.map((appointment) => {
     return (
-      <PatientAppointment
+      <Appointment
         appointment={appointment}
         attributes={attributes}
         actions={<PatientAppointmentActions appointment={appointment} />}

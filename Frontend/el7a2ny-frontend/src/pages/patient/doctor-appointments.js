@@ -3,7 +3,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { Table } from "src/components/Table/Table";
 import { useGet } from "src/hooks/custom-hooks";
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
-import PatientAppointment from "src/components/Appointment/PatientAppointment";
+import Appointment from "src/components/Appointment/Appointment";
 import Icon from "src/components/Icon";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
@@ -24,7 +24,7 @@ const Page = () => {
   const data = filterData();
   const tableRows = data.map((item) => {
     return (
-      <PatientAppointment
+      <Appointment
         appointment={item}
         attributes={attributes}
         actions={
