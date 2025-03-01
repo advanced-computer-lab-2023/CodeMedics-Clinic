@@ -1,17 +1,18 @@
 import { useState } from "react";
-import { Box, Button, SvgIcon } from "@mui/material";
+import { Button, Stack, SvgIcon } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
-import axios from "axios";
 import Cookies from "js-cookie";
-import Title from "src/components/Table/Body/Title";
 import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import Appointment from "src/components/Appointment/Appointment";
 import Icon from "src/components/Icon";
-import { PATCH } from "src/project-utils/helper-functions";
+import { PATCH, POST } from "src/project-utils/helper-functions";
 import CancelIcon from "src/icons/untitled-ui/duocolor/CancelIcon";
 import { CheckIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { Table } from "src/components/Table/Table";
+import PopUp from "src/components/Miscellaneous/PopUp";
+import ButtonElement from "src/components/ButtonElement";
+import TextInput from "src/components/Inputs/TextInput";
 
 const now = new Date();
 
@@ -26,6 +27,7 @@ const Page = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [displayPopUp, setDisplayPopUp] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [startHour, setStartHour] = useState("09:00");
   const [endHour, setEndHour] = useState("17:00");
@@ -69,8 +71,7 @@ const Page = () => {
     return allData.filter((item) => {
       if (item.status === "follow-up Requested") return false;
       if (status !== "None" && item.status !== status) return false;
-      if (doctorName !== "" && !`${item.firstName} ${item.lastName}`.includes(doctorName))
-        return false;
+      if (doctorName !== "" && !`${item.patientUsername}`.includes(doctorName)) return false;
 
       return true;
     });
@@ -78,13 +79,15 @@ const Page = () => {
 
   function updateAppointment(appointmentId, status) {
     PATCH({
-      url: `${BACKEND_ROUTE}/doctors/appointments/${appointmentId}`,
+      url: `${BACKEND_ROUTE}/doctors/appointments/${appointmentId}/${
+        status == "cancelled" ? "cancel" : "complete"
+      }`,
       body: { status },
       updater: () => {
         setAllData((prev) =>
           prev.map((item) => {
             if (item._id == appointmentId) {
-              return { ...item, status: "cancelled" };
+              return { ...item, status: status };
             }
             return item;
           })
@@ -113,7 +116,7 @@ const Page = () => {
           updateAppointment(item._id, "cancelled");
         }}
       >
-        <CancelIcon />
+        <CancelIcon disabled={!(item.status == "upcoming" || item.status == "rescheduled")} />
       </Icon>
     </>
   ));
@@ -122,7 +125,17 @@ const Page = () => {
     return <Appointment actions={actions[index]} appointment={item} attributes={attributes} />;
   });
 
-  function addAppointment() {}
+  function addAppointment(selectedDate, endHour, startHour) {
+    POST({
+      url: `${BACKEND_ROUTE}/doctors/${username}/appointments`,
+      body: { date: selectedDate, endHour, startHour },
+      updater: () => {
+        window.location.reload();
+      },
+      setShowError,
+      setError,
+    });
+  }
 
   const tableActions = (
     <Button
@@ -133,7 +146,7 @@ const Page = () => {
       }
       variant="contained"
       onClick={() => {
-        addAppointment();
+        setDisplayPopUp(true);
       }}
     >
       Add Appointment
@@ -141,22 +154,61 @@ const Page = () => {
   );
 
   return (
-    <Table
-      value={{
-        data: appointments,
-        columns,
-        loading,
-        setShowError,
-        setError,
-        setLoading,
-        noRecords: "No Appointments Found",
-        setAllData,
-        tableRows,
-      }}
-      title="Appointments"
-      filters={filters}
-      actions={tableActions}
-    />
+    <>
+      <Table
+        value={{
+          data: appointments,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Appointments Found",
+          setAllData,
+          tableRows,
+        }}
+        title="Appointments"
+        filters={filters}
+        actions={tableActions}
+      />
+      <PopUp
+        title="Add Appointment"
+        viewing={displayPopUp}
+        setViewing={setDisplayPopUp}
+        actions={
+          <>
+            <ButtonElement
+              actionName="Cancel"
+              onClick={() => {
+                setDisplayPopUp(false);
+              }}
+            />
+            <ButtonElement
+              actionName="Add"
+              onClick={() => {
+                addAppointment(selectedDate, startHour, endHour);
+              }}
+            />
+          </>
+        }
+      >
+        <Stack alignItems="center" direction="row" spacing={1}>
+          <TextInput
+            type="Date"
+            option="Date"
+            defaultValue={selectedDate ? selectedDate : new Date()}
+            setValue={setSelectedDate}
+          />
+          <TextInput
+            type="time"
+            option="Start Hour"
+            defaultValue={startHour}
+            setValue={setStartHour}
+          />
+          <TextInput type="time" option="End Hour" defaultValue={endHour} setValue={setEndHour} />
+        </Stack>
+      </PopUp>
+    </>
   );
 };
 
