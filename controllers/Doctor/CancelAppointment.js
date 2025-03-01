@@ -7,6 +7,7 @@ const {
   validateAppointment,
   validatePatient,
   validatePackage,
+  validateDoctor,
 } = require("../../utils/validator");
 
 exports.CancelAppointment = async (req, res) => {
@@ -14,7 +15,7 @@ exports.CancelAppointment = async (req, res) => {
     const { appointmentId } = req.params;
     console.log("IN CANCEL APPOINTMENT", appointmentId);
     const appointment = await validateAppointment(appointmentId, res);
-    const doctor = await validateAppointment(appointment.doctorUsername, res);
+    const doctor = await validateDoctor(appointment.doctorUsername, res);
     const patient = await validatePatient(appointment.patientUsername, res);
     const package = await validatePackage(patient.healthPackage.name);
     let clinicWallet = await ClinicWallet.find();
