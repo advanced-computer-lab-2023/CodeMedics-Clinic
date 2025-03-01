@@ -1,13 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const Doctor = require("../../models/Doctor");
 const Appointment = require("../../models/Appointment");
-const { getUsername } = require("../../config/infoGetter");
 
-exports.addAppointments = async (req, res) => {
+exports.addAppointment = async (req, res) => {
   try {
     const { doctorUsername } = req.params;
-    var { startHour, endHour, date } = req.body;
+    let { startHour, endHour, date } = req.body;
     date = date.split("T")[0];
     console.log("INSIDE ADD APPOINTMENTS BACKEND");
     startHour = startHour.substring(0, 2);
