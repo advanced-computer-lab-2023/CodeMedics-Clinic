@@ -32,7 +32,7 @@ const { getAllDoctors } = require("../controllers/Doctor/registerDoctor");
 const { scheduleFollowUp } = require("../controllers/Doctor/ScheduleFollowup");
 const { requireAuth } = require("../Middleware/authMiddleware");
 const { changePassword } = require("../controllers/Doctor/registerDoctor");
-const { addAppointments } = require("../controllers/Doctor/addAppointment");
+const { addAppointment } = require("../controllers/Doctor/addAppointment");
 const {
   docViewHealthRecords,
 } = require("../controllers/Doctor/docViewHealthRecords");
@@ -71,6 +71,9 @@ const {
 } = require("../controllers/Doctor/getFollowRequests");
 const { getDoctorChats } = require("../controllers/Chat/DoctorChats.js");
 const { getMessages, sendMessage } = require("../controllers/Chat/Messages");
+const {
+  CompleteAppointment,
+} = require("../controllers/Doctor/UpdateAppointment.js");
 
 router.post("/checkMedicine", checkMedicine);
 
@@ -96,7 +99,9 @@ router.get("/:doctorUsername/chats", getDoctorChats);
 router.get("/chats/:chatId/messages", getMessages);
 
 router.post("/chats/:chatId/messages", sendMessage);
-router.post("/:doctorUsername/appointments", addAppointments);
+router.post("/:doctorUsername/appointments", addAppointment);
+router.patch("/appointments/:appointmentId/complete", CompleteAppointment);
+router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
 
 router.get("/getAllDoctors", requireAuth, getAllDoctors);
 
@@ -110,7 +115,6 @@ router.get("/getDoctorMessages", getDoctorMessages);
 router.get("/getAllPrescriptions", getPrescriptions);
 
 router.patch("/", updateDoctor);
-router.patch("/appointments/:appointmentId", CancelAppointment);
 router.get("/viewPatientAppointment/:patientUsername", viewPatientAppointment);
 router.patch("/rescheduleAppointments/:patientUsername", rescheduleAppointment);
 router.get("/viewAppointments", filterAppointments);
