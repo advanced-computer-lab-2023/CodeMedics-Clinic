@@ -1,5 +1,5 @@
 import { TableCell } from "@mui/material";
-import { SeverityPill } from "../severity-pill";
+import { SeverityPill } from "./severity-pill";
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const statusMap = {
   upcoming: "warning",
@@ -8,23 +8,20 @@ const statusMap = {
   rescheduled: "warning",
 };
 
-function AppointmentInfo({ appointment, attributes }) {
-  console.log("PAI", attributes);
+function ObjectInfo({ obj, attributes }) {
   const cells = attributes.map((item) => {
     let content;
     if (item === "date") {
-      content = new Date(appointment.date).toLocaleDateString();
+      content = new Date(obj.date).toLocaleDateString();
     } else if (item == "day") {
-      content = days[new Date(appointment.date).getDay()];
+      content = days[new Date(obj.date).getDay()];
     } else if (item === "status") {
-      content = (
-        <SeverityPill color={statusMap[appointment.status]}>{appointment.status}</SeverityPill>
-      );
+      content = <SeverityPill color={statusMap[obj.status]}>{obj.status}</SeverityPill>;
     } else {
-      content = appointment[item];
+      content = obj[item];
     }
     return <TableCell>{content}</TableCell>;
   });
   return cells;
 }
-export default AppointmentInfo;
+export default ObjectInfo;

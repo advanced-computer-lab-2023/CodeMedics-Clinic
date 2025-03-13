@@ -14,7 +14,7 @@ import Icon from "../Icon";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { useGet } from "src/hooks/custom-hooks";
 import { PATCH } from "src/project-utils/helper-functions";
-import AppointmentInfo from "./AppointmentInfo";
+import ObjectInfo from "../ObjectInfo";
 const attributes = ["date", "day", "startHour", "endHour"];
 
 function PatientAppointmentActions({ appointment }) {
@@ -26,7 +26,7 @@ function PatientAppointmentActions({ appointment }) {
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
     return (
       <Row key={item._id}>
-        <AppointmentInfo appointment={item} attributes={attributes} />
+        <ObjectInfo obj={item} attributes={attributes} />
         <Cell>
           <ButtonElement
             actionName="Reschedule"
