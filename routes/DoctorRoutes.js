@@ -88,7 +88,7 @@ router.post(
 );
 
 router.get("/:doctorUsername", getDoctor);
-router.get("/patients", viewPatients);
+router.get("/:doctorUsername/patients", viewPatients);
 router.get(
   "/:doctorUsername/patients/:patientUsername/appointments",
   viewPatientAppointment
