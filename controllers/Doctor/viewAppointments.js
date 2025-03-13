@@ -48,13 +48,23 @@ exports.viewPastAppointments = async (req, res) => {
 };
 
 exports.getAllDocAppointments = async (req, res) => {
+  const { doctorUsername } = req.params;
+  const { status } = req.query;
+
   try {
-    const { doctorUsername } = req.params;
-    const appointments = await Appointment.find({ doctorUsername });
-    console.log("doc appointments", appointments)
-    return res.status(200).json({data: appointments});
+    const query = { doctorUsername };
+
+    if (status) {
+      const statusArray = Array.isArray(status) ? status : status.split(",");
+      query.status = { $in: statusArray };
+    }
+    const appointments = await Appointment.find({ doctorUsername })
+      .sort({ date: 1 })
+      .lean();
+    console.log("apps", appointments);
+    res.status(200).json({ data: appointments });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
