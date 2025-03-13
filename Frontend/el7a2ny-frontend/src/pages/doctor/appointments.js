@@ -21,7 +21,7 @@ const attributes = ["patientUsername", "date", "startHour", "endHour", "status"]
 
 const Page = () => {
   const [allData, setAllData] = useState([]);
-  const [doctorName, setDoctorName] = useState("");
+  const [patientName, setPatientName] = useState("");
   const [status, setStatus] = useState("None");
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
@@ -32,14 +32,16 @@ const Page = () => {
   const [startHour, setStartHour] = useState("09:00");
   const [endHour, setEndHour] = useState("17:00");
 
+  const patientUsername = new URLSearchParams(window.location.search).get("patientUsername");
+
   const appointments = filterData();
 
   const filters = [
     {
       type: "text",
-      name: "Search Doctor Name",
-      state: doctorName,
-      setState: setDoctorName,
+      name: "Search Patient Name",
+      state: patientName,
+      setState: setPatientName,
     },
     {
       type: "menu",
@@ -69,9 +71,10 @@ const Page = () => {
 
   function filterData() {
     return allData.filter((item) => {
-      if (item.status === "follow-up Requested") return false;
       if (status !== "None" && item.status !== status) return false;
-      if (doctorName !== "" && !`${item.patientUsername}`.includes(doctorName)) return false;
+      if (patientUsername && item.patientUsername != patientUsername) return false;
+      if (patientName !== "" && !`${item.patientUsername}`.includes(patientName)) return false;
+      if (item.status === "follow-up Requested") return false;
 
       return true;
     });
