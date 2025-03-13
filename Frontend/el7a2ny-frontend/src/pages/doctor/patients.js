@@ -1,12 +1,5 @@
-import { useState, useEffect } from "react";
-import Head from "next/head";
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { useState } from "react";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
-import { PatientsTable } from "src/sections/doctor/myPatients/patients-table";
-import { CustomersSearch } from "src/sections/doctor/myPatients/patients-search";
-import LoadingSpinner from "src/components/LoadingSpinner";
-import NoRecords from "src/components/NoRecords";
-import Message from "src/components/Miscellaneous/Message";
 import { useGet } from "src/hooks/custom-hooks";
 import Cookies from "js-cookie";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
