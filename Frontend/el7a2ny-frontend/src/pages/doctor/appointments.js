@@ -13,6 +13,7 @@ import { Table } from "src/components/Table/Table";
 import PopUp from "src/components/Miscellaneous/PopUp";
 import ButtonElement from "src/components/ButtonElement";
 import TextInput from "src/components/Inputs/TextInput";
+import Message from "src/components/Miscellaneous/Message";
 
 const now = new Date();
 
@@ -211,6 +212,13 @@ const Page = () => {
           <TextInput type="time" option="End Hour" defaultValue={endHour} setValue={setEndHour} />
         </Stack>
       </PopUp>
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title="Error"
+        message={error}
+        action="Close"
+      />
     </>
   );
 };
