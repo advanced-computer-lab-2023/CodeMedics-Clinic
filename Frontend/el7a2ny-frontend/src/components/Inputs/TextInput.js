@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 
-function TextInput({ option, setValue, defaultValue, type, disabled }) {
+function TextInput({ option, setValue, defaultValue, type, disabled, addMargin }) {
   return (
     <TextField
       label={option}
@@ -11,7 +11,7 @@ function TextInput({ option, setValue, defaultValue, type, disabled }) {
       onChange={(event) => {
         setValue(event.target.value);
       }}
-      sx={{ borderRadius: 4 }}
+      sx={{ marginBottom: addMargin ? 2 : null, borderRadius: 4, marginTop: addMargin ? 2 : null }}
       InputLabelProps={{ shrink: true }}
     />
   );
