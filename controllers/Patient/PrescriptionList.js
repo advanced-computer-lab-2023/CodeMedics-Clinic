@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Prescription = require("../../models/Prescription");
 const patientSchema = require("../../models/Patient"); // Adjust the path according to your project structure
-const { getUsername } = require("../../config/infoGetter");
 const PDFDocument = require("pdfkit");
 const Patient = require("../../models/Patient");
 const Medicine = require("../../models/Medicine");
@@ -61,15 +60,33 @@ exports.filterPrescriptions = async (req, res) => {
 
 exports.getPrescriptions = async (req, res) => {
   try {
-    const {patientUsername} = req.params
+    const { patientUsername } = req.params;
 
     const prescriptions = await Prescription.find({
-      patientUsername
+      patientUsername,
     });
 
-    res.status(200).json({data: prescriptions});
+    res.status(200).json({ data: prescriptions });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.downloadPrescription = async (req, res) => {
+  try {
+    const prescription = req.body.prescription;
+    const pdfBuffer = await this.createAndDownloadPDF(prescription);
+
+    // Send the PDF buffer as a response
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="Prescription_${prescription._id}.pdf"`
+    );
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    res.status(500).send("Error generating PDF");
   }
 };
 
@@ -152,7 +169,7 @@ exports.createAndDownloadPDF = (prescription) => {
       doc
         .fontSize(30)
         .fillColor("black")
-        .text(`Dr. ${prescription.Doctor}`)
+        .text(`Dr. ${prescription.doctorUsername}`)
         .moveDown(1.0);
 
       doc
@@ -185,7 +202,7 @@ exports.createAndDownloadPDF = (prescription) => {
       doc
         .fontSize(16)
         .fillColor("black")
-        .text(`Patient: ${prescription.Patient}`)
+        .text(`Patient: ${prescription.patientUsername}`)
         .moveDown(0.75);
       doc
         .fontSize(16)
@@ -196,7 +213,7 @@ exports.createAndDownloadPDF = (prescription) => {
       // Load the Drug font
       doc.font("./Frontend/el7a2ny-frontend/public/assets/Whisper-Regular.ttf");
 
-      prescription.Drug.forEach((drug, index) => {
+      prescription.drug.forEach((drug, index) => {
         doc
           .fontSize(20)
           .fillColor("black")
@@ -227,7 +244,7 @@ exports.createAndDownloadPDF = (prescription) => {
       doc
         .fontSize(16)
         .fillColor("black")
-        .text(`Date: ${prescription.Date}`, 410, 700)
+        .text(`Date: ${prescription.date}`, 410, 700)
         .moveDown(0.5);
 
       const chunks = [];
