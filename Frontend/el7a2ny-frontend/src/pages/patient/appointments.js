@@ -1,4 +1,4 @@
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/user/layout';
+import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
@@ -20,7 +20,7 @@ const Page = () => {
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
   const [currentPatient, setCurrentPatient] = useState(Cookies.get("username"));
-  const [chosenDoctorUsername, setChosenDoctorUsername] = useState('');
+  const [chosenDoctorUsername, setChosenDoctorUsername] = useState("");
   const [popUpDisplay, setPopUpDisplay] = useState(false);
   const [popUpElement, setPopUpElement] = useState(null);
 
@@ -116,8 +116,28 @@ const Page = () => {
     setError,
   });
 
-  if (showError) {
-    return (
+  return (
+    <>
+      <Table
+        value={{
+          data,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          popUpDisplay,
+          popUpElement,
+          setPopUpDisplay,
+          setPopUpElement,
+          currentPatient,
+          noRecords: "No Appointments Found",
+          setAllData,
+          tableRows,
+        }}
+        title="Appointments"
+        filters={filters}
+      />
       <Message
         condition={showError}
         setCondition={setShowError}
@@ -125,37 +145,10 @@ const Page = () => {
         message={error}
         action="Close"
       />
-    );
-  }
-
-  return (
-    <Table
-      value={{
-        data,
-        columns,
-        loading,
-        setShowError,
-        setError,
-        setLoading,
-        popUpDisplay,
-        popUpElement,
-        setPopUpDisplay,
-        setPopUpElement,
-        currentPatient,
-        noRecords: "No Appointments Found",
-        setAllData,
-        tableRows,
-      }}
-      title="Appointments"
-      filters={filters}
-    />
+    </>
   );
 };
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
