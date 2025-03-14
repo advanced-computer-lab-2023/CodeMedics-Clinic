@@ -2,6 +2,8 @@ import { TableCell } from "@mui/material";
 import { SeverityPill } from "./severity-pill";
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const statusMap = {
+  filled: "success",
+  unfilled: "warning",
   upcoming: "warning",
   cancelled: "error",
   completed: "success",
@@ -17,6 +19,13 @@ function ObjectInfo({ obj, attributes }) {
       content = days[new Date(obj.date).getDay()];
     } else if (item === "status") {
       content = <SeverityPill color={statusMap[obj.status]}>{obj.status}</SeverityPill>;
+    } else if (item == "filled") {
+      const str = obj.filled ? "filled" : "unfilled"
+      content = (
+        <SeverityPill color={statusMap[str]}>
+          {str}
+        </SeverityPill>
+      );
     } else {
       content = obj[item];
     }
