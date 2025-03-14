@@ -6,6 +6,7 @@ import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { Table } from "src/components/Table/Table";
 import ObjectInfo from "src/components/ObjectInfo";
 import { DoctorPatientActions } from "src/components/DoctorPatientActions";
+import Message from "src/components/Miscellaneous/Message";
 
 const columns = ["Name", "Email", "Date Of Birth", "Actions"];
 
@@ -82,25 +83,34 @@ const Page = () => {
   });
 
   return (
-    <Table
-      value={{
-        data,
-        columns,
-        loading,
-        setShowError,
-        setError,
-        setLoading,
-        noRecords: "No Patients Found",
-        setAllData,
-        tableRows,
-        popUpDisplay,
-        popUpElement,
-        setPopUpDisplay,
-        setPopUpElement,
-      }}
-      filters={filters}
-      title="Patients"
-    />
+    <>
+      <Table
+        value={{
+          data,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Patients Found",
+          setAllData,
+          tableRows,
+          popUpDisplay,
+          popUpElement,
+          setPopUpDisplay,
+          setPopUpElement,
+        }}
+        filters={filters}
+        title="Patients"
+      />
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title="Error"
+        message={error}
+        action="Close"
+      />
+    </>
   );
 };
 
