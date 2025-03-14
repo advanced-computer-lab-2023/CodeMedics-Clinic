@@ -74,6 +74,9 @@ const { getMessages, sendMessage } = require("../controllers/Chat/Messages");
 const {
   CompleteAppointment,
 } = require("../controllers/Doctor/UpdateAppointment.js");
+const {
+  downloadPrescription,
+} = require("../controllers/Patient/PrescriptionList.js");
 
 router.post("/checkMedicine", checkMedicine);
 
@@ -97,6 +100,14 @@ router.get("/:doctorUsername/appointments", getAllDocAppointments);
 router.get("/", getDoctorsAndAppointments);
 router.get("/:doctorUsername/chats", getDoctorChats);
 router.get("/chats/:chatId/messages", getMessages);
+router.get("/:doctorUsername/prescriptions", getPrescriptions);
+
+
+router.post("/:doctorUsername/download-prescription-pdf", downloadPrescription);
+router.patch("/:doctorUsername/prescriptions/:prescriptionId", addMedicineToPrescription);
+router.delete("/:doctorUsername/prescriptions/:prescriptionId/drugs/:drugName", removeMedicineFromPrescription);
+
+
 
 router.post("/chats/:chatId/messages", sendMessage);
 router.post("/:doctorUsername/appointments", addAppointment);
@@ -112,7 +123,6 @@ router.post("/changePassword", changePassword);
 router.get("/:doctorUsername/upcoming-appointments", viewUpcomingAppointments);
 router.get("/:doctorUsername/past-appointments", viewPastAppointments);
 router.get("/getDoctorMessages", getDoctorMessages);
-router.get("/getAllPrescriptions", getPrescriptions);
 
 router.patch("/", updateDoctor);
 router.get("/viewPatientAppointment/:patientUsername", viewPatientAppointment);
@@ -132,7 +142,6 @@ router.post(
 router.get("/:doctorUsername/health-records", docViewHealthRecords);
 router.post("/addPrescription", addPrescription);
 
-router.post("/addMedicineToPrescription", addMedicineToPrescription);
 router.post("/removeMedicineFromPrescription", removeMedicineFromPrescription);
 router.post("/addMedicineDosage", addMedicineDosage);
 router.post("/updateMedicineDosage", updateMedicineDosage);
