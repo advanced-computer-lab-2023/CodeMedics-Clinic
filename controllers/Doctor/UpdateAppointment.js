@@ -1,3 +1,4 @@
+const Appointment = require("../../models/Appointment");
 const { validateAppointment } = require("../../utils/validator");
 
 exports.CompleteAppointment = async (req, res) => {
@@ -8,11 +9,22 @@ exports.CompleteAppointment = async (req, res) => {
     console.log(appointment);
     appointment.status = "completed";
     await appointment.save();
-    res.status(204).json({ message: "Appointment Updated Successfully" });
+    res.status(201).json({ message: "Appointment Updated Successfully" });
   } catch (error) {
     console.log(error);
     return res
       .status(500)
       .json({ message: "Something Wrong Happened while Cancelling" });
+  }
+};
+
+exports.DeleteAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    await Appointment.deleteOne({ _id: appointmentId });
+    res.status(201).json({ message: "Appointment Updated Successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server Error, please try again" });
   }
 };
