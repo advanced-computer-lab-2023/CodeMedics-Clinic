@@ -1,12 +1,8 @@
-import Head from "next/head";
-import { Box, Container, Unstable_Grid2 as Grid, Button, Typography, Stack } from "@mui/material";
+import { Button } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
-import { OverviewMedicalRecords } from "src/sections/doctor/medicalHistory/overview-medical-records";
 import axios from "axios";
 import { useState } from "react";
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { SvgIcon } from "@mui/material";
 import DocumentArrowUpIcon from "@heroicons/react/24/solid/DocumentArrowUpIcon";
 import FileSaver from "file-saver";
