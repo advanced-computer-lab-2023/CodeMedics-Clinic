@@ -123,6 +123,7 @@ function DoctorPrescriptionActions({ item }) {
           </TableCell>
           <TableCell>
             <Icon
+              disabled={prescription.filled}
               title="Save Dosage"
               onClick={() => {
                 handleSaveClick(prescription, medicineIndex);
@@ -134,6 +135,7 @@ function DoctorPrescriptionActions({ item }) {
             </Icon>
 
             <Icon
+              disabled={prescription.filled}
               title="Delete Medicine"
               onClick={() => {
                 handleDeleteMedicine(prescription._id, drug.drugName);
