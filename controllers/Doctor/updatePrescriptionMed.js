@@ -61,12 +61,11 @@ exports.addMedicineToPrescription = async (req, res) => {
 
 exports.removeMedicineFromPrescription = async (req, res) => {
   try {
-    const doctorUsername = await getUsername(req, res);
-    const { prescriptionID, medicineName } = req.body;
+    const { doctorUsername, prescriptionId, drugName } = req.params;
     console.log(
       "in the remove medicine from prescription",
-      prescriptionID,
-      medicineName
+      prescriptionId,
+      drugName
     );
     if (!doctorUsername) {
       return res
@@ -74,13 +73,13 @@ exports.removeMedicineFromPrescription = async (req, res) => {
         .json({ message: "Authentication error: Doctor not logged in." });
     }
 
-    const doctor = await Doctor.findOne({ Username: doctorUsername });
+    const doctor = await Doctor.findOne({ username: doctorUsername });
 
     if (!doctor) {
       return res.status(404).json({ message: "Doctor not found." });
     }
 
-    const prescription = await Prescription.findOne({ _id: prescriptionID });
+    const prescription = await Prescription.findOne({ _id: prescriptionId });
 
     if (!prescription) {
       return res.status(404).json({
@@ -89,7 +88,7 @@ exports.removeMedicineFromPrescription = async (req, res) => {
     }
 
     const medicineIndex = prescription.drug.findIndex(
-      (med) => med.drugName === medicineName
+      (med) => med.drugName === drugName
     );
     if (medicineIndex === -1) {
       return res
@@ -99,7 +98,7 @@ exports.removeMedicineFromPrescription = async (req, res) => {
 
     prescription.drug.splice(medicineIndex, 1);
     if (prescription.drug.length === 0) {
-      await Prescription.deleteOne({ _id: prescriptionID });
+      await Prescription.deleteOne({ _id: prescriptionId });
       return res
         .status(200)
         .json({ message: "Prescription deleted successfully" });
