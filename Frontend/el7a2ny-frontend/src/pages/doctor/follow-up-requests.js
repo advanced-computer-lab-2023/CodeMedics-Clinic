@@ -1,137 +1,125 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography, TextField } from '@mui/material';
-import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
-import { CustomersTable } from 'src/sections/customer/requests-table';
-import { CustomersSearch } from 'src/sections/customer/customers-search';
-import { applyPagination } from 'src/utils/apply-pagination';
-import axios from 'axios';
-import { DoctorSearch } from 'src/sections/admin/Doctors/DoctorsSearch';
-import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-import { set } from 'lodash';
-import Message from 'src/components/Miscellaneous/Message';
-const now = new Date();
+import { useState } from "react";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
+import Cookies from "js-cookie";
+import Message from "src/components/Miscellaneous/Message";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { Table } from "src/components/Table/Table";
+import ObjectInfo from "src/components/ObjectInfo";
+import { Button, Stack, TableCell, TableRow } from "@mui/material";
+import Icon from "src/components/Icon";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { DELETE } from "src/project-utils/helper-functions";
+import ReschedulePopUp from "src/components/ReschedulePopUp";
+import FollowUpRow from "src/components/Appointment/FollowUpRow";
 
+const columns = ["Patient", "Date", "From", "To", "Actions"];
 
 const Page = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [appointments, setAppointments] = useState([]);
-  const [searchData, setSearchData] = useState(appointments);
-  // const [filteredData , setFilteredData] = useState(appointments);
+  const [allData, setAllData] = useState([]);
+  const [patientName, setPatientName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [popUpDisplay, setPopUpDisplay] = useState(false);
+  const [popUpElement, setPopUpElement] = useState(null);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  
-  useEffect(() => {
-    getAppointments();
-  }, []);
+  const [error, setError] = useState("");
 
-  const username = Cookies.get('username');
+  const username = Cookies.get("username");
 
-  const getAppointments = () =>{
-    axios({
-      method: 'GET',
-      url: 'http://localhost:8000/doctor/getFollowRequests?username='+username,
-      withCredentials: true
-    })
-    .then((response => {
-      console.log("APPOINTMENTS___", response.data);
-      setAppointments(response.data);
-      setSearchData(response.data);
-      setLoading(false);
-    }))
-    .catch(error => {
-      console.log(error);
-      setShowError(true);
-      setErrorMessage(error.response.data.message);
-    })
-  };
+  useGet({
+    url: `${BACKEND_ROUTE}/doctors/${username}/appointments?status=follow-up Requested`,
+    setData: setAllData,
+    setLoading: setLoading,
+    setShowError,
+    setError,
+  });
 
-  const handleSearch = (str) => {
-    if(str === ""){
-      setSearchData(appointments);
-    }
-    else{
-      console.log(appointments);
-      setSearchData(appointments.filter((appointment) => appointment.patient && appointment.patient.toLowerCase().includes(str.toLowerCase())));
-    }
+  function filterData() {
+    return allData.filter((item) => {
+      const itemDate = new Date(item.date);
+
+      if (startDate && itemDate < new Date(startDate)) return false;
+
+      if (endDate && itemDate > new Date(endDate)) return false;
+
+      if (patientName && !item.patientUsername.includes(patientName)) return false;
+
+      return true;
+    });
   }
 
-  const handleFilter  = (str)  => {
-    if(str === "None"){
-      setSearchData(appointments);
-    }
-    else{
-      console.log(searchData)
-      setSearchData(appointments.filter((appointment) => appointment.status === (str)));
-    }
+  function reject(appointment) {
+    DELETE({
+      url: `${BACKEND_ROUTE}/doctors/appointments/${appointment._id}`,
+      setShowError,
+      setError,
+      updater: () => {
+        setAllData((prev) => prev.filter((item) => item._id != appointment._id));
+      },
+    });
   }
-  console.log("searchData");
-  console.log(searchData);
 
+  const data = filterData();
+
+  const filters = [
+    {
+      type: "text",
+      name: "Search Patient Name",
+      setState: setPatientName,
+    },
+    {
+      type: "date",
+      name: "Start Date",
+      setState: setStartDate,
+    },
+    {
+      type: "date",
+      name: "End Date",
+      setState: setEndDate,
+    },
+  ];
+
+  const tableRows = data.map((item) => {
+    return <FollowUpRow item={item} reject={reject} />;
+  });
+
+  console.log("data", data);
 
   return (
     <>
-      <Head>
-        <title>
-          Follow-up Requests
-        </title>
-      </Head>
-      <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8
+      <Table
+        value={{
+          data,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Follow-up Requests Found",
+          setAllData,
+          tableRows,
+          popUpDisplay,
+          setPopUpDisplay,
+          popUpElement,
+          setPopUpElement,
+          reject
         }}
-      >
-        <Container maxWidth="xl">
-          <Stack spacing={3}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              spacing={4}
-            >
-              <Stack spacing={1}>
-                <Typography variant="h4">
-                    Follow-up Requests
-                </Typography>
-              </Stack>
-            </Stack>
-            <DoctorSearch data={searchData} handleSearch={handleSearch} handleFilter={handleFilter} skipFiltering ={true}/>
-            {!loading && (<CustomersTable
-              count={searchData.length}
-              items={searchData}
-              // onDeselectAll={customersSelection.handleDeselectAll}
-              // onDeselectOne={customersSelection.handleDeselectOne}
-              // onPageChange={handlePageChange}
-              // onRowsPerPageChange={handleRowsPerPageChange}
-              // onSelectAll={customersSelection.handleSelectAll}
-              // onSelectOne={customersSelection.handleSelectOne}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              // selected={customersSelection.selected}
-            />)}
-          </Stack>
-        </Container>
-      </Box>
+        filters={filters}
+        title="Follow-up Requests"
+      />
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title="Error"
+        message={error}
+        action="Close"
+      />
     </>
   );
 };
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
