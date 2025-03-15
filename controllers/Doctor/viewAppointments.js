@@ -53,15 +53,12 @@ exports.getAllDocAppointments = async (req, res) => {
 
   try {
     const query = { doctorUsername };
-
+    console.log("getting appointments", status, doctorUsername);
     if (status) {
       const statusArray = Array.isArray(status) ? status : status.split(",");
       query.status = { $in: statusArray };
     }
-    const appointments = await Appointment.find({ doctorUsername })
-      .sort({ date: 1 })
-      .lean();
-    console.log("apps", appointments);
+    const appointments = await Appointment.find(query).sort({ date: 1 }).lean();
     res.status(200).json({ data: appointments });
   } catch (error) {
     console.error(error);
