@@ -6,6 +6,7 @@ import ArrowDownTrayIcon from "@heroicons/react/24/solid/ArrowDownTrayIcon";
 import EyeIcon from "@heroicons/react/24/solid/EyeIcon";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 import PencilSquareIcon from "@heroicons/react/24/solid/PencilSquareIcon";
 import { TableContext } from "../Table/Table";
 import FileSaver from "file-saver";
@@ -47,8 +48,31 @@ function DoctorPrescriptionActions({ item }) {
     }
   };
 
-  function handleAddMedicine(prescriptionId, medicineName, dosage) {
+  const fill = async (prescriptionId) => {
     PATCH({
+      url: `${BACKEND_ROUTE}/doctors/${username}/prescriptions/${prescriptionId}`,
+      body: { status: true },
+      setShowError,
+      setError,
+      updater: () => {
+        setAllData((prev) =>
+          prev.map((item) => {
+            if (item._id == prescriptionId) {
+              return { ...item, filled: true };
+            }
+            return item;
+          })
+        );
+        setPrescription((prev) => {
+          console.log("after", { ...prev, filled: true });
+          return { ...prev, filled: true };
+        });
+      },
+    });
+  };
+
+  function handleAddMedicine(prescriptionId, medicineName, dosage) {
+    POST({
       url: `${BACKEND_ROUTE}/doctors/${username}/prescriptions/${prescriptionId}`,
       body: { medicineName, dosage },
       setShowError,
@@ -228,6 +252,15 @@ function DoctorPrescriptionActions({ item }) {
           }}
         >
           <PlusIcon />
+        </Icon>
+        <Icon
+          disabled={prescription.filled}
+          title="Fill Prescription"
+          onClick={() => {
+            fill(prescription._id);
+          }}
+        >
+          <CheckCircleIcon />
         </Icon>
         <Icon
           title="View Prescription"
