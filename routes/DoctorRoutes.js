@@ -111,6 +111,7 @@ router.patch("/:doctorUsername/prescriptions/:prescriptionId", updatePrescriptio
 
 router.post("/chats/:chatId/messages", sendMessage);
 router.post("/:doctorUsername/appointments", addAppointment);
+router.post("/:doctorUsername/prescriptions", addPrescription);
 router.patch("/appointments/:appointmentId/complete", CompleteAppointment);
 router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
 router.delete("/appointments/:appointmentId", DeleteAppointment)
@@ -144,7 +145,6 @@ router.post(
   addHealthRecord
 );
 router.get("/:doctorUsername/health-records", docViewHealthRecords);
-router.post("/addPrescription", addPrescription);
 
 router.post("/removeMedicineFromPrescription", removeMedicineFromPrescription);
 router.post("/addMedicineDosage", addMedicineDosage);
