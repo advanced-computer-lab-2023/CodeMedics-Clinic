@@ -110,9 +110,6 @@ const Page = () => {
 
   return (
     <>
-      <Head>
-        <title>Medical Histroy</title>
-      </Head>
       <Table
         value={{
           data: medicalRecords,
