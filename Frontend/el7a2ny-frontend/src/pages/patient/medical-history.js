@@ -1,15 +1,12 @@
 import Head from "next/head";
-import { Box, Container, Unstable_Grid2 as Grid, Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
-import { OverviewMedicalRecords } from "src/sections/overview/overview-medical-records";
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { SvgIcon } from "@mui/material";
 import DocumentArrowUpIcon from "@heroicons/react/24/solid/DocumentArrowUpIcon";
-import LoadingSpinner from "src/components/LoadingSpinner";
-import NoRecords from "src/components/NoRecords";
 import Message from "src/components/Miscellaneous/Message";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { useGet } from "src/hooks/custom-hooks";
