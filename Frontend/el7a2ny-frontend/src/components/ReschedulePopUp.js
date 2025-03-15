@@ -8,7 +8,7 @@ import ButtonElement from "./ButtonElement";
 import Cell from "./Table/BasicElements/Cell";
 import Row from "./Table/BasicElements/Row";
 import { useGet } from "src/hooks/custom-hooks";
-import { PATCH } from "src/project-utils/helper-functions";
+import { DELETE, PATCH } from "src/project-utils/helper-functions";
 import ObjectInfo from "./ObjectInfo";
 const attributes = ["date", "day", "startHour", "endHour"];
 
@@ -21,8 +21,9 @@ function ReschedulePopUp({
   setRescheduling,
   appointment,
   patient,
+  followUp,
 }) {
-  const { setShowError, setError, setAllData, setPopUpDisplay, setPopUpElement } =
+  const { setShowError, setError, setAllData, setPopUpDisplay, setPopUpElement, reject } =
     useContext(TableContext);
   const [unreservedAppointments, setUnreservedAppointments] = useState([]);
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
@@ -72,12 +73,15 @@ function ReschedulePopUp({
 
   async function hanldeRescheduleAppointment(newApp, oldApp) {
     if (oldApp) {
-      PATCH({
-        url: `${patchUrl}/${newApp._id}`,
-        body: { status: "rescheduled", patientUsername: oldApp.patientUsername },
-        setShowError,
-        setError,
-      });
+      if (followUp) {
+        reject(oldApp);
+      } else
+        PATCH({
+          url: `${patchUrl}/${newApp._id}`,
+          body: { status: "rescheduled", patientUsername: oldApp.patientUsername },
+          setShowError,
+          setError,
+        });
     }
 
     PATCH({
@@ -87,23 +91,28 @@ function ReschedulePopUp({
       setError,
       updater: () => {
         setAllData((prev) =>
-          prev.map((item) => {
-            if (oldApp) {
-              if (item._id !== oldApp._id && item._id != newApp._id) return item;
-              if (item._id == oldApp._id) {
-                return {
-                  ...item,
-                  _id: newApp._id,
-                  status: "rescheduled",
-                  patientUsername: oldApp.patientUsername,
-                };
+          prev
+            .map((item) => {
+              if (oldApp) {
+                if (item._id !== oldApp._id && item._id != newApp._id) return item;
+                if (item._id == oldApp._id) {
+                  return {
+                    ...item,
+                    _id: newApp._id,
+                    status: "rescheduled",
+                    patientUsername: oldApp.patientUsername,
+                  };
+                }
+                return { ...item, _id: oldApp._id, status: "unreserved", patientUsername: null };
+              } else {
+                if (item._id != newApp._id) return item;
+                return { ...item, status: "upcoming", patientUsername: patient.username };
               }
-              return { ...item, _id: oldApp._id, status: "unreserved", patientUsername: null };
-            } else {
-              if (item._id != newApp._id) return item;
-              return { ...item, status: "upcoming", patientUsername: patient.username };
-            }
-          })
+            })
+            .filter((item) => {
+              if (!followUp) return true;
+              return item._id != oldApp._id && item._id != newApp._id;
+            })
         );
       },
     });
