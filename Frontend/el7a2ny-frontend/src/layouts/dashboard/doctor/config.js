@@ -37,7 +37,7 @@ export const items = [
   },
   {
     title: "Prescriptions",
-    path: "/doctor/AllPrescriptions",
+    path: "/doctor/prescriptions",
     icon: (
       <SvgIcon fontSize="small">
         <AssignmentIcon />
