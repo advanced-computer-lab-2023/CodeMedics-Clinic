@@ -48,6 +48,7 @@ const { addPrescription } = require("../controllers/Doctor/addPrescription");
 const {
   addMedicineToPrescription,
   removeMedicineFromPrescription,
+  updatePrescription,
 } = require("../controllers/Doctor/updatePrescriptionMed");
 const {
   updateMedicineDosage,
@@ -104,7 +105,9 @@ router.get("/chats/:chatId/messages", getMessages);
 router.get("/:doctorUsername/prescriptions", getPrescriptions);
 
 router.post("/:doctorUsername/download-prescription-pdf", downloadPrescription);
-router.patch("/:doctorUsername/prescriptions/:prescriptionId", addMedicineToPrescription);
+router.post("/:doctorUsername/prescriptions/:prescriptionId", addMedicineToPrescription);
+router.patch("/:doctorUsername/prescriptions/:prescriptionId", updatePrescription);
+
 
 router.post("/chats/:chatId/messages", sendMessage);
 router.post("/:doctorUsername/appointments", addAppointment);
