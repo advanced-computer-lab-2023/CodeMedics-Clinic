@@ -73,6 +73,7 @@ const { getDoctorChats } = require("../controllers/Chat/DoctorChats.js");
 const { getMessages, sendMessage } = require("../controllers/Chat/Messages");
 const {
   CompleteAppointment,
+  DeleteAppointment,
 } = require("../controllers/Doctor/UpdateAppointment.js");
 const {
   downloadPrescription,
@@ -102,17 +103,17 @@ router.get("/:doctorUsername/chats", getDoctorChats);
 router.get("/chats/:chatId/messages", getMessages);
 router.get("/:doctorUsername/prescriptions", getPrescriptions);
 
-
 router.post("/:doctorUsername/download-prescription-pdf", downloadPrescription);
 router.patch("/:doctorUsername/prescriptions/:prescriptionId", addMedicineToPrescription);
-router.delete("/:doctorUsername/prescriptions/:prescriptionId/drugs/:drugName", removeMedicineFromPrescription);
-
-
 
 router.post("/chats/:chatId/messages", sendMessage);
 router.post("/:doctorUsername/appointments", addAppointment);
 router.patch("/appointments/:appointmentId/complete", CompleteAppointment);
 router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
+router.delete("/appointments/:appointmentId", DeleteAppointment)
+router.delete("/:doctorUsername/prescriptions/:prescriptionId/drugs/:drugName", removeMedicineFromPrescription);
+
+
 
 router.get("/getAllDoctors", requireAuth, getAllDoctors);
 
