@@ -32,6 +32,8 @@ const Page = () => {
 
   const username = Cookies.get("username");
 
+  const patientUsernameFilter = new URLSearchParams(window.location.search).get("patientUsername");
+
   function filterData() {
     return allData.filter((item) => {
       const itemDate = new Date(item.date);
@@ -41,6 +43,10 @@ const Page = () => {
       if (endDate && itemDate > new Date(endDate)) return false;
 
       if (patientName && !item.patientUsername.includes(patientName)) return false;
+
+      if (patientUsernameFilter && item.patientUsername != patientUsernameFilter) {
+        return false;
+      }
 
       return true;
     });
