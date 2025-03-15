@@ -9,12 +9,6 @@ exports.addMedicineToPrescription = async (req, res) => {
   try {
     const { prescriptionId, doctorUsername } = req.params;
     const { medicineName, dosage } = req.body;
-    console.log(
-      "in the add medicine to prescription",
-      prescriptionId,
-      medicineName,
-      dosage
-    );
     if (parseInt(dosage) <= 0) {
       return res
         .status(404)
@@ -56,6 +50,32 @@ exports.addMedicineToPrescription = async (req, res) => {
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.updatePrescription = async (req, res) => {
+  try {
+    const { prescriptionId, doctorUsername } = req.params;
+    const { status } = req.body;
+    console.log("updating prescription", prescriptionId, status);
+    const prescription = await Prescription.findOne({ _id: prescriptionId });
+
+    if (!prescription) {
+      return res.status(404).json({
+        message: "Prescription not found",
+      });
+    }
+    console.log("prescription", prescription);
+    prescription.filled = status;
+    await prescription.save();
+
+    res.status(201).json({
+      message: "Prescription updated successfully",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error, please try again" });
   }
 };
 
