@@ -17,14 +17,13 @@ import TextInput from "../Inputs/TextInput";
 
 function DoctorPrescriptionActions({ item }) {
   const [prescription, setPrescription] = useState(item);
+  const [drugs, setDrugs] = useState(item.drug);
 
   const [addingMedicine, setAddingMedicine] = useState(false);
   const [medicineName, setMedicineName] = useState("");
   const [dosage, setDosage] = useState("0");
 
   const [viewing, setViewing] = useState(false);
-  const [medicineIndex, setMedicineIndex] = useState(null);
-  const [newDosage, setNewDosage] = useState(null);
 
   const { setShowError, setError, setPopUpDisplay, setPopUpElement, setAllData } =
     useContext(TableContext);
@@ -81,13 +80,21 @@ function DoctorPrescriptionActions({ item }) {
         if (prescription.drug.length == 1) {
           setAllData((prev) => prev.filter((item) => item._id != prescriptionId));
         }
-        setPrescription((prev) => prev.drug.filter((item) => item.drugName !== drugName));
+        setPrescription((prev) => {
+          return { ...prev, drug: prev.drug.filter((item) => item.drugName !== drugName) };
+        });
       },
     });
   }
 
-  function handleSaveClick(prescription, newDosage) {
-    handleAddMedicine(prescription._id, prescription.drug[medicineIndex].drugName, newDosage);
+  function handleSaveClick(prescription, medicineIndex) {
+    console.log(
+      "Saving",
+      prescription._id,
+      drugs[medicineIndex].drugName,
+      drugs[medicineIndex].dosage
+    );
+    handleAddMedicine(prescription._id, drugs[medicineIndex].drugName, drugs[medicineIndex].dosage);
   }
 
   const prescriptionPopUp = (
@@ -107,8 +114,10 @@ function DoctorPrescriptionActions({ item }) {
               defaultValue={drug.dosage}
               disabled={prescription.filled}
               setValue={(value) => {
-                setMedicineIndex(medicineIndex);
-                setNewDosage(value);
+                setDrugs((prev) => {
+                  prev[medicineIndex].dosage = Number(value);
+                  return prev;
+                });
               }}
             />
           </TableCell>
@@ -116,12 +125,9 @@ function DoctorPrescriptionActions({ item }) {
             <Icon
               title="Save Dosage"
               onClick={() => {
-                if (!medicineIndex) return;
-                setPrescription((prev) => {
-                  prev.drug[medicineIndex] = newDosage;
-                  return prev;
-                });
-                handleSaveClick(prescription, newDosage);
+                handleSaveClick(prescription, medicineIndex);
+                setPopUpDisplay(false);
+                setViewing(false);
               }}
             >
               <PencilSquareIcon />
@@ -129,7 +135,11 @@ function DoctorPrescriptionActions({ item }) {
 
             <Icon
               title="Delete Medicine"
-              onClick={() => handleDeleteMedicine(prescription._id, drug.drugName)}
+              onClick={() => {
+                handleDeleteMedicine(prescription._id, drug.drugName);
+                setPopUpDisplay(false);
+                setViewing(false);
+              }}
             >
               <XMarkIcon />
             </Icon>
@@ -158,7 +168,11 @@ function DoctorPrescriptionActions({ item }) {
             Cancel
           </Button>
           <Button
-            onClick={() => handleAddMedicine(prescription._id, medicineName, dosage)}
+            onClick={() => {
+              handleAddMedicine(prescription._id, medicineName, dosage);
+              setPopUpDisplay(false);
+              setAddingMedicine(false);
+            }}
             disabled={medicineName === "" || Number(dosage) <= 0}
           >
             Save
@@ -198,9 +212,6 @@ function DoctorPrescriptionActions({ item }) {
     if (viewing) {
       setPopUpDisplay(true);
       setPopUpElement(prescriptionPopUp);
-    } else {
-      setMedicineIndex(-1);
-      setNewDosage(-1);
     }
   }, [addingMedicine, viewing, medicineName, dosage]);
 
