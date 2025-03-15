@@ -28,19 +28,6 @@ export const ChatBoxTop = (props) => {
           )}
         </Stack>
       </Stack>
-      {!isPharmacy && (
-        <Tooltip title="Video Call">
-          <IconButton
-            onClick={() => {
-              router.push(`/${user}/videoCall?username=${selectedChat[user].username}`);
-            }}
-          >
-            <SvgIcon color="action" fontSize="small">
-              <CameraIcon />
-            </SvgIcon>
-          </IconButton>
-        </Tooltip>
-      )}
     </Stack>
   );
 };
