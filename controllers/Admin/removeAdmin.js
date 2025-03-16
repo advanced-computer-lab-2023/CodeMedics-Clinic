@@ -1,18 +1,17 @@
-const Admin = require('../../models/Administrator'); 
-const { getUsername } = require('../../config/infoGetter');
+const Admin = require("../../models/Administrator");
 const removeAdmin = async (req, res) => {
-    const { username } = req.body;
-    const admin = await Admin.findOne({Username: username });
-    const curUsername = await getUsername(req, res);
-    if(admin.Username === curUsername){
-        return res.status(400).json({message: 'Cannot remove yourself.'});
-    }
-    if(admin.isCreator){
-        return res.status(400).json({message: 'Cannot remove creator.'});
-    }
-    
-    await Admin.deleteOne({Username: username });
-    return res.status(200).json({message: 'Admin removed.'});
+  const { adminUsername } = req.params;
+  console.log("removing", req.params);
+  const admin = await Admin.findOne({ username: adminUsername });
+  if(!admin){
+    return res.status(400).json({ message: "Admin not Found" });
+  }
+  if (admin.isCreator) {
+    return res.status(400).json({ message: "Cannot remove creator." });
+  }
+
+  await Admin.deleteOne({ username: adminUsername });
+  return res.status(201).json({ message: "Admin removed successfully" });
 };
 
 module.exports = removeAdmin;
