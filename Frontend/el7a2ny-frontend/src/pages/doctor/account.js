@@ -1,85 +1,112 @@
-import Head from 'next/head';
-import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/doctor/layout';
-import { AccountProfile } from 'src/sections/doctor/account/account-profile';
-import { AccountProfileDetails } from 'src/sections/doctor/account/account-profile-details';
-
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Message from 'src/components/Miscellaneous/Message';
-
+import { useState } from "react";
+import { Box, Container, Stack, Typography } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
+import Message from "src/components/Miscellaneous/Message";
+import Title from "src/components/Table/Body/Title";
+import LoadingSpinner from "src/components/LoadingSpinner";
+import Account from "src/components/Account/Account";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { useGet } from "src/hooks/custom-hooks";
+import Cookies from "js-cookie";
 
 const Page = () => {
-  
-  const [values, setValues] = useState({});
+  const [doctor, setDoctor] = useState({});
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    axios.get('http://localhost:8000/getMe', {withCredentials: true})
-      .then((req) => {
-        setValues(req.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setShowError(true);
-        setErrorMessage(err.response.data.message);
-      });
-  }, []);
+  const fields = [
+    {
+      name: "firstName",
+      label: "First Name",
+      type: "text",
+    },
+    {
+      name: "lastName",
+      label: "Last Name",
+      type: "text",
+    },
+    {
+      name: "email",
+      label: "Email",
+      type: "email",
+    },
+    {
+      name: "affiliation",
+      label: "Affiliation",
+      type: "text",
+    },
+    {
+      name: "hourlyRate",
+      label: "Hourly Rate",
+      type: "number",
+    },
+    {
+      name: "dateOfBirth",
+      label: "Date Of Birth",
+      type: "text",
+    },
+    {
+      name: "degree",
+      label: "Educational Degree",
+      type: "text",
+    },
+    {
+      name: "speciality",
+      label: "Speciality",
+      type: "text",
+    },
+  ];
 
-  return(
-  <>
-    <Head>
-      <title>
-        My Account
-      </title>
-    </Head>
-    <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth="lg">
-        <Stack spacing={3}>
-          <div>
-            <Typography variant="h4">
-              Account
-            </Typography>
-          </div>
-          <div>
-            <Grid
-              container
-              spacing={3}
-            >
-              <Grid
-                xs={12}
-                md={6}
-                lg={4}
-              >
-              {Object.keys(values).length !==0 && <AccountProfile user={values}/>}
-              </Grid>
-              <Grid
-                xs={12}
-                md={6}
-                lg={8}
-              >
-              {Object.keys(values).length !==0 && <AccountProfileDetails values={values} setValues={setValues} />}
-              </Grid>
-            </Grid>
-          </div>
-        </Stack>
-      </Container>
-    </Box>
-  </>
-);}
+  useGet({
+    url: `${BACKEND_ROUTE}/doctors/${Cookies.get("username")}`,
+    setData: setDoctor,
+    setLoading,
+    setError,
+    setShowError,
+  });
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+  return (
+    <>
+      <Title title="My Account" />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack spacing={3}>
+            <div>
+              <Typography variant="h4">Account</Typography>
+            </div>
+            <div>
+              {loading ? (
+                <LoadingSpinner />
+              ) : (
+                <Account
+                  user={doctor}
+                  fields={fields}
+                  setError={setError}
+                  setShowError={setShowError}
+                />
+              )}
+            </div>
+          </Stack>
+        </Container>
+      </Box>
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title={"Error"}
+        message={error}
+        buttonAction={"Close"}
+      />
+    </>
+  );
+};
+
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
