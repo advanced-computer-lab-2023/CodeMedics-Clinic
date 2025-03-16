@@ -75,6 +75,7 @@ const { getMessages, sendMessage } = require("../controllers/Chat/Messages");
 const {
   CompleteAppointment,
   DeleteAppointment,
+  UpdateAppointment,
 } = require("../controllers/Doctor/UpdateAppointment.js");
 const {
   downloadPrescription,
@@ -116,6 +117,7 @@ router.post("/:doctorUsername/prescriptions", addPrescription);
 router.post("/patients/:patientUsername/health-records", uploadDocument, addDocument);
 router.patch("/appointments/:appointmentId/complete", CompleteAppointment);
 router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
+router.patch("/appointments/:appointmentId", UpdateAppointment);
 router.patch("/:doctorUsername/prescriptions/:prescriptionId", updatePrescription);
 
 
