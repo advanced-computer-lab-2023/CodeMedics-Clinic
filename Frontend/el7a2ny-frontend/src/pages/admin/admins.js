@@ -1,170 +1,169 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography , Alert } from '@mui/material';
-import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
-import { AdminsTable } from 'src/sections/admin/Admins/AdminsTable';
-import { AdminsSearch } from 'src/sections/admin/Admins/AdminsSearch';
-import { applyPagination } from 'src/utils/apply-pagination';
-import Cookies from 'js-cookie';
+import { useState } from "react";
+import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
+import { Button, Stack, SvgIcon, TableCell, TableRow } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { DELETE, POST } from "src/project-utils/helper-functions";
+import { Table } from "src/components/Table/Table";
+import Message from "src/components/Miscellaneous/Message";
+import ObjectInfo from "src/components/ObjectInfo";
+import ButtonElement from "src/components/ButtonElement";
+import PopUp from "src/components/Miscellaneous/PopUp";
+import TextInput from "src/components/Inputs/TextInput";
 
-const axios = require('axios');
-
-const now = new Date();
-
-const useCustomers = (data, page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [data, page, rowsPerPage]
-  );
-};
-
-const useCustomerIds = (customers) => {
-  return useMemo(
-    () => {
-      return customers.map((customer) => customer.id);
-    },
-    [customers]
-  );
-};
+const columns = ["username", "email", "actions"];
 
 const Page = () => {
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(data, page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
-  const [alert , setAlert] = useState(false);
-  const [alertMessage , setAlertMessage] = useState("");
+  const [allData, setAllData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchName, setSearchName] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetch('http://localhost:8000/admin/viewAdmins')
-      .then((res) => {
-        if (res.status == 401) {
-          throw new Error('Error while fetching data');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data['admins']) {
-          console.log(data['admins']);
-        setData(data['admins']);
-        }
-  })
-    .catch((err) => {});
-}, []);
+  const [displayPopUp, setDisplayPopUp] = useState(false);
 
-const handleRemove = (username)  => {
-//   console.log(Cookies.username);
-  axios('http://localhost:8000/admin/removeAdmin', {
-            method: 'POST',
-            data: { username },
-            withCredentials: true
-        })
-  .then((res) => {
-    console.log(res);
-    if(res.status == 200) {
-      console.log("removed");
-      window.location.reload();
-    }
-  })
-  .catch((err) => {
-    setAlert(true);
-    setAlertMessage(err.response.data.message);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
+  const filters = [
+    { type: "text", name: "Search Admin Username", state: searchName, setState: setSearchName },
+  ];
+
+  function filterData() {
+    return allData.filter((item) => item.username.includes(searchName));
   }
-  )
-}
 
-const handlePageChange = useCallback(
-  (event, value) => {
-    setPage(value);
-  },
-  []
-);
+  const data = filterData();
 
-const handleRowsPerPageChange = useCallback(
-  (event) => {
-    setRowsPerPage(event.target.value);
-  },
-  []
-);
+  useGet({
+    url: `${BACKEND_ROUTE}/admins`,
+    setData: setAllData,
+    setError,
+    setShowError,
+    setLoading,
+  });
 
-return (
-  <>
-    <Head>
-      <title>
-        Admins
-      </title>
-    </Head>
-    {alert && 
-      <Stack sx={{width: 600 , ml: 35}} spacing={20}>
-        <></>
-        <Alert onClose={() => {setAlert(false);}} severity="warning" style={{ backgroundColor: '#fff4e5',  }}>{alertMessage}</Alert>
-      </Stack>
-    }
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
+  const handleRemove = (adminUsername) => {
+    console.log("handling", adminUsername);
+    DELETE({
+      url: `${BACKEND_ROUTE}/admins/${adminUsername}`,
+      setShowError,
+      setError,
+      updater: () => {
+        setAllData((prev) => prev.filter((item) => item.username != adminUsername));
+      },
+    });
+  };
+
+  function addAdmin(username, password, email) {
+    POST({
+      url: `${BACKEND_ROUTE}/admins`,
+      body: { username, email, password },
+      setShowError,
+      setError,
+      updater: () => {
+        window.location.reload();
+      },
+    });
+  }
+
+  const tableRows = data.map((item) => {
+    return (
+      <TableRow>
+        <ObjectInfo obj={item} attributes={["username", "email"]} />
+        <TableCell>
+          <ButtonElement
+            actionName="Remove"
+            onClick={() => {
+              console.log("removing", item, item.username);
+              const adminUsername = item.username;
+              handleRemove(adminUsername);
+            }}
+          />
+        </TableCell>
+      </TableRow>
+    );
+  });
+
+  const tableActions = (
+    <Button
+      startIcon={
+        <SvgIcon fontSize="small">
+          <PlusIcon />
+        </SvgIcon>
+      }
+      variant="contained"
+      onClick={() => {
+        setDisplayPopUp(true);
       }}
     >
-      
-      <Container maxWidth="xl">
-        <Stack spacing={3}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            spacing={4}
-          >
-            <Stack spacing={1}>
-              <Typography variant="h4">
-                Admins
-              </Typography>
-            </Stack>
-            <div>
-                <Button
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                  onClick={() => router.push('/admin/addAdmin')}
-                >
-                  Add Admin
-                </Button>
-              </div>
-          </Stack>
-          <AdminsSearch/>
-          <AdminsTable
-            handleRemove = {handleRemove}
-            count={data.length}
-            items={customers}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            page={page}
-            rowsPerPage={rowsPerPage}
-          />
-        </Stack>
-      </Container>
-    </Box>
-  </>
-);
-}
-;
+      Add Admin
+    </Button>
+  );
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+  return (
+    <>
+      <Table
+        value={{
+          data,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Admins Found",
+          allData,
+          setAllData,
+          tableRows,
+        }}
+        title="Admins"
+        filters={filters}
+        actions={tableActions}
+      />
+      <Message
+        title="Error"
+        message={error}
+        condition={showError}
+        setCondition={setShowError}
+        buttonAction={"Close"}
+      />
+      <PopUp
+        title="Add Admin"
+        viewing={displayPopUp}
+        setViewing={setDisplayPopUp}
+        actions={
+          <>
+            <ButtonElement
+              actionName="Cancel"
+              onClick={() => {
+                setDisplayPopUp(false);
+              }}
+            />
+            <ButtonElement
+              actionName="Add"
+              onClick={() => {
+                addAdmin(username, password, email);
+              }}
+            />
+          </>
+        }
+      >
+        <Stack alignItems="center" direction="row" spacing={1}>
+          <TextInput type="text" option="Username" defaultValue={username} setValue={setUsername} />
+          <TextInput
+            type="password"
+            option="Password"
+            defaultValue={password}
+            setValue={setPassword}
+          />
+          <TextInput type="email" option="email" defaultValue={email} setValue={setEmail} />
+        </Stack>
+      </PopUp>
+    </>
+  );
+};
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
