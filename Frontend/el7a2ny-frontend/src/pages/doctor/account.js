@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Container, Stack, Typography } from "@mui/material";
-import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
 import Message from "src/components/Miscellaneous/Message";
 import Title from "src/components/Table/Body/Title";
 import LoadingSpinner from "src/components/LoadingSpinner";
