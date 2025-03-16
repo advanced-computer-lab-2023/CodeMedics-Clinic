@@ -5,17 +5,14 @@ import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import Appointment from "src/components/Appointment/Appointment";
-import Icon from "src/components/Icon";
-import { PATCH, POST } from "src/project-utils/helper-functions";
-import CancelIcon from "src/icons/untitled-ui/duocolor/CancelIcon";
-import { CheckIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { POST } from "src/project-utils/helper-functions";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import { Table } from "src/components/Table/Table";
 import PopUp from "src/components/Miscellaneous/PopUp";
 import ButtonElement from "src/components/ButtonElement";
 import TextInput from "src/components/Inputs/TextInput";
 import Message from "src/components/Miscellaneous/Message";
-
-const now = new Date();
+import DoctorAppointmentActions from "src/components/Appointment/DoctorAppointmentActions";
 
 const columns = ["patient", "date", "from", "to", "status", "actions"];
 const attributes = ["patientUsername", "date", "startHour", "endHour", "status"];
@@ -27,6 +24,8 @@ const Page = () => {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [popUpDisplay, setPopUpDisplay] = useState(false);
+  const [popUpElement, setPopUpElement] = useState(null);
 
   const [displayPopUp, setDisplayPopUp] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -81,52 +80,16 @@ const Page = () => {
     });
   }
 
-  function updateAppointment(appointmentId, status) {
-    PATCH({
-      url: `${BACKEND_ROUTE}/doctors/appointments/${appointmentId}/${
-        status == "cancelled" ? "cancel" : "complete"
-      }`,
-      body: { status },
-      updater: () => {
-        setAllData((prev) =>
-          prev.map((item) => {
-            if (item._id == appointmentId) {
-              return { ...item, status: status };
-            }
-            return item;
-          })
-        );
-      },
-      setShowError,
-      setError,
-    });
-  }
-
-  const actions = appointments.map((item) => (
-    <>
-      <Icon
-        disabled={!(item.status == "upcoming" || item.status == "rescheduled")}
-        title="Complete Appointment"
-        onClick={() => {
-          updateAppointment(item._id, "completed");
-        }}
-      >
-        <CheckIcon />
-      </Icon>
-      <Icon
-        disabled={!(item.status == "upcoming" || item.status == "rescheduled")}
-        title="Cancel Appointment"
-        onClick={() => {
-          updateAppointment(item._id, "cancelled");
-        }}
-      >
-        <CancelIcon disabled={!(item.status == "upcoming" || item.status == "rescheduled")} />
-      </Icon>
-    </>
-  ));
-
-  const tableRows = appointments.map((item, index) => {
-    return <Appointment actions={actions[index]} appointment={item} attributes={attributes} />;
+  const tableRows = appointments.map((item) => {
+    return (
+      <>
+        <Appointment
+          actions={<DoctorAppointmentActions item={item} />}
+          appointment={item}
+          attributes={attributes}
+        />
+      </>
+    );
   });
 
   function addAppointment(selectedDate, endHour, startHour) {
@@ -168,8 +131,13 @@ const Page = () => {
           setError,
           setLoading,
           noRecords: "No Appointments Found",
+          allData,
           setAllData,
           tableRows,
+          popUpDisplay,
+          setPopUpDisplay,
+          popUpElement,
+          setPopUpElement,
         }}
         title="Appointments"
         filters={filters}
