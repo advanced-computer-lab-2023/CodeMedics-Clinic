@@ -88,7 +88,7 @@ function ReschedulePopUp({
 
     PATCH({
       url: `${patchUrl}/${oldApp._id}`,
-      body: { status: "unresrved", patientUsername: null },
+      body: { status: "unreserved", patientUsername: null },
       setShowError,
       setError,
       updater: () => {
@@ -100,12 +100,15 @@ function ReschedulePopUp({
                 if (item._id == oldApp._id) {
                   return {
                     ...item,
-                    _id: newApp._id,
-                    status: "rescheduled",
-                    patientUsername: oldApp.patientUsername,
+                    status: "unreserved",
+                    patientUsername: null,
                   };
                 }
-                return { ...item, _id: oldApp._id, status: "unreserved", patientUsername: null };
+                return {
+                  ...item,
+                  status: "rescheduled",
+                  patientUsername: oldApp.patientUsername,
+                };
               } else {
                 if (item._id != newApp._id) return item;
                 return { ...item, status: "upcoming", patientUsername: patient.username };
