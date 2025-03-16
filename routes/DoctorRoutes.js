@@ -109,6 +109,7 @@ router.get("/:doctorUsername/chats", getDoctorChats);
 router.get("/chats/:chatId/messages", getMessages);
 router.get("/:doctorUsername/prescriptions", getPrescriptions);
 router.get("/patients/:patientUsername/health-records", viewHealthRecords);
+router.get("/:doctorUsername/messages", getDoctorMessages);
 
 router.post("/:doctorUsername/download-prescription-pdf", downloadPrescription);
 router.post(
@@ -131,7 +132,6 @@ router.patch(
   updatePrescription
 );
 router.patch("/:doctorUsername", changePassword);
-
 
 router.delete("/appointments/:appointmentId", DeleteAppointment);
 router.delete(
