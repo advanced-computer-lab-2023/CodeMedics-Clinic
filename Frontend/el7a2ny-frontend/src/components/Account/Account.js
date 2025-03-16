@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import AccountCard from "./AccountCard";
 import AccountDetails from "./AccountDetails";
-function Account({ user }) {
+function Account({ user, fields, setError, setShowError }) {
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={6} lg={4} sx={{ px: 2 }}>
@@ -14,7 +14,12 @@ function Account({ user }) {
         />
       </Grid>
       <Grid xs={12} md={6} lg={8}>
-        <AccountDetails user={user} />
+        <AccountDetails
+          user={user}
+          fields={fields}
+          setError={setError}
+          setShowError={setShowError}
+        />
       </Grid>
     </Grid>
   );
