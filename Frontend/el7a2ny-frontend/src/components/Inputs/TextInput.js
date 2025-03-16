@@ -11,7 +11,7 @@ function TextInput({ option, setValue, defaultValue, type, disabled, addMargin }
       onChange={(event) => {
         setValue(event.target.value);
       }}
-      sx={{ marginBottom: addMargin ? 2 : null, borderRadius: 4, marginTop: addMargin ? 2 : null }}
+      sx={{ marginBottom: addMargin ? 2 : null, borderRadius: 4, marginTop: addMargin ? 2 : null, maxWidth: 500 }}
       InputLabelProps={{ shrink: true }}
     />
   );
