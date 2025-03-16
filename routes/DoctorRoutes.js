@@ -131,7 +131,7 @@ router.patch(
   "/:doctorUsername/prescriptions/:prescriptionId",
   updatePrescription
 );
-router.patch("/:doctorUsername", changePassword);
+router.patch("/:doctorUsername", updateDoctor);
 
 router.delete("/appointments/:appointmentId", DeleteAppointment);
 router.delete(
