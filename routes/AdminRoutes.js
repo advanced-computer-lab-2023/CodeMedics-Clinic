@@ -26,20 +26,18 @@ const Doctor = require('../models/Doctor');
 //router.use(isAuth);
 //admin
 
-
-router.get('/', adminGetter.viewAdminPanel);
+router.get('/',  viewAdmins);
 router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
 router.get('/viewDoctorApplications',  viewDoctorApplications);
 router.get('/viewDoctors',  viewDoctors);
 router.get('/viewPatients',  viewPatients);
-router.get('/viewAdmins',  viewAdmins);
 
+router.post('/', addAdmin);
 router.post('/changePassword', changePassword);
 router.post('/removePatient', removePatient);
 router.post('/removeDoctor', removePatient);
-router.post('/removeAdmin', removeAdmin);
-router.post('/addAdmin', addAdmin);
+router.delete('/:adminUsername', removeAdmin);
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
