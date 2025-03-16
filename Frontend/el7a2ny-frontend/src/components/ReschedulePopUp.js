@@ -23,9 +23,11 @@ function ReschedulePopUp({
   patient,
   followUp,
 }) {
-  const { setShowError, setError, setAllData, setPopUpDisplay, setPopUpElement, reject } =
+  const { setShowError, setError, setAllData, setPopUpDisplay, setPopUpElement, allData, reject } =
     useContext(TableContext);
-  const [unreservedAppointments, setUnreservedAppointments] = useState([]);
+  const [unreservedAppointments, setUnreservedAppointments] = useState(
+    allData ? allData.filter((item) => item.status == "unreserved") : []
+  );
   const unreservedAppointmentsElements = unreservedAppointments.map((item) => {
     return (
       <Row key={item._id}>
@@ -52,7 +54,7 @@ function ReschedulePopUp({
       actionName="Close"
       setPopUpDisplay={setPopUpDisplay}
     >
-      {loading ? (
+      {loading && !allData ? (
         <LoadingSpinner />
       ) : (
         <Table>
@@ -123,16 +125,17 @@ function ReschedulePopUp({
       setPopUpDisplay(true);
       setPopUpElement(reschedulePopUp);
     }
-  }, [rescheduling, loading]);
+  }, [rescheduling, loading, allData]);
 
-  useGet({
-    url: `${getUrl}?status=unreserved`,
-    setData: setUnreservedAppointments,
-    setLoading: setLoading,
-    setShowError,
-    setError,
-    dependency: appointment ? [appointment.doctorUsername, appointment.patientUsername] : [],
-  });
+  if (!allData)
+    useGet({
+      url: `${getUrl}?status=unreserved`,
+      setData: setUnreservedAppointments,
+      setLoading: setLoading,
+      setShowError,
+      setError,
+      dependency: appointment ? [appointment.doctorUsername, appointment.patientUsername] : [],
+    });
 
   return <> </>;
 }
