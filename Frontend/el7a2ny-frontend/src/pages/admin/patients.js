@@ -19,7 +19,7 @@ const Page = () => {
   const [searchName, setSearchName] = useState("");
 
   const filters = [
-    { type: "text", name: "Search Admin Name", state: searchName, setState: setSearchName },
+    { type: "text", name: "Search patient Name", state: searchName, setState: setSearchName },
   ];
 
   function filterData() {
