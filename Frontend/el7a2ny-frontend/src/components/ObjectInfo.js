@@ -20,12 +20,10 @@ function ObjectInfo({ obj, attributes }) {
     } else if (item === "status") {
       content = <SeverityPill color={statusMap[obj.status]}>{obj.status}</SeverityPill>;
     } else if (item == "filled") {
-      const str = obj.filled ? "filled" : "unfilled"
-      content = (
-        <SeverityPill color={statusMap[str]}>
-          {str}
-        </SeverityPill>
-      );
+      const str = obj.filled ? "filled" : "unfilled";
+      content = <SeverityPill color={statusMap[str]}>{str}</SeverityPill>;
+    } else if (item == "name") {
+      content = `${obj.firstName} ${obj.lastName}`;
     } else {
       content = obj[item];
     }
