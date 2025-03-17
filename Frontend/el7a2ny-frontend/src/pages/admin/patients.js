@@ -1,132 +1,101 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
-import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
-import { PatientTable } from 'src/sections/admin/Patients/Patient-Table';
-import { PatientsSearch } from 'src/sections/admin/Patients/patients-search';
-import { applyPagination } from 'src/utils/apply-pagination';
-import Message from 'src/components/Miscellaneous/Message';
+import { useState } from "react";
+import { Box, Container, Stack, TableCell, TableRow, Typography } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
+import { PatientTable } from "src/sections/admin/Patients/Patient-Table";
+import { PatientsSearch } from "src/sections/admin/Patients/patients-search";
+import Message from "src/components/Miscellaneous/Message";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { Table } from "src/components/Table/Table";
+import { Row } from "src/sections/admin/Patients/Patient-row";
+import ObjectInfo from "src/components/ObjectInfo";
+import ButtonElement from "src/components/ButtonElement";
 
-const axios = require('axios');
-
-const now = new Date();
-
-const useCustomers = (data, page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [data, page, rowsPerPage]
-  );
-};
-
-const useCustomerIds = (customers) => {
-  return useMemo(
-    () => {
-      return customers.map((customer) => customer.id);
-    },
-    [customers]
-  );
-};
+const columns = ["name", "username", "email", "gender", "phone", "actions"];
 
 const Page = () => {
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(data, page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
+  const [allData, setAllData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetch('http://localhost:8000/admin/viewPatients') // done new Route
-      .then((res) => {
-        if (res.status == 401) {
-          throw new Error('Error while fetching data');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data['patients']) {
-          console.log(data['patients']);
-        setData(data['patients']);
-        }
-  })
-    .catch((err) => {
-      console.log(err);
-      setShowError(true);
-      setErrorMessage(err.response.data.message);
+  const [searchName, setSearchName] = useState("");
+
+  const filters = [
+    { type: "text", name: "Search Admin Name", state: searchName, setState: setSearchName },
+  ];
+
+  function filterData() {
+    return allData.filter((item) => `${item.firstName} ${item.lastName}`.includes(searchName));
+  }
+
+  const data = filterData();
+
+  useGet({
+    url: `${BACKEND_ROUTE}/admins/patients`,
+    setData: setAllData,
+    setLoading,
+    setShowError,
+    setError,
+  });
+
+  const handleRemove = async (patientUsername) => {
+    DELETE({
+      url: `${BACKEND_ROUTE}/admins/patients/${patientUsername}`,
+      setShowError,
+      setError,
+      updater: () => {
+        window.location.reload();
+      },
     });
-}, []);
-const handlePageChange = useCallback(
-  (event, value) => {
-    setPage(value);
-  },
-  []
-);
+  };
 
-const handleRowsPerPageChange = useCallback(
-  (event) => {
-    setRowsPerPage(event.target.value);
-  },
-  []
-);
-
-return (
-  <>
-    <Head>
-      <title>
-        Patients
-      </title>
-    </Head>
-    <Message condition={showError} setCondition={setShowError} message={errorMessage} title="Error" buttonAction="Close" />
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth="xl">
-        <Stack spacing={3}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            spacing={4}
-          >
-            <Stack spacing={1}>
-              <Typography variant="h4">
-                Patients
-              </Typography>
-            </Stack>
-          </Stack>
-          <PatientsSearch/>
-          <PatientTable
-            count={data.length}
-            items={customers}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            page={page}
-            rowsPerPage={rowsPerPage}
+  const tableRows = data.map((item) => {
+    return (
+      <TableRow>
+        <ObjectInfo obj={item} attributes={["name", "username", "email", "gender", "number"]} />
+        <TableCell>
+          <ButtonElement
+            actionName="Remove"
+            onClick={() => {
+              console.log("removing", item, item.username);
+              const patientUsername = item.username;
+              handleRemove(patientUsername);
+            }}
           />
-        </Stack>
-      </Container>
-    </Box>
-  </>
-);
-}
-;
+        </TableCell>
+      </TableRow>
+    );
+  });
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+  return (
+    <>
+      <Table
+        value={{
+          data,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Patients Found",
+          allData,
+          setAllData,
+          tableRows,
+        }}
+        title="Patients"
+        filters={filters}
+      />
+      <Message
+        title="Error"
+        message={error}
+        condition={showError}
+        setCondition={setShowError}
+        buttonAction={"Close"}
+      />
+    </>
+  );
+};
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
