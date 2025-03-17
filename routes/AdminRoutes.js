@@ -31,13 +31,15 @@ router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
 router.get('/viewDoctorApplications',  viewDoctorApplications);
 router.get('/viewDoctors',  viewDoctors);
-router.get('/viewPatients',  viewPatients);
+router.get('/patients',  viewPatients);
 
 router.post('/', addAdmin);
 router.post('/changePassword', changePassword);
-router.post('/removePatient', removePatient);
+router.delete('patients/:patientUsername', removePatient);
 router.post('/removeDoctor', removePatient);
 router.delete('/:adminUsername', removeAdmin);
+
+
 
 router.post('/createAdmin', (req, res) => {
     AdminController.createAdmin(req, res).then();
