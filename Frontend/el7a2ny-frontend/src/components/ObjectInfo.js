@@ -1,5 +1,6 @@
 import { TableCell } from "@mui/material";
 import { SeverityPill } from "./severity-pill";
+import DoctorDocument from "./DoctorDocument";
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const statusMap = {
   filled: "success",
@@ -24,6 +25,14 @@ function ObjectInfo({ obj, attributes }) {
       content = <SeverityPill color={statusMap[str]}>{str}</SeverityPill>;
     } else if (item == "name") {
       content = `${obj.firstName} ${obj.lastName}`;
+    } else if (item == "documents") {
+      content = (
+        <>
+          <DoctorDocument title="National ID" document={item.idDocument}/>
+          <DoctorDocument title="Medical License" document={item.medicalLicense}/>
+          <DoctorDocument title="Medical Degree" document={item.medicalDegree}/>
+        </>
+      );
     } else {
       content = obj[item];
     }
