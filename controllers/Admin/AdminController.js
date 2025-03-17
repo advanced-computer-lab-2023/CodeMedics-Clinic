@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const nodemailer = require("nodemailer");
+const { validateDoctor } = require("../../utils/validator.js");
 
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (username) => {
@@ -95,20 +96,13 @@ const removeUser = asyncHandler(async (req, res) => {
   return res.status(201).json(Username + "'s account has been Deleted!");
 });
 
-const getDoctorsReg = asyncHandler(async (req, res) => {
-  const Username = req.body.Username;
-
+const getDoctorsReg = async (req, res) => {
   const doctors = await doctorModel.find({
-    Username: Username,
-    Status: "Pending",
+    status: "pending",
   });
 
-  if (doctors.length === 0) {
-    return res.status(404).json({ message: "No doctor applications found" });
-  }
-
-  return res.status(200).json(doctors);
-});
+  return res.status(200).json({ data: doctors });
+};
 
 const getPackages = asyncHandler(async (req, res) => {
   try {
@@ -327,6 +321,35 @@ const acceptRejectDoctorRequest = async (req, res) => {
   }
 };
 
+const rejectDoctorRequest = async (req, res) => {
+  const { doctorUsername } = req.params;
+  try {
+    await validateDoctor(doctorUsername, res);
+    await doctorModel.deleteOne({ username: doctorUsername });
+    return res
+      .status(201)
+      .json({ message: "Doctor request rejected and record deleted" });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const acceptDoctorRequest = async (req, res) => {
+  const { doctorUsername } = req.params;
+  try {
+    const doctor = await validateDoctor(doctorUsername, res);
+    doctor.status = "contract";
+    await doctor.save();
+    return res
+      .status(201)
+      .json({ message: "doctor status updated successfully" });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   createAdmin,
   getAllAdmins,
@@ -338,5 +361,7 @@ module.exports = {
   updatePackage,
   getPackages,
   changePassword,
+  acceptDoctorRequest,
+  rejectDoctorRequest,
   acceptRejectDoctorRequest,
 };
