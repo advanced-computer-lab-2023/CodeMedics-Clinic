@@ -1,9 +1,7 @@
-
-const Patient = require('../../models/Patient'); 
+const Patient = require("../../models/Patient");
 const viewPatients = async (req, res) => {
-    const patients = await Patient.find();
-    console.log(patients);
-    return res.status(200).json({patients});
+  const patients = await Patient.find();
+  return res.status(200).json({ data: patients });
 };
 
 module.exports = viewPatients;
