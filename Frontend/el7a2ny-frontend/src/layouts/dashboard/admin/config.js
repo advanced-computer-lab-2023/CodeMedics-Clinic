@@ -53,15 +53,6 @@ export const items = [
     ),
   },
   {
-    title: "Account",
-    path: "/admin/account",
-    icon: (
-      <SvgIcon fontSize="small">
-        <UserIcon />
-      </SvgIcon>
-    ),
-  },
-  {
     title: "Settings",
     path: "/admin/settings",
     icon: (
