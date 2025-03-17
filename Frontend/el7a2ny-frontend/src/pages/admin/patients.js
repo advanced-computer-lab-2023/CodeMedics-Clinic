@@ -7,6 +7,7 @@ import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { Table } from "src/components/Table/Table";
 import ObjectInfo from "src/components/ObjectInfo";
 import ButtonElement from "src/components/ButtonElement";
+import { DELETE } from "src/project-utils/helper-functions";
 
 const columns = ["name", "username", "email", "gender", "phone", "actions"];
 
