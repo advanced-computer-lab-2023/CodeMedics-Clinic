@@ -30,13 +30,13 @@ router.get('/',  viewAdmins);
 router.get('/getPackages', getPackages);
 router.get('/packageManager', adminGetter.viewPackageManager);
 router.get('/viewDoctorApplications',  viewDoctorApplications);
-router.get('/viewDoctors',  viewDoctors);
+router.get('/doctors',  viewDoctors);
 router.get('/patients',  viewPatients);
 
 router.post('/', addAdmin);
 router.post('/changePassword', changePassword);
 router.delete('patients/:patientUsername', removePatient);
-router.post('/removeDoctor', removePatient);
+router.delete('/doctors/:doctorUsername', removeDoctor);
 router.delete('/:adminUsername', removeAdmin);
 
 
