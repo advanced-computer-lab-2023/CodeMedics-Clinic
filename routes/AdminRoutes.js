@@ -34,7 +34,7 @@ router.get('/doctors',  viewDoctors);
 router.get('/patients',  viewPatients);
 
 router.post('/', addAdmin);
-router.post('/changePassword', changePassword);
+router.patch('/:adminUsername', changePassword);
 router.delete('patients/:patientUsername', removePatient);
 router.delete('/doctors/:doctorUsername', removeDoctor);
 router.delete('/:adminUsername', removeAdmin);
