@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { Box, Container, Stack, TableCell, TableRow, Typography } from "@mui/material";
+import { TableCell, TableRow } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
-import { PatientTable } from "src/sections/admin/Patients/Patient-Table";
-import { PatientsSearch } from "src/sections/admin/Patients/patients-search";
 import Message from "src/components/Miscellaneous/Message";
 import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { Table } from "src/components/Table/Table";
-import { Row } from "src/sections/admin/Patients/Patient-row";
 import ObjectInfo from "src/components/ObjectInfo";
 import ButtonElement from "src/components/ButtonElement";
 
