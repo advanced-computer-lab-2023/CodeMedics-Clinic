@@ -107,153 +107,114 @@ const getDoctorsReg = async (req, res) => {
 const getPackages = asyncHandler(async (req, res) => {
   try {
     const packages = await packageModel.find();
-    return res.status(200).json(packages);
+    return res.status(200).json({ data: packages });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.log("error", error.message);
+    return res.status(500).json({ message: "Server Error" });
   }
 });
 
 const addPackage = async (req, res) => {
-  //add a package to the database
-  if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({ message: "Request body is empty" });
-  }
-  const requiredVariables = [
-    "Name",
-    "Price",
-    "SessionDiscount",
-    "MedicineDiscount",
-    "FamilyDiscount",
-  ];
+  try {
+    const requiredVariables = [
+      "name",
+      "price",
+      "sessionDiscount",
+      "medicineDiscount",
+      "familyDiscount",
+    ];
 
-  for (const variable of requiredVariables) {
-    if (!req.body[variable]) {
-      return res
-        .status(400)
-        .json({ message: `Missing ${variable} in the request body` });
+    for (const variable of requiredVariables) {
+      if (!req.body[variable]) {
+        return res
+          .status(400)
+          .json({ message: `Please fill the missing fields` });
+      }
     }
-  }
-  const { Name, Price, SessionDiscount, MedicineDiscount, FamilyDiscount } =
-    req.body;
-  if ((await packageModel.findOne({ Name: Name })) === null) {
-    const newPackage = new packageModel({
-      Name,
-      Price,
-      SessionDiscount,
-      MedicineDiscount,
-      FamilyDiscount,
-    });
-    try {
+    const { name, price, sessionDiscount, medicineDiscount, familyDiscount } =
+      req.body;
+    if ((await packageModel.findOne({ name: name })) === null) {
+      const newPackage = new packageModel({
+        name,
+        price,
+        sessionDiscount,
+        medicineDiscount,
+        familyDiscount,
+      });
       await newPackage.save();
       return res.status(201).json({
-        message: `${Name} Package created successfully!`,
-        package: {
-          _id: newPackage._id,
-          Name: newPackage.Name,
-          Price: newPackage.Price,
-          SessionDiscount: newPackage.SessionDiscount,
-          MedicineDiscount: newPackage.MedicineDiscount,
-          FamilyDiscount: newPackage.FamilyDiscount,
-        },
+        message: `Package created successfully!`,
       });
-    } catch (error) {
-      return res.status(409).json({ message: error.message });
+    } else {
+      console.log("Package already exists");
+      return res.status(400).json({ message: "Package name already exists" });
     }
-  } else {
-    console.log("Package already exists");
-    return res.status(400).json({ message: "Package name already exists" });
+  } catch (error) {
+    console.log("error", error.message);
+    return res.status(500).json({ message: "Server Error" });
   }
 };
 
 const removePackage = async (req, res) => {
-  // delete a package from the database
-  if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({ message: "Request body is empty" });
-  }
-
-  // Check if 'Name' is present in the request body
-  if (!req.body["Name"] || req.body["Name"].trim() === "") {
-    return res
-      .status(400)
-      .json({ message: "Missing Name in the request body" });
-  }
-
-  const { Name } = req.body;
-  const caseInsensitiveNameQuery = {
-    Name: { $regex: new RegExp(`^${Name}$`, "i") },
-  };
-
   try {
+    const { packageName } = req.params;
+    const caseInsensitiveNameQuery = {
+      name: { $regex: new RegExp(`^${packageName}$`, "i") },
+    };
+
     const deletedPackage = await packageModel.findOneAndDelete(
       caseInsensitiveNameQuery
     );
 
     if (deletedPackage) {
-      return res.status(200).json(`${Name} has been deleted`);
+      return res.status(200).json(`${packageName} has been deleted`);
     } else {
-      return res
-        .status(404)
-        .json({ message: "Package not found in the database!" });
+      return res.status(404).json({ message: "Package not found" });
     }
   } catch (error) {
-    return res.status(500).json({ message: "Error deleting package" });
+    console.log("error", error.message);
+    return res.status(500).json({ message: "Sever Error" });
   }
 };
 
 const updatePackage = async (req, res) => {
-  // Check if request body is empty
-  if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({ message: "Request body is empty" });
-  }
-
-  // Check if 'Name' is present in the request body
-  if (!req.body["Name"]) {
-    return res
-      .status(400)
-      .json({ message: "Missing Name in the request body" });
-  }
-
-  const { Name, Price, SessionDiscount, MedicineDiscount, FamilyDiscount } =
-    req.body;
-
-  // Check which variables (besides Name) exist in the request body
-  const updateFields = {};
-
-  if (Price !== undefined && Price !== "") {
-    updateFields.Price = Price;
-  }
-
-  if (SessionDiscount !== undefined && SessionDiscount !== "") {
-    updateFields.SessionDiscount = SessionDiscount;
-  }
-
-  if (MedicineDiscount !== undefined && MedicineDiscount !== "") {
-    updateFields.MedicineDiscount = MedicineDiscount;
-  }
-
-  if (FamilyDiscount !== undefined && FamilyDiscount !== "") {
-    updateFields.FamilyDiscount = FamilyDiscount;
-  }
-
   try {
+    const { name, price, sessionDiscount, medicineDiscount, familyDiscount } =
+      req.body;
+    const updateFields = {};
+
+    if (price !== undefined && price !== "") {
+      updateFields.price = price;
+    }
+
+    if (sessionDiscount !== undefined && sessionDiscount !== "") {
+      updateFields.sessionDiscount = sessionDiscount;
+    }
+
+    if (medicineDiscount !== undefined && medicineDiscount !== "") {
+      updateFields.medicineDiscount = medicineDiscount;
+    }
+
+    if (familyDiscount !== undefined && familyDiscount !== "") {
+      updateFields.familyDiscount = familyDiscount;
+    }
+
     const updatedPackage = await packageModel.findOneAndUpdate(
-      { Name: Name },
+      { name: name },
       { $set: updateFields },
       { new: true }
     );
 
     if (updatedPackage) {
       return res.status(200).json({
-        message: Name + " has been updated!",
-        updatedPackage: updatedPackage.toJSON(), // Convert the Mongoose model to JSON
+        message: "Package has been updated!",
       });
     } else {
-      return res
-        .status(404)
-        .json({ message: "Package not found in the database!" });
+      return res.status(404).json({ message: "Package not found" });
     }
   } catch (error) {
-    return res.status(500).json({ message: "Error updating package" });
+    console.log("error", error.message);
+    return res.status(500).json({ message: "Sever Error" });
   }
 };
 
@@ -276,48 +237,6 @@ const changePassword = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ message: "Internal Sever Error" });
-  }
-};
-
-// In AdminController.js
-
-const acceptRejectDoctorRequest = async (req, res) => {
-  const { username, action } = req.body;
-  console.log("I am here");
-  try {
-    // Find the doctor by username
-    const doctor = await doctorModel.findOne({ Username: username });
-    console.log(username, action);
-    console.log(doctor);
-    if (!doctor) {
-      return res
-        .status(404)
-        .json({ message: "Doctor request not found or already processed" });
-    }
-
-    // Update the doctor's status based on the action (Accept or Reject)
-    if (action === "accept") {
-      doctor.Status = "Contract";
-    } else if (action === "agree") {
-      doctor.Status = "Approved";
-    } else if (action === "reject") {
-      // If rejected, delete the doctor's record from the database
-      await doctorModel.deleteOne({ Username: username });
-      // Return success message or any relevant information
-      return res
-        .status(200)
-        .json({ message: "Doctor request rejected and record deleted" });
-    } else {
-      return res.status(400).json({ message: "Invalid action" });
-    }
-
-    // Save the updated doctor
-    await doctor.save();
-
-    // Return the updated doctor
-    return res.status(200).json(doctor);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -363,5 +282,4 @@ module.exports = {
   changePassword,
   acceptDoctorRequest,
   rejectDoctorRequest,
-  acceptRejectDoctorRequest,
 };
