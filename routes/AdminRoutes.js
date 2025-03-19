@@ -31,7 +31,7 @@ const Doctor = require("../models/Doctor");
 //admin
 
 router.get("/", viewAdmins);
-router.get("/getPackages", getPackages);
+router.get("/packages", getPackages);
 router.get("/viewDoctorApplications", viewDoctorApplications);
 router.get("/doctors", viewDoctors);
 router.get("/doctors/applications", AdminController.getDoctorsReg);
@@ -60,9 +60,14 @@ router.get("/getAllAdmins", (req, res) => {
 
 //doctor
 
-router.patch("/doctors/:doctorUsername/accept", AdminController.acceptDoctorRequest);
-router.patch("/doctors/:doctorUsername/reject", AdminController.rejectDoctorRequest);
-
+router.patch(
+  "/doctors/:doctorUsername/accept",
+  AdminController.acceptDoctorRequest
+);
+router.patch(
+  "/doctors/:doctorUsername/reject",
+  AdminController.rejectDoctorRequest
+);
 
 router.post("/download-contract", async (req, res) => {
   try {
@@ -84,13 +89,13 @@ router.post("/download-contract", async (req, res) => {
 
 //packages
 
-router.post("/addPackage", (req, res) => {
+router.post("/packages", (req, res) => {
   AdminController.addPackage(req, res).then();
 });
-router.delete("/removePackage", (req, res) => {
+router.delete("/packages/:packageName", (req, res) => {
   AdminController.removePackage(req, res).then();
 });
-router.patch("/updatePackage", (req, res) => {
+router.patch("/packages/:packageName", (req, res) => {
   AdminController.updatePackage(req, res).then();
 });
 
