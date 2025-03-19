@@ -1,110 +1,136 @@
-const Prescription = require('../../models/Prescription');
-const Medicine = require('../../models/Medicine');
-const { getUsername } = require('../../config/infoGetter');
-const Doctor = require('../../models/Doctor');
-const Patient = require('../../models/Patient');
-const Appointment = require('../../models/Appointment');
-
+const Prescription = require("../../models/Prescription");
+const Medicine = require("../../models/Medicine");
+const { getUsername } = require("../../config/infoGetter");
+const Doctor = require("../../models/Doctor");
+const Patient = require("../../models/Patient");
+const Appointment = require("../../models/Appointment");
 
 exports.addMedicineToPrescription = async (req, res) => {
   try {
-    const doctorUsername = await getUsername(req, res);
-    const { prescriptionID, medicineName, dosage } = req.body;
-    console.log("in the add medicine to prescription", prescriptionID, medicineName, dosage);
-    if(isNaN(parseInt(dosage))){
-      return res.status(404).json({message: "Dosage Must be a number"});
+    const { prescriptionId, doctorUsername } = req.params;
+    const { medicineName, dosage } = req.body;
+    if (parseInt(dosage) <= 0) {
+      return res
+        .status(404)
+        .json({ message: "Dosage Must be a positive number" });
     }
 
-    if (!doctorUsername) {
-      return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
-    }
+    const prescription = await Prescription.findOne({ _id: prescriptionId });
 
-    // const appointmentIds = doctor.Appointments;
-    // const hasCompletedAppointment = await Appointment.exists({
-    //     _id: { $in: appointmentIds },
-    //     patient: patientUsername,
-    //     status: 'completed',
-    // });
-
-    // if (!hasCompletedAppointment) {
-    //     return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
-    // }
-
-    const prescription = await Prescription.findOne({ _id:prescriptionID });
-  
     if (!prescription) {
-      return res.status(404).json({ message: 'Prescription not found or doctor does not have access.' });
+      return res.status(404).json({
+        message: "Prescription not found",
+      });
     }
 
     const medicine = await Medicine.findOne({ name: medicineName });
 
-    if (!medicine || medicine.availableQuantity == 0 ) {
-      return res.status(404).json({ message: 'Medicine not available in the Pharmacy.' });
+    if (!medicine || medicine.availableQuantity == 0) {
+      return res
+        .status(404)
+        .json({ message: "Medicine not available in the Pharmacy." });
     }
 
-
-    const medicineData = { drugName: medicineName };
-    if (dosage) {
-      medicineData.dosage = dosage;
+    const medicineData = { drugName: medicineName, dosage };
+    let found = false;
+    for (const drug of prescription.drug) {
+      if (drug.drugName == medicineName) {
+        drug.dosage = dosage;
+        found = true;
+        break;
+      }
     }
-    
-    prescription.Drug.push(medicineData);    
+    if (!found) prescription.drug.push(medicineData);
     await prescription.save();
 
-    res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
+    res.status(201).json({
+      message: "Medicine added to prescription successfully",
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
+exports.updatePrescription = async (req, res) => {
+  try {
+    const { prescriptionId, doctorUsername } = req.params;
+    const { status } = req.body;
+    console.log("updating prescription", prescriptionId, status);
+    const prescription = await Prescription.findOne({ _id: prescriptionId });
+
+    if (!prescription) {
+      return res.status(404).json({
+        message: "Prescription not found",
+      });
+    }
+    console.log("prescription", prescription);
+    prescription.filled = status;
+    await prescription.save();
+
+    res.status(201).json({
+      message: "Prescription updated successfully",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error, please try again" });
+  }
+};
 
 exports.removeMedicineFromPrescription = async (req, res) => {
   try {
-    const doctorUsername = await getUsername(req, res);
-    const { prescriptionID, medicineName } = req.body;
-    console.log("in the remove medicine from prescription", prescriptionID, medicineName);
+    const { doctorUsername, prescriptionId, drugName } = req.params;
+    console.log(
+      "in the remove medicine from prescription",
+      prescriptionId,
+      drugName
+    );
     if (!doctorUsername) {
-      return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
+      return res
+        .status(401)
+        .json({ message: "Authentication error: Doctor not logged in." });
     }
 
-    const doctor = await Doctor.findOne({ Username: doctorUsername });
+    const doctor = await Doctor.findOne({ username: doctorUsername });
 
     if (!doctor) {
-      return res.status(404).json({ message: 'Doctor not found.' });
+      return res.status(404).json({ message: "Doctor not found." });
     }
 
-
-    // const appointmentIds = doctor.Appointments;
-    // const hasCompletedAppointment = await Appointment.exists({
-    //     _id: { $in: appointmentIds },
-    //     patient: patientUsername,
-    //     status: 'completed',
-    // });
-
-    // if (!hasCompletedAppointment) {
-    //     return res.status(403).json({ error: 'Doctor never had completed appointments with this patient' });
-    // }
-
-    const prescription = await Prescription.findOne({ _id:prescriptionID });
+    const prescription = await Prescription.findOne({ _id: prescriptionId });
 
     if (!prescription) {
-      return res.status(404).json({ message: 'Prescription not found or doctor does not have access.' });
+      return res.status(404).json({
+        message: "Prescription not found or doctor does not have access.",
+      });
     }
 
-    const medicineIndex = prescription.Drug.findIndex(med => med.drugName === medicineName);
+    const medicineIndex = prescription.drug.findIndex(
+      (med) => med.drugName === drugName
+    );
     if (medicineIndex === -1) {
-      return res.status(404).json({ message: 'Medicine not found in the prescription.' });
+      return res
+        .status(404)
+        .json({ message: "Medicine not found in the prescription." });
     }
 
-    prescription.Drug.splice(medicineIndex, 1);
-    if (prescription.Drug.length === 0) {
-      await Prescription.deleteOne({ _id: prescriptionID });
-      return res.status(200).json({ message: 'Prescription deleted successfully' });
+    prescription.drug.splice(medicineIndex, 1);
+    if (prescription.drug.length === 0) {
+      await Prescription.deleteOne({ _id: prescriptionId });
+      return res
+        .status(200)
+        .json({ message: "Prescription deleted successfully" });
     }
     await prescription.save();
-   
-    res.status(200).json({ message: 'Medicine removed from prescription successfully', prescription });
+
+    res.status(201).json({
+      message: "Medicine removed from prescription successfully",
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };

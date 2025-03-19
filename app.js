@@ -1,179 +1,166 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const dotenv = require('dotenv').config();
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const colors = require('colors');
-const cors = require('cors');
+const express = require("express");
+const path = require("path");
+const dotenv = require("dotenv").config();
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const colors = require("colors");
+const { v4: uuidV4 } = require("uuid");
+const cors = require("cors");
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: `http://localhost:${process.env.FRONT_END_PORT}`,
   credentials: true,
-  optionSuccessStatus: 200
+  optionSuccessStatus: 200,
 };
 
+const connectDB = require("./config/MongoDBConnection");
+const adminRoutes = require("./routes/AdminRoutes");
+const DeleteModelRecords = require("./config/DeleteAllRecords");
+const doctorRoutes = require("./routes/DoctorRoutes");
+const patientRoutes = require("./routes/PatientRoutes");
+const genericRoutes = require("./routes/GenericRoutes");
+const chatRoutes = require("./routes/ChatsRoutes");
 
-const stripe = require("stripe")("sk_test_51OA3YuHNsLfp0dKZBQsyFFPLXepbGkt9p5xZzd2Jzzj6zxLqUTY2DYF244qILCi0cfVjg37szrwdXZzin83e5ijm00X5eXuTnM");
-
-const connectDB = require('./config/MongoDBConnection');
-const adminRoutes = require('./routes/AdminRoutes');
-const DeleteModelRecords = require('./config/DeleteAllRecords');
-const doctorRoutes = require('./routes/DoctorRoutes');
-const patientRoutes = require('./routes/PatientRoutes');
-const genericRoutes = require('./routes/GenericRoutes');
-const chatRoutes = require('./routes/ChatsRoutes');
+const {
+  putSocket,
+  getSocket,
+  joinSocket,
+  getUser,
+} = require("./config/socket");
 
 // Connect to MongoDB
-connectDB().then(r => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
+connectDB().then((r) =>
+  console.log("Connected to MongoDB 200 OK".bgGreen.bold)
+);
 
 //Start Express server
 const app = express();
 const Port = process.env.PORT;
 
-const http = require('http');
+const http = require("http");
 
 const server = http.createServer(app);
 
-
-
-const io = require('socket.io')(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
-
 app.use(cors(corsOptions));
-
-const {putSocket, getSocket, joinSocket} = require('./config/socket');
-
-
-// server.listen(5000);
-io.on("connection", (socket) => {
-
-  socket.on("iAmReady", (username) => {
-    console.log("iAmReady: " + username);
-    putSocket(username, socket.id);
-    socket.emit("me", socket.id);
-  });
-
-  socket.on("iWantToJoin", async () => {
-    console.log("iWantToJoin");
-    await joinSocket(socket);
-  });
-
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded")
-  });
-
-  socket.on("callUser", async ({ userToCall, signalData, from, name }) => {
-    const idToCall = await getSocket(userToCall);
-    console.log("callUser: " + userToCall + " with socketID: " + idToCall);
-    io.to(idToCall).emit("callUser", { signal: signalData, from, name });
-  });
-
-  socket.on("answerCall", (data) => {
-    console.log("call answered, " + data.to + " is the caller");
-    io.to(data.to).emit("callAccepted", data.signal)
-  });
-  
-  socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log("User Joined Room: " + room);
-  });
-
-  socket.on("newMessage", async({message, receiver}) => {
-    const socketID = await getSocket(receiver);
-    console.log("newMessage: " + message.content + " to " + receiver + " with socketID: " + socketID);
-    io.to(socketID).emit("newMessage", message);
-  });
-
-  socket.on("newMessagePharmacy", async({message, receiver, sendingToPharmacy}) => {
-    const socketID = await getSocket(receiver);
-    console.log("newMessagePharmacy: " + message.content + " to " + receiver + " with socketID: " + socketID + " sendingToPharmacy: " + sendingToPharmacy);
-    const room = receiver + " room";
-    if(sendingToPharmacy){
-      io.to(room).emit("newMessagePharmacy", message);
-    }else{
-      io.to(socketID).to(room).emit("newMessagePharmacy", message);
-    }
-  });
-});
-
 app.use(express.static("public"));
 app.use(express.json());
 
-
-
 //DeleteModelRecords.deleteAllRecords(); //uncomment this line to delete all records from a specific model
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 server.listen(Port);
 
 console.log("Server running at http://localhost:" + process.env.PORT + "/");
 
-app.set('view engine', 'ejs');
-// const corsOptions = {
-//     origin: 'http://example.com', // Replace with your frontend's URL
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//     credentials: true, // Enable credentials (e.g., cookies, authorization headers)
-// };
-//
-// app.use(cors(corsOptions));
+app.use("/admins", adminRoutes);
+app.use("/doctors", doctorRoutes);
+app.use("/patients", patientRoutes);
+app.use("/", genericRoutes);
+app.use("/chats", chatRoutes);
 
-// routes
+const rooms = new Map();
 
-app.use('/admin', adminRoutes);
-app.use('/doctor', doctorRoutes);
-app.use('/patient', patientRoutes);
-app.use('/', genericRoutes);
-app.use('/chat', chatRoutes);
-
-
-app.post("/package/create-payment-intent", async (req, res) => {
-  // const { items } = req.body;
-  const card = req.body.card;
-  console.log("in the package payment intent");
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 100,
-    currency: "usd",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    }
-  });
-
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
 
-app.post("/create-payment-intent", async (req, res) => {
-  // const { items } = req.body;
-  const card = req.body.card;
-  console.log("in the payment intent");
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 100,
-    currency: "usd",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-    automatic_payment_methods: {
-      enabled: true,
-    }
+io.on("connection", (socket) => {
+  socket.on("iAmReady", (username) => {
+    console.log("iAmReady: " + username, socket.id);
+    io.to(socket.id).emit("me", socket.id);
+    putSocket(username, socket.id);
+    socket.emit("me", socket.id);
   });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
+  socket.on("create-room", (roomId) => {
+    if (rooms.has(roomId)) {
+      return;
+    }
+    rooms.set(roomId, { participants: [] });
+    console.log("room created", roomId);
   });
+
+  socket.on("join-room", (roomId, userId, name) => {
+    if (!rooms.has(roomId)) {
+      socket.emit("invalid-room");
+      return;
+    }
+    const room = rooms.get(roomId);
+    if (room.participants.some((p) => p.userId == userId)) return;
+    console.log("participants", room.participants, { userId, name });
+    console.log(userId);
+    room.participants.push({ userId, name });
+    socket.join(roomId);
+    socket.to(roomId).emit("user-connected", { userId, name });
+
+    socket.emit(
+      "existing-users",
+      room.participants.filter((item) => item.userId !== userId)
+    );
+
+    socket.on("disconnect", () => {
+      const userId = socket.id;
+      room.participants = room.participants.filter(
+        (item) => item.userId !== userId
+      );
+      console.log("disconnecting ", userId);
+      socket.to(roomId).emit("user-disconnected", userId);
+    });
+  });
+
+  socket.on("offer", (userId, offer) => {
+    socket.broadcast.to(userId).emit("offer", socket.id, offer);
+  });
+
+  socket.on("answer", (userId, answer) => {
+    socket.broadcast.to(userId).emit("answer", socket.id, answer);
+  });
+
+  socket.on("ice-candidate", (userId, candidate) => {
+    socket.broadcast.to(userId).emit("ice-candidate", socket.id, candidate);
+  });
+
+  socket.on("newMessage", async ({ message, receiver }) => {
+    const socketId = await getSocket(receiver);
+    console.log(
+      "newMessage: " +
+        message.content +
+        " to " +
+        receiver +
+        " with socketI: " +
+        socketId
+    );
+    io.to(socketId).emit("newMessage", message);
+  });
+
+  socket.on(
+    "newMessagePharmacy",
+    async ({ message, receiver, sendingToPharmacy }) => {
+      const socketId = await getSocket(receiver);
+      console.log(
+        "newMessagePharmacy: " +
+          message.content +
+          " to " +
+          receiver +
+          " with socketId: " +
+          socketId +
+          " sendingToPharmacy: " +
+          sendingToPharmacy
+      );
+      const room = receiver + " room";
+      if (sendingToPharmacy) {
+        io.to(room).emit("newMessagePharmacy", message);
+      } else {
+        io.to(socketId).to(room).emit("newMessagePharmacy", message);
+      }
+    }
+  );
 });
 
 module.exports = app;

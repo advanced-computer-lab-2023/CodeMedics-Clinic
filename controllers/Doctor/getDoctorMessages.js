@@ -1,24 +1,12 @@
-const jwt = require('jsonwebtoken');
-const Doctor = require('../../models/Doctor'); 
-const { getUsername } = require('../../config/infoGetter');
+const { validateDoctor } = require("../../utils/validator");
 
 exports.getDoctorMessages = async (req, res) => {
   try {
-    const doctorUsername = await getUsername(req, res);
-
-    // Now you can use doctorId to retrieve messages
-    const doctor = await Doctor.findOne({ Username: doctorUsername });
-
-    if (!doctor) {
-      console.log('Doctor not found.');
-      return res.status(404).json({ message: 'Doctor not found' });
-    }
-
-    console.log('Doctor found:', doctor);
-
-    res.status(200).json({ messages: doctor.Messages });
+    const { doctorUsername } = req.params;
+    const doctor = await validateDoctor(doctorUsername, res);
+    res.status(200).json({ data: doctor.messages });
   } catch (error) {
-    console.error('Error retrieving doctor messages:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error retrieving doctor messages:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

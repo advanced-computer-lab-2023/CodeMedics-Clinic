@@ -10,7 +10,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
 import { PatientTable } from 'src/sections/admin/Patients/Patient-Table';
 import { PatientsSearch } from 'src/sections/admin/Patients/patients-search';
 import { applyPagination } from 'src/utils/apply-pagination';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const axios = require('axios');
 

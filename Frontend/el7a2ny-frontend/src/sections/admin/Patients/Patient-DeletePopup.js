@@ -16,7 +16,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useRouter } from 'next/navigation';
 const axios = require('axios');
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 export const PatientDeletePopup = (props) => {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');

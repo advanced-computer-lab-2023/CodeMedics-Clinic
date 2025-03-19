@@ -25,7 +25,7 @@ import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
-  const [method, setMethod] = useState('Username');
+  const [method, setMethod] = useState('username');
 
   const formik = useFormik({
     initialValues: {
@@ -59,14 +59,14 @@ const Page = () => {
           .then((data) => {
             console.log('Here ----> ');
             if (data['Type'] === 'Patient') {
-              Cookies.set('username', data['patient']['Username']);
+              Cookies.set('username', data['patient']['username']);
               Cookies.set('isDoctor', false);
               Cookies.set('type', 'patient');
               socket.on('me', (id) => {
-                Cookies.set('socketID', id);
+                Cookies.set('socketId', id);
               });
               socket.emit('iAmReady', Cookies.get('username'));
-              router.push(`/user/doctors`);
+              router.push(`/patient/doctors`);
             } else if (data['Type'] === 'Doctor') {
               console.log(data);
               if (data.doctor.Status == 'Pending') {
@@ -75,21 +75,21 @@ const Page = () => {
                 helpers.setSubmitting(false);
               }
               else if(data.doctor.Status == 'Contract'){
-                Cookies.set('doctor', data['doctor']['Username']);
+                Cookies.set('doctor', data['doctor']['username']);
                 router.push(`/doctor/contract`);
               }
               else {
-                Cookies.set('username', data['doctor']['Username']);
+                Cookies.set('username', data['doctor']['username']);
                 Cookies.set('isDoctor', true);
                 Cookies.set('type', 'doctor');
                 socket.on('me', (id) => {
-                  Cookies.set('socketID', id);
+                  Cookies.set('socketId', id);
                 });
                 socket.emit('iAmReady', Cookies.get('username'));
                 router.push(`/doctor/patients`);
               }
             } else if (data['Type'] === 'Admin') {
-              Cookies.set('username', data['admin']['Username']);
+              Cookies.set('username', data['admin']['username']);
               Cookies.set('type', 'admin');
               router.push(`/admin/admins`);
             }
@@ -137,14 +137,14 @@ const Page = () => {
           .then((data) => {
             console.log('Here ----> ');
             if (data['Type'] === 'Patient') {
-              Cookies.set('username', data['patient']['Username']);
+              Cookies.set('username', data['patient']['username']);
               Cookies.set('isDoctor', false);
               Cookies.set('type', 'patient');
               socket.on('me', (id) => {
-                Cookies.set('socketID', id);
+                Cookies.set('socketId', id);
               });
               socket.emit('iAmReady', Cookies.get('username'));
-              router.push(`/user/doctors`);
+              router.push(`/patient/doctors`);
             } else if (data['Type'] === 'Doctor') {
               console.log(data);
               if (data.doctor.Status == 'Pending') {
@@ -153,21 +153,21 @@ const Page = () => {
                 helpers.setSubmitting(false);
               }
               else if(data.doctor.Status == 'Contract'){
-                Cookies.set('doctor', data['doctor']['Username']);
+                Cookies.set('doctor', data['doctor']['username']);
                 router.push(`/doctor/contract`);
               }
               else {
-                Cookies.set('username', data['doctor']['Username']);
+                Cookies.set('username', data['doctor']['username']);
                 Cookies.set('isDoctor', true);
                 Cookies.set('type', 'doctor');
                 socket.on('me', (id) => {
-                  Cookies.set('socketID', id);
+                  Cookies.set('socketId', id);
                 });
                 socket.emit('iAmReady', Cookies.get('username'));
                 router.push(`/doctor/patients`);
               }
             } else if (data['Type'] === 'Admin') {
-              Cookies.set('username', data['admin']['Username']);
+              Cookies.set('username', data['admin']['username']);
               Cookies.set('type', 'admin');
               router.push(`/admin/admins`);
             }
@@ -319,7 +319,7 @@ const Page = () => {
                 </Alert> */}
               </form>
             )}
-            {method === 'Username' && (
+            {method === 'username' && (
               <form
                 noValidate
                 onSubmit={LoginWithUsername.handleSubmit}

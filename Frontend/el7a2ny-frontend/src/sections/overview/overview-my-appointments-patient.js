@@ -4,7 +4,7 @@ import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { SeverityPill } from 'src/components/severity-pill';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import { List, ListItemButton, ListItem, ListItemText} from '@mui/material';
 import {

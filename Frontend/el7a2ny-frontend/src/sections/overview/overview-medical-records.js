@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
 import FileSaver from 'file-saver';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import {
     Button,

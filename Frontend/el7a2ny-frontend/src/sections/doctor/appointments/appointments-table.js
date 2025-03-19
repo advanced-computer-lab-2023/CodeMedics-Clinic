@@ -3,7 +3,7 @@ import CheckIcon from '@heroicons/react/24/solid/CheckIcon';
 import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 
 import Cookies from 'js-cookie';

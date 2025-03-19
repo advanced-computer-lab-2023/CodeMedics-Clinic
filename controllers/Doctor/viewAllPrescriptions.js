@@ -1,21 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const Prescription = require('../../models/Prescription');
-const doctorSchema = require('../../models/Doctor');
-const { getUsername } = require('../../config/infoGetter');
+const Prescription = require("../../models/Prescription");
 exports.getPrescriptions = async (req, res) => {
-    try {
-      const Username = await getUsername(req, res);
-  
-      
-      const prescriptions = await Prescription.find({ 
-        Doctor: Username 
-      });
-  
-      res.status(200).json(prescriptions);
-    } catch (error) {
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
-
- 
+  try {
+    const { doctorUsername } = req.params;
+    const prescriptions = await Prescription.find({
+      doctorUsername,
+    });
+    res.status(200).json({ data: prescriptions });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};

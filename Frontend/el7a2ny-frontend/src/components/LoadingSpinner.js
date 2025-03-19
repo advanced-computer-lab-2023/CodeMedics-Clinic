@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 const LoadingSpinner = () => {
+  const containerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px 0', 
+  };
 
-    const styles = `
-    .loading-spinner-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
+  const spinnerStyle = {
+    border: '3px solid #f3f3f3', 
+    borderTop: '3px solid #3498db',
+    borderRadius: '50%',
+    width: '40px', 
+    height: '40px',
+    animation: 'spin 1s linear infinite',
+  };
 
-    .loading-spinner {
-      border: 4px solid #f3f3f3; /* Light gray */
-      border-top: 4px solid #3498db; /* Blue */
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-    }
-
+  const keyframes = `
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -26,11 +25,9 @@ const LoadingSpinner = () => {
   `;
 
   return (
-    <div>
-      <style>{styles}</style>
-      <div className="loading-spinner-container">
-          <div className="loading-spinner"></div>
-        </div>
+    <div style={containerStyle}>
+      <style>{keyframes}</style>
+      <div style={spinnerStyle}></div>
     </div>
   );
 };

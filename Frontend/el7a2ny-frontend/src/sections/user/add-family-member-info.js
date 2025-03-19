@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Cookies from 'js-cookie';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 export const AddFamilyMemberInfo = () => {
 

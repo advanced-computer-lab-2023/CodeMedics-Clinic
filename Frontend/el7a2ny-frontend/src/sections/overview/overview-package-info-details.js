@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 export const OverviewPackageInfoDetails = ({ curPackage }) => {
 

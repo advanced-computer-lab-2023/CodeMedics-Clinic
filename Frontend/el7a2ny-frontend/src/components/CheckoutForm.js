@@ -1,137 +1,147 @@
-import React, { useEffect, useState } from "react";
-import Button from '@mui/material/Button';
-import {
-  PaymentElement,
-  useStripe,
-  useElements
-} from "@stripe/react-stripe-js";
+import { useEffect, useState } from "react";
+import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { Typography } from "@mui/material";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
 
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/router';
-export default function CheckoutForm({activeStep, setStep}) {
+export default function CheckoutForm({ appointmentId, patientUsername, packageName }) {
   const stripe = useStripe();
   const elements = useElements();
-
   const router = useRouter();
-  
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const username = Cookies.get('username');
-  const [isDone, setIsDone] = useState(false);
-  const [isPatched, setIsPatched] = useState(false);
-  useEffect(() => {
-    if (isDone) {
-      axios.patch(`http://localhost:8000/patient/bookAppointment?appointmentId=${appointment._id}&patientUsername=${Cookies.get('username')}`)
-      setIsPatched(true);
-    }
-  }
-  , [isDone]);
+
+  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`
 
   useEffect(() => {
-    if (isPatched) {
-      router.push(`/user/doctors`);
-    }
-  }
-  , [isPatched]);
-
-  useEffect(() => {
-    if (!stripe) {
-      return;
-    }
+    if (!stripe) return;
 
     const clientSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret"
     );
 
-    if (!clientSecret) {
-      return;
-    }
+    if (!clientSecret) return;
 
     stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      console.log(paymentIntent.status);
       switch (paymentIntent.status) {
         case "succeeded":
-          {
-            setIsDone(true);
-            setMessage("Payment succeeded!");
-          }
+          setMessage("Payment succeeded.");
           break;
         case "processing":
           setMessage("Your payment is processing.");
           break;
         case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
+          setMessage("Payment failed. Please try another method.");
           break;
         default:
           setMessage("Something went wrong.");
           break;
       }
     });
-  }, [stripe]);
+  }, [stripe, router]);
 
-  const handleSubmit = async (e) => {
+  const handleWalletPayment = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    if (!stripe || !elements) {
-      return;
+    try {
+      await axios.post(
+        `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
+        { paymentMethod: "Wallet", packageName }
+      );
+      router.push("/patient/doctors");
+    } catch (err) {
+      console.log("error", err);
+      setMessage(err.response.data.message || "Payment failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleStripePayment = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
 
     setIsLoading(true);
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        // return_url: "http://localhost:3000/user/orders"
-        return_url: window.location.href
-      },
+      confirmParams: { return_url: `${window.location.origin}/patient/doctors` },
+      redirect: "if_required",
     });
 
-    // This point will only be reached if there is an immediate error when
-    // confirming the payment. Otherwise, your customer will be redirected to
-    // your `return_url`. For some payment methods like iDEAL, your customer will
-    // be redirected to an intermediate site first to authorize the payment, then
-    // redirected to the `return_url`.
-    console.log(error.type);
-    if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(error.message);
-    } else {
-      setMessage("An unexpected error occurred.");
+    if (error) {
+      console.log(error);
+      setMessage(error.message || "An unexpected error occurred.");
+      setIsLoading(false);
+      return;
+    }
+    if (paymentIntent && paymentIntent.status === "succeeded") {
+      try {
+        await axios.post(
+          `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
+          { paymentMethod: "Card", packageName }
+        );
+        router.push("/patient/doctors");
+      } catch (err) {
+        setMessage("Payment succeeded, but failed to update the backend. Please contact support.");
+        console.error("Backend update error:", err);
+      }
     }
 
     setIsLoading(false);
   };
 
-  const paymentElementOptions = {
-    layout: "tabs"
-  }
-
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <form id="payment-form" onSubmit={handleStripePayment} style={{ margin: "40px" }}>
+        <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
+        <button
+          disabled={isLoading || !stripe}
+          type="submit"
+          style={{
+            padding: "10px 15px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            backgroundColor: "#6666FF",
+            color: "white",
+            borderRadius: "20px",
+            cursor: "pointer",
+            marginTop: "20px",
+            opacity: isLoading ? 0.7 : 1,
+          }}
+        >
+          {isLoading ? "Processing..." : "Pay with Card"}
+        </button>
+        {isLoading ? null : (
+          <button
+            type="button"
+            onClick={handleWalletPayment}
+            disabled={isLoading}
+            style={{
+              padding: "10px 15px",
+              fontSize: "18px",
+              fontWeight: "bold",
+              backgroundColor: "#6666FF",
+              color: "white",
+              borderRadius: "20px",
+              cursor: "pointer",
+              marginTop: "20px",
+              marginLeft: "10px",
+              opacity: isLoading ? 0.7 : 1,
+            }}
+          >
+            Pay with Wallet
+          </button>
+        )}
 
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <button
-  disabled={isLoading || !stripe || !elements}
-  id="submit"
-  style={{
-    padding: '10px 15px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    backgroundColor: '#6666FF', // Light Blue color
-    color: 'white',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    marginTop: '20px',
-    transition: 'background-color 0.3s',
-  }}
->
-  <span id="button-text">
-    {isLoading ? <div className="spinner" id="spinner" ></div> : "Pay Order"}
-  </span>
-</button>
-
-      {message && <Typography color="black">{message}</Typography>}
-    </form>
+        {message && (
+          <Typography color={message.includes("success") ? "green" : "red"} sx={{ mt: 2 }}>
+            {message}
+          </Typography>
+        )}
+      </form>
+    </div>
   );
 }

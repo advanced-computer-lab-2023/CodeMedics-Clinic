@@ -5,7 +5,7 @@ import PencilIcon from '@heroicons/react/24/solid/PencilIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import ChevronDownIcon from '@heroicons/react/24/solid/ChevronDownIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/solid/EllipsisVerticalIcon';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import { format } from 'date-fns';
 import {
@@ -95,13 +95,13 @@ export const Row = (props) => {
       },
     });
     if (item === "View Appointments") {
-      router.push(`/doctor/viewAppointments?username=${patient.Username}`)
+      router.push(`/doctor/viewAppointments?username=${patient.username}`)
     }
     else if (item === "View Prescriptions") {
-      router.push(`/doctor/prescriptions?username=${patient.Username}`)
+      router.push(`/doctor/prescriptions?username=${patient.username}`)
     }
     else if (item === "View Health Records") {
-      router.push(`/doctor/medical-history?username=${patient.Username}`)
+      router.push(`/doctor/medical-history?username=${patient.username}`)
     }
     else if (item === "Schedule a Follow-Up") {
       setScheduling(true);
@@ -110,8 +110,8 @@ export const Row = (props) => {
     }
   };
 
-  const acceptRequest = async (appointmentID, patient) => {
-    await axios.patch('http://localhost:8000/patient/bookAppointment?appointmentId='+appointmentID+'&patientUsername='+patient.Username+'&isRequested=true').then((res) => {
+  const acceptRequest = async (appointmentId, patient) => {
+    await axios.patch('http://localhost:8000/patient/bookAppointment?appointmentId='+appointmentId+'&patientUsername='+patient.username+'&isRequested=true').then((res) => {
       console.log("appointment booked");
       setScheduling(false);
       window.location.reload();
@@ -129,14 +129,14 @@ export const Row = (props) => {
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <Typography>
-            {patient.patient.FirstName} {patient.patient.LastName}
+            {patient.patient.firstName} {patient.patient.lastName}
           </Typography>
         </TableCell>
         <TableCell>
-          {patient.patient.Email}
+          {patient.patient.email}
         </TableCell>
         <TableCell>
-          {patient.patient.DateOfBirth}
+          {patient.patient.dateOfBirth}
         </TableCell>
         <TableCell align='right'>
           <div>

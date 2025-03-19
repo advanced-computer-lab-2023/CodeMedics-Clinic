@@ -1,121 +1,108 @@
-const mongoose = require('mongoose');
-const Prescription = require('./Prescription');
-const Cart = require('./Cart');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const patientSchema = new Schema({
-    FirstName: {
-        type: String,
-        required: [true, 'Please enter a first name']
+const patientSchema = new Schema(
+  {
+    firstName: {
+      type: String,
+      required: [true, "Please enter a first name"],
     },
-    LastName: {
-        type: String,
-        required: [true, 'Please enter a last name']
+    lastName: {
+      type: String,
+      required: [true, "Please enter a last name"],
     },
-    Username: {
-        type: String,
-        required: [true, 'Please enter a username']
+    username: {
+      type: String,
+      required: [true, "Please enter a username"],
     },
-    Password: {
-        type: String,
-        required: [true, 'Please enter a password']
+    password: {
+      type: String,
+      required: [true, "Please enter a password"],
     },
-    Email: {
-        type: String,
-        required: [true, 'Please enter an email']
+    email: {
+      type: String,
+      required: [true, "Please enter an email"],
     },
-    DateOfBirth: {
-        type: String,
-        required: true
+    dateOfBirth: {
+      type: String,
+      required: true,
     },
-    Number: {
-        type: String,
-        required: true
+    number: {
+      type: String,
+      required: true,
     },
-    Gender: {
-        type: String,
-        required: true,
+    gender: {
+      type: String,
+      required: true,
     },
-    Prescriptions: {
-        type: [Prescription.schema],
-        required: false
+    emergencyContact: {
+      type: {
+        name: String,
+        number: String,
+        relation: String,
+      },
+      required: false,
     },
-    EmergencyContact: {
-        type: {
-            Name: String,
-            Number: String,
-            Relation: String
-        },
-        required: false
+    familyMembers: {
+      type: [{ relation: String, username: String }],
+      ref: "Patient",
     },
-    Package: {
-        type: String,
-        default: 'Free',
-        required: false
+    familyMembersNoAccount: {
+      type: [Schema.Types.ObjectId],
+      ref: "FamilyMember",
     },
-    FamilyMembers: {
-        type: [{ relation: String, id: Schema.Types.ObjectId }],
-        ref: 'Patient',
+    linked: {
+      type: Schema.Types.ObjectId,
+      required: false,
+      ref: "Patient",
     },
-    FamilyMembersNoAccount: {
-        type: [Schema.Types.ObjectId],
-        ref: 'FamilyMember'
+    healthPackage: {
+      type: {
+        name: String,
+        price: Number,
+        status: String,
+        discount: Number,
+        date: Date,
+        discountEndDate: Date,
+      },
+      default: {
+        name: "Free",
+        price: 0,
+        discount: 0,
+        status: "Inactive",
+        date: null,
+        discountEndDate: null,
+      },
+      required: false,
     },
-    Appointments: {
-        type: [String],
-        required: false
+    wallet: {
+      type: Number,
+      default: 0,
+      required: false,
     },
-    Linked: {
-        type: Schema.Types.ObjectId,
-        required: false,
-        ref: 'Patient'
-    },
-    Cart :{
-        type: Cart.schema,
-        required: false
-    },
-    HealthPackage: {
-        type: {
-            membership: String, // Free, Silver, Gold, Platinum
-            Price: Number,
-            status: String,
-            discount: Number,
-            date: Date,
-            discountEndDate: Date,
-        },
-        default: {
-            membership: "Free",
-            Price: 0,
-            discount: 0,
-            status: "Inactive",
-            date: null,
-            discountEndDate: null,
-        },
-        required: false
-    },
-    Wallet: {
-        type: Number,
-        default: 0,
-        required: false
-    },
-    HealthRecords: [{ //for medical history and doctor notes
+    healthRecords: [
+      {
+        //for medical history and doctor notes
         filename: String,
         originalname: String,
         uploadedBy: String,
-    }],
-    Messages: {
-        type: [{
-            sender: String,
-            content: String,
-            timestamp: { type: Date, default: Date.now },
-        }],
-        default: [],
-        required: false,
+      },
+    ],
+    messages: {
+      type: [
+        {
+          sender: String,
+          content: String,
+          timestamp: { type: Date, default: Date.now },
+        },
+      ],
+      default: [],
+      required: false,
     },
-    SocketID: { type: String, required: false },
+    socketId: { type: String, required: false },
+  },
+  { timestamps: true }
+);
 
-}, { timestamps: true });
-
-
-const Patient = mongoose.model('Patient', patientSchema, 'Patients');
+const Patient = mongoose.model("Patient", patientSchema, "Patients");
 module.exports = Patient;

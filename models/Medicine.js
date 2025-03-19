@@ -6,7 +6,7 @@ const medicineSchema = new Schema({
         type: String,
         required: [true, 'Please enter the medicine name'],
     },
-    Description :{
+    description: {
         type: String,
         required: [true, 'Please enter the medicine description'],
     },
@@ -23,29 +23,27 @@ const medicineSchema = new Schema({
         type: String,
         required: [true, 'Please enter the medical use'],
     },
-    sales:{
+    sales: {
         type: Number,
-        default :0,
+        default: 0,
     },
-    otc:{
+    otc: {
         type: Boolean,
         default: true
     },
     availableQuantity: {
         type: Number,
         required: [true, 'Please enter the available quantity'],
-     
-    },Picture : {
+    },
+    picture: {
         type: String,
         required: [true, 'Please enter the medicine picture']
     },
-    
     archived: {
         type: Boolean,
         default: false,
     },
 }, { timestamps: true });
-
 
 const Medicine = mongoose.model('Medicine', medicineSchema);
 

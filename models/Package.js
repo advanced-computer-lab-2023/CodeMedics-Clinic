@@ -2,25 +2,25 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const packageSchema = new Schema({
-    Name: {
+    name: {
         type: String,
-        required: [true, 'Please enter a Name']
+        required: [true, 'Please enter a name']
     },
-    Price: {
+    price: {
         type: Number,
-        required: [true, 'Please enter a Price']
+        required: [true, 'Please enter a price']
     },
-    SessionDiscount: {
+    sessionDiscount: {
         type: Number,
-        required: [true, 'Please enter a SessionDiscount']
+        required: [true, 'Please enter a session discount']
     },
-    MedicineDiscount: {
+    medicineDiscount: {
         type: Number,
-        required: [true, 'Please enter a MedicineDiscount']
+        required: [true, 'Please enter a medicine discount']
     },
-    FamilyDiscount: {
+    familyDiscount: {
         type: Number,
-        required: [true, 'Please enter a FamilyDiscount']
+        required: [true, 'Please enter a family discount']
     },
 }, {timestamps: true});
 

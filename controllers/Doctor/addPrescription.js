@@ -1,46 +1,56 @@
-const express = require('express');
-const router = express.Router();
-const Patient = require('../../models/Patient');
-const Prescription = require('../../models/Prescription');
-const { getUsername } = require('../../config/infoGetter');
+const Medicine = require("../../models/Medicine");
+const Prescription = require("../../models/Prescription");
+const { validatePatient } = require("../../utils/validator");
 
 exports.addPrescription = async (req, res) => {
   try {
-    const doctorUsername = await getUsername(req, res);
+    const { doctorUsername } = req.params;
 
-    if (!doctorUsername) {
-      return res.status(401).json({ message: 'Authentication error: Doctor not logged in.' });
+    const { drugs, patientUsername, date } = req.body;
+    const patient = await validatePatient(patientUsername, res);
+    if (!drugs || !date) {
+      return res
+        .status(400)
+        .json({ message: "Incomplete data for prescription" });
     }
-
-    const { drugs, patientUsername, date, filledStatus } = req.body;
-
-    if (!patientUsername || !drugs || !date) {
-      return res.status(400).json({ message: 'Incomplete data for prescription' });
+    if (drugs.length == 0) {
+      return res
+        .status(400)
+        .json({ message: "Add at least one medicine for the prescription" });
     }
-
-    const patient = await Patient.findOne({ Username: patientUsername });
-
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found' });
+    console.log("adding prescriptions", drugs, patient != null, date);
+    for (const drug of drugs) {
+      if (Number(drug.dosage) <= 0) {
+        return res.status(400).json({ message: "Dosage should be positive" });
+      }
+      const medicine = await Medicine.findOne({ name: drug.drugName });
+      if (!medicine) {
+        return res.status(400).json({ message: `${drug.drugName} not Found` });
+      }
+      if (medicine.availableQuantity < Number(drug.dosgae)) {
+        return res.status(400).json({
+          message: `Out-of-stock medicine ${drug.drugName}`,
+        });
+      }
     }
+    console.log("checked");
 
     const newPrescription = new Prescription({
-      Drug: drugs,
-      Doctor: doctorUsername,
-      Patient: patientUsername,
-      Date: date,
-      filled: filledStatus || false,
+      drug: drugs,
+      doctorUsername,
+      patientUsername,
+      date,
+      filled: false,
     });
-    if (newPrescription.Drug.length == 0){
-      return res.status(400).json({ message: 'Incomplete data for prescription' });
-    }
+
     await newPrescription.save();
 
-    patient.Prescriptions.push(newPrescription);
-    await patient.save();
-
-    res.status(201).json({ message: 'Prescription added successfully', prescription: newPrescription });
+    res.status(201).json({
+      message: "Prescription added successfully",
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };

@@ -20,7 +20,7 @@ import {
   Typography
 } from '@mui/material';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 const username = Cookies.get('doctor');
 

@@ -2,23 +2,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const familyMemberSchema = new Schema({
-    Name: {
+    name: {
         type: String,
         required: true,
     },
-    NationalID:{
+    nationalId: {
         type: String,
         required: true
     },
-    Gender:{
+    gender: {
         type: String,
         required: true
     },
-    DateOfBirth:{
+    dateOfBirth: {
         type: String,
         required: true
     },
-    Relationship:{
+    relationship: {
         type: String,
         required: true
     }

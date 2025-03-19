@@ -6,7 +6,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { Button, IconButton, SvgIcon } from '@mui/material';
 import FileSaver from 'file-saver';
 import axios from 'axios';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -99,7 +99,6 @@ export const PatientPrescriptionsTable = (props) => {
   return (
     <Card>
       <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
-      <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
@@ -209,7 +208,6 @@ export const PatientPrescriptionsTable = (props) => {
           <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
         )}
         
-      </Scrollbar>
       <TablePagination
         component="div"
         count={count}

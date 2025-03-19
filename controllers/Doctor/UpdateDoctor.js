@@ -1,32 +1,76 @@
-const Doctor = require('../../models/Doctor');
+const Doctor = require("../../models/Doctor");
+const { validateDoctor } = require("../../utils/validator");
 
 exports.updateDoctor = async (req, res) => {
-   const {Username, Email, HourlyRate, Affiliation } = req.body;
-   const doctor = await Doctor.findOne({Username});
-   if(doctor == null){
-      return res.status(404).json({message: 'Doctor does not exist'});
-   }
-   if(Email != null){  // check if the email already exists
-      if(Email == doctor.Email){
-         return res.status(400).json({message: 'Email is the same as the current one'});
+  try {
+    console.log(req.params);
+    const { doctorUsername } = req.params;
+    const {
+      firstName,
+      lastName,
+      email,
+      hourlyRate,
+      affiliation,
+      dateOfBirth,
+      speciality,
+      degree,
+      password,
+    } = req.body;
+    const doctor = await validateDoctor(doctorUsername, res);
+    console.log("updating", req.body);
+    if (email != null) {
+      const exists = await Doctor.findOne({ email });
+      if (exists && exists.username !== doctorUsername) {
+         return res.status(400).json({ message: "Email already exists" });
+       }
+      doctor.email = email;
+    }
+
+    if (hourlyRate != null) {
+      if (Number(hourlyRate) <= 0) {
+        return res
+          .status(400)
+          .json({ message: "Hourly Rate should be positive" });
       }
-      const exists = await Doctor.findOne({Email});
-      if(exists){
-         return res.status(400).json({message: 'Email already exists'});
-      }
-      doctor.Email = Email;
-   }
-   if(HourlyRate != null){
-      doctor.HourlyRate = HourlyRate;
-   }
-   if(Affiliation != null){
-      doctor.affiliation = Affiliation;
-   }
-   try{
-      const updatedDoctor = await doctor.save();
-      res.status(200).json({message: 'Doctor updated successfully' , data: updatedDoctor});
-   }
-   catch(e){
-      res.status(400).json({message: e.message});
-   }
+      doctor.hourlyRate = hourlyRate;
+    }
+
+    if (firstName != null) {
+      doctor.firstName = firstName;
+    }
+
+    if (lastName != null) {
+      doctor.lastName = lastName;
+    }
+
+    if (affiliation != null) {
+      doctor.affiliation = affiliation;
+    }
+
+    if (dateOfBirth != null) {
+      doctor.dateOfBirth = dateOfBirth;
+    }
+
+    if (speciality != null) {
+      doctor.speciality = speciality;
+    }
+
+    if (degree != null) {
+      doctor.degree = degree;
+    }
+
+    if (password != null) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      doctor.password = hashedPassword;
+    }
+
+    await doctor.save();
+    res.status(201).json({ message: "Doctor updated successfully" });
+  } catch (e) {
+    console.log(e.message);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error, please try later" });
+  }
 };

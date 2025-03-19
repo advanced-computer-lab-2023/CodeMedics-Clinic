@@ -12,7 +12,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
 import { OverviewPackages } from 'src/sections/overview/admin/overview-packages';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import Message from 'src/components/Message';
+import Message from 'src/components/Miscellaneous/Message';
 import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 
 const now = new Date();
