@@ -1,9 +1,6 @@
 import { useState } from "react";
-import Head from "next/head";
-import { Box, Container, Stack, TableCell, TableRow, Typography } from "@mui/material";
+import { TableCell, TableRow } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
-import { RequestTable } from "src/sections/admin/Requests/Request-Table";
-import { RequestSearch } from "src/sections/admin/Requests/Request-search";
 import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import { Table } from "src/components/Table/Table";

@@ -6,7 +6,6 @@ import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import PopUp from "src/components/Miscellaneous/PopUp";
-import ButtonElement from "src/components/ButtonElement";
 import { DELETE, PATCH, POST } from "src/project-utils/helper-functions";
 import ObjectDetails from "src/components/Account/ObjectDetails";
 import { Table } from "src/components/Table/Table";
