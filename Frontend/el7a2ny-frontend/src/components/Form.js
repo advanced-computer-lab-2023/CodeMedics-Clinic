@@ -95,10 +95,14 @@ function Form({ title, fields, onSubmit, actionName, values, largeTitle }) {
     );
   });
 
+  console.log("title", title);
+
   return (
     <form noValidate onSubmit={form.handleSubmit}>
       <Card>
-        <CardHeader title={title} titleTypographyProps={{ variant: largeTitle ? "h4" : null }}/>
+        {title && (
+          <CardHeader title={title} titleTypographyProps={{ variant: largeTitle ? "h4" : null }} />
+        )}
         <CardContent>
           <Box>
             <Grid container spacing={3}>

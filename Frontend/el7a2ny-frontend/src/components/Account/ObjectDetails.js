@@ -4,15 +4,16 @@ import Form from "../Form";
 import { PATCH } from "src/project-utils/helper-functions";
 import Cookies from "js-cookie";
 
-function AccountDetails({ user, fields, setShowError, setError }) {
+function ObjectDetails({ obj, fields, setShowError, setError, action, title }) {
   const createInitialValues = () => {
     const initialValues = {};
     fields.forEach((field) => {
       if (field.name.includes(".")) {
         const [parent, child] = field.name.split(".");
-        initialValues[field.name] = user[parent]?.[child] || "";
+        initialValues[field.name] =
+          obj && obj[parent] && obj[parent][child] ? obj[parent]?.[child] : "";
       } else {
-        initialValues[field.name] = user[field.name] || "";
+        initialValues[field.name] = obj && obj[field.name] ? obj[field.name] : "";
       }
     });
     return initialValues;
@@ -45,33 +46,39 @@ function AccountDetails({ user, fields, setShowError, setError }) {
         }
       });
 
-      const apiEndpoint = `${BACKEND_ROUTE}/${Cookies.get("isDoctor") ? "doctors" : "patients"}/${
-        user.username
-      }`;
+      if (action) {
+        action(body);
+      } else {
+        const apiEndpoint = `${BACKEND_ROUTE}/${Cookies.get("isDoctor") ? "doctors" : "patients"}/${
+          obj.objname
+        }`;
 
-      PATCH({
-        url: apiEndpoint,
-        body,
-        setShowError,
-        setError,
-        updater: () => {
-          window.location.reload();
-        },
-      });
+        PATCH({
+          url: apiEndpoint,
+          body,
+          setShowError,
+          setError,
+          updater: () => {
+            window.location.reload();
+          },
+        });
+      }
     } catch (err) {
       console.log("err", err);
       helpers.setStatus({ success: false });
-      helpers.setErrors({ submit: err.response?.data?.message || "An error occurred" });
+      helpers.setErrors({ submit: "An error occurred" });
       helpers.setSubmitting(false);
     }
   };
 
+  console.log("type", Cookies.get("type"), Cookies.get("type") == "admin" ? null : "Profile");
+
   return (
     <div>
       <Form
-        title="Profile"
+        title={Cookies.get("type") == "admin" ? null : "Profile"}
         fields={formFields}
-        actionName="save"
+        actionName="Save"
         onSubmit={onSubmit}
         values={formValues}
       />
@@ -79,4 +86,4 @@ function AccountDetails({ user, fields, setShowError, setError }) {
   );
 }
 
-export default AccountDetails;
+export default ObjectDetails;

@@ -1,127 +1,120 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
-import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
-import { RequestTable } from 'src/sections/admin/Requests/Request-Table';
-import { RequestSearch } from 'src/sections/admin/Requests/Request-search';
-import { applyPagination } from 'src/utils/apply-pagination';
+import { useState } from "react";
+import { TableCell, TableRow } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { Table } from "src/components/Table/Table";
+import Message from "src/components/Miscellaneous/Message";
+import ObjectInfo from "src/components/ObjectInfo";
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
+import Icon from "src/components/Icon";
+import { PATCH } from "src/project-utils/helper-functions";
 
-const now = new Date();
-
-const useCustomers = (data, page, rowsPerPage) => {
-  return useMemo(
-    () => {
-      return applyPagination(data, page, rowsPerPage);
-    },
-    [data, page, rowsPerPage]
-  );
-};
-
-const useCustomerIds = (customers) => {
-  return useMemo(
-    () => {
-      return customers.map((customer) => customer.id);
-    },
-    [customers]
-  );
-};
+const columns = [
+  "name",
+  "username",
+  "email",
+  "hourlyRate",
+  "affiliation",
+  "edu",
+  "documents",
+  "actions",
+];
 
 const Page = () => {
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const customers = useCustomers(data, page, rowsPerPage);
-  const customersIds = useCustomerIds(customers);
-  const customersSelection = useSelection(customersIds);
+  const [allData, setAllData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetch('http://localhost:8000/admin/viewDoctorApplications')
-      .then((res) => {
+  const [searchName, setSearchName] = useState("");
 
-        if (res.statusCode == 401) {
-          throw new Error('Error while fetching data');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data['DoctorApplications']) {
-          setData(data['DoctorApplications']);
-        }
-      })
-      .catch((err) => {});
-  }, []);
+  const filters = [
+    { type: "text", name: "Search Doctor Name", state: searchName, setState: setSearchName },
+  ];
 
-  const handlePageChange = useCallback(
-    (event, value) => {
-      setPage(value);
-    },
-    []
-  );
+  function filterData() {
+    return allData.filter((item) => `${item.firstName} ${item.lastName}`.includes(searchName));
+  }
 
-  const handleRowsPerPageChange = useCallback(
-    (event) => {
-      setRowsPerPage(event.target.value);
-    },
-    []
-  );
+  function updateDoctor(doctorUsername, action) {
+    PATCH({
+      url: `${BACKEND_ROUTE}/admins/doctors/${doctorUsername}/${action}`,
+      setShowError,
+      setError,
+      updater: () => {
+        window.location.reload();
+      }
+    })
+  }
+
+  const data = filterData();
+
+  useGet({
+    url: `${BACKEND_ROUTE}/admins/doctors/applications`,
+    setData: setAllData,
+    setLoading,
+    setShowError,
+    setError,
+  });
+
+  const tableRows = data.map((item) => {
+    return (
+      <TableRow>
+        <ObjectInfo
+          obj={item}
+          attributes={[
+            "name",
+            "username",
+            "email",
+            "hourlyRate",
+            "affiliation",
+            "degree",
+            "documents",
+          ]}
+        />
+        <TableCell>
+          <Icon title="Accept Doctor" onClick={() => updateDoctor(item.username, "accept")}>
+            <CheckIcon />
+          </Icon>
+          <Icon title="Reject Doctor" onClick={() => updateDoctor(item.username, "reject")}>
+            <XMarkIcon />
+          </Icon>
+        </TableCell>
+      </TableRow>
+    );
+  });
 
   return (
     <>
-      <Head>
-        <title>
-        Doctor Applications
-        </title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8
+      <Table
+        value={{
+          data,
+          columns,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Applications Found",
+          allData,
+          setAllData,
+          tableRows,
         }}
-      >
-        <Container maxWidth="xl">
-          <Stack spacing={3}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              spacing={4}
-            >
-              <Stack spacing={1}>
-                <Typography variant="h4">
-                  Requests
-                </Typography>
-              </Stack>
-            </Stack>
-            <RequestSearch/>
-            <RequestTable
-              count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
-            />
-          </Stack>
-        </Container>
-      </Box>
+        title="Doctors Applications"
+        filters={filters}
+      />
+      <Message
+        title="Error"
+        message={error}
+        condition={showError}
+        setCondition={setShowError}
+        buttonAction={"Close"}
+      />
     </>
   );
 };
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;

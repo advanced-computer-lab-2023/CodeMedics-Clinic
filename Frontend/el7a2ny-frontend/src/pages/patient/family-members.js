@@ -1,5 +1,4 @@
-import Head from "next/head";
-import { Box, Container, Button, Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -79,7 +78,7 @@ const Page = () => {
       onClick: () => removeFamilyMember(item.username),
     },
   ]);
-  console.log(familyMembers)
+  console.log(familyMembers);
   const tableRows = familyMembers.map((item, index) => (
     <CardObject
       item={item}
@@ -106,9 +105,6 @@ const Page = () => {
 
   return (
     <>
-      <Head>
-        <title>El7a2ny Clinic</title>
-      </Head>
       <Message
         condition={showError}
         setCondition={setShowError}
@@ -116,14 +112,19 @@ const Page = () => {
         message={error}
         buttonAction="Close"
       />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
+      <Table
+        title="Family Members"
+        value={{
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Family Members Found",
+          tableRows,
+          displayGrid: "true",
+          px: 250,
         }}
-      >
-        <Container maxWidth="xl">
+        actions={
           <Stack direction="row">
             <Button onClick={addFamilyMemberNoAccountRedirect} sx={{ marginLeft: "auto" }}>
               Add Family Member
@@ -132,21 +133,8 @@ const Page = () => {
               Add existing user as Family Member
             </Button>
           </Stack>
-          <Table
-            title="Family Members"
-            value={{
-              loading,
-              setShowError,
-              setError,
-              setLoading,
-              noRecords: "No Family Members Found",
-              tableRows,
-              displayGrid: "true",
-              px: 250,
-            }}
-          />
-        </Container>
-      </Box>
+        }
+      />
     </>
   );
 };

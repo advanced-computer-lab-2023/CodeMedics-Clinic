@@ -1,96 +1,188 @@
-import Head from 'next/head';
-import {
-  Box,
-  Container,
-  Unstable_Grid2 as Grid,
-  Typography,
-  Button,
-  SvgIcon,
-  Alert
-} from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/admin/layout';
-import { OverviewPackages } from 'src/sections/overview/admin/overview-packages';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import Message from 'src/components/Miscellaneous/Message';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
-
-const now = new Date();
+import { Button, SvgIcon } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
+import { useState } from "react";
+import Message from "src/components/Miscellaneous/Message";
+import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
+import { useGet } from "src/hooks/custom-hooks";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
+import PopUp from "src/components/Miscellaneous/PopUp";
+import { DELETE, PATCH, POST } from "src/project-utils/helper-functions";
+import ObjectDetails from "src/components/Account/ObjectDetails";
+import { Table } from "src/components/Table/Table";
+import CardActionsElement from "src/components/CardObject/CardActionsElement";
+import CardObject from "src/components/CardObject/CardObject";
 
 const Page = () => {
-
-  const [packages, setPackages] = useState([]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [obj, setObj] = useState(null);
   const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [showErrorAlert, setShowErrorAlert] = useState('');
-  useEffect(() => {
-    if (showErrorAlert) {
-      // Set a timeout to hide the alert after 5 seconds
-      const timeoutId = setTimeout(() => {
-        setShowErrorAlert(false);
-      }, 3500);
+  const [error, setError] = useState("");
+  const [displayPopUp, setDisplayPopUp] = useState(false);
 
-      // Clear the timeout when the component unmounts or when showErrorAlert changes
-      return () => clearTimeout(timeoutId);
-    }
-  }, [showErrorAlert]);
+  useGet({
+    url: `${BACKEND_ROUTE}/admins/packages`,
+    setData,
+    setLoading,
+    setShowError,
+    setError,
+  });
 
-  useEffect(() => {
-    axios.get('http://localhost:8000/patient/getAvailablePackages', { withCredentials: true })
-         .then((response) => {
-           setPackages(response.data);
-         })
-         .catch((error) => {
-           setShowError(true);
-           setErrorMessage(error.response.data.message);
-         });
-  }, []);
-  const handleAddButtonClick = () => {
-    setIsAddOpen(true);
+  const fields = [
+    {
+      name: "name",
+      label: "Package Name",
+      type: "text",
+    },
+    {
+      name: "price",
+      label: "Price",
+      type: "number",
+    },
+    {
+      name: "sessionDiscount",
+      label: "Session Discount Precentage",
+      type: "number",
+    },
+    {
+      name: "familyDiscount",
+      label: "Family Discount Precentage",
+      type: "number",
+    },
+    {
+      name: "medicineDiscount",
+      label: "Medicine Discount Precentage",
+      type: "number",
+    },
+  ];
+
+  const addPackage = async (body) => {
+    POST({
+      url: `${BACKEND_ROUTE}/admins/packages`,
+      body,
+      setShowError,
+      setError,
+      updater: () => {
+        window.location.reload();
+      },
+    });
   };
+  const updatePackage = async (body) => {
+    PATCH({
+      url: `${BACKEND_ROUTE}/admins/packages/${body.name}`,
+      body,
+      setShowError,
+      setError,
+      updater: () => {
+        setData((prev) =>
+          prev.map((item) => {
+            if (item.name == body.name) {
+              return body;
+            }
+            return item;
+          })
+        );
+        setDisplayPopUp(false);
+      },
+    });
+  };
+  const removePackage = async (item) => {
+    DELETE({
+      url: `${BACKEND_ROUTE}/admins/packages/${item.name}`,
+      setShowError,
+      setError,
+      updater: () => {
+        setData((prev) => prev.filter((e) => e.name != item.name));
+      },
+    });
+  };
+
+  const tableRows = data.map((item) => (
+    <CardObject
+      item={{ src: `/assets/Packages/${item.name}.jpg` }}
+      texts={[
+        `${item.price} EGP / Yr`,
+        `${item.name} Package`,
+        `${item.sessionDiscount}% Session Discount`,
+        `${item.medicineDiscount}% Medicine Discount`,
+        `${item.familyDiscount}% Family Discount`,
+      ]}
+      variants={["h5", "subtitle2", "subtitle1", "subtitle1", "subtitle1"]}
+      cardActionsElement={
+        <CardActionsElement
+          actions={[
+            {
+              name: "Update",
+              onClick: () => {
+                setObj(item);
+                setDisplayPopUp(true);
+              },
+            },
+            {
+              name: "Delete",
+              onClick: () => {
+                removePackage(item);
+              },
+            },
+          ]}
+        />
+      }
+    />
+  ));
+
+  const tableActions = (
+    <Button
+      color="inherit"
+      startIcon={
+        <SvgIcon fontSize="small">
+          <ArrowUpOnSquareIcon />
+        </SvgIcon>
+      }
+      onClick={() => setDisplayPopUp(true)}
+    >
+      Add Package
+    </Button>
+  );
+
   return (
     <>
-      <Head>
-        <title>El7a2ny Clinic</title>
-      </Head>
-      <Message condition={showError} setCondition={setShowError} title={'Error'}
-               message={errorMessage} buttonAction={'Close'}/>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8
+      <Table
+        value={{
+          data,
+          loading,
+          setShowError,
+          setError,
+          setLoading,
+          noRecords: "No Packages Found",
+          tableRows,
+          displayGrid: "true",
+          px: 250,
         }}
-      >
-
-        <Container maxWidth="xl">
-          <Typography variant="h3" gutterBottom>
-            Packages
-          </Typography>
-          <Button
-            color="inherit"
-            startIcon={(
-              <SvgIcon fontSize="small">
-                <ArrowUpOnSquareIcon/>
-              </SvgIcon>
-            )}
-            onClick={handleAddButtonClick}
-          >
-            Add Package
-          </Button>
-          {showErrorAlert && (
-            <Alert severity="success">{showErrorAlert}</Alert>
-          )}
-          <Grid container spacing={3}>
-            <Grid xs={20} md={20} lg={15}>
-              <OverviewPackages initialPackages={packages} isAddOpen={isAddOpen}
-                                setIsAddOpen={setIsAddOpen} setShowErrorAlert={setShowErrorAlert}
-                                sx={{ height: '100%' }}/>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+        title="Packages"
+        actions={tableActions}
+      />
+      <PopUp title="Add Package" viewing={displayPopUp} setViewing={setDisplayPopUp}>
+        <ObjectDetails
+          obj={obj}
+          fields={fields}
+          setError={setError}
+          setShowError={setShowError}
+          action={(body) => {
+            if (obj) {
+              updatePackage(body);
+            } else {
+              addPackage(body);
+            }
+          }}
+        />
+      </PopUp>
+      <Message
+        condition={showError}
+        setCondition={setShowError}
+        title="Error"
+        message={error}
+        action="Close"
+      />
     </>
   );
 };
