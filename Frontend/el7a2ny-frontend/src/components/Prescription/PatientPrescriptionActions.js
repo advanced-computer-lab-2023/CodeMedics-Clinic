@@ -1,22 +1,21 @@
 import { useState, useContext } from "react";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import axios from "axios";
-import { TableRow, TableCell, TextField, IconButton, SvgIcon } from "@mui/material";
+import { TableRow, TableCell, TextField } from "@mui/material";
 import EyeIcon from "@heroicons/react/24/solid/EyeIcon";
 import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 import ArrowDownTrayIcon from "@heroicons/react/24/solid/ArrowDownTrayIcon";
 import { TableContext } from "../Table/Table";
 import PopUp from "../Miscellaneous/PopUp";
-import FileSaver from 'file-saver';
-
-
+import FileSaver from "file-saver";
+import Icon from "../Icon";
 
 function PatientPrescriptionActions({ state }) {
   const [viewing, setViewing] = useState(false);
   const { setShowError, setError, setLoading, setAllData } = useContext(TableContext);
   const downloadPDF = async () => {
     try {
-      console.log("State", state, state._id)
+      console.log("State", state, state._id);
       const response = await axios.post(
         `http://localhost:8000/patient/download-prescription-pdf`,
         { prescription: state },
@@ -35,7 +34,7 @@ function PatientPrescriptionActions({ state }) {
 
   const fillPrescription = async (prescriptionID) => {
     try {
-      console.log("before filling", state)
+      console.log("before filling", state);
       setLoading(true);
       await axios
         .patch(`http://localhost:8000/patient/fillPrescription`, {
@@ -44,26 +43,25 @@ function PatientPrescriptionActions({ state }) {
         })
         .then((response) => {
           console.log(response.data);
-          setAllData(prev => {
-            return prev.map(item => {
-              if(item._id != state._id)
-                return item
-              return {...item, filled: true}
-            })
-          })
+          setAllData((prev) => {
+            return prev.map((item) => {
+              if (item._id != state._id) return item;
+              return { ...item, filled: true };
+            });
+          });
           // loading = false is in the useEffect in the theme
         });
     } catch (error) {
       console.error("Error filling prescription: ", error);
       setShowError(true);
-      console.log(err)
+      console.log(err);
       setError(error.response.data.message);
     }
   };
 
-  console.log("PP rendered", state)
+  console.log("PP rendered", state);
 
-  const drugs = state.Drug.map((drug, medicineIndex) => (
+  const drugs = state.drug.map((drug, medicineIndex) => (
     <TableRow hover key={medicineIndex}>
       <TableCell>{drug.drugName}</TableCell>
       <TableCell>
@@ -75,30 +73,24 @@ function PatientPrescriptionActions({ state }) {
   return (
     <>
       <TableCell>
-        <IconButton
+        <Icon
           title="View Prescription"
           onClick={() => {
             setViewing(true);
           }}
         >
-          <SvgIcon fontSize="small">
-            <EyeIcon />
-          </SvgIcon>
-        </IconButton>
-        <IconButton
+          <EyeIcon />
+        </Icon>
+        <Icon
           disabled={state.filled}
           title="Fill Prescription"
           onClick={() => fillPrescription(state._id)}
         >
-          <SvgIcon fontSize="small">
-            <CheckCircleIcon />
-          </SvgIcon>
-        </IconButton>
-        <IconButton title="Download as PDF" onClick={() => downloadPDF()}>
-          <SvgIcon fontSize="small">
-            <ArrowDownTrayIcon />
-          </SvgIcon>
-        </IconButton>
+          <CheckCircleIcon />
+        </Icon>
+        <Icon title="Download as PDF" onClick={() => downloadPDF()}>
+          <ArrowDownTrayIcon />
+        </Icon>
       </TableCell>
       {viewing && (
         <PopUp
