@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { Button } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import axios from "axios";
@@ -123,7 +122,7 @@ const Page = () => {
           <DocumentArrowUpIcon />
         </SvgIcon>
       }
-      onClick={handleUpload} 
+      onClick={handleUpload}
     >
       Upload Medical Records
     </Button>
@@ -131,9 +130,6 @@ const Page = () => {
 
   return (
     <>
-      <Head>
-        <title>Medical Histroy</title>
-      </Head>
       <Message
         condition={showError}
         setCondition={setShowError}
