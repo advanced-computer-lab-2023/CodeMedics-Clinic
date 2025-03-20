@@ -95,8 +95,6 @@ function Form({ title, fields, onSubmit, actionName, values, largeTitle }) {
     );
   });
 
-  console.log("title", title);
-
   return (
     <form noValidate onSubmit={form.handleSubmit}>
       <Card>
