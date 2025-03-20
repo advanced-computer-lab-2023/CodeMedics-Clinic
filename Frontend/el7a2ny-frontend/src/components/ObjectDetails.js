@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
-import Form from "../Form";
+import Form from "./Form";
 import { PATCH } from "src/project-utils/helper-functions";
 import Cookies from "js-cookie";
 
@@ -49,9 +49,9 @@ function ObjectDetails({ obj, fields, setShowError, setError, action, title }) {
       if (action) {
         action(body);
       } else {
-        const apiEndpoint = `${BACKEND_ROUTE}/${Cookies.get("isDoctor") ? "doctors" : "patients"}/${
-          obj.objname
-        }`;
+        const apiEndpoint = `${BACKEND_ROUTE}/${
+          Cookies.get("type") == "doctor" ? "doctors" : "patients"
+        }/${obj.objname}`;
 
         PATCH({
           url: apiEndpoint,
@@ -71,12 +71,10 @@ function ObjectDetails({ obj, fields, setShowError, setError, action, title }) {
     }
   };
 
-  console.log("type", Cookies.get("type"), Cookies.get("type") == "admin" ? null : "Profile");
-
   return (
     <div>
       <Form
-        title={Cookies.get("type") == "admin" ? null : "Profile"}
+        title={title}
         fields={formFields}
         actionName="Save"
         onSubmit={onSubmit}

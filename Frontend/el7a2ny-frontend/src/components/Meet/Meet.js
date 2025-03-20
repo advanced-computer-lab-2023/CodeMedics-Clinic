@@ -156,7 +156,7 @@ function Meet({ participants, toggleVideo, toggleAudio, hasPendingRequests }) {
           color="error"
           sx={{ ml: 2 }}
           onClick={() => {
-            router.push(`${Cookies.get("isDoctor") ? "/doctor/patients" : "/patient/doctors"}`);
+            router.push(`${Cookies.get("type") == "doctor" ? "/doctor/patients" : "/patient/doctors"}`);
           }}
         >
           Leave

@@ -42,7 +42,7 @@ const doctorSchema = new Schema(
     status: {
       type: String,
       enum: ["approved", "pending", "contract", "rejected"],
-      default: "Pending",
+      default: "pending",
       required: false,
     },
     speciality: {

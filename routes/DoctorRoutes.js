@@ -88,7 +88,7 @@ const { addDocument } = require("../controllers/Patient/MedicalHistory.js");
 router.post("/checkMedicine", checkMedicine);
 
 router.post(
-  "/register",
+  "/",
   upload.fields([
     { name: "nationalIdFile", maxCount: 1 },
     { name: "medicalDegreeFile", maxCount: 1 },
