@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { useState } from "react";
 import * as Yup from "yup";
-import { MAX_LEN } from "src/project-utils/constants";
+import { MAX_LEN } from "src/utils/Constants";
 import { fixFormDate } from "src/project-utils/helper-functions";
 import {
   Button,

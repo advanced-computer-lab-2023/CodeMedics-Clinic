@@ -8,7 +8,7 @@ import DocumentArrowUpIcon from "@heroicons/react/24/solid/DocumentArrowUpIcon";
 import FileSaver from "file-saver";
 import Message from "src/components/Miscellaneous/Message";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { Table } from "src/components/Table/Table";
 import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";

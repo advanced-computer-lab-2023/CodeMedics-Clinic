@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Alert, Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { Layout as AuthLayout } from "src/layouts/auth/layout";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 
 const Page = () => {
   const router = useRouter();

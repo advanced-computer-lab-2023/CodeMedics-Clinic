@@ -3,7 +3,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Message from "src/components/Miscellaneous/Message";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import CardObject from "src/components/CardObject/CardObject";

@@ -13,7 +13,7 @@ import Message from "src/components/Miscellaneous/Message";
 import CardObject from "src/components/CardObject/CardObject";
 import Form from "src/components/Form";
 import LoadingSpinner from "src/components/LoadingSpinner";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { useGet } from "src/hooks/custom-hooks";
 
 const Page = () => {

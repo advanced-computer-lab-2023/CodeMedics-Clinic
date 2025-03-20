@@ -3,7 +3,7 @@ import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
 import { Button, Stack, SvgIcon, TableCell, TableRow } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { DELETE, POST } from "src/project-utils/helper-functions";
 import { Table } from "src/components/Table/Table";
 import Message from "src/components/Miscellaneous/Message";

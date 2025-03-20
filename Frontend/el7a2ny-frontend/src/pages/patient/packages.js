@@ -2,7 +2,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import Message from "src/components/Miscellaneous/Message";
 import LoadingSpinner from "src/components/LoadingSpinner";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import Title from "src/components/Table/Body/Title";

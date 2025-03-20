@@ -4,7 +4,7 @@ import RescheduleIcon from "src/icons/untitled-ui/duocolor/RescheduleIcon";
 import CancelIcon from "src/icons/untitled-ui/duocolor/CancelIcon";
 import { TableContext } from "../Table/Table";
 import Icon from "../Icon";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { PATCH } from "src/project-utils/helper-functions";
 import ReschedulePopUp from "../ReschedulePopUp";
 

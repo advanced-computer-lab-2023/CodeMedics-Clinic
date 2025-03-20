@@ -10,7 +10,7 @@ import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon";
 import PencilSquareIcon from "@heroicons/react/24/solid/PencilSquareIcon";
 import { TableContext } from "../Table/Table";
 import FileSaver from "file-saver";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Icon from "../Icon";
 import PopUp from "../Miscellaneous/PopUp";
 import { DELETE, PATCH } from "src/project-utils/helper-functions";

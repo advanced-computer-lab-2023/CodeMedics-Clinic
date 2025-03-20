@@ -3,7 +3,7 @@ import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import axios from "axios";
 import { useRouter } from "next/router";
 import { Typography } from "@mui/material";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 
 export default function CheckoutForm({ appointmentId, patientUsername, packageName }) {
   const stripe = useStripe();

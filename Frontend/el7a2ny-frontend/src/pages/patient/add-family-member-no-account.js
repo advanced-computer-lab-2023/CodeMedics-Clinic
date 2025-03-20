@@ -4,7 +4,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Form from "src/components/Form";
-import { BACKEND_ROUTE, familyMembersPageRoute } from "src/project-utils/constants";
+import { BACKEND_ROUTE, familyMembersPageRoute } from "src/utils/Constants";
 import { POST } from "src/project-utils/helper-functions";
 import Cookies from "js-cookie";
 

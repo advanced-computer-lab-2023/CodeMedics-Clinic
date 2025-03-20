@@ -4,7 +4,7 @@ import { useState } from "react";
 import Message from "src/components/Miscellaneous/Message";
 import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import PopUp from "src/components/Miscellaneous/PopUp";
 import { DELETE, PATCH, POST } from "src/project-utils/helper-functions";
 import ObjectDetails from "src/components/ObjectDetails";

@@ -5,7 +5,7 @@ import Message from "src/components/Miscellaneous/Message";
 import Title from "src/components/Table/Body/Title";
 import LoadingSpinner from "src/components/LoadingSpinner";
 import Account from "src/components/Account/Account";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { useGet } from "src/hooks/custom-hooks";
 import Cookies from "js-cookie";
 

@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 import socket from "src/components/socket";
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { Layout as AuthLayout } from "src/layouts/auth/layout";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 
 const usernameLoginSchema = Yup.object({
   username: Yup.string().max(255).required("Username is required"),

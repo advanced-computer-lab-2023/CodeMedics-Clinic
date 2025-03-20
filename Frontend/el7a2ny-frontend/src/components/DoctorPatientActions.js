@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import ReschedulePopUp from "./ReschedulePopUp";
 import Cookies from "js-cookie";
 import { useState } from "react";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 export const DoctorPatientActions = ({ patient }) => {
   const [loading, setLoading] = useState(true);
   const [rescheduling, setRescheduling] = useState(false);

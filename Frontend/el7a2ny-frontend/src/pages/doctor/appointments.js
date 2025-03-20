@@ -3,7 +3,7 @@ import { Button, Stack, SvgIcon } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
 import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Appointment from "src/components/Appointment/Appointment";
 import { POST } from "src/project-utils/helper-functions";
 import { PlusIcon } from "@heroicons/react/24/solid";

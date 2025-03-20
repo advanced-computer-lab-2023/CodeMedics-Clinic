@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Stack } from "@mui/system";
 import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { useGet } from "src/hooks/custom-hooks";
 import LoadingSpinner from "src/components/Miscellaneous/LoadingSpinner";
 import { GET, POST } from "src/project-utils/helper-functions";

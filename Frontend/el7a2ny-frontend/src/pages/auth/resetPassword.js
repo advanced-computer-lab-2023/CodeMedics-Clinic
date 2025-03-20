@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import Message from "src/components/Miscellaneous/Message";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { Layout as AuthLayout } from "src/layouts/auth/layout";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 
 const ResetPasswordPage = () => {
   const router = useRouter();
