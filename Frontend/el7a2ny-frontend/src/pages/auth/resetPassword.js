@@ -1,183 +1,103 @@
-import { useCallback, useState } from 'react';
-import axios from 'axios';
-import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import Cookies from 'js-cookie';
-import Message from 'src/components/Miscellaneous/Message';
-import {
-    Alert,
-    Box,
-    Button,
-    FormHelperText,
-    Link,
-    Stack,
-    Tab,
-    Tabs,
-    TextField,
-    Typography
-} from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
-import { Layout as AuthLayout } from 'src/layouts/auth/layout';
+import { useState } from "react";
+import Head from "next/head";
+import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Message from "src/components/Miscellaneous/Message";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import { Layout as AuthLayout } from "src/layouts/auth/layout";
+import { BACKEND_ROUTE } from "src/project-utils/constants";
 
-const Page = () => {
-    const router = useRouter();
-    const auth = useAuth();
-    const [method, setMethod] = useState('Username');
-    const [showError, setShowError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+const ResetPasswordPage = () => {
+  const router = useRouter();
+  const [error, setError] = useState({ show: false, message: "" });
 
-    const formik = useFormik({
-        initialValues: {
-            password: '',
-            confirmPassword: '',
-            submit: null
-        },
-        validationSchema: Yup.object({
-            password: Yup
-                .string()
-                .max(35, 'Password must be at most 35 characters')
-                .min(8, 'Password must be at least 8 characters')
-                .required('Password is required')
-                // password must have at least one digit and at least one capital letter
-                .matches(/^(?=.*\d)(?=.*[A-Z]).+$/, 'Password must have at least one Capital Character and one Digit'),
-            confirmPassword: Yup
-                .string()
-                .min(8, 'Password must be at least 8 characters')
-                .max(35, 'Password must be at most 35 characters')
-                .required('Confirmation Password is required')
-                .oneOf([Yup.ref('password'), null], 'Passwords must match')
-        }),
-        onSubmit: async (values, helpers) => {
-            const username = new URLSearchParams(window.location.search).get('username');
-            if (values.password !== values.confirmPassword) {
-                console.log(123);
-            } else {
-                try {
-                    const response = await fetch('http://localhost:8000/patient/changePassword', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            username: username,
-                            newPassword: values.password,
-                        }),
-                    });
-                    if (response.ok) {
-                        console.log('Password updated successfully');
-                        router.push('/auth/login');
-                    } else {
-                        console.error('Failed to update password');
-                    }
-                } catch (error) {
-                    console.error('An error occurred while updating the password', error);
-                    setShowError(true);
-                    setErrorMessage(error.response.data.message);
-                }
-            }
-        }
-    });
+  const formik = useFormik({
+    initialValues: { password: "", confirmPassword: "" },
+    validationSchema: Yup.object({
+      password: Yup.string()
+        .min(8, "At least 8 characters")
+        .max(35, "At most 35 characters")
+        .matches(/^(?=.*\d)(?=.*[A-Z]).+$/, "Must include 1 capital letter & 1 digit")
+        .required("Password is required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirmation is required"),
+    }),
+    onSubmit: async (values) => {
+      try {
+        const username = new URLSearchParams(window.location.search).get("username");
+        const category = new URLSearchParams(window.location.search).get("category");
+        const response = await fetch(`${BACKEND_ROUTE}/${category}/${username}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password: values.password }),
+        });
 
-    const handleMethodChange = useCallback(
-        (event, value) => {
-            setMethod(value);
-        },
-        []
-    );
+        if (!response.ok) throw new Error("Failed to update password");
 
-    const handleSkip = useCallback(
-        () => {
-            auth.skip();
-            router.push('/');
-        },
-        [auth, router]
-    );
+        router.push("/auth/login");
+      } catch (err) {
+        setError({ show: true, message: err.message || "An error occurred" });
+      }
+    },
+  });
 
-    return (
-        <>
-            <Head>
-                <title>
-                    Reset Password
-                </title>
-            </Head>
-            <Message condition={showError} setCondition={setShowError} title={"Error"} message={errorMessage} buttonAction={"Close"} />
-            <Box
-                sx={{
-                    backgroundColor: 'background.paper',
-                    flex: '1 1 auto',
-                    alignItems: 'center',
-                    display: 'flex',
-                    justifyContent: 'center'
-                }}
-            >
-                <Box
-                    sx={{
-                        maxWidth: 550,
-                        px: 3,
-                        py: '100px',
-                        width: '100%'
-                    }}
-                >
-                    <div>
-                        <Stack
-                            spacing={1}
-                            sx={{ mb: 3 }}
-                        >
-                            <Typography variant="h4">
-                                Reset your password
-                            </Typography>
+  return (
+    <>
+      <Head>
+        <title>Reset Password</title>
+      </Head>
+      <Message
+        condition={error.show}
+        setCondition={() => setError({ ...error, show: false })}
+        title="Error"
+        message={error.message}
+        buttonAction="Close"
+      />
 
-                        </Stack>
-                        <form noValidate
-                            onSubmit={formik.handleSubmit}>
-                            <Stack spacing={3}>
-                                <TextField
-                                    error={!!(formik.touched.password && formik.errors.password)}
-                                    fullWidth
-                                    helperText={formik.touched.password && formik.errors.password}
-                                    label="Password"
-                                    name="password"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    type="password"
-                                    value={formik.values.password}
-                                />
-                                <TextField
-                                    error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
-                                    fullWidth
-                                    helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
-                                    label="Password (Confirm)"
-                                    name="confirmPassword"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    type="password"
-                                    value={formik.values.confirmPassword}
-                                />
-                                <Button
-                                    fullWidth
-                                    size="large"
-                                    sx={{ mt: 3 }}
-                                    type="submit"
-                                    variant="contained"
-                                >
-                                    Reset
-                                </Button>
-                            </Stack>
-                        </form>
-                    </div>
-                </Box>
-            </Box>
-        </>
-    );
+      <Box
+        sx={{
+          backgroundColor: "background.paper",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flex: "1 1 auto",
+        }}
+      >
+        <Box sx={{ maxWidth: 550, px: 3, py: "100px", width: "100%" }}>
+          <Stack spacing={1} sx={{ mb: 3 }}>
+            <Typography variant="h4">Reset your password</Typography>
+          </Stack>
+          <form noValidate onSubmit={formik.handleSubmit}>
+            <Stack spacing={3}>
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                {...formik.getFieldProps("password")}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
+              />
+              <TextField
+                label="Confirm Password"
+                type="password"
+                fullWidth
+                {...formik.getFieldProps("confirmPassword")}
+                error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+              />
+              <Button fullWidth size="large" sx={{ mt: 3 }} type="submit" variant="contained">
+                Reset
+              </Button>
+            </Stack>
+          </form>
+        </Box>
+      </Box>
+    </>
+  );
 };
 
-Page.getLayout = (page) => (
-    <AuthLayout>
-        {page}
-    </AuthLayout>
-);
+ResetPasswordPage.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
 
-export default Page;
+export default ResetPasswordPage;
