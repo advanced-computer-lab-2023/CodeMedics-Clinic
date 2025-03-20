@@ -49,9 +49,9 @@ function ObjectDetails({ obj, fields, setShowError, setError, action, title }) {
       if (action) {
         action(body);
       } else {
-        const apiEndpoint = `${BACKEND_ROUTE}/${Cookies.get("isDoctor") ? "doctors" : "patients"}/${
-          obj.objname
-        }`;
+        const apiEndpoint = `${BACKEND_ROUTE}/${
+          Cookies.get("type") == "doctor" ? "doctors" : "patients"
+        }/${obj.objname}`;
 
         PATCH({
           url: apiEndpoint,

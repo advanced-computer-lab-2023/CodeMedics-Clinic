@@ -20,8 +20,8 @@ const Notifications = () => {
 
   useGet({
     url: `${BACKEND_ROUTE}/${
-      Cookies.get("isDoctor") ? "doctors" : "patients"
-    }/${username}/messages`,
+      Cookies.get("type")
+    }s/${username}/messages`,
     setData: setNotifications,
     setShowError,
     setError,
