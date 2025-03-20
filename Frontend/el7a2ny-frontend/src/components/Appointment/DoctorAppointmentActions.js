@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import Icon from "src/components/Icon";
-import { PATCH } from "src/project-utils/helper-functions";
+import { PATCH } from "src/utils/helper-functions";
 import CancelIcon from "src/icons/untitled-ui/duocolor/CancelIcon";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import RescheduleIcon from "src/icons/untitled-ui/duocolor/RescheduleIcon";

@@ -13,7 +13,7 @@ import FileSaver from "file-saver";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import Icon from "../Icon";
 import PopUp from "../Miscellaneous/PopUp";
-import { DELETE, PATCH } from "src/project-utils/helper-functions";
+import { DELETE, PATCH } from "src/utils/helper-functions";
 import TextInput from "../Inputs/TextInput";
 
 function DoctorPrescriptionActions({ item }) {

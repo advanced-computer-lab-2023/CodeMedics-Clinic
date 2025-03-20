@@ -12,7 +12,7 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import PopUp from "src/components/Miscellaneous/PopUp";
 import TextInput from "src/components/Inputs/TextInput";
 import ButtonElement from "src/components/ButtonElement";
-import { POST } from "src/project-utils/helper-functions";
+import { POST } from "src/utils/helper-functions";
 
 const columns = ["Patient", "Date", "Status", "Actions"];
 

@@ -8,7 +8,7 @@ import ButtonElement from "./ButtonElement";
 import Cell from "./Table/BasicElements/Cell";
 import Row from "./Table/BasicElements/Row";
 import { useGet } from "src/hooks/custom-hooks";
-import { DELETE, PATCH } from "src/project-utils/helper-functions";
+import { DELETE, PATCH } from "src/utils/helper-functions";
 import ObjectInfo from "./ObjectInfo";
 const attributes = ["date", "day", "startHour", "endHour"];
 

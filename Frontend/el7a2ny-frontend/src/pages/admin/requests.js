@@ -9,7 +9,7 @@ import ObjectInfo from "src/components/ObjectInfo";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
 import Icon from "src/components/Icon";
-import { PATCH } from "src/project-utils/helper-functions";
+import { PATCH } from "src/utils/helper-functions";
 
 const columns = [
   "name",

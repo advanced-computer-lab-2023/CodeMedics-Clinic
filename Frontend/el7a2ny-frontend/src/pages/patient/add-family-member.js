@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Form from "src/components/Form";
-import { POST } from "src/project-utils/helper-functions";
+import { POST } from "src/utils/helper-functions";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 
 const Page = () => {

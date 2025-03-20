@@ -10,7 +10,7 @@ import Message from "src/components/Miscellaneous/Message";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import { useGet } from "src/hooks/custom-hooks";
 import LoadingSpinner from "src/components/Miscellaneous/LoadingSpinner";
-import { GET, POST } from "src/project-utils/helper-functions";
+import { GET, POST } from "src/utils/helper-functions";
 import NoChat from "src/components/Miscellaneous/NoChat";
 
 const Chat = ({ isPatient }) => {

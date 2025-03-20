@@ -9,7 +9,7 @@ import DocumentArrowUpIcon from "@heroicons/react/24/solid/DocumentArrowUpIcon";
 import Message from "src/components/Miscellaneous/Message";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import { useGet } from "src/hooks/custom-hooks";
-import { DELETE } from "src/project-utils/helper-functions";
+import { DELETE } from "src/utils/helper-functions";
 import FileSaver from "file-saver";
 import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";

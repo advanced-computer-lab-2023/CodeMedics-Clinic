@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import Appointment from "src/components/Appointment/Appointment";
-import { POST } from "src/project-utils/helper-functions";
+import { POST } from "src/utils/helper-functions";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Table } from "src/components/Table/Table";
 import PopUp from "src/components/Miscellaneous/PopUp";
