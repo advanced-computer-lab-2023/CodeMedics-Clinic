@@ -29,9 +29,9 @@ const handleUserLogin = (data, router) => {
     setupSocketConnection(data.patient.username);
     router.push("/patient/doctors");
   } else if (data.Type === "Doctor") {
-    if (data.doctor.status === "Pending" || data.doctor.Status === "Pending") {
+    if (data.doctor.status === "Pending" || data.doctor.status === "Pending") {
       return { error: "Your request is still pending" };
-    } else if (data.doctor.status === "Contract" || data.doctor.Status === "Contract") {
+    } else if (data.doctor.status === "Contract" || data.doctor.status === "Contract") {
       Cookies.set("doctor", data.doctor.username);
       router.push("/doctor/contract");
     } else {
