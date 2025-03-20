@@ -2,14 +2,14 @@ import { useState } from "react";
 import { TableCell, TableRow } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { Table } from "src/components/Table/Table";
 import Message from "src/components/Miscellaneous/Message";
 import ObjectInfo from "src/components/ObjectInfo";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 import CheckIcon from "@heroicons/react/24/solid/CheckIcon";
 import Icon from "src/components/Icon";
-import { PATCH } from "src/project-utils/helper-functions";
+import { PATCH } from "src/utils/helper-functions";
 
 const columns = [
   "name",

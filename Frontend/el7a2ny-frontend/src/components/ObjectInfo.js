@@ -1,5 +1,5 @@
 import { TableCell } from "@mui/material";
-import { SeverityPill } from "./severity-pill";
+import { SeverityPill } from "./SeverityPill";
 import DoctorDocument from "./DoctorDocument";
 const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const statusMap = {

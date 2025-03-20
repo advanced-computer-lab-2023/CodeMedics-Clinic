@@ -5,7 +5,7 @@ import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
 import { useGet } from "src/hooks/custom-hooks";
 import { useRouter } from "next/router";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 
 const Page = () => {

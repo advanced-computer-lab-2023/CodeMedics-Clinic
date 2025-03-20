@@ -2,14 +2,14 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import Message from "src/components/Miscellaneous/Message";
 import LoadingSpinner from "src/components/LoadingSpinner";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import Title from "src/components/Table/Body/Title";
 import Form from "src/components/Form";
 import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
-import { DELETE } from "src/project-utils/helper-functions";
+import { DELETE } from "src/utils/helper-functions";
 import { Table } from "src/components/Table/Table";
 import { useRouter } from "next/router";
 

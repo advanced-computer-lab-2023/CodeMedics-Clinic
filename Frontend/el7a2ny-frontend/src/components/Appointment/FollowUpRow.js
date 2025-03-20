@@ -4,7 +4,7 @@ import Icon from "src/components/Icon";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import ObjectInfo from "src/components/ObjectInfo";
 import ReschedulePopUp from "src/components/ReschedulePopUp";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 
 const FollowUpRow = ({ item, reject }) => {

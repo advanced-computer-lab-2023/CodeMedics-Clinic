@@ -2,7 +2,7 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import Message from "src/components/Miscellaneous/Message";
 import { useState } from "react";
 import { Table } from "src/components/Table/Table";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import PatientPrescription from "src/components/Prescription/PatientPrescription";
 import { useGet } from "src/hooks/custom-hooks";
 import Cookies from "js-cookie";

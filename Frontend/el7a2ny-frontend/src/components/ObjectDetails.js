@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Form from "./Form";
-import { PATCH } from "src/project-utils/helper-functions";
+import { PATCH } from "src/utils/helper-functions";
 import Cookies from "js-cookie";
 
 function ObjectDetails({ obj, fields, setShowError, setError, action, title }) {

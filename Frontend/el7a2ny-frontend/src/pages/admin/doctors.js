@@ -3,11 +3,11 @@ import { TableCell, TableRow } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/admin/layout";
 import Message from "src/components/Miscellaneous/Message";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { Table } from "src/components/Table/Table";
 import ObjectInfo from "src/components/ObjectInfo";
 import ButtonElement from "src/components/ButtonElement";
-import { DELETE } from "src/project-utils/helper-functions";
+import { DELETE } from "src/utils/helper-functions";
 
 const columns = [
   "name",

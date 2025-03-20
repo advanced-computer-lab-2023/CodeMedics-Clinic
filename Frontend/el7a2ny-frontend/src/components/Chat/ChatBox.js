@@ -1,7 +1,7 @@
 import { Stack, Box, Divider } from "@mui/material";
 import { ChatBoxTop } from "./ChatBoxTop";
 import { ChatMessages } from "./ChatMessages";
-import { Scrollbar } from "src/components/scrollbar";
+import { Scrollbar } from "src/components/Scrollbar";
 import { NewChatMessage } from "./NewChatMessage";
 
 export const ChatBox = (props) => {

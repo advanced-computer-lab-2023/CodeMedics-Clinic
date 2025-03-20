@@ -3,13 +3,13 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/user/layout";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Message from "src/components/Miscellaneous/Message";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 import { useGet } from "src/hooks/custom-hooks";
 import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
 import { Table } from "src/components/Table/Table";
-import { DELETE } from "src/project-utils/helper-functions";
+import { DELETE } from "src/utils/helper-functions";
 
 const Page = () => {
   const router = useRouter();

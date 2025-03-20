@@ -13,8 +13,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import Cookies from "js-cookie";
-import { PATCH } from "src/project-utils/helper-functions";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { PATCH } from "src/utils/helper-functions";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 
 export const SettingsPassword = () => {
   const username = Cookies.get("username");

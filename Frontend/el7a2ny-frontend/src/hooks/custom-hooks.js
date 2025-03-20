@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { GET } from "src/project-utils/helper-functions";
+import { GET } from "src/utils/helper-functions";
 
 function useGet({ url, setData, setLoading, setShowError, setError, dependency }) {
   useEffect(

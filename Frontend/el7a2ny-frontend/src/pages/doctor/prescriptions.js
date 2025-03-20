@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Stack, SvgIcon, TableCell, TableRow } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Cookies from "js-cookie";
 import { Table } from "src/components/Table/Table";
 import ObjectInfo from "src/components/ObjectInfo";
@@ -12,7 +12,7 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import PopUp from "src/components/Miscellaneous/PopUp";
 import TextInput from "src/components/Inputs/TextInput";
 import ButtonElement from "src/components/ButtonElement";
-import { POST } from "src/project-utils/helper-functions";
+import { POST } from "src/utils/helper-functions";
 
 const columns = ["Patient", "Date", "Status", "Actions"];
 

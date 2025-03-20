@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { ChatSidebarSearch } from "./ChatSidebarSearch";
-import { Scrollbar } from "src/components/scrollbar";
+import { Scrollbar } from "src/components/Scrollbar";
 import { ChatItem } from "./ChatItem";
 import NoRecords from "../NoRecords";
 

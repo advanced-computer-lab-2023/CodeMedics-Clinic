@@ -3,9 +3,9 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
 import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
 import { useGet } from "src/hooks/custom-hooks";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { Table } from "src/components/Table/Table";
-import { DELETE } from "src/project-utils/helper-functions";
+import { DELETE } from "src/utils/helper-functions";
 import FollowUpRow from "src/components/Appointment/FollowUpRow";
 
 const columns = ["Patient", "Date", "From", "To", "Actions"];

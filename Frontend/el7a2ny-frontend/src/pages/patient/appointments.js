@@ -3,7 +3,7 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import Message from "src/components/Miscellaneous/Message";
 import { Table } from "src/components/Table/Table";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import Appointment from "src/components/Appointment/Appointment";
 import { useGet } from "src/hooks/custom-hooks";
 import PatientAppointmentActions from "src/components/Appointment/PatientAppointmentActions";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
 import { useGet } from "src/hooks/custom-hooks";
 import Cookies from "js-cookie";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 import { Table } from "src/components/Table/Table";
 import ObjectInfo from "src/components/ObjectInfo";
 import { DoctorPatientActions } from "src/components/DoctorPatientActions";

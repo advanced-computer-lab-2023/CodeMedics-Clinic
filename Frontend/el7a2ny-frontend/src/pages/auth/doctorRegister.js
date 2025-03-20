@@ -9,7 +9,7 @@ import { Layout as AuthLayout } from "src/layouts/auth/layout";
 import axios from "axios";
 import { DocumentArrowUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
-import { BACKEND_ROUTE } from "src/project-utils/constants";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 
 const validationSchema = Yup.object({
   firstName: Yup.string().max(255).required("First name is required"),
