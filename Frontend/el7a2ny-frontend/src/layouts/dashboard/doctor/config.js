@@ -2,8 +2,8 @@ import CalendarDaysIcon from "@heroicons/react/24/solid/CalendarDaysIcon";
 import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
 import VideoCameraIcon from "@heroicons/react/24/solid/VideoCameraIcon";
 import { SvgIcon } from "@mui/material";
-import MessageChatSquareIcon from "../../../icons/untitled-ui/duocolor/message-chat-square";
-import HomeSmileIcon from "../../../icons/untitled-ui/duocolor/home-smile";
+import MessageChatSquareIcon from "../../../icons/untitled-ui/duocolor/MessageChatSquare";
+import HomeSmileIcon from "../../../icons/untitled-ui/duocolor/HomeSmile";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import SettingsIcon from "@mui/icons-material/Settings";
 

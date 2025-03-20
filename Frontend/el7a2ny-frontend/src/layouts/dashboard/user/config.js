@@ -1,10 +1,10 @@
 import UserIcon from "@heroicons/react/24/solid/UserIcon";
 import CalendarDaysIcon from "@heroicons/react/24/solid/CalendarDaysIcon";
 import ClipboardDocumentListIcon from "@heroicons/react/24/solid/ClipboardDocumentListIcon";
-import MessageChatSquareIcon from "../../../icons/untitled-ui/duocolor/message-chat-square";
+import MessageChatSquareIcon from "../../../icons/untitled-ui/duocolor/MessageChatSquare";
 import UsersIcon from "@heroicons/react/24/solid/UsersIcon";
 import { SvgIcon } from "@mui/material";
-import CreditCard01Icon from "../../../icons/untitled-ui/duocolor/credit-card-01";
+import CreditCard01Icon from "../../../icons/untitled-ui/duocolor/CreditCard01";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import VideoCameraIcon from "@heroicons/react/24/solid/VideoCameraIcon";
