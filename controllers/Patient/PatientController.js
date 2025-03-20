@@ -43,9 +43,6 @@ const createToken = (username) => {
 };
 
 const createPatient = asyncHandler(async (req, res) => {
-  if (Object.keys(req.body).length === 0) {
-    return res.status(400).json({ message: "Request body is empty" });
-  }
   const requiredVariables = [
     "firstName",
     "lastName",
@@ -64,10 +61,9 @@ const createPatient = asyncHandler(async (req, res) => {
     if (!req.body[variable]) {
       return res
         .status(400)
-        .json({ message: `Missing ${variable} in the request body` });
+        .json({ message: `please fill the missing fields` });
     }
   }
-  // If all required variables are present, proceed with creating the patient
   const {
     firstName,
     lastName,
@@ -82,7 +78,6 @@ const createPatient = asyncHandler(async (req, res) => {
     emergencyContactRelation,
   } = req.body;
 
-  //check if the username is already taken
   const existingUser =
     (await adminModel.findOne({ username: username })) ||
     (await doctorModel.findOne({ username: username })) ||
@@ -91,7 +86,6 @@ const createPatient = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Username already taken" });
   }
 
-  //check if the email is already taken
   const existingEmail =
     (await adminModel.findOne({ email: email })) ||
     (await doctorModel.findOne({ email: email })) ||
