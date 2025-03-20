@@ -14,7 +14,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { Logo } from 'src/components/logo';
-import { Scrollbar } from 'src/components/scrollbar';
+import { Scrollbar } from 'src/components/Scrollbar';
 import { items } from './config';
 import { SideNavItem } from './side-nav-item';
 
