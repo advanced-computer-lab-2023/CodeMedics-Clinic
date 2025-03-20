@@ -7,7 +7,7 @@ import { useGet } from "src/hooks/custom-hooks";
 import { BACKEND_ROUTE } from "src/project-utils/constants";
 import PopUp from "src/components/Miscellaneous/PopUp";
 import { DELETE, PATCH, POST } from "src/project-utils/helper-functions";
-import ObjectDetails from "src/components/Account/ObjectDetails";
+import ObjectDetails from "src/components/ObjectDetails";
 import { Table } from "src/components/Table/Table";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
 import CardObject from "src/components/CardObject/CardObject";
