@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
 import AccountCard from "./AccountCard";
-import ObjectDetails from "./ObjectDetails";
+import ObjectDetails from "../ObjectDetails";
 function Account({ user, fields, setError, setShowError }) {
   return (
     <Grid container spacing={3}>
@@ -15,6 +15,7 @@ function Account({ user, fields, setError, setShowError }) {
       </Grid>
       <Grid xs={12} md={6} lg={8}>
         <ObjectDetails
+          title="Account Details"
           obj={user}
           fields={fields}
           setError={setError}
