@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { TableRow, TableCell, Stack, Typography, IconButton, SvgIcon } from "@mui/material";
-import { SeverityPill } from "src/components/severity-pill";
+import { SeverityPill } from "src/components/SeverityPill";
 import PatientPrescriptionActions from "./PatientPrescriptionActions";
 import ObjectInfo from "../ObjectInfo";
 
