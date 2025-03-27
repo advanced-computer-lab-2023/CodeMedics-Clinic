@@ -72,95 +72,54 @@ const verifyToken = (req, res, next) => {
 // Routes
 // ==========================
 
-// ----- Patient Routes -----
-// GET
+// Patient Routes
 router.get("/", patientController.getPatients);
 router.get("/packages", patientController.getAvailablePackages);
 router.get("/:patientUsername", patientController.getPatient);
-// POST
 router.post("/", patientController.createPatient);
-// PATCH
 router.patch("/:patientUsername", patientController.updatePatient);
 
-// ----- Appointment Routes -----
-// GET
+// Appointment Routes
 router.get("/:patientUsername/appointments", getPatientAppointments);
-// PATCH
 router.patch("/:patientUsername/appointments/:appointmentId", bookAppointment);
 router.patch("/appointments/:appointmentId", updateAppointment);
 router.patch("/appointments/:appointmentId/cancel", CancelAppointment);
 
-// ----- Payment Routes -----
-// POST
+// Payment Routes
 router.post("/:patientUsername/payment/appointments/:appointmentId", payAppointment);
 router.post("/:patientUsername/payment/health-packages/:packageName", payHealthPackage);
-router.post(
-  "/:patientUsername/health-packages/subscription",
-  patientController.healthPackageSubscription
-);
-// DELETE
-router.delete(
-  "/:patientUsername/health-packages/subscription",
-  patientController.healthPackageUnsubscription
-);
+router.post("/:patientUsername/health-packages/subscription", patientController.healthPackageSubscription);
+router.delete("/:patientUsername/health-packages/subscription", patientController.healthPackageUnsubscription);
 
-// ----- Doctor Routes -----
-// GET
+// Doctor Routes
 router.get("/:patientUsername/doctors", getDoctorsAndAppointments);
 router.get("/doctors/:doctorUsername", getDoctor);
 router.get("/doctors/:doctorUsername/appointments", getPatientDoctorAppointments);
 
-// ----- Family Members Routes -----
-// GET
+// Family Members Routes
 router.get("/:patientUsername/family-members", viewFamilyMembers);
-// POST
 router.post("/:patientUsername/family-members", addFamilyMember);
-router.post(
-  "/:patientUsername/family-members-no-account",
-  addFamilyMemberNoAccount
-);
-// DELETE
-router.delete(
-  "/:patientUsername/family-members/:familyMemberUsername",
-  removeFamilyMember
-);
-router.delete(
-  "/:patientUsername/family-members-no-account/:familyMemberId",
-  removeFamilyMemberNoAccount
-);
+router.post("/:patientUsername/family-members-no-account", addFamilyMemberNoAccount);
+router.delete("/:patientUsername/family-members/:familyMemberUsername", removeFamilyMember);
+router.delete("/:patientUsername/family-members-no-account/:familyMemberId", removeFamilyMemberNoAccount);
 
-// ----- Prescription Routes -----
-// GET
+// Prescription Routes
 router.get("/:patientUsername/prescriptions", getPrescriptions);
-// POST
 router.post("/:patientUsername/prescriptions", addPrescription);
 router.post("/download-prescription-pdf", downloadPrescription);
-// PATCH
 router.patch("/:patientUsername/prescriptions/:prescriptionId", fillPrescription);
 
-// ----- Medical History Routes -----
-// POST
-router.post(
-  "/:patientUsername/medical-history",
-  uploadDocument,
-  addDocument
-);
-// DELETE
-router.delete(
-  "/:patientUsername/medical-history/:documentId",
-  removeDocument
-);
+// Medical History Routes
+router.post("/:patientUsername/medical-history", uploadDocument, addDocument);
+router.delete("/:patientUsername/medical-history/:documentId", removeDocument);
 
-// ----- Health Records Routes -----
-// GET
+// Health Records Routes
 router.get("/:patientUsername/health-records", viewHealthRecords);
 
-// ----- Chat Routes -----
-// GET
+// Chat Routes
 router.get("/:patientUsername/messages", getPatientMessages);
 router.get("/chats/:chatId/messages", getMessages);
 router.get("/:patientUsername/chats", getPatientChats);
-// POST
 router.post("/chats/:chatId/messages", sendMessage);
 
 module.exports = router;
