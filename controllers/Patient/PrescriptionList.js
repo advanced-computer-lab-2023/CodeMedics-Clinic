@@ -7,6 +7,7 @@ const Patient = require("../../models/Patient");
 const Medicine = require("../../models/Medicine");
 const fs = require("fs");
 const Cart = require("../../models/Cart");
+const { validatePatient } = require("../../utils/validator");
 
 exports.filterPrescriptions = async (req, res) => {
   try {
@@ -264,25 +265,21 @@ exports.createAndDownloadPDF = (prescription) => {
 exports.fillPrescription = async (req, res) => {
   try {
     const { patientUsername, prescriptionId } = req.params;
-    const patient = await Patient.findOne({ username: patientUsername });
-    var cart = patient.Cart;
-    if (!cart) {
-      cart = new Cart();
-      cart.PatientId = patient._id;
-      cart.items = [];
-      patient.Cart = cart;
-      await patient.save();
-    }
-    const items = patient.Cart.items;
-    if (!items) {
-      items = [];
-    }
+    const patient = await validatePatient(patientUsername, res);
     const prescription = await Prescription.findOne({ _id: prescriptionId });
     const meds = prescription.drug;
     for (let i = 0; i < meds.length; i++) {
       const drug = meds[i].drugName;
       var dosage = meds[i].dosage;
       const fetchDrug = await Medicine.findOne({ name: drug });
+      if (!fetchDrug) {
+        return res.status(400).json({ message: "Invalid Drug Name" });
+      }
+      if (fetchDrug.availableQuantity < dosage) {
+        return res
+          .status(400)
+          .json({ message: "Not Enough Quantity Available" });
+      }
       dosage = Math.min(dosage, fetchDrug.availableQuantity);
       if (dosage > 0) {
         const price = dosage * fetchDrug.price;
@@ -294,11 +291,10 @@ exports.fillPrescription = async (req, res) => {
       }
     }
     prescription.filled = true;
-    patient.Cart.items = items;
     await prescription.save();
     await patient.save();
     return res
-      .status(204)
+      .status(201)
       .json({ message: "Prescription Filled Successfully" });
   } catch (error) {
     console.log(error);
