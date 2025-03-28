@@ -14,7 +14,6 @@ const adminRoutes = require("./routes/AdminRoutes");
 const doctorRoutes = require("./routes/DoctorRoutes");
 const patientRoutes = require("./routes/PatientRoutes");
 const genericRoutes = require("./routes/GenericRoutes");
-const chatRoutes = require("./routes/ChatsRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -42,7 +41,6 @@ app.use("/admins", adminRoutes);
 app.use("/doctors", doctorRoutes);
 app.use("/patients", patientRoutes);
 app.use("/", genericRoutes);
-app.use("/chats", chatRoutes);
 
 // Initialize Socket.IO
 initializeSocket(server);
