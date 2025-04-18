@@ -19,7 +19,7 @@ function PatientPrescription({ prescription }) {
 
   return (
     <TableRow hover key={state._id}>
-      <ObjectInfo obj={state} attributes={["doctorUsername", "date", "status"]} />
+      <ObjectInfo obj={state} attributes={["doctorUsername", "date", "filled"]} />
       <PatientPrescriptionActions setState={setState} state={state} />
     </TableRow>
   );

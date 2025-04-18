@@ -60,8 +60,8 @@ const Page = () => {
       if (endDate && itemDate > new Date(endDate)) return false;
 
       const doctorCondition =
-        !doctorName || item.Doctor.toLowerCase().includes(doctorName.toLowerCase());
-      console.log(doctorName, item.Doctor);
+        !doctorName || item.doctorUsername.toLowerCase().includes(doctorName.toLowerCase());
+      console.log(doctorName, item.doctorUsername);
       const itemStatus = item.filled ? "filled" : "unfilled";
       if (!doctorCondition) return false;
 
