@@ -66,29 +66,23 @@ exports.updatePatientPassword = async (patientUsername, password) => {
   return updatedPatient;
 };
 
-exports.getPatientAppointments = async (patientUsername) => {
+exports.getPatientAppointments = async (patientUsername, status) => {
   await patientRepo.validatePatient(patientUsername);
-  const appointments = await appointmentRepo.getAppointments({
-    patientUsername,
-  });
+  const query = { patientUsername };
+  if (status) {
+    const statusArray = Array.isArray(status) ? status : status.split(",");
+    query.status = { $in: statusArray };
+  }
+  const appointments = await appointmentRepo.getAppointments(query);
   return appointments;
 };
 
-exports.bookAppointment = async (patientUsername, appointmentId) => {
-  const appointment = await appointmentRepo.validateAppointment(appointmentId);
-  if (appointment.status !== "unreserved") {
-    const error = new Error("Appointment is not available for booking");
-    error.statusCode = 400;
-    throw error;
-  }
-  const bookedAppointment = await appointmentRepo.bookAppointment(
-    patientUsername,
-    appointmentId
-  );
-  return bookedAppointment;
-};
-
-exports.updateAppointment = async (appointmentId, appointmentData) => {
+exports.updateAppointment = async (
+  patientUsername,
+  appointmentId,
+  appointmentData
+) => {
+  await patientRepo.validatePatient(patientUsername);
   await appointmentRepo.validateAppointment(appointmentId);
   const updatedAppointment = await appointmentRepo.updateAppointment(
     appointmentId,
@@ -97,7 +91,8 @@ exports.updateAppointment = async (appointmentId, appointmentData) => {
   return updatedAppointment;
 };
 
-exports.cancelAppointment = async (appointmentId) => {
+exports.cancelAppointment = async (patientUsername, appointmentId) => {
+  await patientRepo.validatePatient(patientUsername);
   await appointmentRepo.validateAppointment(appointmentId);
   const cancelledAppointment = await appointmentRepo.cancelAppointment(
     appointmentId
@@ -182,19 +177,48 @@ exports.getDoctorAppointments = async (
   return appointments;
 };
 
-exports.payAppointment = async (patientUsername, appointmentId) => {
-  await patientRepo.validatePatient(patientUsername);
+exports.payAppointment = async (
+  patientUsername,
+  appointmentId,
+  paymentMethod
+) => {
+  const patient = await patientRepo.validatePatient(patientUsername);
   const appointment = await appointmentRepo.validateAppointment(appointmentId);
   if (appointment.status !== "unreserved") {
     const error = new Error("Appointment is not available for payment");
     error.statusCode = 400;
     throw error;
   }
-  const payment = await appointmentRepo.payAppointment(
-    patientUsername,
-    appointmentId
-  );
-  return payment;
+  const doctor = await doctorRepo.validateDoctor(appointment.doctorUsername);
+  const package = await packageRepo.validatePackage(patient.healthPackage.name);
+  if (paymentMethod === "Card") {
+    await appointmentRepo.addAppointment(appointment, patient, doctor);
+  } else if (paymentMethod === "Wallet") {
+    let price = doctor.hourlyRate + 0.1 * doctor.hourlyRate;
+    const hours = Math.abs(
+      parseInt(appointment.startHour) - parseInt(appointment.endHour)
+    );
+    price *= hours;
+    if (package) {
+      price -= price * (package.sessionDiscount / 100);
+    }
+    if (patient.wallet < price) {
+      const error = new Error("Insufficient funds in wallet");
+      error.statusCode = 402;
+      throw error;
+    }
+    const result = await appointmentRepo.addAppointment(
+      appointment,
+      patient,
+      doctor,
+      price
+    );
+    return result;
+  } else {
+    const error = new Error("Invalid payment method");
+    error.statusCode = 400;
+    throw error;
+  }
 };
 
 exports.getFamilyMembers = async (patientUsername) => {
@@ -277,9 +301,9 @@ exports.removeFamilyMemberWithNoAccount = async (
 
 exports.getPrescriptions = async (patientUsername) => {
   await patientRepo.validatePatient(patientUsername);
-  const prescriptions = await prescriptionRepo.getPrescriptions(
-    patientUsername
-  );
+  const prescriptions = await prescriptionRepo.getPrescriptions({
+    patientUsername,
+  });
   return prescriptions;
 };
 
