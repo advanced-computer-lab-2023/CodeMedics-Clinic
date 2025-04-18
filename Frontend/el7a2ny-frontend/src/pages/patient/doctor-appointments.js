@@ -56,7 +56,7 @@ const Page = () => {
   ];
 
   useGet({
-    url: `${BACKEND_ROUTE}/patients/doctors/${doctorUsername}/appointments?status=unreserved`,
+    url: `${BACKEND_ROUTE}/patients/${username}/doctors/${doctorUsername}/appointments?status=unreserved`,
     setData: setAllData,
     setLoading,
     setShowError,
