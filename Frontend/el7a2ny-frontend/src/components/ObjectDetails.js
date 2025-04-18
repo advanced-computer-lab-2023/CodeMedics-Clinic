@@ -51,16 +51,13 @@ function ObjectDetails({ obj, fields, setShowError, setError, action, title }) {
       } else {
         const apiEndpoint = `${BACKEND_ROUTE}/${
           Cookies.get("type") == "doctor" ? "doctors" : "patients"
-        }/${obj.objname}`;
+        }/${obj.username}`;
 
         PATCH({
           url: apiEndpoint,
           body,
           setShowError,
           setError,
-          updater: () => {
-            window.location.reload();
-          },
         });
       }
     } catch (err) {
