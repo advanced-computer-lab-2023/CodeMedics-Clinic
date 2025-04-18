@@ -57,28 +57,14 @@ router.patch("/:username/password", async (req, res) => {
 router.get("/:username/appointments", async (req, res) => {
   try {
     const appointments = await patientService.getPatientAppointments(
-      req.params.username
+      req.params.username,
+      req.query.status
     );
     res.status(200).json({ data: appointments });
   } catch (error) {
     errorHandler(error, req, res);
   }
 });
-
-router.patch(
-  "/:username/appointments/:appointmentId/book",
-  async (req, res) => {
-    try {
-      const appointment = await patientService.bookAppointment(
-        req.params.username,
-        req.params.appointmentId
-      );
-      res.status(200).json({ data: appointment });
-    } catch (error) {
-      errorHandler(error, req, res);
-    }
-  }
-);
 
 router.patch(
   "/:username/appointments/:appointmentId/cancel",
