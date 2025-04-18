@@ -295,26 +295,22 @@ router.get("/:username/prescriptions", async (req, res) => {
   }
 });
 
-router.post("/:username/prescriptions", async (req, res) => {
-  try {
-    const prescription = await patientService.addPrescription(
-      req.params.username,
-      req.body
-    );
-    res.status(201).json({ data: prescription });
-  } catch (error) {
-    errorHandler(error, req, res);
+router.post(
+  "/:username/prescriptions/download-prescription-pdf",
+  async (req, res) => {
+    try {
+      const pdf = await patientService.downloadPrescriptionPdf(req.params.username, req.body.prescription);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="Prescription_${req.body.prescription._id}.pdf"`
+      );
+      res.send(pdf);
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
   }
-});
-
-router.post("/:username/download-prescription-pdf", async (req, res) => {
-  try {
-    const pdf = await patientService.downloadPrescriptionPdf(req.body);
-    res.status(200).json({ data: pdf });
-  } catch (error) {
-    errorHandler(error, req, res);
-  }
-});
+);
 
 router.patch("/:username/prescriptions/:prescriptionId", async (req, res) => {
   try {

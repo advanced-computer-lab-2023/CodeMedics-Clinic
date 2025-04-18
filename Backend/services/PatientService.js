@@ -318,7 +318,7 @@ exports.addPrescription = async (patientUsername, prescriptionData) => {
 
 exports.downloadPrescriptionPdf = async (patientUsername, prescriptionData) => {
   await patientRepo.validatePatient(patientUsername);
-  const prescription = await prescriptionRepo.downloadPrescription(
+  const prescription = await prescriptionRepo.createAndDownloadPDF(
     prescriptionData
   );
   return prescription;
@@ -331,7 +331,6 @@ exports.updatePrescription = async (
 ) => {
   await patientRepo.validatePatient(patientUsername);
   const prescription = await prescriptionRepo.updatePrescription(
-    patientUsername,
     prescriptionId,
     prescriptionData
   );
