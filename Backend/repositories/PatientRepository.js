@@ -70,27 +70,23 @@ exports.updatePatient = async (patientUsername, patientData) => {
     dateOfBirth,
     gender,
     number,
-    emergencyContactName,
-    emergencyContactNumber,
-    emergencyContactRelation,
+    emergencyContact
   } = patientData;
+
+  console.log("patientData", patientData);
 
   const updatedPatient = await Patient.findOneAndUpdate(
     { username: patientUsername },
     {
       $set: {
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-        email: email,
-        dateOfBirth: dateOfBirth,
-        number: number,
-        gender: gender,
-        emergencyContact: {
-          name: emergencyContactName,
-          number: emergencyContactNumber,
-          relation: emergencyContactRelation,
-        },
+        firstName,
+        lastName,
+        username,
+        email,
+        dateOfBirth,
+        number,
+        gender,
+        emergencyContact
       },
     },
     { new: true }
