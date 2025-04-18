@@ -122,7 +122,10 @@ router.get("/:username/family-members", async (req, res) => {
     const familyMembers = await patientService.getFamilyMembers(
       req.params.username
     );
-    res.status(200).json({ data: familyMembers });
+    const familyMembersNoAccount =
+      await patientService.getFamilyMembersWithNoAccount(req.params.username);
+    console.log("familyMembersNoAccount", familyMembersNoAccount);
+    res.status(200).json({ data: { familyMembers, familyMembersNoAccount } });
   } catch (error) {
     errorHandler(error, req, res);
   }
@@ -141,9 +144,10 @@ router.get("/:username/family-members-no-account", async (req, res) => {
 
 router.post("/:username/family-members", async (req, res) => {
   try {
+    console.log("req.body", req.body);
     const familyMember = await patientService.addFamilyMember(
       req.params.username,
-      req.body.familyMemberUsername
+      req.body
     );
     res.status(201).json({ data: familyMember });
   } catch (error) {
@@ -299,7 +303,10 @@ router.post(
   "/:username/prescriptions/download-prescription-pdf",
   async (req, res) => {
     try {
-      const pdf = await patientService.downloadPrescriptionPdf(req.params.username, req.body.prescription);
+      const pdf = await patientService.downloadPrescriptionPdf(
+        req.params.username,
+        req.body.prescription
+      );
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",

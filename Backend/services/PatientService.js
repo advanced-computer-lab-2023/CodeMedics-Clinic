@@ -235,9 +235,12 @@ exports.getFamilyMembersWithNoAccount = async (patientUsername) => {
   return familyMembers;
 };
 
-exports.addFamilyMember = async (patientUsername, familyMemberUsername) => {
+exports.addFamilyMember = async (patientUsername, familyMemberData) => {
+  console.log("familyMemberData", familyMemberData, familyMemberData.username);
   const patient = await patientRepo.validatePatient(patientUsername);
-  const familyMember = await patientRepo.validatePatient(familyMemberUsername);
+  const familyMember = await patientRepo.validatePatient(
+    familyMemberData.username
+  );
   if (familyMember.username === patientUsername) {
     const error = new Error("Cannot add yourself as a family member");
     error.statusCode = 400;
@@ -260,7 +263,7 @@ exports.addFamilyMember = async (patientUsername, familyMemberUsername) => {
 
   const result = await patientRepo.addFamilyMember(
     patientUsername,
-    familyMemberUsername
+    familyMemberData.username
   );
 
   return result;

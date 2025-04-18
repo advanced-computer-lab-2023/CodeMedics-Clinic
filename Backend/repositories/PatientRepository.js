@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const Patient = require("../../models/Patient");
 const Chat = require("../../models/Chat");
 const Message = require("../../models/Message");
+const FamilyMember = require("../../models/FamilyMember");
 
 exports.validatePatient = async (patientUsername) => {
   const patient = await this.getPatient(patientUsername);
@@ -70,7 +71,7 @@ exports.updatePatient = async (patientUsername, patientData) => {
     dateOfBirth,
     gender,
     number,
-    emergencyContact
+    emergencyContact,
   } = patientData;
 
   console.log("patientData", patientData);
@@ -86,7 +87,7 @@ exports.updatePatient = async (patientUsername, patientData) => {
         dateOfBirth,
         number,
         gender,
-        emergencyContact
+        emergencyContact,
       },
     },
     { new: true }
@@ -128,18 +129,37 @@ exports.unsubscribeHealthPackage = async (patientUsername) => {
 
 exports.getFamilyMembers = async (patientUsername) => {
   const patient = await Patient.findOne({ username: patientUsername });
-  return patient.familyMembers;
+  const familyMembers = [];
+  for (let i = 0; i < patient.familyMembers.length; i++) {
+    const familyMember = await Patient.findOne({
+      username: patient.familyMembers[i].username,
+    });
+    familyMembers.push(familyMember);
+  }
+  return familyMembers;
 };
 
 exports.getFamilyMembersWithNoAccount = async (patientUsername) => {
-  const patient = await Patient.find({ username: patientUsername });
-  return patient.familyMembersNoAccount;
+  const patient = await Patient.findOne({ username: patientUsername });
+  const familyMembers = [];
+  for (let i = 0; i < patient.familyMembersNoAccount.length; i++) {
+    const familyMember = await FamilyMember.findById(
+      patient.familyMembersNoAccount[i]
+    );
+    familyMembers.push(familyMember);
+  }
+  return familyMembers;
 };
 
 exports.addFamilyMember = async (patientUsername, familyMemberUsername) => {
-  const patient = await Patient.find({ username: patientUsername });
-  const familyMember = await Patient.find({ username: familyMemberUsername });
-  patient.familyMembers.push(familyMemberUsername);
+  const patient = await Patient.findOne({ username: patientUsername });
+  const familyMember = await Patient.findOne({
+    username: familyMemberUsername,
+  });
+  if (!patient.familyMembers) {
+    patient.familyMembers = [];
+  }
+  patient.familyMembers.push({ username: familyMemberUsername });
   familyMember.linked = patient._id;
   await patient.save();
   await familyMember.save();
@@ -147,8 +167,10 @@ exports.addFamilyMember = async (patientUsername, familyMemberUsername) => {
 };
 
 exports.removeFamilyMember = async (patientUsername, familyMemberUsername) => {
-  const patient = await Patient.find({ username: patientUsername });
-  const familyMember = await Patient.find({ username: familyMemberUsername });
+  const patient = await Patient.findOne({ username: patientUsername });
+  const familyMember = await Patient.findOne({
+    username: familyMemberUsername,
+  });
   patient.familyMembers = patient.familyMembers.filter(
     (member) => member.username !== familyMemberUsername
   );
@@ -162,8 +184,18 @@ exports.addFamilyMemberWithNoAccount = async (
   patientUsername,
   familyMemberData
 ) => {
-  const patient = await Patient.find({ username: patientUsername });
-  patient.familyMembersNoAccount.push(familyMemberData);
+  const { name, nationalId, gender, dateOfBirth, relationship } =
+    familyMemberData;
+  const patient = await Patient.findOne({ username: patientUsername });
+  const familyMember = new FamilyMember({
+    name,
+    nationalId,
+    gender,
+    dateOfBirth,
+    relationship,
+  });
+  const savedFamilyMember = await familyMember.save();
+  patient.familyMembersNoAccount.push(savedFamilyMember._id);
   await patient.save();
   return familyMemberData;
 };
@@ -172,7 +204,7 @@ exports.removeFamilyMemberWithNoAccount = async (
   patientUsername,
   familyMemberId
 ) => {
-  const patient = await Patient.find({ username: patientUsername });
+  const patient = await Patient.findOne({ username: patientUsername });
   patient.familyMembersNoAccount = patient.familyMembersNoAccount.filter(
     (member) => member._id.toString() !== familyMemberId
   );
@@ -181,19 +213,19 @@ exports.removeFamilyMemberWithNoAccount = async (
 };
 
 exports.getHealthRecords = async (patientUsername) => {
-  const patient = await Patient.find({ username: patientUsername });
+  const patient = await Patient.findOne({ username: patientUsername });
   return patient.healthRecords;
 };
 
 exports.addHealthRecord = async (patientUsername, healthRecord) => {
-  const patient = await Patient.find({ username: patientUsername });
+  const patient = await Patient.findOne({ username: patientUsername });
   patient.healthRecords.push(healthRecord);
   await patient.save();
   return healthRecord;
 };
 
 exports.removeHealthRecord = async (patientUsername, healthRecordId) => {
-  const patient = await Patient.find({ username: patientUsername });
+  const patient = await Patient.findOne({ username: patientUsername });
   patient.healthRecords = patient.healthRecords.filter(
     (record) => record._id.toString() !== healthRecordId
   );
@@ -202,7 +234,7 @@ exports.removeHealthRecord = async (patientUsername, healthRecordId) => {
 };
 
 exports.getNotifications = async (patientUsername) => {
-  const patient = await Patient.find({ username: patientUsername });
+  const patient = await Patient.findOne({ username: patientUsername });
   return patient.messages;
 };
 
