@@ -3,7 +3,7 @@ const patientRepo = require("../repositories/PatientRepository");
 const appointmentRepo = require("../repositories/AppointmentRepository");
 const prescriptionRepo = require("../repositories/PrescriptionRepository");
 const packageRepo = require("../repositories/PackageRepository");
-const { sendNotification } = require("../../utils/notificationHandler");
+const generalRepo = require("../repositories/GeneralRepository");
 
 exports.getDoctor = async (doctorUsername) => {
   const doctor = await doctorRepo.validateDoctor(doctorUsername);
@@ -142,6 +142,61 @@ exports.addHealthRecord = async (
     bodyData
   );
   return healthRecord;
+};
+
+exports.getChatMessages = async (doctorUsername, chatId) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const messages = await generalRepo.getChatMessages(chatId);
+  return messages;
+};
+
+exports.getChats = async (doctorUsername) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const finishedAppointments = await appointmentRepo.getAppointments({
+    doctorUsername,
+    status: { $in: ["completed", "follow-up Requested"] },
+  });
+  const patients = [];
+  for (const appointment of finishedAppointments) {
+    const patient = await patientRepo.validatePatient(
+      appointment.patientUsername
+    );
+    if (!patients.some((p) => p.username === patient.username)) {
+      patients.push(patient);
+    }
+  }
+  const chats = [];
+  const pharmacyChat = await generalRepo.getPharmacyChat(doctorUsername);
+  chats.push(pharmacyChat);
+  for (const patient of patients) {
+    const chat = await generalRepo.getChat(patient.username, doctorUsername);
+    if (!chat) {
+      const newChat = await generalRepo.createChat(
+        patient.username,
+        doctorUsername
+      );
+      chats.push({ patient, chat: newChat, latestMessage: null });
+    } else {
+      const latestMessage = await generalRepo.getLatestMessage(chat._id);
+      chats.push({ patient, chat, latestMessage });
+    }
+  }
+  chats.sort((a, b) => {
+    if (a.chat.updatedAt > b.chat.updatedAt) return -1;
+    if (a.chat.updatedAt < b.chat.updatedAt) return 1;
+    return 0;
+  });
+  return chats;
+};
+
+exports.sendMessage = async (doctorUsername, chatId, content) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const message = await generalRepo.sendMessage(
+    chatId,
+    doctorUsername,
+    content
+  );
+  return message;
 };
 
 exports.getNotifications = async (doctorUsername) => {

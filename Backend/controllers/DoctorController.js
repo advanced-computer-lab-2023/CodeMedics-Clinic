@@ -286,7 +286,7 @@ router.get("/:username/chats", async (req, res) => {
 
 router.get("/:username/chats/:chatId/messages", async (req, res) => {
   try {
-    const messages = await doctorService.getMessages(
+    const messages = await doctorService.getChatMessages(
       req.params.username,
       req.params.chatId
     );
@@ -301,7 +301,7 @@ router.post("/:username/chats/:chatId/messages", async (req, res) => {
     const message = await doctorService.sendMessage(
       req.params.username,
       req.params.chatId,
-      req.body
+      req.body.content
     );
     res.status(201).json({ data: message });
   } catch (error) {
