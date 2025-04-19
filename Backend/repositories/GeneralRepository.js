@@ -1,5 +1,6 @@
 const Message = require("../../models/Message");
 const Chat = require("../../models/Chat");
+const Medicine = require("../../models/Medicine");
 
 exports.getChatMessages = async (chatId) => {
   const messages = await Message.find({ chat: chatId }).sort({
@@ -62,3 +63,14 @@ exports.createChat = async (patientUsername, doctorUsername) => {
   await chat.save();
   return chat;
 };
+
+exports.validateMedicine = async (medicineName) => {
+  const medicine = await Medicine.findOne({ name: medicineName });
+  if (!medicine) {
+    const error = new Error("Medicine not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  return medicine;
+}
+

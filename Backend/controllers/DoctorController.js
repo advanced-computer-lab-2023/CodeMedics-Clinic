@@ -183,7 +183,7 @@ router.post("/:username/prescriptions", async (req, res) => {
 });
 
 router.post(
-  "/:username/prescriptions/:prescriptionId/medicines",
+  "/:username/prescriptions/:prescriptionId/drugs",
   async (req, res) => {
     try {
       const prescription = await doctorService.addMedicineToPrescription(
@@ -199,13 +199,13 @@ router.post(
 );
 
 router.delete(
-  "/:username/prescriptions/:prescriptionId/medicines/:medicineId",
+  "/:username/prescriptions/:prescriptionId/drugs/:drugName",
   async (req, res) => {
     try {
       const prescription = await doctorService.removeMedicineFromPrescription(
         req.params.username,
         req.params.prescriptionId,
-        req.params.medicineId
+        req.params.drugName
       );
       res.status(200).json({ data: prescription });
     } catch (error) {
@@ -227,7 +227,7 @@ router.patch("/:username/prescriptions/:prescriptionId", async (req, res) => {
   }
 });
 
-router.get(
+router.post(
   "/:username/prescriptions/:prescriptionId/download",
   async (req, res) => {
     try {
@@ -235,7 +235,7 @@ router.get(
         req.params.username,
         req.params.prescriptionId
       );
-      res.status(200).json({ data: prescription });
+      res.status(201).json({ data: prescription });
     } catch (error) {
       errorHandler(error, req, res);
     }

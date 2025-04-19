@@ -20,6 +20,12 @@ exports.getPrescriptions = async (query = {}) => {
   return prescriptions;
 };
 
+exports.addPrescription = async (prescriptionData) => {
+  const prescription = new Prescription(prescriptionData);
+  await prescription.save();
+  return prescription;
+};
+
 exports.updatePrescription = async (prescriptionId, prescriptionData) => {
   const prescription = await Prescription.findByIdAndUpdate(
     prescriptionId,
@@ -28,6 +34,35 @@ exports.updatePrescription = async (prescriptionId, prescriptionData) => {
       new: true,
     }
   );
+  return prescription;
+};
+
+exports.addMedicineToPrescription = async (
+  prescriptionId,
+  drugName,
+  dosage
+) => {
+  const prescription = await this.getPrescription(prescriptionId);
+  const medicineData = { drugName, dosage };
+  let found = false;
+  for (const drug of prescription.drug) {
+    if (drug.drugName == drugName) {
+      drug.dosage = dosage;
+      found = true;
+      break;
+    }
+  }
+  if (!found) prescription.drug.push(medicineData);
+  await prescription.save();
+  return prescription;
+};
+
+exports.removeMedicineFromPrescription = async (prescriptionId, drugName) => {
+  const prescription = await this.getPrescription(prescriptionId);
+  prescription.drug = prescription.drug.filter(
+    (drug) => drug.drugName !== drugName
+  );
+  await prescription.save();
   return prescription;
 };
 

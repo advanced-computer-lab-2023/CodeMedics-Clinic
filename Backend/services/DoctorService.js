@@ -122,6 +122,110 @@ exports.getPrescriptions = async (doctorUsername) => {
   return prescriptions;
 };
 
+exports.addPrescription = async (doctorUsername, bodyData) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const { drugs, patientUsername, date } = bodyData;
+  await patientRepo.validatePatient(patientUsername);
+  if (!drugs || !date) {
+    const error = new Error("Incomplete data for prescription");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (drugs.length == 0) {
+    const error = new Error("Add at least one medicine for the prescription");
+    error.statusCode = 400;
+    throw error;
+  }
+  for (const drug of drugs) {
+    if (Number(drug.dosage) <= 0) {
+      const error = new Error("Dosage should be positive");
+      error.statusCode = 400;
+      throw error;
+    }
+    const medicine = await generalRepo.validateMedicine(drug.drugName);
+    if (medicine.availableQuantity < Number(drug.dosgae)) {
+      const error = new Error(`Out-of-stock medicine ${drug.drugName}`);
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+  const newPrescription = await prescriptionRepo.addPrescription({
+    doctorUsername,
+    patientUsername,
+    drug: drugs,
+    date,
+    filled: false,
+  });
+  return newPrescription;
+};
+
+exports.updatePrescription = async (
+  doctorUsername,
+  prescriptionId,
+  bodyData
+) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  await prescriptionRepo.validatePrescription(prescriptionId);
+  const updatedPrescription = await prescriptionRepo.updatePrescription(
+    prescriptionId,
+    bodyData
+  );
+  return updatedPrescription;
+};
+
+exports.downloadPrescription = async (doctorUsername, prescriptionId) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const prescription = await prescriptionRepo.validatePrescription(
+    prescriptionId
+  );
+  const pdfBuffer = await prescriptionRepo.createAndDownloadPDF(prescription);
+  return pdfBuffer;
+};
+
+exports.addMedicineToPrescription = async (
+  doctorUsername,
+  prescriptionId,
+  bodyData
+) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  await prescriptionRepo.validatePrescription(prescriptionId);
+  const { medicineName, dosage } = bodyData;
+  console.log("adding medicine", bodyData, medicineName, dosage);
+  if (!medicineName || !dosage) {
+    const error = new Error("Incomplete data for prescription");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (Number(dosage) <= 0) {
+    const error = new Error("Dosage should be positive");
+    error.statusCode = 400;
+    throw error;
+  }
+  const medicine = await generalRepo.validateMedicine(medicineName);
+  if (medicine.availableQuantity < Number(dosage)) {
+    const error = new Error(`Out-of-stock medicine ${medicineName}`);
+    error.statusCode = 400;
+    throw error;
+  }
+  const updatedPrescription = await prescriptionRepo.addMedicineToPrescription(
+    prescriptionId,
+    medicineName,
+    dosage
+  );
+  return updatedPrescription;
+};
+
+exports.removeMedicineFromPrescription = async (doctorUsername, prescriptionId, drugName) => {
+    await doctorRepo.validateDoctor(doctorUsername);
+    await prescriptionRepo.validatePrescription(prescriptionId);
+    await generalRepo.validateMedicine(drugName);
+    const updatedPrescription = await prescriptionRepo.removeMedicineFromPrescription(
+      prescriptionId,
+      drugName
+    );
+    return updatedPrescription;
+}
+
 exports.getHealthRecords = async (doctorUsername, patientUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const healthRecords = await patientRepo.getHealthRecords(patientUsername);
