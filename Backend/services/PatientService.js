@@ -92,12 +92,28 @@ exports.updateAppointment = async (
 };
 
 exports.cancelAppointment = async (patientUsername, appointmentId) => {
-  await patientRepo.validatePatient(patientUsername);
-  await appointmentRepo.validateAppointment(appointmentId);
-  const cancelledAppointment = await appointmentRepo.cancelAppointment(
+  const patient = await patientRepo.validatePatient(patientUsername);
+  const appointment = await appointmentRepo.validateAppointment(appointmentId);
+  if (
+    appointment.status === "completed" ||
+    appointment.status === "unreserved"
+  ) {
+    const error = new Error("Cannot cancel this appointment");
+    error.statusCode = 400;
+    throw error;
+  }
+  const doctor = await doctorRepo.validateDoctor(appointment.doctorUsername);
+  const package = await packageRepo.validatePackage(patient.healthPackage.name);
+  const updatedAppointment = await appointmentRepo.cancelAppointment(
     appointmentId
   );
-  return cancelledAppointment;
+  await appointmentRepo.handleAppointmentCancellation(
+    appointmentId,
+    patient,
+    doctor,
+    package
+  );
+  return updatedAppointment;
 };
 
 exports.payHealthPackage = async (

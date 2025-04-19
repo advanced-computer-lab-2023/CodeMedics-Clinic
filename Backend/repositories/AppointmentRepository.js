@@ -1,7 +1,9 @@
 const Appointment = require("../../models/Appointment");
+const ClinicWallet = require("../../models/ClinicWallet");
 const {
   handlePatientAppointmentNotification,
   handleDoctorAppointmentNotification,
+  sendNotification,
 } = require("../../utils/notificationHandler");
 
 exports.validateAppointment = async (appointmentId) => {
@@ -54,6 +56,48 @@ exports.cancelAppointment = async (appointmentId) => {
   return await this.updateAppointment(appointmentId, {
     status: "cancelled",
   });
+};
+
+exports.handleAppointmentCancellation = async (
+  appointmentId,
+  patient,
+  doctor,
+  package
+) => {
+  const appointment = await this.validateAppointment(appointmentId);
+  const clinicWallet = await ClinicWallet.findOne();
+  let discount = 0;
+  if (package) {
+    discount = package.sessionDiscount;
+  }
+  const clinicFees = doctor.hourlyRate * 0.1;
+  const hours = Math.abs(
+    parseInt(appointment.startHour) - parseInt(appointment.endHour)
+  );
+  const appointmentPrice = hours * (doctor.hourlyRate + clinicFees);
+  doctor.wallet -= hours * doctor.hourlyRate;
+  patient.wallet += appointmentPrice - (appointmentPrice * discount) / 100;
+  clinicWallet.wallet -= clinicFees;
+  appointment.status = "cancelled";
+  await clinicWallet.save();
+  await doctor.save();
+  await patient.save();
+  await appointment.save();
+  const notificationMessage = `Your appointment on ${appointment.date} has been canceled.`;
+
+  await sendNotification(
+    doctor,
+    "Appointment Cancelled",
+    notificationMessage,
+    notificationMessage
+  );
+
+  await sendNotification(
+    patient,
+    "Appointment Cancelled",
+    notificationMessage,
+    notificationMessage
+  );
 };
 
 exports.deleteAppointment = async (appointmentId) => {

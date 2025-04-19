@@ -2,6 +2,8 @@ const doctorRepo = require("../repositories/DoctorRepository");
 const patientRepo = require("../repositories/PatientRepository");
 const appointmentRepo = require("../repositories/AppointmentRepository");
 const prescriptionRepo = require("../repositories/PrescriptionRepository");
+const packageRepo = require("../repositories/PackageRepository");
+const { sendNotification } = require("../../utils/notificationHandler");
 
 exports.getDoctor = async (doctorUsername) => {
   const doctor = await doctorRepo.validateDoctor(doctorUsername);
@@ -83,6 +85,33 @@ exports.completeAppointment = async (doctorUsername, appointmentId) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const appointment = await appointmentRepo.completeAppointment(appointmentId);
   return appointment;
+};
+
+exports.cancelAppointment = async (doctorUsername, appointmentId) => {
+  const doctor = await doctorRepo.validateDoctor(doctorUsername);
+  const appointment = await appointmentRepo.validateAppointment(appointmentId);
+  if (
+    appointment.status === "completed" ||
+    appointment.status === "unreserved"
+  ) {
+    const error = new Error("Cannot cancel this appointment");
+    error.statusCode = 400;
+    throw error;
+  }
+  const patient = await patientRepo.validatePatient(
+    appointment.patientUsername
+  );
+  const package = await packageRepo.validatePackage(patient.healthPackage.name);
+  const updatedAppointment = await appointmentRepo.cancelAppointment(
+    appointmentId
+  );
+  await appointmentRepo.handleAppointmentCancellation(
+    appointmentId,
+    patient,
+    doctor,
+    package
+  );
+  return updatedAppointment;
 };
 
 exports.getPrescriptions = async (doctorUsername) => {
