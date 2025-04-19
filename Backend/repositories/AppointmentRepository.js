@@ -17,6 +17,11 @@ exports.getAppointments = async (query = {}) => {
   return appointments;
 };
 
+exports.checkExistingAppointmentWithQuery = async (query) => {
+  const appointment = await Appointment.findOne(query);
+  return appointment ? true : false;
+};
+
 exports.getAppointment = async (appointmentId) => {
   const appointment = await Appointment.findById(appointment);
   return appointment;
