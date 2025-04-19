@@ -442,12 +442,12 @@ exports.getPatientChats = async (patientUsername) => {
   return chats;
 };
 
-exports.sendMessage = async (patientUsername, chatId, messageData) => {
+exports.sendMessage = async (patientUsername, chatId, content) => {
   await patientRepo.validatePatient(patientUsername);
   const message = await patientRepo.sendMessage(
     chatId,
     patientUsername,
-    messageData
+    content
   );
   return message;
 };

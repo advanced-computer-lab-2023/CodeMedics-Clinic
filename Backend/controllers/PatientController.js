@@ -354,20 +354,24 @@ router.get("/:username/chats", async (req, res) => {
   }
 });
 
-router.get("/chats/:chatId/messages", async (req, res) => {
+router.get("/:username/chats/:chatId/messages", async (req, res) => {
+  console.log("req.params", req.params);
   try {
-    const messages = await patientService.getChatMessages(req.params.chatId);
+    const messages = await patientService.getChatMessages(
+      req.params.username,
+      req.params.chatId
+    );
     res.status(200).json({ data: messages });
   } catch (error) {
     errorHandler(error, req, res);
   }
 });
 
-router.post("/chats/:chatId/messages", async (req, res) => {
+router.post("/:username/chats/:chatId/messages", async (req, res) => {
   try {
     const message = await patientService.sendMessage(
+      req.params.username,
       req.params.chatId,
-      req.body.sender,
       req.body.content
     );
     res.status(201).json({ data: message });
