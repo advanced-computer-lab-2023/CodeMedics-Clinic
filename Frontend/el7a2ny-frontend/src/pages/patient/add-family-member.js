@@ -15,18 +15,18 @@ import { BACKEND_ROUTE } from "src/utils/Constants";
 
 const Page = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [relationship, setRelationship] = useState("");
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
 
   const fields = [
     {
-      name: "email",
-      label: "Email",
-      value: email,
+      name: "username",
+      label: "Username",
+      value: username,
       type: "text",
-      setValue: setEmail,
+      setValue: setUsername,
     },
     {
       name: "relationship",
@@ -37,17 +37,15 @@ const Page = () => {
     },
   ];
 
-  const username = Cookies.get("username");
-
   const onSubmit = async (values, helpers) => {
     try {
       const body = {
-        email: values.email,
+        username: values.username,
         relationship: values.relationship,
       };
       console.log(body);
       POST({
-        url: `${BACKEND_ROUTE}/patients/${username}/family-members`,
+        url: `${BACKEND_ROUTE}/patients/${Cookies.get("username")}/family-members`,
         body,
         setShowError,
         setError,

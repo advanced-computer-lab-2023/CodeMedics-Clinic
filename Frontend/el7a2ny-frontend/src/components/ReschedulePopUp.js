@@ -22,6 +22,7 @@ function ReschedulePopUp({
   appointment,
   patient,
   followUp,
+  scheduleFollowUp,
 }) {
   const { setShowError, setError, setAllData, setPopUpDisplay, setPopUpElement, allData, reject } =
     useContext(TableContext);
@@ -34,7 +35,7 @@ function ReschedulePopUp({
         <ObjectInfo obj={item} attributes={attributes} />
         <Cell>
           <ButtonElement
-            actionName="Reschedule"
+            actionName="Schedule"
             onClick={() => {
               hanldeRescheduleAppointment(item, appointment);
               setRescheduling(false);
@@ -48,7 +49,7 @@ function ReschedulePopUp({
 
   const reschedulePopUp = (
     <PopUp
-      title={"Reschedule Appointment"}
+      title={"Schedule Appointment"}
       viewing={rescheduling}
       setViewing={setRescheduling}
       actionName="Close"
@@ -74,6 +75,25 @@ function ReschedulePopUp({
   );
 
   async function hanldeRescheduleAppointment(newApp, oldApp) {
+    if (scheduleFollowUp) {
+      PATCH({
+        url: `${patchUrl}/${newApp._id}`,
+        body: { status: "upcoming", patientUsername: patient.username },
+        updater: () => {
+          setAllData((prev) =>
+            prev.map((item) => {
+              if (item._id == newApp._id) {
+                return { ...item, status: "upcoming", patientUsername: patient.username };
+              }
+              return item;
+            })
+          );
+        },
+        setShowError,
+        setError,
+      });
+      return;
+    }
     if (oldApp) {
       if (followUp) {
         reject(oldApp);

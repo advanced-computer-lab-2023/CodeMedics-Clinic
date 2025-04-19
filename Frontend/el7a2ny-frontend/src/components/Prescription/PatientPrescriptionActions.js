@@ -10,15 +10,17 @@ import FileSaver from "file-saver";
 import Icon from "../Icon";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import { PATCH } from "src/utils/helper-functions";
+import Cookies from "js-cookie";
 
 function PatientPrescriptionActions({ state }) {
   const [viewing, setViewing] = useState(false);
   const { setShowError, setError, setAllData } = useContext(TableContext);
+  const username = Cookies.get("username");
   const downloadPDF = async () => {
     try {
       console.log("State", state, state._id);
       const response = await axios.post(
-        `${BACKEND_ROUTE}/patients/download-prescription-pdf`,
+        `${BACKEND_ROUTE}/patients/${username}/prescriptions/download-prescription-pdf`,
         { prescription: state },
         { responseType: "blob" }
       );
@@ -35,7 +37,8 @@ function PatientPrescriptionActions({ state }) {
 
   const fillPrescription = async (prescriptionID) => {
     PATCH({
-      url: `${BACKEND_ROUTE}/patients/prescriptions/${prescriptionID}`,
+      url: `${BACKEND_ROUTE}/patients/${username}/prescriptions/${prescriptionID}`,
+      body: { filled: true },
       setShowError,
       setError,
       updater: () => {
