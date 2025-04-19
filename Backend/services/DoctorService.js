@@ -61,6 +61,15 @@ exports.getAppointments = async (doctorUsername, status) => {
   return appointments;
 };
 
+exports.addAppointment = async (doctorUsername, bodyData) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const appointment = await appointmentRepo.addEmptyAppointment(
+    doctorUsername,
+    bodyData
+  );
+  return appointment;
+};
+
 exports.updateAppointment = async (doctorUsername, appointmentId, bodyData) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const appointment = await appointmentRepo.updateAppointment(

@@ -55,6 +55,22 @@ exports.deleteAppointment = async (appointmentId) => {
   return appointment;
 };
 
+exports.addEmptyAppointment = async (doctorUsername, bodyData) => {
+  const date = bodyData.date.split("T")[0];
+  const startHour = bodyData.startHour.substring(0, 2);
+  const endHour = bodyData.endHour.substring(0, 2);
+  const appointment = new Appointment({
+    doctorUsername,
+    patientUsername: null,
+    date: date,
+    startHour: startHour,
+    endHour: endHour,
+    status: "unreserved",
+  });
+  await appointment.save();
+  return appointment;
+};
+
 exports.addAppointment = async (appointment, patient, doctor, price = 0) => {
   appointment.patientUsername = patient.username;
   appointment.status = "upcoming";
