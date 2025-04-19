@@ -94,6 +94,17 @@ router.patch("/:username/appointments/:appointmentId", async (req, res) => {
   }
 });
 
+router.get("/:username/packages", async (req, res) => {
+  try {
+    const packages = await patientService.getAvailablePackages(
+      req.params.username
+    );
+    res.status(200).json({ data: packages });
+  } catch (error) {
+    errorHandler(error, req, res);
+  }
+});
+
 router.post("/:username/health-packages/subscription", async (req, res) => {
   try {
     const subscription = await patientService.subscribeHealthPackage(
@@ -203,18 +214,6 @@ router.get("/:username/health-records", async (req, res) => {
       req.params.username
     );
     res.status(200).json({ data: healthRecords });
-  } catch (error) {
-    errorHandler(error, req, res);
-  }
-});
-
-router.post("/:username/health-records", async (req, res) => {
-  try {
-    const healthRecord = await patientService.addHealthRecord(
-      req.params.username,
-      req.body
-    );
-    res.status(201).json({ data: healthRecord });
   } catch (error) {
     errorHandler(error, req, res);
   }

@@ -3,6 +3,8 @@ const Patient = require("../../models/Patient");
 const Chat = require("../../models/Chat");
 const Message = require("../../models/Message");
 const FamilyMember = require("../../models/FamilyMember");
+const { FREE_PACKAGE } = require("../Constants");
+const { validatePatient } = require("../../utils/validator");
 
 exports.validatePatient = async (patientUsername) => {
   const patient = await this.getPatient(patientUsername);
@@ -109,13 +111,12 @@ exports.updatePatientPassword = async (patientUsername, password) => {
   return updatedPatient;
 };
 
-exports.subscribeHealthPackage = async (patientUsername, package) => {
-  const patient = await Patient.findOneAndUpdate(
-    { username: patientUsername },
-    { $set: { healthPackage: package } },
-    { new: true }
-  );
-  return patient;
+exports.payHealthPackage = async (patientUsername, package, price = 0) => {
+    const patient = await this.validatePatient(patientUsername);
+    patient.healthPackage = package;
+    patient.wallet -= price;
+    await patient.save();
+    return patient;
 };
 
 exports.unsubscribeHealthPackage = async (patientUsername) => {

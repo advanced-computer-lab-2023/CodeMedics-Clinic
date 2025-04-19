@@ -100,24 +100,30 @@ exports.cancelAppointment = async (patientUsername, appointmentId) => {
   return cancelledAppointment;
 };
 
-exports.payHealthPackage = async (patientUsername, packageName) => {
-  await patientRepo.validatePatient(patientUsername);
-  await packageRepo.validatePackage(packageName);
-  const payment = await packageRepo.payHealthPackage(
-    patientUsername,
-    packageName
-  );
-  return payment;
-};
-
-exports.subscribeHealthPackage = async (patientUsername, packageName) => {
-  await patientRepo.validatePatient(patientUsername);
+exports.payHealthPackage = async (
+  patientUsername,
+  packageName,
+  paymentMethod
+) => {
+  const patient = await patientRepo.validatePatient(patientUsername);
   const package = await packageRepo.validatePackage(packageName);
-  const subscription = await patientRepo.subscribeHealthPackage(
+  let price = package.price;
+  if (paymentMethod === "Wallet") {
+    if (patient.wallet < price) {
+      const error = new Error("Insufficient funds in wallet");
+      error.statusCode = 402;
+      throw error;
+    }
+  } else {
+    price = 0;
+  }
+  const updatedPatient = await patientRepo.payHealthPackage(
     patientUsername,
-    package
+    package,
+    price
   );
-  return subscription;
+
+  return updatedPatient;
 };
 
 exports.unsubscribeHealthPackage = async (patientUsername) => {
@@ -360,7 +366,7 @@ exports.uploadDocument = async (patientUsername, documentData) => {
 
 exports.removeDocument = async (patientUsername, documentId) => {
   await patientRepo.validatePatient(patientUsername);
-  const document = await patientRepo.removeDocument(
+  const document = await patientRepo.removeHealthRecord(
     patientUsername,
     documentId
   );
@@ -447,6 +453,6 @@ exports.sendMessage = async (patientUsername, chatId, messageData) => {
 
 exports.getAvailablePackages = async (patientUsername) => {
   await patientRepo.validatePatient(patientUsername);
-  const packages = await packageRepo.getAvailablePackages();
+  const packages = await packageRepo.getPackages();
   return packages;
 };

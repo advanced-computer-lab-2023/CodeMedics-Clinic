@@ -16,3 +16,9 @@ exports.getPackage = async (packageName) => {
   });
   return package;
 };
+
+exports.getPackages = async (query = {}) => {
+  const packages = await Package.find(query);
+  return packages;
+};
+
