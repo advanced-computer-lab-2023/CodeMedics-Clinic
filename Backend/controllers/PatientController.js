@@ -97,24 +97,12 @@ router.patch("/:username/appointments/:appointmentId", async (req, res) => {
   }
 });
 
-router.get("/:username/packages", async (req, res) => {
+router.get("/:username/health-packages", async (req, res) => {
   try {
     const packages = await patientService.getAvailablePackages(
       req.params.username
     );
     res.status(200).json({ data: packages });
-  } catch (error) {
-    errorHandler(error, req, res);
-  }
-});
-
-router.post("/:username/health-packages/subscription", async (req, res) => {
-  try {
-    const subscription = await patientService.subscribeHealthPackage(
-      req.params.username,
-      req.body.packageName
-    );
-    res.status(201).json({ data: subscription });
   } catch (error) {
     errorHandler(error, req, res);
   }
