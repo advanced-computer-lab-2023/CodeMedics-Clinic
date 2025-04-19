@@ -376,7 +376,7 @@ router.post("/chats/:chatId/messages", async (req, res) => {
   }
 });
 
-router.post("/:username/medical-history", uploadDocument, async (req, res) => {
+router.post("/:username/health-records", uploadDocument, async (req, res) => {
   try {
     const document = await patientService.addDocument(
       req.params.username,
@@ -389,7 +389,7 @@ router.post("/:username/medical-history", uploadDocument, async (req, res) => {
   }
 });
 
-router.delete("/:username/medical-history/:documentId", async (req, res) => {
+router.delete("/:username/health-records/:documentId", async (req, res) => {
   try {
     const document = await patientService.removeDocument(
       req.params.username,
