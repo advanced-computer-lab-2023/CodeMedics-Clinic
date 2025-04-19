@@ -50,8 +50,9 @@ export const DoctorPatientActions = ({ patient }) => {
         rescheduling={rescheduling}
         setRescheduling={setRescheduling}
         patient={patient}
+        scheduleFollowUp={true}
         getUrl={`${BACKEND_ROUTE}/doctors/${username}/appointments`}
-        patchUrl={`${BACKEND_ROUTE}/doctors/appointments`}
+        patchUrl={`${BACKEND_ROUTE}/doctors/${username}/appointments`}
         loading={loading}
         setLoading={setLoading}
       />

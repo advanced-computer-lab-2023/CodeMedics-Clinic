@@ -55,6 +55,12 @@ exports.getPatients = async (doctorUsername) => {
   return patients;
 };
 
+exports.getHealthRecords = async (doctorUsername) => {
+  const doctor = await this.validateDoctor(doctorUsername);
+  const healthRecords = doctor.healthRecords;
+  return healthRecords;
+};
+
 exports.getDoctorNotifications = async (doctorUsername) => {
   const doctor = await this.validateDoctor(doctorUsername);
   const notifications = doctor.messages;
