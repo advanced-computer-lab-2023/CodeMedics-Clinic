@@ -28,7 +28,6 @@ exports.createDoctor = async (doctorData) => {
 };
 
 exports.updateDoctor = async (doctorUsername, doctorData) => {
-  await this.validateDoctor(doctorUsername);
   const doctor = await Doctor.findOneAndUpdate(
     { username: doctorUsername },
     { $set: doctorData },
@@ -38,7 +37,6 @@ exports.updateDoctor = async (doctorUsername, doctorData) => {
 };
 
 exports.updateDoctorPassword = async (doctorUsername, password) => {
-  await this.validateDoctor(doctorUsername);
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   const doctor = await Doctor.findOneAndUpdate(
@@ -50,20 +48,26 @@ exports.updateDoctorPassword = async (doctorUsername, password) => {
 };
 
 exports.getPatients = async (doctorUsername) => {
-  const doctor = await this.validateDoctor(doctorUsername);
-  const patients = doctor.patients
+  const doctor = await this.getDoctor(doctorUsername);
+  const patients = doctor.patients;
   return patients;
 };
 
 exports.getHealthRecords = async (doctorUsername) => {
-  const doctor = await this.validateDoctor(doctorUsername);
+  const doctor = await this.getDoctor(doctorUsername);
   const healthRecords = doctor.healthRecords;
   return healthRecords;
 };
 
+exports.getChats = async (doctorUsername) => {
+  const doctor = await this.getDoctor(doctorUsername);
+  const chats = doctor.chats;
+  return chats;
+};
+
+
 exports.getNotifications = async (doctorUsername) => {
-  const doctor = await this.validateDoctor(doctorUsername);
+  const doctor = await this.getDoctor(doctorUsername);
   const notifications = doctor.messages;
   return notifications;
-}
-
+};
