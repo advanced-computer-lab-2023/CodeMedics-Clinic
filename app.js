@@ -8,16 +8,15 @@ const cors = require("cors");
 const http = require("http");
 const connectDB = require("./config/MongoDBConnection");
 const { initializeSocket } = require("./socketHandler");
-
+const patientController = require("./Backend/controllers/PatientController");
+const doctorController = require("./Backend/controllers/DoctorController");
 // Routes
 const adminRoutes = require("./routes/AdminRoutes");
-const doctorRoutes = require("./routes/DoctorRoutes");
-const patientRoutes = require("./routes/PatientRoutes");
 const genericRoutes = require("./routes/GenericRoutes");
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 // Database Connection
 connectDB().then(() => console.log("Connected to MongoDB 200 OK".bgGreen.bold));
@@ -38,8 +37,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use("/admins", adminRoutes);
-app.use("/doctors", doctorRoutes);
-app.use("/patients", patientRoutes);
+app.use("/doctors", doctorController);
+app.use("/patients", patientController);
 app.use("/", genericRoutes);
 
 // Initialize Socket.IO
