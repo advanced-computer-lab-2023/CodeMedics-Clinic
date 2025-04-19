@@ -79,6 +79,12 @@ exports.updateAppointment = async (doctorUsername, appointmentId, bodyData) => {
   return appointment;
 };
 
+exports.completeAppointment = async (doctorUsername, appointmentId) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const appointment = await appointmentRepo.completeAppointment(appointmentId);
+  return appointment;
+};
+
 exports.getPrescriptions = async (doctorUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const prescriptions = await prescriptionRepo.getPrescriptions({

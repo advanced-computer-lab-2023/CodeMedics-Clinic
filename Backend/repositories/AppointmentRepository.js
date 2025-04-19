@@ -44,6 +44,12 @@ exports.updateAppointment = async (appointmentId, appointmentData) => {
   return appointment;
 };
 
+exports.completeAppointment = async (appointmentId) => {
+  return await this.updateAppointment(appointmentId, {
+    status: "completed",
+  });
+};
+
 exports.cancelAppointment = async (appointmentId) => {
   return await this.updateAppointment(appointmentId, {
     status: "cancelled",
