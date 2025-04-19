@@ -104,7 +104,7 @@ const Page = () => {
     });
   }
 
-  const tableActions = (
+  const tableActions = patientUsername ? null : (
     <Button
       startIcon={
         <SvgIcon fontSize="small">
