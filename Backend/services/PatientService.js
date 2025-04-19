@@ -355,11 +355,12 @@ exports.fillPrescription = async (patientUsername, prescriptionId) => {
   return prescription;
 };
 
-exports.uploadDocument = async (patientUsername, documentData) => {
+exports.addDocument = async (patientUsername, fileData, bodyData) => {
   await patientRepo.validatePatient(patientUsername);
-  const document = await patientRepo.uploadDocument(
+  const document = await patientRepo.addHealthRecord(
     patientUsername,
-    documentData
+    fileData,
+    bodyData
   );
   return document;
 };

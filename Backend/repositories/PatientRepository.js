@@ -112,11 +112,11 @@ exports.updatePatientPassword = async (patientUsername, password) => {
 };
 
 exports.payHealthPackage = async (patientUsername, package, price = 0) => {
-    const patient = await this.validatePatient(patientUsername);
-    patient.healthPackage = package;
-    patient.wallet -= price;
-    await patient.save();
-    return patient;
+  const patient = await this.validatePatient(patientUsername);
+  patient.healthPackage = package;
+  patient.wallet -= price;
+  await patient.save();
+  return patient;
 };
 
 exports.unsubscribeHealthPackage = async (patientUsername) => {
@@ -218,8 +218,22 @@ exports.getHealthRecords = async (patientUsername) => {
   return patient.healthRecords;
 };
 
-exports.addHealthRecord = async (patientUsername, healthRecord) => {
-  const patient = await Patient.findOne({ username: patientUsername });
+exports.addHealthRecord = async (patientUsername, fileData, bodyData) => {
+  const patient = await validatePatient(patientUsername);
+  const { filename, originalname } = fileData;
+  const { username, linkedId } = bodyData;
+
+  console.log("adding health record", fileData, bodyData);
+  const healthRecord = {
+    filename,
+    originalname,
+    uploadedBy: username,
+  };
+
+  if (linkedId) {
+    healthRecord.linked = linkedId;
+  }
+
   patient.healthRecords.push(healthRecord);
   await patient.save();
   return healthRecord;

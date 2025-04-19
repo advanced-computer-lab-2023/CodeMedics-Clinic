@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const errorHandler = require("../../middleware/errorHandler");
+const upload = require("../../config/multerConfig");
 const patientService = require("../services/PatientService");
+
+const uploadDocument = upload.single("document");
 
 router.get("/", async (req, res) => {
   try {
@@ -373,11 +376,12 @@ router.post("/chats/:chatId/messages", async (req, res) => {
   }
 });
 
-router.post("/:username/medical-history", async (req, res) => {
+router.post("/:username/medical-history", uploadDocument, async (req, res) => {
   try {
     const document = await patientService.addDocument(
       req.params.username,
-      req.body.document
+      req.file,
+      req.body
     );
     res.status(201).json({ data: document });
   } catch (error) {
