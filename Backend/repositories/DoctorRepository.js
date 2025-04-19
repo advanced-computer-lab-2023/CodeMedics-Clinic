@@ -61,7 +61,7 @@ exports.getHealthRecords = async (doctorUsername) => {
   return healthRecords;
 };
 
-exports.getDoctorNotifications = async (doctorUsername) => {
+exports.getNotifications = async (doctorUsername) => {
   const doctor = await this.validateDoctor(doctorUsername);
   const notifications = doctor.messages;
   return notifications;

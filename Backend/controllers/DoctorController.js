@@ -277,7 +277,7 @@ router.post(
 
 router.get("/:username/chats", async (req, res) => {
   try {
-    const chats = await doctorService.getDoctorChats(req.params.username);
+    const chats = await doctorService.getChats(req.params.username);
     res.status(200).json({ data: chats });
   } catch (error) {
     errorHandler(error, req, res);
@@ -286,7 +286,7 @@ router.get("/:username/chats", async (req, res) => {
 
 router.get("/:username/chats/:chatId/messages", async (req, res) => {
   try {
-    const messages = await doctorService.getDoctorMessages(
+    const messages = await doctorService.getMessages(
       req.params.username,
       req.params.chatId
     );
@@ -311,7 +311,7 @@ router.post("/:username/chats/:chatId/messages", async (req, res) => {
 
 router.get("/:username/notifications", async (req, res) => {
   try {
-    const messages = await doctorService.getDoctorNotifications(
+    const messages = await doctorService.getNotifications(
       req.params.username
     );
     res.status(200).json({ data: messages });

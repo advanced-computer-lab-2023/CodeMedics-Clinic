@@ -144,8 +144,8 @@ exports.addHealthRecord = async (
   return healthRecord;
 };
 
-exports.getDoctorNotifications = async (doctorUsername) => {
+exports.getNotifications = async (doctorUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
-  const notifications = await doctorRepo.getDoctorNotifications(doctorUsername);
+  const notifications = await doctorRepo.getNotifications(doctorUsername);
   return notifications;
 };
