@@ -33,7 +33,7 @@ function DoctorPrescriptionActions({ item }) {
     try {
       console.log("prescription", prescription, prescription._id);
       const response = await axios.post(
-        `${BACKEND_ROUTE}/doctors/${username}/download-prescription-pdf`,
+        `${BACKEND_ROUTE}/doctors/${username}/prescriptions/download`,
         { prescription: prescription },
         { responseType: "blob" }
       );
