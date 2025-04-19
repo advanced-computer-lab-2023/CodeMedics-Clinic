@@ -114,6 +114,13 @@ exports.cancelAppointment = async (doctorUsername, appointmentId) => {
   return updatedAppointment;
 };
 
+exports.deleteAppointment = async (doctorUsername, appointmentId) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const appointment = await appointmentRepo.validateAppointment(appointmentId);
+  await appointmentRepo.deleteAppointment(appointmentId);
+  return appointment;
+};
+
 exports.getPrescriptions = async (doctorUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const prescriptions = await prescriptionRepo.getPrescriptions({
@@ -215,16 +222,21 @@ exports.addMedicineToPrescription = async (
   return updatedPrescription;
 };
 
-exports.removeMedicineFromPrescription = async (doctorUsername, prescriptionId, drugName) => {
-    await doctorRepo.validateDoctor(doctorUsername);
-    await prescriptionRepo.validatePrescription(prescriptionId);
-    await generalRepo.validateMedicine(drugName);
-    const updatedPrescription = await prescriptionRepo.removeMedicineFromPrescription(
+exports.removeMedicineFromPrescription = async (
+  doctorUsername,
+  prescriptionId,
+  drugName
+) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  await prescriptionRepo.validatePrescription(prescriptionId);
+  await generalRepo.validateMedicine(drugName);
+  const updatedPrescription =
+    await prescriptionRepo.removeMedicineFromPrescription(
       prescriptionId,
       drugName
     );
-    return updatedPrescription;
-}
+  return updatedPrescription;
+};
 
 exports.getHealthRecords = async (doctorUsername, patientUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
