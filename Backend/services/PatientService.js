@@ -4,6 +4,7 @@ const doctorRepo = require("../repositories/DoctorRepository");
 const adminRepo = require("../repositories/AdminRepository");
 const prescriptionRepo = require("../repositories/PrescriptionRepository");
 const packageRepo = require("../repositories/PackageRepository");
+const generalRepo = require("../repositories/GeneralRepository");
 
 exports.getPatients = async () => {
   const patients = await patientRepo.getPatients();
@@ -422,7 +423,7 @@ exports.getNotifications = async (patientUsername) => {
 
 exports.getChatMessages = async (patientUsername, chatId) => {
   await patientRepo.validatePatient(patientUsername);
-  const messages = await patientRepo.getChatMessages(chatId);
+  const messages = await generalRepo.getChatMessages(chatId);
   return messages;
 };
 
@@ -440,18 +441,18 @@ exports.getPatientChats = async (patientUsername) => {
     }
   }
   const chats = [];
-  const pharmacyChat = await patientRepo.getPharmacyChat(patientUsername);
+  const pharmacyChat = await generalRepo.getPharmacyChat(patientUsername);
   chats.push(pharmacyChat);
   for (const doctor of doctors) {
-    const chat = await patientRepo.getChat(patientUsername, doctor.username);
+    const chat = await generalRepo.getChat(patientUsername, doctor.username);
     if (!chat) {
-      const newChat = await patientRepo.createChat(
+      const newChat = await generalRepo.createChat(
         patientUsername,
         doctor.username
       );
       chats.push({ doctor, chat: newChat, latestMessage: null });
     } else {
-      const latestMessage = await patientRepo.getLatestMessage(chat._id);
+      const latestMessage = await generalRepo.getLatestMessage(chat._id);
       chats.push({ doctor, chat, latestMessage });
     }
   }
@@ -460,7 +461,7 @@ exports.getPatientChats = async (patientUsername) => {
 
 exports.sendMessage = async (patientUsername, chatId, content) => {
   await patientRepo.validatePatient(patientUsername);
-  const message = await patientRepo.sendMessage(
+  const message = await generalRepo.sendMessage(
     chatId,
     patientUsername,
     content
