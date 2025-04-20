@@ -14,7 +14,6 @@ const {
 // ==========================
 // Routes
 // ==========================
-router.get("/getMe", getMe);
 router.post("/login", LoginController.login);
 router.post("/logout", LoginController.logout);
 router.post("/resetPassword", resetPassword);
