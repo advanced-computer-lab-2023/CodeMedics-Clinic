@@ -83,7 +83,6 @@ router.delete("/doctors/:doctorUsername", async (req, res) => {
 router.patch("/doctors/:doctorUsername/accept", async (req, res) => {
   try {
     const doctor = await adminService.acceptDoctor(
-      req.params.username,
       req.params.doctorUsername
     );
     res.status(200).json({ data: doctor });
@@ -95,7 +94,6 @@ router.patch("/doctors/:doctorUsername/accept", async (req, res) => {
 router.patch("/doctors/:doctorUsername/reject", async (req, res) => {
   try {
     const doctor = await adminService.rejectDoctor(
-      req.params.username,
       req.params.doctorUsername
     );
     res.status(200).json({ data: doctor });
