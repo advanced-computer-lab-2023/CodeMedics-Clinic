@@ -21,6 +21,11 @@ exports.getDoctor = async (doctorUsername) => {
   return doctor;
 };
 
+exports.getDoctorApplications = async () => {
+  const doctors = await Doctor.find({ status: "pending" });
+  return doctors;
+};
+
 exports.createDoctor = async (doctorData) => {
   // TODO: fix later
   const doctor = await Doctor.create(doctorData);
@@ -47,6 +52,13 @@ exports.updateDoctorPassword = async (doctorUsername, password) => {
   return doctor;
 };
 
+exports.deleteDoctor = async (doctorUsername) => {
+  const deletedDoctor = await Doctor.findOneAndDelete({
+    username: doctorUsername,
+  });
+  return deletedDoctor;
+};
+
 exports.getPatients = async (doctorUsername) => {
   const doctor = await this.getDoctor(doctorUsername);
   const patients = doctor.patients;
@@ -64,7 +76,6 @@ exports.getChats = async (doctorUsername) => {
   const chats = doctor.chats;
   return chats;
 };
-
 
 exports.getNotifications = async (doctorUsername) => {
   const doctor = await this.getDoctor(doctorUsername);
