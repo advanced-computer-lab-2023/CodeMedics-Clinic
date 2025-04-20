@@ -26,6 +26,11 @@ exports.getPatient = async (patientUsername) => {
   return patient;
 };
 
+exports.getPatientByEmail = async (patientEmail) => {
+  const patient = await Patient.findOne({ email: patientEmail });
+  return patient;
+};
+
 exports.createPatient = async (patientData) => {
   const {
     firstName,

@@ -21,6 +21,11 @@ exports.getAdmin = async (adminUsername) => {
   return admin;
 };
 
+exports.getAdminByEmail = async (adminEmail) => {
+  const admin = await Admin.findOne({ email: adminEmail });
+  return admin;
+};
+
 exports.createAdmin = async (adminData) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(adminData.password, salt);

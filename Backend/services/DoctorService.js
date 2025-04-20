@@ -1,5 +1,6 @@
 const doctorRepo = require("../repositories/DoctorRepository");
 const patientRepo = require("../repositories/PatientRepository");
+const adminRepo = require("../repositories/AdminRepository");
 const appointmentRepo = require("../repositories/AppointmentRepository");
 const prescriptionRepo = require("../repositories/PrescriptionRepository");
 const packageRepo = require("../repositories/PackageRepository");
@@ -15,9 +16,66 @@ exports.getDoctors = async () => {
   return doctors;
 };
 
-exports.createDoctor = async (doctorData) => {
-  // TODO: fix later
-  const doctor = await doctorRepo.createDoctor(doctorData);
+exports.createDoctor = async (doctorData, files) => {
+  const requiredVariables = [
+    "firstName",
+    "lastName",
+    "username",
+    "password",
+    "email",
+    "dateOfBirth",
+    "affiliation",
+    "hourlyRate",
+    "degree",
+    "speciality",
+  ];
+  for (const variable of requiredVariables) {
+    if (!doctorData[variable]) {
+      const error = new Error(`Missing required field: ${variable}`);
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+  const existingUsername =
+    (await patientRepo.getPatient(doctorData.username)) ||
+    (await doctorRepo.getDoctor(doctorData.username)) ||
+    (await adminRepo.getAdmin(doctorData.username));
+
+  if (existingUsername) {
+    const error = new Error("Username already exists");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const existingEmail =
+    (await doctorRepo.getDoctorByEmail(doctorData.email)) ||
+    (await patientRepo.getPatientByEmail(doctorData.email)) ||
+    (await adminRepo.getAdminByEmail(doctorData.email));
+
+  if (existingEmail) {
+    const error = new Error("Email already exists");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!files || Object.keys(files).length !== 3) {
+    const error = new Error(
+      "Please upload ID Document, Medical Degree, and Medical License"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  const idDocumentFile = files["nationalIdFile"][0].filename;
+  const medicalDegreeFile = files["medicalDegreeFile"][0].filename;
+  const medicalLicenseFile = files["medicalLicenseFile"][0].filename;
+
+  const doctor = await doctorRepo.createDoctor(
+    doctorData,
+    idDocumentFile,
+    medicalDegreeFile,
+    medicalLicenseFile
+  );
+
   return doctor;
 };
 

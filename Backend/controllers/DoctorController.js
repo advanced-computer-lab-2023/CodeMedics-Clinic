@@ -23,14 +23,22 @@ router.get("/:username", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  try {
-    const doctor = await doctorService.createDoctor(req.body);
-    res.status(201).json({ data: doctor });
-  } catch (error) {
-    errorHandler(error, req, res);
+router.post(
+  "/",
+  upload.fields([
+    { name: "nationalIdFile", maxCount: 1 },
+    { name: "medicalDegreeFile", maxCount: 1 },
+    { name: "medicalLicenseFile", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      const doctor = await doctorService.createDoctor(req.body, req.files);
+      res.status(201).json({ data: doctor });
+    } catch (error) {
+      errorHandler(error, req, res);
+    }
   }
-});
+);
 
 router.patch("/:username", async (req, res) => {
   try {
@@ -311,9 +319,7 @@ router.post("/:username/chats/:chatId/messages", async (req, res) => {
 
 router.get("/:username/notifications", async (req, res) => {
   try {
-    const messages = await doctorService.getNotifications(
-      req.params.username
-    );
+    const messages = await doctorService.getNotifications(req.params.username);
     res.status(200).json({ data: messages });
   } catch (error) {
     errorHandler(error, req, res);

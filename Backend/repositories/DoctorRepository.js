@@ -21,14 +21,24 @@ exports.getDoctor = async (doctorUsername) => {
   return doctor;
 };
 
+exports.getDoctorByEmail = async (doctorEmail) => {
+  const doctor = await Doctor.findOne({ email: doctorEmail });
+  return doctor;
+};
+
 exports.getDoctorApplications = async () => {
   const doctors = await Doctor.find({ status: "pending" });
   return doctors;
 };
 
 exports.createDoctor = async (doctorData) => {
-  // TODO: fix later
-  const doctor = await Doctor.create(doctorData);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(doctorData.password, salt);
+  const doctor = new Doctor({
+    ...doctorData,
+    password: hashedPassword,
+  });
+  await doctor.save();
   return doctor;
 };
 
