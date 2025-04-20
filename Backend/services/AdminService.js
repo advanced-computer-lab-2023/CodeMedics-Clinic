@@ -77,6 +77,12 @@ exports.acceptDoctor = async (doctorUsername) => {
   return doctor;
 };
 
+exports.updateDoctorApplication = async (doctorUsername, doctorData) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const doctor = await doctorRepo.updateDoctor(doctorUsername, doctorData);
+  return doctor;
+}
+
 exports.rejectDoctor = async (doctorUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const doctor = await doctorRepo.deleteDoctor(doctorUsername);
