@@ -111,6 +111,13 @@ exports.updatePatientPassword = async (patientUsername, password) => {
   return updatedPatient;
 };
 
+exports.deletePatient = async (patientUsername) => {
+  const deletedPatient = await Patient.findOneAndDelete({
+    username: patientUsername,
+  });
+  return deletedPatient;
+};
+
 exports.payHealthPackage = async (patientUsername, package, price = 0) => {
   const patient = await this.validatePatient(patientUsername);
   patient.healthPackage = package;
