@@ -76,7 +76,10 @@ const Page = () => {
       setShowError,
       setError,
       updater: () => {
-        window.location.reload();
+        setAllData((prev) => {
+          const newData = prev.filter((item) => item.username !== doctorUsername);
+          return newData;
+        });
       },
     });
   };
