@@ -122,10 +122,10 @@ router.delete("/patients/:patientUsername", async (req, res) => {
   }
 });
 
-router.post("/download-contract", async (req, res) => {
+router.post("/doctors/:doctorUsername/download-contract", async (req, res) => {
   try {
-    const doctorUsername = req.body.doctor;
-    const pdfBuffer = await adminService.createAndDownloadContract(
+    const doctorUsername = req.params.doctorUsername;
+    const pdfBuffer = await adminService.downloadContract(
       doctorUsername
     );
     res.setHeader("Content-Type", "application/pdf");

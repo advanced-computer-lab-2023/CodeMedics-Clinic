@@ -83,6 +83,13 @@ exports.rejectDoctor = async (doctorUsername) => {
   return doctor;
 };
 
+exports.downloadContract = async (doctorUsername) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const doctor = await doctorRepo.getDoctor(doctorUsername);
+  const pdf = await doctorRepo.generateContract(doctor);
+  return pdf;
+}
+
 exports.getDoctor = async (doctorUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const doctor = await doctorRepo.getDoctor(doctorUsername);
