@@ -72,7 +72,7 @@ exports.getDoctorApplications = async () => {
 exports.acceptDoctor = async (doctorUsername) => {
   await doctorRepo.validateDoctor(doctorUsername);
   const doctor = await doctorRepo.updateDoctor(doctorUsername, {
-    status: "accepted",
+    status: "contract",
   });
   return doctor;
 };
