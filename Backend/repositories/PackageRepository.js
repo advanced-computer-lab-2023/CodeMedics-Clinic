@@ -22,3 +22,24 @@ exports.getPackages = async (query = {}) => {
   return packages;
 };
 
+exports.createPackage = async (packageData) => {
+  const package = new Package(packageData);
+  await package.save();
+  return package;
+};
+
+exports.updatePackage = async (packageName, packageData) => {
+  const updatedPackage = await Package.findOneAndUpdate(
+    { name: packageName },
+    { $set: packageData },
+    { new: true }
+  );
+  return updatedPackage;
+};
+
+exports.deletePackage = async (packageName) => {
+  const deletedPackage = await Package.findOneAndDelete({
+    name: packageName,
+  });
+  return deletedPackage;
+};
