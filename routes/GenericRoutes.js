@@ -6,7 +6,6 @@ const router = express.Router();
 // ==========================
 const LoginController = require("../controllers/Login.js");
 const { resetPassword } = require("../controllers/ResetPassword.js");
-const { getMe } = require("../controllers/GetMe.js");
 const {
   createPaymentIntent,
 } = require("../controllers/Payment/CreatePaymentIntent.js");
