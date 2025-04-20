@@ -10,6 +10,7 @@ const connectDB = require("./config/MongoDBConnection");
 const { initializeSocket } = require("./socketHandler");
 const patientController = require("./Backend/controllers/PatientController");
 const doctorController = require("./Backend/controllers/DoctorController");
+const adminController = require("./Backend/controllers/AdminController");
 // Routes
 const adminRoutes = require("./routes/AdminRoutes");
 const genericRoutes = require("./routes/GenericRoutes");
@@ -36,7 +37,7 @@ app.use(logger("dev"));
 app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
-app.use("/admins", adminRoutes);
+app.use("/admins", adminController);
 app.use("/doctors", doctorController);
 app.use("/patients", patientController);
 app.use("/", genericRoutes);
