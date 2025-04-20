@@ -11,8 +11,6 @@ const { initializeSocket } = require("./socketHandler");
 const patientController = require("./Backend/controllers/PatientController");
 const doctorController = require("./Backend/controllers/DoctorController");
 const adminController = require("./Backend/controllers/AdminController");
-// Routes
-const adminRoutes = require("./routes/AdminRoutes");
 const genericRoutes = require("./routes/GenericRoutes");
 
 const app = express();
@@ -30,6 +28,7 @@ app.use(
     optionSuccessStatus: 200,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

@@ -26,9 +26,9 @@ exports.updateAdmin = async (adminUsername, adminData) => {
 };
 
 exports.updatePassword = async (adminUsername, password) => {
-    await adminRepo.validateAdmin(adminUsername);
-    const admin = await adminRepo.updateAdminPassword(adminUsername, password);
-    return admin;
+  await adminRepo.validateAdmin(adminUsername);
+  const admin = await adminRepo.updateAdminPassword(adminUsername, password);
+  return admin;
 };
 
 exports.deleteAdmin = async (adminUsername) => {
@@ -67,6 +67,20 @@ exports.getDoctors = async () => {
 exports.getDoctorApplications = async () => {
   const applications = await doctorRepo.getDoctorApplications();
   return applications;
+};
+
+exports.acceptDoctor = async (doctorUsername) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const doctor = await doctorRepo.updateDoctor(doctorUsername, {
+    status: "accepted",
+  });
+  return doctor;
+};
+
+exports.rejectDoctor = async (doctorUsername) => {
+  await doctorRepo.validateDoctor(doctorUsername);
+  const doctor = await doctorRepo.deleteDoctor(doctorUsername);
+  return doctor;
 };
 
 exports.getDoctor = async (doctorUsername) => {
