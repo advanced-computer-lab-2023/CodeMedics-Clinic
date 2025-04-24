@@ -24,5 +24,5 @@ const familyMemberSchema = new Schema({
     }
 }, { timestamps: true });
 
-const FamilyMember = mongoose.model('FamilyMember', familyMemberSchema);
+const FamilyMember = mongoose.model('FamilyMember', familyMemberSchema, "FamilyMember");
 module.exports = FamilyMember;
