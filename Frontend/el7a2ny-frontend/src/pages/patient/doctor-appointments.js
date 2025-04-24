@@ -8,7 +8,7 @@ import Icon from "src/components/Icon";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { BACKEND_ROUTE } from "src/utils/Constants";
-const columns = ["date", "day", "from", "to", "price", "actions"];
+const columns = ["date", "day", "from", "to", "actions"];
 const attributes = ["date", "day", "startHour", "endHour"];
 
 const Page = () => {
