@@ -22,7 +22,7 @@ const Page = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:8000/payment/payment-intent", { appointmentId, packageName, currency: "EGP" })
+      .post("http://localhost:8000/payment/payment-intent", { appointmentId, packageName, currency: "USD" })
       .then((response) => {
         console.log(response);
         setClientSecret(response.data.data);
