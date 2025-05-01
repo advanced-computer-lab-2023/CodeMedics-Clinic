@@ -28,11 +28,13 @@ const Page = () => {
     setError,
   });
 
+
   const fields = [
     {
       name: "name",
       label: "Package Name",
       type: "text",
+      disabled: true,
     },
     {
       name: "price",
@@ -161,7 +163,12 @@ const Page = () => {
         title="Packages"
         actions={tableActions}
       />
-      <PopUp title="Add Package" viewing={displayPopUp} setViewing={setDisplayPopUp}>
+      <PopUp
+        title="Add Package"
+        viewing={displayPopUp}
+        setViewing={setDisplayPopUp}
+        onClose={() => setObj(null)}
+      >
         <ObjectDetails
           obj={obj}
           fields={fields}

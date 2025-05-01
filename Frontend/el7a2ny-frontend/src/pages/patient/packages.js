@@ -68,7 +68,7 @@ const Page = () => {
   ];
 
   useGet({
-    url: `${BACKEND_ROUTE}/patients/packages`,
+    url: `${BACKEND_ROUTE}/patients/${username}/health-packages`,
     setData: setPackages,
     setShowError,
     setError,

@@ -19,9 +19,7 @@ const Notifications = () => {
   const username = Cookies.get("username");
 
   useGet({
-    url: `${BACKEND_ROUTE}/${
-      Cookies.get("type")
-    }s/${username}/messages`,
+    url: `${BACKEND_ROUTE}/${Cookies.get("type")}s/${username}/notifications`,
     setData: setNotifications,
     setShowError,
     setError,
@@ -30,7 +28,7 @@ const Notifications = () => {
 
   if (loading) return <LoadingSpinner />;
 
-  const notificationsELement = notifications.map((notification, index) => (
+  const notificationsELement = [...notifications].reverse().map((notification, index) => (
     <Box
       key={index}
       sx={{

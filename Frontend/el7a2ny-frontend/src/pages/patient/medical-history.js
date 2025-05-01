@@ -33,7 +33,7 @@ const Page = () => {
 
   const removeMedicalRecord = (documentId) => {
     DELETE({
-      url: `${BACKEND_ROUTE}/patients/${username}/medical-history/${documentId}`,
+      url: `${BACKEND_ROUTE}/patients/${username}/health-records/${documentId}`,
       setShowError,
       setError,
       updater: () => {
@@ -56,7 +56,7 @@ const Page = () => {
           formData.append("document", file);
           try {
             const response = await axios.post(
-              `${BACKEND_ROUTE}/patients/${username}/medical-history`,
+              `${BACKEND_ROUTE}/patients/${username}/health-records`,
               formData,
               {
                 withCredentials: true,

@@ -26,6 +26,7 @@ const Page = () => {
   const [prescriptionDate, setPrescriptionDate] = useState("");
   const [drugs, setDrugs] = useState([]);
   const [popUpDisplay, setPopUpDisplay] = useState(false);
+  const [addingPrescription, setAddingPrescription] = useState(false);
   const [popUpElement, setPopUpElement] = useState(null);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
@@ -139,21 +140,22 @@ const Page = () => {
   const createPrescriptionPopUp = () => (
     <PopUp
       title="Add Prescription"
-      viewing={popUpDisplay}
-      setViewing={setPopUpDisplay}
+      viewing={addingPrescription}
+      setViewing={setAddingPrescription}
+      setPopUpDisplay={setPopUpDisplay}
       actions={
         <>
           <ButtonElement
             actionName="Cancel"
             onClick={() => {
-              setPopUpDisplay(false);
+              setAddingPrescription(false);
               setPopUpElement(null);
             }}
           />
           <ButtonElement
             actionName="Submit"
             onClick={() => {
-              setPopUpDisplay(false);
+              setAddingPrescription(false);
               setPopUpElement(null);
               POST({
                 url: `${BACKEND_ROUTE}/doctors/${username}/prescriptions`,
@@ -208,8 +210,9 @@ const Page = () => {
       }
       variant="contained"
       onClick={() => {
-        setPopUpElement(createPrescriptionPopUp());
         setPopUpDisplay(true);
+        setPopUpElement(createPrescriptionPopUp());
+        setAddingPrescription(true);
       }}
     >
       Add Patient Prescription
@@ -217,10 +220,11 @@ const Page = () => {
   );
 
   useEffect(() => {
-    if (popUpDisplay) {
+    if (addingPrescription) {
+      setPopUpDisplay(true);
       setPopUpElement(createPrescriptionPopUp());
     }
-  }, [patientUsername, drugs, prescriptionDate, popUpDisplay]);
+  }, [patientUsername, drugs, prescriptionDate, addingPrescription]);
 
   return (
     <>

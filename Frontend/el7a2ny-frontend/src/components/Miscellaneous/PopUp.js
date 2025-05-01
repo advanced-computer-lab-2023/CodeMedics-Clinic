@@ -20,6 +20,7 @@ function PopUp({
   setPopUpDisplay,
   children,
   actions,
+  onClose
 }) {
   const tableCellsElements = tableCells
     ? tableCells.map((cell) => <TableCell>{cell}</TableCell>)
@@ -32,6 +33,9 @@ function PopUp({
         setViewing(false);
         if (setPopUpDisplay) {
           setPopUpDisplay(false);
+        }
+        if (onClose) {
+          onClose();
         }
       }}
       sx={{ minWidth: 200 }}
@@ -57,6 +61,9 @@ function PopUp({
               setViewing(false);
               if (setPopUpDisplay) {
                 setPopUpDisplay(false);
+              }
+              if (onClose) {
+                onClose();
               }
             }}
           >

@@ -47,7 +47,7 @@ const Page = () => {
 
   function reject(appointment) {
     DELETE({
-      url: `${BACKEND_ROUTE}/doctors/appointments/${appointment._id}`,
+      url: `${BACKEND_ROUTE}/doctors/${username}/appointments/${appointment._id}`,
       setShowError,
       setError,
       updater: () => {

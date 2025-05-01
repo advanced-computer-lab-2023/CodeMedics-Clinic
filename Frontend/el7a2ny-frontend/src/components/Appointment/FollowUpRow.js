@@ -33,7 +33,7 @@ const FollowUpRow = ({ item, reject }) => {
         rescheduling={scheduling}
         setRescheduling={setScheduling}
         getUrl={`${BACKEND_ROUTE}/doctors/${username}/appointments`}
-        patchUrl={`${BACKEND_ROUTE}/doctors/appointments`}
+        patchUrl={`${BACKEND_ROUTE}/doctors/${username}/appointments`}
         appointment={item}
         followUp={true}
       />

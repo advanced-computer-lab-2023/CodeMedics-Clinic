@@ -89,7 +89,7 @@ const Chat = ({ isPatient }) => {
       }));
     } else {
       GET({
-        url: `${BACKEND_ROUTE}/${route}/chats/${message.chat}/messages`,
+        url: `${BACKEND_ROUTE}/${route}/${username}/chats/${message.chat}/messages`,
         setData: (data) => {
           setMessagesCache((prev) => ({ ...prev, [message.chat]: data }));
         },
@@ -110,7 +110,7 @@ const Chat = ({ isPatient }) => {
   const getMessages = async (chatId) => {
     if (chatId && !messagesCache[chatId]) {
       GET({
-        url: `${BACKEND_ROUTE}/${route}/chats/${chatId}/messages`,
+        url: `${BACKEND_ROUTE}/${route}/${username}/chats/${chatId}/messages`,
         setData: (data) => {
           setMessagesCache((prev) => ({ ...prev, [chatId]: data }));
         },
@@ -129,7 +129,7 @@ const Chat = ({ isPatient }) => {
     console.log("message", message);
 
     POST({
-      url: `${BACKEND_ROUTE}/${route}/chats/${selectedChat.chat._id}/messages`,
+      url: `${BACKEND_ROUTE}/${route}/${username}/chats/${selectedChat.chat._id}/messages`,
       body,
       setShowError,
       setError,

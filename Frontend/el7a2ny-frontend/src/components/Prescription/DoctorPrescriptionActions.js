@@ -13,7 +13,7 @@ import FileSaver from "file-saver";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import Icon from "../Icon";
 import PopUp from "../Miscellaneous/PopUp";
-import { DELETE, PATCH } from "src/utils/helper-functions";
+import { DELETE, PATCH, POST } from "src/utils/helper-functions";
 import TextInput from "../Inputs/TextInput";
 
 function DoctorPrescriptionActions({ item }) {
@@ -33,7 +33,7 @@ function DoctorPrescriptionActions({ item }) {
     try {
       console.log("prescription", prescription, prescription._id);
       const response = await axios.post(
-        `${BACKEND_ROUTE}/doctors/${username}/download-prescription-pdf`,
+        `${BACKEND_ROUTE}/doctors/${username}/prescriptions/${prescription._id}/download`,
         { prescription: prescription },
         { responseType: "blob" }
       );
@@ -51,7 +51,7 @@ function DoctorPrescriptionActions({ item }) {
   const fill = async (prescriptionId) => {
     PATCH({
       url: `${BACKEND_ROUTE}/doctors/${username}/prescriptions/${prescriptionId}`,
-      body: { status: true },
+      body: { filled: true },
       setShowError,
       setError,
       updater: () => {
@@ -73,7 +73,7 @@ function DoctorPrescriptionActions({ item }) {
 
   function handleAddMedicine(prescriptionId, medicineName, dosage) {
     POST({
-      url: `${BACKEND_ROUTE}/doctors/${username}/prescriptions/${prescriptionId}`,
+      url: `${BACKEND_ROUTE}/doctors/${username}/prescriptions/${prescriptionId}/drugs`,
       body: { medicineName, dosage },
       setShowError,
       setError,

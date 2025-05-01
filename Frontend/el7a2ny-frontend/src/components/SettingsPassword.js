@@ -49,7 +49,7 @@ export const SettingsPassword = () => {
         throw new Error("passwords don't match but they have passed the check");
       } else {
         PATCH({
-          url: `${BACKEND_ROUTE}/${Cookies.get("type")}s/${username}`,
+          url: `${BACKEND_ROUTE}/${Cookies.get("type")}s/${username}/password`,
           body: { password: values.password },
           setShowError,
           setError,

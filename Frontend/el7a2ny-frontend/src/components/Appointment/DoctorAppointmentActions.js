@@ -17,7 +17,7 @@ function DoctorAppointmentActions({ item }) {
 
   function updateAppointment(appointmentId, status) {
     PATCH({
-      url: `${BACKEND_ROUTE}/doctors/appointments/${appointmentId}/${
+      url: `${BACKEND_ROUTE}/doctors/${username}/appointments/${appointmentId}/${
         status == "cancelled" ? "cancel" : "complete"
       }`,
       body: { status },
@@ -45,7 +45,7 @@ function DoctorAppointmentActions({ item }) {
           rescheduling={rescheduling}
           setRescheduling={setRescheduling}
           getUrl={`${BACKEND_ROUTE}/doctors/${username}/appointments`}
-          patchUrl={`${BACKEND_ROUTE}/doctors/appointments`}
+          patchUrl={`${BACKEND_ROUTE}/doctors/${username}/appointments`}
           appointment={item}
         />
       );

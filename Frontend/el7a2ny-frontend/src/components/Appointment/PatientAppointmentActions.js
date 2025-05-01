@@ -7,15 +7,17 @@ import Icon from "../Icon";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import { PATCH } from "src/utils/helper-functions";
 import ReschedulePopUp from "../ReschedulePopUp";
+import Cookies from "js-cookie";
 
 function PatientAppointmentActions({ appointment }) {
   const { setShowError, setError, setAllData } = useContext(TableContext);
   const [loading, setLoading] = useState(true);
   const [rescheduling, setRescheduling] = useState(false);
 
+  const username = Cookies.get("username");
   async function handleRequestFollowUp(appointmentId) {
     PATCH({
-      url: `${BACKEND_ROUTE}/patients/appointments/${appointmentId}`,
+      url: `${BACKEND_ROUTE}/patients/${username}/appointments/${appointmentId}`,
       body: { status: "follow-up Requested" },
       setShowError,
       setError,
@@ -32,7 +34,7 @@ function PatientAppointmentActions({ appointment }) {
 
   async function handleCancelAppointment(appointmentId) {
     PATCH({
-      url: `${BACKEND_ROUTE}/patients/appointments/${appointmentId}/cancel`,
+      url: `${BACKEND_ROUTE}/patients/${username}/appointments/${appointmentId}/cancel`,
       setLoading,
       setShowError,
       setError,
@@ -77,8 +79,8 @@ function PatientAppointmentActions({ appointment }) {
       </Icon>
       <ReschedulePopUp
         appointment={appointment}
-        getUrl={`${BACKEND_ROUTE}/patients/doctors/${appointment.doctorUsername}/appointments`}
-        patchUrl={`${BACKEND_ROUTE}/patients/appointments`}
+        getUrl={`${BACKEND_ROUTE}/patients/${username}/doctors/${appointment.doctorUsername}/appointments`}
+        patchUrl={`${BACKEND_ROUTE}/patients/${username}/appointments`}
         loading={loading}
         setLoading={setLoading}
         rescheduling={rescheduling}

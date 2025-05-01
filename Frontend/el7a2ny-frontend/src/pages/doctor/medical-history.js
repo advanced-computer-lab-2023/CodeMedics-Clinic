@@ -12,6 +12,7 @@ import { BACKEND_ROUTE } from "src/utils/Constants";
 import { Table } from "src/components/Table/Table";
 import CardObject from "src/components/CardObject/CardObject";
 import CardActionsElement from "src/components/CardObject/CardActionsElement";
+import Cookies from "js-cookie";
 
 const Page = () => {
   const router = useRouter();
@@ -20,10 +21,11 @@ const Page = () => {
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
 
+  const username = Cookies.get("username");
   const patientUsername = new URLSearchParams(window.location.search).get("patientUsername");
 
   useGet({
-    url: `${BACKEND_ROUTE}/doctors/patients/${patientUsername}/health-records`,
+    url: `${BACKEND_ROUTE}/doctors/${username}/patients/${patientUsername}/health-records`,
     setData: setMedicalRecords,
     setLoading,
     setShowError,
@@ -45,7 +47,7 @@ const Page = () => {
 
           try {
             const response = await axios.post(
-              `${BACKEND_ROUTE}/doctors/patients/${patientUsername}/health-records`,
+              `${BACKEND_ROUTE}/doctors/${username}/patients/${patientUsername}/health-records`,
               formData,
               {
                 withCredentials: true,

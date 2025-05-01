@@ -1,5 +1,4 @@
 import { useState, useContext } from "react";
-import Cookies from "js-cookie";
 import axios from "axios";
 import { TableRow, TableCell, TextField } from "@mui/material";
 import EyeIcon from "@heroicons/react/24/solid/EyeIcon";
@@ -9,15 +8,19 @@ import { TableContext } from "../Table/Table";
 import PopUp from "../Miscellaneous/PopUp";
 import FileSaver from "file-saver";
 import Icon from "../Icon";
+import { BACKEND_ROUTE } from "src/utils/Constants";
+import { PATCH } from "src/utils/helper-functions";
+import Cookies from "js-cookie";
 
 function PatientPrescriptionActions({ state }) {
   const [viewing, setViewing] = useState(false);
-  const { setShowError, setError, setLoading, setAllData } = useContext(TableContext);
+  const { setShowError, setError, setAllData } = useContext(TableContext);
+  const username = Cookies.get("username");
   const downloadPDF = async () => {
     try {
       console.log("State", state, state._id);
       const response = await axios.post(
-        `http://localhost:8000/patient/download-prescription-pdf`,
+        `${BACKEND_ROUTE}/patients/${username}/prescriptions/download-prescription-pdf`,
         { prescription: state },
         { responseType: "blob" }
       );
@@ -33,30 +36,20 @@ function PatientPrescriptionActions({ state }) {
   };
 
   const fillPrescription = async (prescriptionID) => {
-    try {
-      console.log("before filling", state);
-      setLoading(true);
-      await axios
-        .patch(`http://localhost:8000/patient/fillPrescription`, {
-          Username: Cookies.get("username"),
-          prescriptionID: prescriptionID,
-        })
-        .then((response) => {
-          console.log(response.data);
-          setAllData((prev) => {
-            return prev.map((item) => {
-              if (item._id != state._id) return item;
-              return { ...item, filled: true };
-            });
+    PATCH({
+      url: `${BACKEND_ROUTE}/patients/${username}/prescriptions/${prescriptionID}`,
+      body: { filled: true },
+      setShowError,
+      setError,
+      updater: () => {
+        setAllData((prev) => {
+          return prev.map((item) => {
+            if (item._id != state._id) return item;
+            return { ...item, filled: true };
           });
-          // loading = false is in the useEffect in the theme
         });
-    } catch (error) {
-      console.error("Error filling prescription: ", error);
-      setShowError(true);
-      console.log(err);
-      setError(error.response.data.message);
-    }
+      },
+    });
   };
 
   console.log("PP rendered", state);

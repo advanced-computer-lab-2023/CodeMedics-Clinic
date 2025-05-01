@@ -7,6 +7,7 @@ import Appointment from "src/components/Appointment/Appointment";
 import Icon from "src/components/Icon";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { BACKEND_ROUTE } from "src/utils/Constants";
 const columns = ["date", "day", "from", "to", "price", "actions"];
 const attributes = ["date", "day", "startHour", "endHour", "price"];
 
@@ -55,7 +56,7 @@ const Page = () => {
   ];
 
   useGet({
-    url: `http://localhost:8000/patients/doctors/${doctorUsername}/appointments?status=unreserved`,
+    url: `${BACKEND_ROUTE}/patients/${username}/doctors/${doctorUsername}/appointments?status=unreserved`,
     setData: setAllData,
     setLoading,
     setShowError,

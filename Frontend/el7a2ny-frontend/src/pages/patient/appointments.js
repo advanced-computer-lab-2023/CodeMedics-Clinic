@@ -20,7 +20,6 @@ const Page = () => {
   const [endDate, setEndDate] = useState(null);
   const [status, setStatus] = useState("None");
   const [currentPatient, setCurrentPatient] = useState(Cookies.get("username"));
-  const [chosenDoctorUsername, setChosenDoctorUsername] = useState("");
   const [popUpDisplay, setPopUpDisplay] = useState(false);
   const [popUpElement, setPopUpElement] = useState(null);
 

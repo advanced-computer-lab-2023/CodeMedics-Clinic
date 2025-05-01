@@ -44,7 +44,7 @@ const Page = () => {
     {
       name: "dateOfBirth",
       label: "Date Of Birth",
-      type: "text",
+      type: "date",
     },
     {
       name: "degree",

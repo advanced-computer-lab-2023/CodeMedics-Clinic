@@ -12,7 +12,7 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`
+  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`;
 
   useEffect(() => {
     if (!stripe) return;
@@ -46,10 +46,9 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     setIsLoading(true);
 
     try {
-      await axios.post(
-        `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
-        { paymentMethod: "Wallet", packageName }
-      );
+      await axios.post(`${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`, {
+        paymentMethod: "Wallet",
+      });
       router.push("/patient/doctors");
     } catch (err) {
       console.log("error", err);
@@ -79,10 +78,9 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     }
     if (paymentIntent && paymentIntent.status === "succeeded") {
       try {
-        await axios.post(
-          `${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`,
-          { paymentMethod: "Card", packageName }
-        );
+        await axios.post(`${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`, {
+          paymentMethod: "Card",
+        });
         router.push("/patient/doctors");
       } catch (err) {
         setMessage("Payment succeeded, but failed to update the backend. Please contact support.");

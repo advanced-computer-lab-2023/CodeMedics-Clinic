@@ -15,6 +15,7 @@ import Form from "src/components/Form";
 import LoadingSpinner from "src/components/LoadingSpinner";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import { useGet } from "src/hooks/custom-hooks";
+import Cookies from "js-cookie";
 
 const Page = () => {
   const params = new URLSearchParams(window.location.search);
@@ -24,9 +25,9 @@ const Page = () => {
   const [doctor, setDoctor] = useState({});
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
-
+  const username = Cookies.get("username");
   useGet({
-    url: `${BACKEND_ROUTE}/patients/doctors/${doctorUsername}`,
+    url: `${BACKEND_ROUTE}/patients/${username}/doctors/${doctorUsername}`,
     setData: setDoctor,
     setError,
     setLoading,
@@ -76,10 +77,6 @@ const Page = () => {
     },
   ];
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <>
       <Head>
@@ -92,44 +89,48 @@ const Page = () => {
         message={error}
         buttonAction={"Close"}
       />
-      <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
-        <Container maxWidth="lg">
-          <Stack spacing={3}>
-            <div>
-              <Typography variant="h4">Dr. {doctor.firstName}'s Profile</Typography>
-            </div>
-            <div>
-              <Grid containerspacing={3}>
-                <CardContent>
-                  <Box
-                    display="grid"
-                    gridTemplateColumns="repeat(auto-fill, minmax(400px, 1fr))"
-                    gap={2}
-                  >
-                    <Grid xs={12} md={6} lg={4}>
-                      <CardObject
-                        item={doctor}
-                        index={counter}
-                        texts={[
-                          `${doctor.firstName} ${doctor.lastName}`,
-                          `${doctor.affiliation} / ${doctor.degree}`,
-                        ]}
-                      />
-                    </Grid>
-                    <Grid xs={12} md={6} lg={8} sx={{ width: "100%" }}>
-                      <Form
-                        title={`${doctor.username}'s Profile`}
-                        fields={fields}
-                        values={values}
-                      />
-                    </Grid>
-                  </Box>
-                </CardContent>
-              </Grid>
-            </div>
-          </Stack>
-        </Container>
-      </Box>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <Box component="main" sx={{ flexGrow: 1, py: 8 }}>
+          <Container maxWidth="lg">
+            <Stack spacing={3}>
+              <div>
+                <Typography variant="h4">Dr. {doctor.firstName}'s Profile</Typography>
+              </div>
+              <div>
+                <Grid containerspacing={3}>
+                  <CardContent>
+                    <Box
+                      display="grid"
+                      gridTemplateColumns="repeat(auto-fill, minmax(400px, 1fr))"
+                      gap={2}
+                    >
+                      <Grid xs={12} md={6} lg={4}>
+                        <CardObject
+                          item={doctor}
+                          index={counter}
+                          texts={[
+                            `${doctor.firstName} ${doctor.lastName}`,
+                            `${doctor.affiliation} / ${doctor.degree}`,
+                          ]}
+                        />
+                      </Grid>
+                      <Grid xs={12} md={6} lg={8} sx={{ width: "100%" }}>
+                        <Form
+                          title={`${doctor.username}'s Profile`}
+                          fields={fields}
+                          values={values}
+                        />
+                      </Grid>
+                    </Box>
+                  </CardContent>
+                </Grid>
+              </div>
+            </Stack>
+          </Container>
+        </Box>
+      )}
     </>
   );
 };
