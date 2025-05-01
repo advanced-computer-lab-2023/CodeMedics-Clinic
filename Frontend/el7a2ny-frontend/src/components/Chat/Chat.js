@@ -78,9 +78,11 @@ const Chat = ({ isPatient }) => {
         }
         return chat;
       })
-      .sort(
-        (a, b) => new Date(b.latestMessage.createdAt) - new Date(a.chat.latestMessage.createdAt)
-      );
+      .sort((a, b) => {
+        if(!a.latestMessage) return 1;
+        if(!b.latestMessage) return -1;
+        return new Date(b.latestMessage.createdAt) - new Date(a.chat.latestMessage.createdAt);
+      });
     setChats(updatedChats);
     if (messagesCache[message.chat]) {
       setMessagesCache((prev) => ({
