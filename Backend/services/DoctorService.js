@@ -105,6 +105,7 @@ exports.getPatients = async (doctorUsername) => {
       doctorUsername,
       status: "upcoming",
     });
+    if(patients.some((p) => p.patient.username === patient.username)) continue;
     patients.push({ patient, upcoming: yes });
   }
   return patients;
