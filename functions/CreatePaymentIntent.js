@@ -2,7 +2,7 @@ const {
   validateAppointment,
   validateDoctor,
   validatePackage,
-} = require("../../utils/validator");
+} = require("../utils/validator");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const createPaymentIntent = async (req, res) => {

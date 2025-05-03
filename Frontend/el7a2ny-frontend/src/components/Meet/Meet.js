@@ -1,22 +1,16 @@
 import React, { useState } from "react";
 import {
   Box,
-  AppBar,
-  Toolbar,
   IconButton,
   Typography,
-  Avatar,
   Button,
-  Badge,
   useTheme,
 } from "@mui/material";
 import {
-  MoreVert,
   Mic,
   MicOff,
   Videocam,
   VideocamOff,
-  People,
   ContentCopy,
 } from "@mui/icons-material";
 import BottomMessage from "../Miscellaneous/BottomMessage";
@@ -76,7 +70,7 @@ function Meet({ participants, toggleVideo, toggleAudio, hasPendingRequests }) {
             color: "white",
             padding: "8px 16px",
             borderRadius: 1,
-            fontSize: "1.2rem"
+            fontSize: "1.2rem",
           }}
         >
           {name}
@@ -87,17 +81,6 @@ function Meet({ participants, toggleVideo, toggleAudio, hasPendingRequests }) {
 
   return (
     <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <AppBar position="static" color="default" sx={{ boxShadow: "none", mb: 1 }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            CodeMedics Meet
-          </Typography>
-          <IconButton onClick={copyMeetingLink} color="primary" title="Copy meeting link">
-            <ContentCopy />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
       <Box
         sx={{
           flexGrow: 1,
@@ -142,21 +125,17 @@ function Meet({ participants, toggleVideo, toggleAudio, hasPendingRequests }) {
         >
           {cameraOn ? <Videocam /> : <VideocamOff />}
         </IconButton>
-        <IconButton color="primary" title="Participants">
-          {hasPendingRequests ? (
-            <Badge color="error" variant="dot">
-              <People />
-            </Badge>
-          ) : (
-            <People />
-          )}
+        <IconButton onClick={copyMeetingLink} color="primary" title="Copy meeting link">
+          <ContentCopy />
         </IconButton>
         <Button
           variant="contained"
           color="error"
           sx={{ ml: 2 }}
           onClick={() => {
-            router.push(`${Cookies.get("type") == "doctor" ? "/doctor/patients" : "/patient/doctors"}`);
+            router.push(
+              `${Cookies.get("type") == "doctor" ? "/doctor/patients" : "/patient/doctors"}`
+            );
           }}
         >
           Leave

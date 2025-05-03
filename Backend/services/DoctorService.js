@@ -105,6 +105,7 @@ exports.getPatients = async (doctorUsername) => {
       doctorUsername,
       status: "upcoming",
     });
+    if(patients.some((p) => p.patient.username === patient.username)) continue;
     patients.push({ patient, upcoming: yes });
   }
   return patients;
@@ -123,6 +124,18 @@ exports.getAppointments = async (doctorUsername, status) => {
 
 exports.addAppointment = async (doctorUsername, bodyData) => {
   await doctorRepo.validateDoctor(doctorUsername);
+  if (bodyData.startHour > bodyData.endHour) {
+    const error = new Error("Start hour must be before end hour");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (new Date(bodyData.date) <= new Date()) {
+    const error = new Error("Date must be in the future");
+    error.statusCode = 400;
+    throw error;
+  }
+
   const appointment = await appointmentRepo.addEmptyAppointment(
     doctorUsername,
     bodyData

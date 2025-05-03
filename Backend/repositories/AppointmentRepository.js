@@ -127,6 +127,7 @@ exports.addAppointment = async (appointment, patient, doctor, price = 0) => {
   await appointment.save();
   patient.wallet -= price;
   doctor.wallet += price;
+  doctor.patients.push(patient.username);
   await patient.save();
   await doctor.save();
   handlePatientAppointmentNotification(patient, appointment, doctor);

@@ -12,8 +12,6 @@ import Message from "src/components/Miscellaneous/Message";
 import { BACKEND_ROUTE } from "src/utils/Constants";
 import { PATCH } from "src/utils/helper-functions";
 
-const username = Cookies.get("doctor");
-
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
@@ -23,6 +21,7 @@ const Page = () => {
   };
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
+  const username = Cookies.get("doctor");
 
   const handleAcceptContract = () => {
     PATCH({

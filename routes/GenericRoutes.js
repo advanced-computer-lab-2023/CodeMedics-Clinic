@@ -4,11 +4,11 @@ const router = express.Router();
 // ==========================
 // Controllers
 // ==========================
-const LoginController = require("../controllers/Login.js");
-const { resetPassword } = require("../controllers/ResetPassword.js");
+const LoginController = require("../functions/Login.js");
+const { resetPassword } = require("../functions/ResetPassword.js");
 const {
   createPaymentIntent,
-} = require("../controllers/Payment/CreatePaymentIntent.js");
+} = require("../functions/CreatePaymentIntent.js");
 
 // ==========================
 // Routes

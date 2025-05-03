@@ -1,8 +1,12 @@
 const Package = require("../../models/Package");
+const { FREE_PACKAGE } = require("../Constants");
 
 exports.validatePackage = async (packageName) => {
   const package = await this.getPackage(packageName);
   if (!package) {
+    if (packageName.toLowerCase() == "free") {
+      return FREE_PACKAGE;
+    }
     const error = new Error("Package not found");
     error.statusCode = 404;
     throw error;

@@ -92,10 +92,10 @@ const Page = () => {
     );
   });
 
-  function addAppointment(selectedDate, endHour, startHour) {
+  function addAppointment(selectedDate, startHour, endHour) {
     POST({
       url: `${BACKEND_ROUTE}/doctors/${username}/appointments`,
-      body: { date: selectedDate, endHour, startHour },
+      body: { date: selectedDate, startHour: startHour, endHour: endHour },
       updater: () => {
         window.location.reload();
       },

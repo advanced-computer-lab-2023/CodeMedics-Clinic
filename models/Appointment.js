@@ -28,11 +28,11 @@ const appointmentSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled', 'follow-up Requested', 'followUpAccepted', 'followUpRevoked'],
+        enum: ['unreserved', 'upcoming', 'completed', 'cancelled', 'rescheduled', 'follow-up Requested'],
         default: 'unreserved',
         required: true
     }
 }, {timestamps: true});
 
-const Appointment = mongoose.model('Appointment', appointmentSchema, 'Appointments');
+const Appointment = mongoose.model('Appointment', appointmentSchema, 'Appointment');
 module.exports = Appointment;
