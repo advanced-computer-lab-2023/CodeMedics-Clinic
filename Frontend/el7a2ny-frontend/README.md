@@ -60,81 +60,80 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 
 ![Patient Dashboard](screenshots/PatientDashboard.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>Doctor's Profile</strong></summary>
 
 ![Doctor's Profile](screenshots/DoctorProfile.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>Doctor's Appointments</strong></summary>
 
 ![Doctor's Appointments](screenshots/DoctorAppointments.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>Doctors' Applications Page</strong></summary>
 
 ![Doctors' Applications](screenshots/AdminViewingDoctorsApplications.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>Appointment Booking</strong></summary>
 
 ![Appointment Booking](screenshots/AppointmentBooking.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>Appointment Payment</strong></summary>
 
 ![Appointment Payment](screenshots/AppointmentPage.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>CodeMedic's Meet</strong></summary>
 
 ![CodeMedic's Meet](screenshots/PatientMeetWithDoctor.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>CodeMedic's Chat</strong></summary>
 
 ![CodeMedic's Chat](screenshots/Chats.png)
 
-<details>
+</details>
 
 ### Phamrmacy
-
-<details>
 
 <details>
 <summary><strong>Pharmacy Section</strong></summary>
 
 ![Pharmacy Section](screenshots/PharmacySection.png)
 
-<details>
+</details>
 
 <details>
 <summary><strong>Pharmacy Cart</strong></summary>
 
 ![Pharmacy Cart](screenshots/PharmacyCart.png)
 
-<details>
+</details>
 
 ## Code Snippets
 
-Snippet from Patient Controller
+Backend Snippet
 
 <details>
-<summary> Backend Snippet </summary>
+<summary> Patient Controller Snippet </summary>
+
 ```javascript
 router.patch("/:username/password", async (req, res) => {
   try {
@@ -159,14 +158,16 @@ router.get("/:username/appointments", async (req, res) => {
     errorHandler(error, req, res);
   }
 });
-</details> ```
+```
+</details>
 
 ### ----------------------------------------------
 
-Frontend code of Patient Account Page
+Frontend Snippets
 
 <details>
 <summary>Patient Account Page</summary>
+
 ```javascript
 import { useState } from "react";
 import { Box, Container, Stack, Typography } from "@mui/material";
@@ -230,10 +231,12 @@ const Page = () => {
 
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 export default Page;
-</details>```
+```
+</details>
 
 <details>
 <summary>Doctor's Patients Page</summary>
+
 ```javascript
 import { useState } from "react";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/doctor/layout";
@@ -354,7 +357,8 @@ const Page = () => {
 Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
-</details>```
+```
+</details>
 
 ## Frameworks and Technologies Used
 - [Node.js](https://nodejs.org/)
