@@ -70,16 +70,16 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 </details>
 
 <details>
-<summary><strong>Doctors' Applications Page</strong></summary>
+<summary><strong>Doctor Scheduling an Appointment</strong></summary>
 
-![Doctors' Applications](screenshots/AdminViewingDoctorsApplications.png)
+![Doctor Scheduling an Appointment](screenshots/ScheduleAppointments.png)
 
 </details>
 
 <details>
-<summary><strong>Appointment Booking</strong></summary>
+<summary><strong>Doctors' Applications Page</strong></summary>
 
-![Appointment Booking](screenshots/AppointmentBooking.png)
+![Doctors' Applications](screenshots/AdminViewingDoctorsApplications.png)
 
 </details>
 
@@ -93,14 +93,14 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 <details>
 <summary><strong>CodeMedic's Meet</strong></summary>
 
-![CodeMedic's Meet](screenshots/PatientMeetWithDoctor.png)
+![CodeMedic's Meet](screenshots/PatientMeetWithDoctor.jpg)
 
 </details>
 
 <details>
 <summary><strong>CodeMedic's Chat</strong></summary>
 
-![CodeMedic's Chat](screenshots/Chats.png)
+![CodeMedic's Chat](screenshots/Chats.jpg)
 
 </details>
 
