@@ -28,7 +28,7 @@ const ResetPasswordPage = () => {
       try {
         const username = new URLSearchParams(window.location.search).get("username");
         const category = new URLSearchParams(window.location.search).get("category");
-        const response = await fetch(`${BACKEND_ROUTE}/${category}/${username}`, {
+        const response = await fetch(`${BACKEND_ROUTE}/${category}/${username}/password`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password: values.password }),
