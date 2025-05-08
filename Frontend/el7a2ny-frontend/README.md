@@ -515,13 +515,13 @@ git clone https://github.com/advanced-computer-lab-2023/CodeMedics-Pharmacy
 
 Testing Login
 
-![postman_test1](screenshots/postman_test1.png)
+![PostmanTest1](screenshots/PostmanTest1.png)
 
 Fetching family members of logged in user
 
-![postman_test2](screenshots/postman_test2.png)
+![PostmanTest2](screenshots/PostmanTest2.png)
 
 Getting all prescriptions prescriped by a certain doctor
 
-![postman_test3](screenshots/postman_test3.png)
+![PostmanTest3](screenshots/PostmanTest3.png)
 
