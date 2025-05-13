@@ -13,6 +13,8 @@ const doctorController = require("./Backend/controllers/DoctorController");
 const adminController = require("./Backend/controllers/AdminController");
 const genericRoutes = require("./routes/GenericRoutes");
 
+const { swaggerUi, swaggerSpec } = require("./swagger");
+
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT;
@@ -40,6 +42,9 @@ app.use("/admins", adminController);
 app.use("/doctors", doctorController);
 app.use("/patients", patientController);
 app.use("/", genericRoutes);
+
+// Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Initialize Socket.IO
 initializeSocket(server);
