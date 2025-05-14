@@ -49,7 +49,7 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 ## Git Workflow
 
 - _Branching_: Follow Gitflow (feature branches, develop, master).
-- _Pull Requests_: Require clear descriptions and peer reviews before merging.
+- _Pull Requests_
 
 </details>
 
@@ -63,13 +63,6 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 </details>
 
 <details>
-<summary><strong>Doctor's Profile</strong></summary>
-
-![Doctor's Profile](screenshots/DoctorProfile.png)
-
-</details>
-
-<details>
 <summary><strong>Doctor's Appointments</strong></summary>
 
 ![Doctor's Appointments](screenshots/DoctorAppointments.png)
@@ -77,16 +70,16 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 </details>
 
 <details>
-<summary><strong>Doctors' Applications Page</strong></summary>
+<summary><strong>Doctor Scheduling an Appointment</strong></summary>
 
-![Doctors' Applications](screenshots/AdminViewingDoctorsApplications.png)
+![Doctor Scheduling an Appointment](screenshots/ScheduleAppointments.png)
 
 </details>
 
 <details>
-<summary><strong>Appointment Booking</strong></summary>
+<summary><strong>Doctors' Applications Page</strong></summary>
 
-![Appointment Booking](screenshots/AppointmentBooking.png)
+![Doctors' Applications](screenshots/AdminViewingDoctorsApplications.png)
 
 </details>
 
@@ -100,14 +93,14 @@ We are continuously working to enhance the El7a2ny Virtual Clinic and Pharmacy p
 <details>
 <summary><strong>CodeMedic's Meet</strong></summary>
 
-![CodeMedic's Meet](screenshots/PatientMeetWithDoctor.png)
+![CodeMedic's Meet](screenshots/PatientMeetWithDoctor.jpg)
 
 </details>
 
 <details>
 <summary><strong>CodeMedic's Chat</strong></summary>
 
-![CodeMedic's Chat](screenshots/Chats.png)
+![CodeMedic's Chat](screenshots/Chats.jpg)
 
 </details>
 
@@ -515,17 +508,4 @@ git clone https://github.com/advanced-computer-lab-2023/CodeMedics-Pharmacy
 
 ## Tests
 
-### Postman
-
-Testing Login
-
-![PostmanTest1](screenshots/PostmanTest1.png)
-
-Fetching family members of logged in user
-
-![PostmanTest2](screenshots/PostmanTest2.png)
-
-Getting all prescriptions prescriped by a certain doctor
-
-![PostmanTest3](screenshots/PostmanTest3.png)
-
+Will be added soon
