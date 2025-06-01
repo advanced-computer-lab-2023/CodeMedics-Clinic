@@ -12,7 +12,9 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const route = appointmentId ? `appointments/${appointmentId}` : `health-packages/${packageName}`;
+  const validAppointmentId = /^[a-zA-Z0-9_-]+$/.test(appointmentId) ? appointmentId : null;
+  const validPackageName = /^[a-zA-Z0-9_-]+$/.test(packageName) ? packageName : null;
+  const route = validAppointmentId ? `appointments/${validAppointmentId}` : validPackageName ? `health-packages/${validPackageName}` : null;
 
   useEffect(() => {
     if (!stripe) return;
@@ -46,6 +48,9 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     setIsLoading(true);
 
     try {
+      if (!/^[a-zA-Z0-9_-]+$/.test(patientUsername) || !route) {
+        throw new Error("Invalid input detected.");
+      }
       await axios.post(`${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`, {
         paymentMethod: "Wallet",
       });
@@ -78,6 +83,9 @@ export default function CheckoutForm({ appointmentId, patientUsername, packageNa
     }
     if (paymentIntent && paymentIntent.status === "succeeded") {
       try {
+        if (!/^[a-zA-Z0-9_-]+$/.test(patientUsername) || !route) {
+          throw new Error("Invalid input detected.");
+        }
         await axios.post(`${BACKEND_ROUTE}/patients/${patientUsername}/payment/${route}`, {
           paymentMethod: "Card",
         });
